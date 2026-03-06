@@ -1,22 +1,21 @@
 ## R CMD check results
 
-0 errors | 0 warnings | 0 notes
+0 errors | 0 warnings | 0 notes (local check)
 
 Tested on:
-- macOS (local): R 4.4.x
-- GitHub Actions: ubuntu-latest, windows-latest, macOS-latest × R release + devel
-- win-builder: R release + devel
+
+• macOS (local): R 4.4.x  
+• GitHub Actions CI: macOS, Windows, Ubuntu (R release and devel)  
+• win-builder: R release and devel
 
 ## New submission
 
-This is a new package — no previous CRAN versions exist.
+This is a new package. There are no previous CRAN versions.
 
 ## Notes for reviewers
 
-* The package provides two Shiny HTML widgets (`glassTabsUI`, `glassMultiSelect`).
-  No external API calls, no internet access at runtime.
-* All JavaScript is original, hand-written, and bundled in `inst/www/`.
-* Examples that launch a Shiny app are wrapped in `if (interactive())`.
-* The `Suggests` field lists `spelling` (used only via `devtools::spell_check()`)
-  and `testthat` (test suite, 67 tests, 0 failures).
-* `inst/WORDLIST` contains package-specific technical terms for `spelling::spell_check_package()`.
+The package provides two Shiny UI widgets: `glassTabsUI()` for animated tab navigation and `glassMultiSelect()` for a searchable multi-select dropdown filter.
+
+Both widgets are implemented using HTML, CSS, and JavaScript bundled in `inst/www/`. They do not perform any network access at runtime.
+
+Examples that launch a Shiny app are wrapped in `if (interactive())`.

@@ -4,13 +4,15 @@ Version: 0.1.0
 Authors@R: 
     person("George", "Arthur", , "prigasgenthian48@gmail.com", role = c("aut", "cre"))
 Description: Tools for creating animated glassmorphism-style tab
-    navigation and multi-select dropdown filters in 'shiny'
-    applications. The package provides a tab navigation component and
-    a searchable multi-select widget with multiple checkbox indicator
-    styles, select-all controls, and customizable colour themes. The
-    widgets are compatible with standard 'shiny' layouts and
-    'bs4Dash' dashboards.
+    navigation and multi-select dropdown filters in 'shiny' applications.
+    The package provides a tab navigation component and a searchable
+    multi-select widget with multiple checkbox indicator styles,
+    select-all controls, and customizable colour themes. The widgets are
+    compatible with standard 'shiny' layouts and 'bs4Dash' dashboards.
 License: MIT + file LICENSE
+URL: https://github.com/PrigasG/glasstabs,
+    https://prigasg.github.io/glasstabs/
+BugReports: https://github.com/PrigasG/glasstabs/issues
 Imports:
     htmltools (>= 0.5.0),
     shiny (>= 1.7.0)
@@ -18,11 +20,12 @@ Suggests:
     bs4Dash,
     knitr,
     rmarkdown,
+    spelling,
     testthat (>= 3.0.0)
+VignetteBuilder: 
+    knitr
+Config/testthat/edition: 3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
-URL: https://github.com/PrigasG/glasstabs, https://prigasg.github.io/glasstabs/
-BugReports: https://github.com/PrigasG/glasstabs/issues
-VignetteBuilder: knitr
-Config/testthat/edition: 3
+Language: en-US
