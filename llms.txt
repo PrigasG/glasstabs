@@ -1,4 +1,4 @@
-# glasstabs ![](reference/figures/logo.svg)
+# glasstabs
 
 > Animated glass-morphism tab navigation and multi-select filter widgets
 > for R Shiny
