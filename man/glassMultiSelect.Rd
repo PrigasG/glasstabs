@@ -39,7 +39,7 @@ the dropdown? Default \code{TRUE}. Set \code{FALSE} to lock the style silently.}
 \item{show_clear_all}{Show the "Clear all" footer link? Default \code{TRUE}.}
 
 \item{theme}{color theme. One of \code{"dark"} (default) or
-\code{"light"}, or a \code{\link[=glass_theme]{glass_theme()}} object for full custom control. You only
+\code{"light"}, or a \code{\link[=glass_select_theme]{glass_select_theme()}} object for full custom control. You only
 need to supply the colors you want to change — everything else falls back
 to the dark preset.}
 
@@ -72,15 +72,15 @@ glassMultiSelect("f", fruits,
 
 # Only tweak the accent color — rest stays dark
 glassMultiSelect("f", fruits,
-  theme = glass_theme(accent_color = "#f59e0b")
+  theme = glass_select_theme(accent_color = "#f59e0b")
 )
 
 # Light panel
 glassMultiSelect("f", fruits, theme = "light")
 
-# Full custom via glass_theme()
+# Full custom via glass_select_theme()
 glassMultiSelect("f", fruits,
-  theme = glass_theme(
+  theme = glass_select_theme(
     bg_color     = "#1a0a2e",
     border_color = "#a855f7",
     text_color   = "#ede9fe",

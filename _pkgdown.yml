@@ -1,0 +1,54 @@
+url: https://prigasg.github.io/glasstabs/
+template:
+  bootstrap: 5
+  bootswatch: flatly
+home:
+  title: glasstabs — Animated Shiny Widgets
+  description: |
+    Animated glass-morphism tab navigation and multi-select filter for R Shiny.
+navbar:
+  bg: dark
+  structure:
+    left:
+    - intro
+    - articles
+    - reference
+    right:
+    - search
+    - github
+  components:
+    github:
+      icon: fab fa-github
+      href: https://github.com/prigasG/glasstabs
+articles:
+- title: Widgets
+  navbar: Widgets
+  contents:
+  - getting-started
+  - tabs
+  - multiselect
+reference:
+- title: Setup
+  desc: Load CSS and JavaScript into your Shiny page.
+  contents: useGlassTabs
+- title: Tab widget
+  desc: |
+    Animated glass-morphism tab navigation — sliding halo, spring easing, transfer trace.
+  contents:
+  - glassTabsUI
+  - glassTabPanel
+  - glassTabsServer
+  - glass_tab_theme
+- title: Multi-select filter
+  desc: |
+    Animated dropdown filter with live search, select-all, three checkbox styles, and tag-pill display.
+  contents:
+  - glassMultiSelect
+  - glassMultiSelectServer
+  - glassFilterTags
+  - glass_select_theme
+footer:
+  structure:
+    left: developed_by
+    right: built_with
+

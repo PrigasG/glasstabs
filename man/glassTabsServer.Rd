@@ -10,9 +10,26 @@ glassTabsServer(id)
 \item{id}{Module id matching the \code{id} passed to \code{\link[=glassTabsUI]{glassTabsUI()}}.}
 }
 \value{
-A \code{reactive} string — the value of the currently active tab.
+A reactive expression returning the active tab value.
 }
 \description{
-Tracks the active tab and exposes it as a reactive value. Also registers
-Shiny input binding so the active tab is available as \verb{input$<id>_active}.
+Tracks the active tab and exposes it as a reactive value.
+}
+\examples{
+if (interactive()) {
+  library(shiny)
+  ui <- fluidPage(
+    useGlassTabs(),
+    glassTabsUI(
+      "tabs",
+      glassTabPanel("a", "A", p("Tab A"), selected = TRUE),
+      glassTabPanel("b", "B", p("Tab B"))
+    )
+  )
+  server <- function(input, output, session) {
+    active <- glassTabsServer("tabs")
+    observe(print(active()))
+  }
+  shinyApp(ui, server)
+}
 }

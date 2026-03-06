@@ -4,49 +4,31 @@
 \alias{glassTabsUI}
 \title{Animated glass-style tab navigation UI}
 \usage{
-glassTabsUI(id, ..., selected = NULL, wrap = TRUE, extra_ui = NULL)
+glassTabsUI(
+  id,
+  ...,
+  selected = NULL,
+  wrap = TRUE,
+  extra_ui = NULL,
+  theme = NULL
+)
 }
 \arguments{
-\item{id}{Module namespace id. Used to scope Shiny inputs.}
+\item{id}{Module namespace id.}
 
 \item{...}{One or more \code{\link[=glassTabPanel]{glassTabPanel()}} objects.}
 
-\item{selected}{Value of the initially selected tab. If \code{NULL} the first
-tab is selected.}
+\item{selected}{Value of the initially selected tab.}
 
-\item{wrap}{Logical. When \code{TRUE} (default) wraps everything in a
-\code{div.gt-container}. Set to \code{FALSE} when embedding inside bs4Dash boxes.}
+\item{wrap}{Logical. When \code{TRUE} wraps everything in a \code{div.gt-container}.}
 
-\item{extra_ui}{Optional additional UI placed to the right of the tab bar
-(e.g. a \code{\link[=glassMultiSelect]{glassMultiSelect()}} filter). Defaults to \code{NULL}.}
+\item{extra_ui}{Optional additional UI placed to the right of the tab bar.}
+
+\item{theme}{One of \code{"dark"}, \code{"light"}, or a \code{\link[=glass_tab_theme]{glass_tab_theme()}} object.}
 }
 \value{
 An \code{htmltools::tagList} ready to use in a Shiny UI.
 }
 \description{
-Renders the full tab bar + content area. Place \code{\link[=useGlassTabs]{useGlassTabs()}} somewhere
-in the same page to attach styles and scripts.
-}
-\details{
-Works in plain \code{fluidPage()}, \code{bs4DashPage()}, and any other container —
-pass \code{wrap = FALSE} if you are embedding inside a bs4Dash box or card that
-already provides a constrained container.
-}
-\examples{
-if (interactive()) {
-  library(shiny)
-  ui <- fluidPage(
-    useGlassTabs(),
-    glassTabsUI("tabs",
-      glassTabPanel("A", "Overview", p("Content A"), selected = TRUE),
-      glassTabPanel("B", "Details",  p("Content B")),
-      glassTabPanel("C", "Settings", p("Content C"))
-    )
-  )
-  server <- function(input, output, session) {
-    glassTabsServer("tabs")
-  }
-  shinyApp(ui, server)
-}
-
+Animated glass-style tab navigation UI
 }

@@ -13,7 +13,7 @@
 #' @param show_select_all     Show the "Select all" row? Default `TRUE`.
 #' @param show_clear_all      Show the "Clear all" footer link? Default `TRUE`.
 #' @param theme               color theme. One of `"dark"` (default) or
-#'   `"light"`, or a [glass_theme()] object for full custom control. You only
+#'   `"light"`, or a [glass_select_theme()] object for full custom control. You only
 #'   need to supply the colors you want to change — everything else falls back
 #'   to the dark preset.
 #' @param hues                Optional named integer vector of HSL hue angles
@@ -35,15 +35,15 @@
 #'
 #' # Only tweak the accent color — rest stays dark
 #' glassMultiSelect("f", fruits,
-#'   theme = glass_theme(accent_color = "#f59e0b")
+#'   theme = glass_select_theme(accent_color = "#f59e0b")
 #' )
 #'
 #' # Light panel
 #' glassMultiSelect("f", fruits, theme = "light")
 #'
-#' # Full custom via glass_theme()
+#' # Full custom via glass_select_theme()
 #' glassMultiSelect("f", fruits,
-#'   theme = glass_theme(
+#'   theme = glass_select_theme(
 #'     bg_color     = "#1a0a2e",
 #'     border_color = "#a855f7",
 #'     text_color   = "#ede9fe",

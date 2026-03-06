@@ -33,126 +33,128 @@ glassTabPanel <- function(value, label, ..., selected = FALSE) {
 
 #' Animated glass-style tab navigation UI
 #'
-#' Renders the full tab bar + content area. Place [useGlassTabs()] somewhere
-#' in the same page to attach styles and scripts.
-#'
-#' Works in plain `fluidPage()`, `bs4DashPage()`, and any other container —
-#' pass `wrap = FALSE` if you are embedding inside a bs4Dash box or card that
-#' already provides a constrained container.
-#'
-#' @param id         Module namespace id. Used to scope Shiny inputs.
-#' @param ...        One or more [glassTabPanel()] objects.
-#' @param selected   Value of the initially selected tab. If `NULL` the first
-#'   tab is selected.
-#' @param wrap       Logical. When `TRUE` (default) wraps everything in a
-#'   `div.gt-container`. Set to `FALSE` when embedding inside bs4Dash boxes.
-#' @param extra_ui   Optional additional UI placed to the right of the tab bar
-#'   (e.g. a [glassMultiSelect()] filter). Defaults to `NULL`.
+#' @param id Module namespace id.
+#' @param ... One or more [glassTabPanel()] objects.
+#' @param selected Value of the initially selected tab.
+#' @param wrap Logical. When `TRUE` wraps everything in a `div.gt-container`.
+#' @param extra_ui Optional additional UI placed to the right of the tab bar.
+#' @param theme One of `"dark"`, `"light"`, or a [glass_tab_theme()] object.
 #'
 #' @return An `htmltools::tagList` ready to use in a Shiny UI.
-#'
-#' @examples
-#' if (interactive()) {
-#'   library(shiny)
-#'   ui <- fluidPage(
-#'     useGlassTabs(),
-#'     glassTabsUI("tabs",
-#'       glassTabPanel("A", "Overview", p("Content A"), selected = TRUE),
-#'       glassTabPanel("B", "Details",  p("Content B")),
-#'       glassTabPanel("C", "Settings", p("Content C"))
-#'     )
-#'   )
-#'   server <- function(input, output, session) {
-#'     glassTabsServer("tabs")
-#'   }
-#'   shinyApp(ui, server)
-#' }
-#'
 #' @export
-glassTabsUI <- function(id, ..., selected = NULL, wrap = TRUE, extra_ui = NULL) {
+glassTabsUI <- function(
+    id, ...,
+    selected = NULL,
+    wrap = TRUE,
+    extra_ui = NULL,
+    theme = NULL
+) {
   ns     <- shiny::NS(id)
   panels <- list(...)
 
-  # Validate inputs
-  if (!all(vapply(panels, inherits, logical(1), "glassTabPanel"))) {
-    stop("All `...` arguments to glassTabsUI() must be glassTabPanel() objects.")
+  if (length(panels) == 0) {
+    stop("glassTabsUI() requires at least one glassTabPanel().", call. = FALSE)
   }
-  if (length(panels) == 0) stop("glassTabsUI() requires at least one glassTabPanel().")
+  if (!all(vapply(panels, inherits, logical(1), "glassTabPanel"))) {
+    stop("All `...` arguments to glassTabsUI() must be glassTabPanel() objects.", call. = FALSE)
+  }
 
-  # Determine which tab starts active
+  theme_vals <- .tab_resolve_theme(theme)
+
   active_val <- selected %||% {
     sel <- Filter(function(p) p$selected, panels)
     if (length(sel)) sel[[1]]$value else panels[[1]]$value
   }
 
-  # ── Tab link buttons ────────────────────────────────────────────────────────
   tab_links <- lapply(panels, function(p) {
     cls <- paste("gt-tab-link", if (p$value == active_val) "active" else "")
     shiny::tags$div(
-      class         = cls,
-      `data-value`  = p$value,
-      `data-ns`     = id,
+      class = cls,
+      `data-value` = p$value,
+      `data-ns` = id,
       p$label
     )
   })
 
-  # ── Content panes ───────────────────────────────────────────────────────────
   panes <- lapply(panels, function(p) {
     cls <- paste("gt-tab-pane", if (p$value == active_val) "active" else "")
     shiny::div(
       class = cls,
-      id    = ns(paste0("pane-", p$value)),
+      id = ns(paste0("pane-", p$value)),
       do.call(shiny::div, c(list(class = "gt-card"), p$content))
     )
   })
 
-  # ── Assemble ─────────────────────────────────────────────────────────────────
   navbar <- shiny::div(
     class = "gt-topbar",
     shiny::div(
       class = "gt-navbar",
-      id    = ns("navbar"),
+      id = ns("navbar"),
       `data-ns` = id,
       tab_links
     ),
     extra_ui
   )
 
+  scope_id <- ns("wrap")
+  theme_css <- sprintf(
+    "#%s{--gt-tab-text:%s;--gt-tab-active-text:%s;--gt-halo-bg:%s;--gt-halo-border:%s;--gt-content-bg:%s;--gt-content-border:%s;--gt-card-bg:%s;--gt-card-text:%s;}",
+    scope_id,
+    theme_vals$tab_text,
+    theme_vals$tab_active_text,
+    theme_vals$halo_bg,
+    theme_vals$halo_border,
+    theme_vals$content_bg,
+    theme_vals$content_border,
+    theme_vals$card_bg,
+    theme_vals$card_text
+  )
+
   inner <- htmltools::tagList(
+    shiny::tags$style(theme_css),
     navbar,
-    shiny::tags$div(class = "gt-halo",     id = ns("halo")),
+    shiny::tags$div(class = "gt-halo", id = ns("halo")),
     shiny::tags$div(class = "gt-transfer", id = ns("transfer")),
     shiny::div(class = "gt-tab-wrap", panes)
   )
 
   if (wrap) {
-    shiny::div(class = "gt-container", inner)
+    shiny::div(class = "gt-container", id = scope_id, inner)
   } else {
-    inner
+    shiny::div(id = scope_id, inner)
   }
 }
 
-
 #' Server logic for glass tabs
 #'
-#' Tracks the active tab and exposes it as a reactive value. Also registers
-#' Shiny input binding so the active tab is available as `input$<id>_active`.
+#' Tracks the active tab and exposes it as a reactive value.
 #'
 #' @param id Module id matching the `id` passed to [glassTabsUI()].
 #'
-#' @return A `reactive` string — the value of the currently active tab.
+#' @return A reactive expression returning the active tab value.
 #'
+#' @examples
+#' if (interactive()) {
+#'   library(shiny)
+#'   ui <- fluidPage(
+#'     useGlassTabs(),
+#'     glassTabsUI(
+#'       "tabs",
+#'       glassTabPanel("a", "A", p("Tab A"), selected = TRUE),
+#'       glassTabPanel("b", "B", p("Tab B"))
+#'     )
+#'   )
+#'   server <- function(input, output, session) {
+#'     active <- glassTabsServer("tabs")
+#'     observe(print(active()))
+#'   }
+#'   shinyApp(ui, server)
+#' }
 #' @export
 glassTabsServer <- function(id) {
   shiny::moduleServer(id, function(input, output, session) {
-    # JS sets input$<ns>_active via Shiny.setInputValue on every tab click
-    active <- shiny::reactive({
+    shiny::reactive({
       input[["active_tab"]] %||% NULL
     })
-    active
   })
 }
-
-
-# Null-coalescing helper (not exported)
-`%||%` <- function(a, b) if (!is.null(a)) a else b
