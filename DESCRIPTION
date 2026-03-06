@@ -1,0 +1,20 @@
+Package: glasstabs
+Title: Animated Glass-Style Tabs and Multi-Select Filter for Shiny
+Version: 0.1.0
+Authors@R: 
+    person("Author", "Name", , "author@example.com", role = c("aut", "cre"))
+Description: Provides animated glass-morphism tab navigation and a custom
+    multi-select dropdown filter widget for use in Shiny applications and
+    bs4Dash dashboards. Includes three checkbox indicator styles
+    (check-only, box, filled-colour), live search, select-all, and smart
+    trigger labels.
+License: MIT + file LICENSE
+Imports:
+    htmltools (>= 0.5.0),
+    shiny (>= 1.7.0)
+Suggests:
+    bs4Dash,
+    knitr
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
