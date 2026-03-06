@@ -266,4 +266,4 @@ shinyApp(ui, server)
   [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md):
   checkbox styles, custom hues, tag pills, theming
 - **Reference** — complete function documentation at
-  [`help(package = "glasstabs")`](https://rdrr.io/pkg/glasstabs/man)
+  [`help(package = "glasstabs")`](https://prigasg.github.io/glasstabs/reference)
