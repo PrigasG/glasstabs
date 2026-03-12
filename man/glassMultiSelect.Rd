@@ -8,7 +8,9 @@ glassMultiSelect(
   inputId,
   choices,
   selected = NULL,
+  label = NULL,
   placeholder = "Filter by Category",
+  all_label = "All categories",
   check_style = c("checkbox", "check-only", "filled"),
   show_style_switcher = TRUE,
   show_select_all = TRUE,
@@ -18,43 +20,54 @@ glassMultiSelect(
 )
 }
 \arguments{
-\item{inputId}{Shiny input id. Selected values available as
-\verb{input$<inputId>} (character vector) and active style as
-\verb{input$<inputId>_style}.}
+\item{inputId}{Shiny input id.}
 
 \item{choices}{Named or unnamed character vector of choices.}
 
-\item{selected}{Initially selected values. Defaults to all.}
+\item{selected}{Initially selected values. Defaults to all choices when
+\code{NULL}.}
+
+\item{label}{Optional field label shown above the widget.}
 
 \item{placeholder}{Trigger label when nothing is selected.}
 
-\item{check_style}{One of \code{"checkbox"} (default), \code{"check-only"},
-or \code{"filled"}.}
+\item{all_label}{Label shown when all choices are selected.}
+
+\item{check_style}{One of \code{"checkbox"} (default),
+\code{"check-only"}, or \code{"filled"}.}
 
 \item{show_style_switcher}{Show the Check / Box / Fill switcher row inside
-the dropdown? Default \code{TRUE}. Set \code{FALSE} to lock the style silently.}
+the dropdown? Default \code{TRUE}.}
 
 \item{show_select_all}{Show the "Select all" row? Default \code{TRUE}.}
 
 \item{show_clear_all}{Show the "Clear all" footer link? Default \code{TRUE}.}
 
-\item{theme}{color theme. One of \code{"dark"} (default) or
-\code{"light"}, or a \code{\link[=glass_select_theme]{glass_select_theme()}} object for full custom control. You only
-need to supply the colors you want to change — everything else falls back
-to the dark preset.}
+\item{theme}{Color theme. One of \code{"dark"} (default) or \code{"light"},
+or a \code{\link[=glass_select_theme]{glass_select_theme()}} object.}
 
-\item{hues}{Optional named integer vector of HSL hue angles
-(0–360) for the \code{"filled"} style. Auto-assigned if \code{NULL}.}
+\item{hues}{Optional named integer vector of HSL hue angles (0 to 360) for
+the \code{"filled"} style. Auto-assigned if \code{NULL}.}
 }
 \value{
 An \code{htmltools::tagList} containing the trigger button, dropdown
-panel, and a scoped \code{<style>} block. Embed directly in any Shiny UI
-function. The widget registers two Shiny inputs:
-\code{input$<inputId>} (character vector of selected values) and
-\code{input$<inputId>_style} (active checkbox style string).
+panel, and scoped \code{<style>} block.
 }
 \description{
-Animated glass multi-select dropdown filter
+A stylized multi-select Shiny input with optional search, style switching,
+select-all behavior, and programmatic updates via \code{\link[=updateGlassMultiSelect]{updateGlassMultiSelect()}}.
+}
+\details{
+The widget registers two Shiny inputs:
+
+\itemize{
+\item \code{input$<inputId>} : character vector of selected values
+\item \code{input$<inputId>_style} : active style string
+(\code{"checkbox"}, \code{"check-only"}, or \code{"filled"})
+}
+
+By default, when \code{selected = NULL}, all choices are initially selected.
+This preserves the existing package behavior.
 }
 \examples{
 fruits <- c(Apple = "apple", Banana = "banana", Cherry = "cherry")
@@ -62,30 +75,17 @@ fruits <- c(Apple = "apple", Banana = "banana", Cherry = "cherry")
 # Minimal
 glassMultiSelect("f", fruits)
 
-# Lock style, hide all chrome
-glassMultiSelect("f", fruits,
-  check_style         = "check-only",
+# Lock style, hide extra controls
+glassMultiSelect(
+  "f",
+  fruits,
+  check_style = "check-only",
   show_style_switcher = FALSE,
-  show_select_all     = FALSE,
-  show_clear_all      = FALSE
+  show_select_all = FALSE,
+  show_clear_all = FALSE
 )
 
-# Only tweak the accent color — rest stays dark
-glassMultiSelect("f", fruits,
-  theme = glass_select_theme(accent_color = "#f59e0b")
-)
-
-# Light panel
+# Light theme
 glassMultiSelect("f", fruits, theme = "light")
-
-# Full custom via glass_select_theme()
-glassMultiSelect("f", fruits,
-  theme = glass_select_theme(
-    bg_color     = "#1a0a2e",
-    border_color = "#a855f7",
-    text_color   = "#ede9fe",
-    accent_color = "#a855f7"
-  )
-)
 
 }

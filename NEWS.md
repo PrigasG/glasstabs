@@ -1,3 +1,42 @@
+# glasstabs 0.1.1
+
+## New features
+
+### Single-select widget
+
+* Added `glassSelect()`, an animated single-select dropdown for Shiny.
+* Added `updateGlassSelect()` for server-side updates to choices and selection.
+* Added `glassSelectValue()` as a convenience reactive helper for reading the selected value.
+
+### Multi-select widget
+
+* Added `updateGlassMultiSelect()` for server-side updates to choices, selection, and checkbox style.
+* Added `glassMultiSelectValue()` as a convenience reactive helper for reading selected values and active style.
+* Added optional `label` support to `glassMultiSelect()`.
+* Added configurable `all_label` support to control the trigger text shown when all choices are selected.
+
+## Improvements
+
+* Aligned `glassSelect()` and `glassMultiSelect()` more closely with standard Shiny input behavior.
+* Added client-side input bindings so select widgets now support `session$sendInputMessage()` update patterns.
+* Preserved current `glassMultiSelect()` default behavior where `selected = NULL` initializes all choices as selected.
+* Improved choice normalization so named choices retain display labels correctly.
+* Improved hue normalization for the `"filled"` multi-select style.
+* Updated vignettes and examples to show direct Shiny input usage and server-side update patterns.
+
+## Documentation
+
+* Added a new vignette for `glassSelect()`.
+* Updated the getting started vignette to include `glassSelect()`.
+* Updated the multi-select vignette to document `updateGlassMultiSelect()` and `glassMultiSelectValue()`.
+
+## Internal changes
+
+* Added tests for `glassSelect()`, `updateGlassSelect()`, and `glassSelectValue()`.
+* Expanded tests for `glassMultiSelect()` server-side updates and helper utilities.
+
+---
+
 # glasstabs 0.1.0
 
 Initial release.
@@ -22,8 +61,6 @@ Initial release.
 * `glassMultiSelect()` — dropdown filter with live search,
   select-all with indeterminate state, and three checkbox indicator styles:
   `"checkbox"`, `"check-only"`, and `"filled"`.
-* `glassMultiSelectServer()` — typed reactive wrapper exposing `selected`
-  and `style` reactives.
 * `glassFilterTags()` — tag-pill display area that stays in sync with a
   `glassMultiSelect()` automatically via JavaScript; clicking × on a pill
   deselects that option.
