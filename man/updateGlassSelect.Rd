@@ -4,7 +4,13 @@
 \alias{updateGlassSelect}
 \title{Update a glassSelect widget}
 \usage{
-updateGlassSelect(session, inputId, choices = NULL, selected = NULL)
+updateGlassSelect(
+  session,
+  inputId,
+  choices = NULL,
+  selected = NULL,
+  check_style = NULL
+)
 }
 \arguments{
 \item{session}{Shiny session.}
@@ -15,14 +21,18 @@ updateGlassSelect(session, inputId, choices = NULL, selected = NULL)
 
 \item{selected}{New selected value, or \code{NULL} to keep the current
 selection. Use \code{character(0)} to clear.}
+
+\item{check_style}{Optional new style string. One of \code{"checkbox"},
+\code{"check-only"}, or \code{"filled"}. Defaults to \code{NULL}, which
+keeps the current style unchanged.}
 }
 \value{
 No return value. Called for its side effect of updating the client-side
 widget.
 }
 \description{
-Update the available choices and/or current selection of an existing
-\code{\link[=glassSelect]{glassSelect()}} input.
+Update the available choices, current selection, and/or selection-marker
+style of an existing \code{\link[=glassSelect]{glassSelect()}} input.
 }
 \details{
 This function follows Shiny-style update semantics:
@@ -31,6 +41,7 @@ This function follows Shiny-style update semantics:
 \item \code{choices = NULL} leaves choices unchanged
 \item \code{selected = NULL} leaves selection unchanged
 \item \code{selected = character(0)} clears the selection
+\item \code{check_style = NULL} leaves the current style unchanged
 }
 
 When \code{choices} is supplied and \code{selected} is not, the browser side

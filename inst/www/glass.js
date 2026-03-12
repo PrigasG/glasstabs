@@ -291,6 +291,12 @@
     var clearBtn = wrap.querySelector('.gt-gs-clear');
     var searchIn = wrap.querySelector('input[type="text"]');
     var optionsBox = wrap.querySelector('[id$="-options"]') || wrap;
+    var STYLES = ['check-only', 'checkbox', 'filled'];
+    var currentStyle = 'checkbox';
+
+    STYLES.forEach(function (s) {
+      if (wrap.classList.contains('style-' + s)) currentStyle = s;
+    });
 
     if (!trigger || !dropdown || !labelEl) return;
 
@@ -437,6 +443,19 @@
         setValue(v, false);
       },
       setChoices: setChoices,
+      getStyle: function () {
+        return currentStyle;
+      },
+      setStyle: function (s) {
+        if (STYLES.indexOf(s) === -1) return;
+
+        STYLES.forEach(function (st) {
+          wrap.classList.remove('style-' + st);
+        });
+
+        wrap.classList.add('style-' + s);
+        currentStyle = s;
+      },
       clear: function () {
         setValue(null, false);
       }
@@ -812,6 +831,10 @@
           if (Array.isArray(sel)) sel = sel.length ? sel[0] : null;
           if (sel === '') sel = null;
           el._gt.setValue(sel);
+        }
+
+        if (hasOwn(data, 'style')) {
+          el._gt.setStyle(data.style);
         }
 
         triggerShinyChange(el);

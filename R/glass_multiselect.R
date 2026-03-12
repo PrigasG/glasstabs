@@ -118,10 +118,12 @@ glassMultiSelect <- function(
     "gt-ms-badge"
   }
 
+  field_id <- paste0(inputId, "-field")
   scope_id <- paste0(inputId, "-wrap")
+
   theme_css <- sprintf(
-    "#%s{--ms-bg:%s;--ms-border:%s;--ms-text:%s;--ms-accent:%s;}",
-    scope_id, colors$bg, colors$border, colors$text, colors$accent
+    "#%s{--ms-bg:%s;--ms-border:%s;--ms-text:%s;--ms-accent:%s;--ms-label:%s;}",
+    field_id, colors$bg, colors$border, colors$text, colors$accent, colors$label
   )
 
   check_svg <- shiny::tags$svg(
@@ -207,16 +209,11 @@ glassMultiSelect <- function(
             width = "11",
             height = "11",
             rx = "3",
-            fill = "rgba(80,160,255,0.55)",
-            stroke = "rgba(100,180,255,0.6)",
+            fill = colors$accent,
+            `fill-opacity` = "0.45",
+            stroke = colors$accent,
+            `stroke-opacity` = "0.75",
             `stroke-width` = "1.4"
-          ),
-          shiny::tags$path(
-            d = "M3.5 7l2.8 3L10.5 4",
-            stroke = "#fff",
-            `stroke-width` = "1.7",
-            `stroke-linecap` = "round",
-            `stroke-linejoin` = "round"
           )
         ),
         shiny::tags$span("Fill")
@@ -285,13 +282,18 @@ glassMultiSelect <- function(
     }
   )
 
-  wrap_cls <- paste("gt-ms-wrap", paste0("style-", check_style))
+  wrap_cls <- paste(
+    "gt-ms-wrap",
+    paste0("style-", check_style),
+    if (.is_light_theme(theme)) "theme-light" else NULL
+  )
 
   htmltools::tagList(
     shiny::tags$style(theme_css),
     shiny::div(
       class = "gt-ms-field",
       label_tag,
+      id = field_id,
       shiny::div(
         class = wrap_cls,
         id = scope_id,

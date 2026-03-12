@@ -2,7 +2,6 @@ CMD
 Dropdown
 HSL
 JS
-Mult
 Roadmap
 Shiny's
 Theming
@@ -10,6 +9,7 @@ UI
 bs
 clearable
 colour
+customizable
 deduplicated
 dropdown
 dropdowns
@@ -18,11 +18,11 @@ glassSelect
 glassTabsUI
 glassmorphism
 morphism
-multiselect
 nav
 pre
 reactives
 renderer
+selectable
 themeable
 theming
 walkthrough

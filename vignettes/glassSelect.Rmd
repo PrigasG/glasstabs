@@ -23,7 +23,14 @@ It behaves like a standard Shiny input:
 `input$<inputId>` stores the selected value as a single character string,
 or `NULL` when nothing is selected.
 
-It also supports server-side updates with `updateGlassSelect()`.
+It supports:
+
+- optional labels
+- search and clear controls
+- built-in dark and light themes
+- custom theming with `glass_select_theme()`
+- selectable marker styles via `check_style`
+- server-side updates with `updateGlassSelect()`
 
 ## Basic usage
 
@@ -69,6 +76,19 @@ glassSelect("f", fruits, selected = "banana")
 glassSelect("f", fruits, label = "Choose a fruit")
 ```
 
+## Selection styles
+
+`glassSelect()` supports three selection marker styles:
+
+- `"checkbox"` (default)
+- `"check-only"`
+- `"filled"`
+
+```{r styles}
+glassSelect("f1", fruits, check_style = "checkbox")
+glassSelect("f2", fruits, check_style = "check-only")
+glassSelect("f3", fruits, check_style = "filled")
+```
 
 ## Searchable and clearable
 
@@ -121,8 +141,8 @@ Read the current value directly from `input$<inputId>`:
 ```{r server-direct}
 server <- function(input, output, session) {
   observe({
-    message("Selected: ", input$pick %||% "NULL")
-  })
+  message("Selected: ", if (is.null(input$pick)) "NULL" else input$pick)
+})
 }
 ```
 
@@ -147,6 +167,17 @@ server <- function(input, output, session) {
 `updateGlassSelect()` can update:
 - available choices
 - current selection
+- selection marker style
+
+```{r style selection}
+observeEvent(input$filled, {
+  updateGlassSelect(
+    session,
+    "pick",
+    check_style = "filled"
+  )
+})
+```
 
 It follows Shiny-style update semantics:
 
@@ -160,6 +191,7 @@ ui <- fluidPage(
   actionButton("subset", "Keep first 2 fruits"),
   actionButton("banana", "Select banana"),
   actionButton("clear", "Clear"),
+  actionButton("filled", "Use filled style"),
   glassSelect("pick", fruits, clearable = TRUE),
   verbatimTextOutput("out")
 )
@@ -215,7 +247,10 @@ glassSelect("f", fruits, theme = "light")
 glassSelect(
   "f",
   fruits,
-  theme = glass_select_theme(accent_color = "#f59e0b")
+  theme = glass_select_theme(
+    mode = "dark",
+    accent_color = "#f59e0b"
+  )
 )
 
 glassSelect(
@@ -228,13 +263,38 @@ glassSelect(
     accent_color = "#a855f7"
   )
 )
+
+
+#other themes
+glassSelect(
+  "f",
+  fruits,
+  theme = glass_select_theme(
+    mode = "light",
+    accent_color = "#2563eb"
+  )
+)
+
+#more themes
+glassSelect(
+  "f",
+  fruits,
+  theme = glass_select_theme(
+    mode = "light",
+    bg_color = "#ffffff",
+    border_color = "rgba(0,0,0,0.15)",
+    text_color = "#111111",
+    accent_color = "#111111",
+    label_color = "#111111"
+  )
+)
 ```
 
 
 ## Standalone usage
 
-`glassSelect()` does not require tabs. You only need `useGlassTabs()`
-for the package assets:
+`glassSelect()` can be used without the tab widget. You only need
+`useGlassTabs()` to load the package CSS and JavaScript assets:
 
 ```{r standalone}
 ui <- fluidPage(

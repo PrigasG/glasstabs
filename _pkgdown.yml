@@ -1,54 +1,70 @@
 url: https://prigasg.github.io/glasstabs/
+
 template:
   bootstrap: 5
   bootswatch: flatly
+
 home:
   title: glasstabs — Animated Shiny Widgets
   description: |
-    Animated glass-morphism tab navigation and multi-select filter for R Shiny.
+    Animated glass-morphism tabs, single-select, and multi-select widgets for R Shiny.
+
 navbar:
   bg: dark
   structure:
     left:
-    - intro
-    - articles
-    - reference
+      - intro
+      - articles
+      - reference
     right:
-    - search
-    - github
+      - search
+      - github
   components:
     github:
       icon: fab fa-github
       href: https://github.com/prigasG/glasstabs
+
 articles:
-- title: Widgets
-  navbar: Widgets
-  contents:
-  - getting-started
-  - tabs
-  - multiselect
+  - title: Getting started
+    navbar: ~
+    contents:
+      - getting-started
+  - title: Widgets
+    navbar: Widgets
+    contents:
+      - tabs
+      - glassSelect
+      - multiselect
+
 reference:
-- title: Setup
-  desc: Load CSS and JavaScript into your Shiny page.
-  contents: useGlassTabs
-- title: Tab widget
-  desc: |
-    Animated glass-morphism tab navigation — sliding halo, spring easing, transfer trace.
-  contents:
-  - glassTabsUI
-  - glassTabPanel
-  - glassTabsServer
-  - glass_tab_theme
-- title: Multi-select filter
-  desc: |
-    Animated dropdown filter with live search, select-all, three checkbox styles, and tag-pill display.
-  contents:
-  - glassMultiSelect
-  - glassMultiSelectServer
-  - glassFilterTags
-  - glass_select_theme
+  - title: Setup
+    desc: Load CSS and JavaScript into your Shiny page.
+    contents:
+      - useGlassTabs
+
+  - title: Tab widget
+    desc: |
+      Animated glass-morphism tab navigation with a sliding halo, spring easing, and transfer trace.
+    contents:
+      - glassTabsUI
+      - glassTabPanel
+      - glassTabsServer
+      - glass_tab_theme
+
+  - title: Select widgets
+    desc: |
+      Animated single-select and multi-select dropdown widgets for Shiny, with theming, search, update helpers, and reactive value helpers.
+    contents:
+      - glassSelect
+      - updateGlassSelect
+      - glassSelectValue
+      - glassMultiSelect
+      - updateGlassMultiSelect
+      - glassMultiSelectValue
+      - glassFilterTags
+      - glass_select_theme
+
 footer:
   structure:
     left: developed_by
     right: built_with
-

@@ -1,4 +1,4 @@
-/* glasstabs v0.1.0 */
+/* glasstabs v0.1.1 */
 *,*::before,*::after{box-sizing:border-box;}
 
 /* ── Container ── */
@@ -95,14 +95,9 @@
      --ms-text    main text
      --ms-accent  tick / badge / checked states
 ══════════════════════════════════════════════ */
-
-/* Default (dark) values — overridden per-instance via inline <style> */
 .gt-ms-wrap{
-  position:relative;z-index:100;
-  --ms-bg:     rgba(9,20,42,0.97);
-  --ms-border: rgba(255,255,255,0.10);
-  --ms-text:   #cfe6ff;
-  --ms-accent: #7ec3f7;
+  position:relative;
+  z-index:100;
 }
 
 /* ── Trigger button ── */
@@ -259,15 +254,30 @@
 .gt-ms-wrap.style-filled .gt-ms-check{
   border-color:color-mix(in srgb,var(--ms-accent) 28%,transparent)!important;
 }
+
 .gt-ms-wrap.style-filled .gt-ms-option.checked .gt-ms-check{
   border-color:transparent!important;
   box-shadow:0 0 0 2px rgba(255,255,255,0.06)!important;
   background:hsl(var(--opt-hue,210),72%,52%)!important;
 }
-.gt-ms-wrap.style-filled .gt-ms-option.checked .gt-ms-check svg path{stroke:#fff;}
+
+.gt-ms-wrap.style-filled .gt-ms-option.checked .gt-ms-check svg{
+  opacity:0 !important;
+  transform:scale(0.5) !important;
+}
+
 .gt-ms-wrap.style-filled .gt-ms-all.checked .gt-ms-check{
   background:color-mix(in srgb,var(--ms-accent) 32%,transparent)!important;
   border-color:color-mix(in srgb,var(--ms-accent) 60%,transparent)!important;
+}
+
+.gt-ms-wrap.style-filled .gt-ms-all.checked .gt-ms-check svg{
+  opacity:0 !important;
+  transform:scale(0.5) !important;
+}
+
+.gt-ms-wrap.style-filled .gt-ms-option.checked{
+  background:color-mix(in srgb,hsl(var(--opt-hue,210),72%,52%) 12%,transparent);
 }
 
 /* Indeterminate dash */
@@ -305,4 +315,269 @@
   .gt-navbar{gap:8px;}.gt-tab-link{padding:8px 12px;border-radius:10px;}
   .gt-topbar{flex-direction:column;align-items:flex-start;}
   .gt-ms-dropdown{right:auto;left:0;}
+}
+
+
+/* ══════════════════════════════════════════════
+   SINGLE-SELECT — visually aligned with MULTI-SELECT
+   Uses the same theme variables:
+     --ms-bg
+     --ms-border
+     --ms-text
+     --ms-accent
+══════════════════════════════════════════════ */
+
+.gt-gs-field,
+.gt-ms-field{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.gt-input-label{
+  color:var(--ms-label, var(--ms-text, #cfe6ff));
+  font-size:12px;
+  font-weight:600;
+  letter-spacing:.01em;
+  margin:0;
+}
+
+.gt-gs-wrap{
+  position:relative;
+  z-index:100;
+}
+
+
+/* ── Trigger button ── */
+.gt-gs-trigger{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:8px 14px;
+  border-radius:12px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid var(--ms-border);
+  color:var(--ms-text);
+  cursor:pointer;
+  font-size:13px;
+  font-weight:600;
+  white-space:nowrap;
+  user-select:none;
+  min-width:160px;
+  transition:background 140ms,border-color 140ms,box-shadow 140ms;
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+}
+
+.gt-gs-trigger:hover{
+  background:rgba(255,255,255,0.08);
+  border-color:var(--ms-accent);
+  box-shadow:0 4px 14px rgba(0,0,0,0.2);
+}
+
+.gt-gs-trigger.open{
+  background:rgba(255,255,255,0.08);
+  border-color:var(--ms-accent);
+  box-shadow:
+    0 0 0 3px color-mix(in srgb,var(--ms-accent) 18%,transparent),
+    0 4px 14px rgba(0,0,0,0.2);
+}
+
+.gt-gs-wrap.theme-light .gt-gs-trigger{
+  background:rgba(0,0,0,0.04);
+  box-shadow:0 1px 4px rgba(0,0,0,0.08);
+}
+
+.gt-gs-wrap.theme-light .gt-gs-trigger:hover{
+  background:rgba(0,0,0,0.07);
+}
+
+.gt-gs-chevron{
+  width:14px;
+  height:14px;
+  transition:transform 180ms cubic-bezier(.2,.9,.25,1);
+  opacity:.6;
+  flex-shrink:0;
+}
+
+.gt-gs-trigger.open .gt-gs-chevron{
+  transform:rotate(180deg);
+}
+
+.gt-gs-clear{
+  font-size:12px;
+  color:var(--ms-accent);
+  cursor:pointer;
+  font-weight:600;
+  opacity:.7;
+  transition:opacity 120ms;
+}
+
+.gt-gs-clear:hover{
+  opacity:1;
+}
+
+/* ── Dropdown panel ── */
+.gt-gs-dropdown{
+  position:absolute;
+  top:calc(100% + 8px);
+  right:0;
+  min-width:232px;
+  border-radius:14px;
+  background:var(--ms-bg);
+  border:1px solid var(--ms-border);
+  box-shadow:
+    0 22px 64px rgba(0,0,0,0.45),
+    inset 0 1px 0 rgba(255,255,255,0.06);
+  padding:8px;
+  opacity:0;
+  transform:translateY(-8px) scale(0.96);
+  pointer-events:none;
+  transition:
+    opacity 180ms cubic-bezier(.2,.9,.25,1),
+    transform 180ms cubic-bezier(.2,.9,.25,1);
+  transform-origin:top right;
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+}
+
+.gt-gs-wrap.theme-light .gt-gs-dropdown{
+  box-shadow:
+    0 12px 40px rgba(0,0,0,0.15),
+    0 0 0 1px rgba(0,0,0,0.06);
+}
+
+.gt-gs-dropdown.open{
+  opacity:1;
+  transform:translateY(0) scale(1);
+  pointer-events:auto;
+}
+
+/* ── Search ── */
+.gt-gs-search{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  padding:7px 10px;
+  border-radius:8px;
+  background:color-mix(in srgb,var(--ms-text) 6%,transparent);
+  border:1px solid var(--ms-border);
+  margin-bottom:6px;
+}
+
+.gt-gs-search input{
+  background:none;
+  border:none;
+  outline:none;
+  color:var(--ms-text);
+  font-size:12px;
+  width:100%;
+  font-family:inherit;
+}
+
+.gt-gs-search input::placeholder{
+  color:color-mix(in srgb,var(--ms-text) 35%,transparent);
+}
+
+/* ── Option rows ── */
+.gt-gs-option{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  padding:8px 10px;
+  border-radius:8px;
+  cursor:pointer;
+  user-select:none;
+  color:var(--ms-text);
+  font-size:13px;
+  font-weight:500;
+  transition:background 120ms;
+}
+
+.gt-gs-option:hover{
+  background:color-mix(in srgb,var(--ms-text) 6%,transparent);
+}
+
+.gt-gs-option.hidden{
+  display:none;
+}
+
+/* ── Check container ── */
+.gt-gs-check{
+  flex-shrink:0;
+  width:16px;
+  height:16px;
+  border-radius:5px;
+  border:1.5px solid color-mix(in srgb,var(--ms-accent) 40%,transparent);
+  background:color-mix(in srgb,var(--ms-text) 3%,transparent);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:background 150ms,border-color 150ms,box-shadow 150ms;
+  position:relative;
+  overflow:hidden;
+}
+
+.gt-gs-check svg{
+  opacity:0;
+  transform:scale(0.5);
+  transition:opacity 120ms,transform 130ms cubic-bezier(.2,.9,.25,1);
+}
+
+.gt-gs-option.selected .gt-gs-check{
+  background:color-mix(in srgb,var(--ms-accent) 22%,transparent);
+  border-color:color-mix(in srgb,var(--ms-accent) 75%,transparent);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--ms-accent) 12%,transparent);
+}
+
+.gt-gs-option.selected .gt-gs-check svg{
+  opacity:1;
+  transform:scale(1);
+}
+
+.gt-gs-option.selected{
+  background:color-mix(in srgb,var(--ms-text) 6%,transparent);
+}
+
+/* Check only */
+.gt-gs-wrap.style-check-only .gt-gs-check{
+  border-color:transparent !important;
+  background:transparent !important;
+  box-shadow:none !important;
+}
+
+.gt-gs-wrap.style-check-only .gt-gs-option.selected .gt-gs-check svg{
+  opacity:1;
+  transform:scale(1.15);
+}
+
+/* filled only */
+.gt-gs-wrap.style-filled .gt-gs-check{
+  border-color:color-mix(in srgb,var(--ms-accent) 28%,transparent) !important;
+}
+
+.gt-gs-wrap.style-filled .gt-gs-option.selected .gt-gs-check{
+  border-color:transparent !important;
+  background:var(--ms-accent) !important;
+  box-shadow:0 0 0 2px rgba(255,255,255,0.06) !important;
+}
+
+.gt-gs-wrap.style-filled .gt-gs-option.selected .gt-gs-check svg{
+  opacity:0 !important;
+  transform:scale(0.5) !important;
+}
+
+/* Optional subtle divider between search and options list */
+.gt-gs-dropdown [id$="-options"]{
+  display:flex;
+  flex-direction:column;
+  gap:1px;
+}
+
+@media(max-width:600px){
+  .gt-gs-dropdown{
+    right:auto;
+    left:0;
+  }
 }

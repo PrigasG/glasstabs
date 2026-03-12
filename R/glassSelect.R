@@ -1,7 +1,7 @@
 #' Animated glass single-select dropdown
 #'
 #' A stylized single-select Shiny input with optional search, clear control,
-#' and programmatic updates via [updateGlassSelect()].
+#' selection-marker styling, and programmatic updates via [updateGlassSelect()].
 #'
 #' The widget registers one Shiny input:
 #'
@@ -23,6 +23,8 @@
 #'   \code{FALSE}.
 #' @param all_choice_label Label used for the explicit "All" option.
 #' @param all_choice_value Value used for the explicit "All" option.
+#' @param check_style One of \code{"checkbox"} (default),
+#'   \code{"check-only"}, or \code{"filled"}.
 #' @param theme Color theme. One of \code{"dark"} (default) or \code{"light"},
 #'   or a [glass_select_theme()] object.
 #'
@@ -49,6 +51,12 @@
 #'   all_choice_value = "__all__"
 #' )
 #'
+#' glassSelect(
+#'   "fruit",
+#'   fruits,
+#'   check_style = "filled"
+#' )
+#'
 #' @export
 glassSelect <- function(
     inputId,
@@ -61,8 +69,10 @@ glassSelect <- function(
     include_all = FALSE,
     all_choice_label = "All categories",
     all_choice_value = "__all__",
+    check_style = c("checkbox", "check-only", "filled"),
     theme = "dark"
 ) {
+  check_style <- match.arg(check_style)
   colors <- .ms_resolve_theme(theme)
 
   normalized <- .gt_normalize_choices(choices)
@@ -95,10 +105,18 @@ glassSelect <- function(
     placeholder = placeholder
   )
 
+  field_id <- paste0(inputId, "-field")
   scope_id <- paste0(inputId, "-wrap")
+
   theme_css <- sprintf(
-    "#%s{--ms-bg:%s;--ms-border:%s;--ms-text:%s;--ms-accent:%s;}",
-    scope_id, colors$bg, colors$border, colors$text, colors$accent
+    "#%s{--ms-bg:%s;--ms-border:%s;--ms-text:%s;--ms-accent:%s;--ms-label:%s;}",
+    field_id, colors$bg, colors$border, colors$text, colors$accent, colors$label
+  )
+
+  wrap_cls <- paste(
+    "gt-gs-wrap",
+    paste0("style-", check_style),
+    if (.is_light_theme(theme)) "theme-light" else NULL
   )
 
   check_svg <- shiny::tags$svg(
@@ -130,7 +148,7 @@ glassSelect <- function(
     lbl <- labels[[i]]
     cls <- paste(
       "gt-gs-option",
-      if (!is.null(selected) && identical(v, selected)) "selected" else ""
+      if (!is.null(selected) && identical(v, selected)) "selected" else NULL
     )
 
     shiny::div(
@@ -160,9 +178,10 @@ glassSelect <- function(
     shiny::tags$style(theme_css),
     shiny::div(
       class = "gt-gs-field",
+      id = field_id,
       label_tag,
       shiny::div(
-        class = "gt-gs-wrap",
+        class = wrap_cls,
         id = scope_id,
         `data-input-id` = inputId,
         `data-placeholder` = placeholder,
@@ -231,8 +250,8 @@ glassSelect <- function(
 
 #' Update a glassSelect widget
 #'
-#' Update the available choices and/or current selection of an existing
-#' [glassSelect()] input.
+#' Update the available choices, current selection, and/or selection-marker
+#' style of an existing [glassSelect()] input.
 #'
 #' This function follows Shiny-style update semantics:
 #'
@@ -240,6 +259,7 @@ glassSelect <- function(
 #'   \item \code{choices = NULL} leaves choices unchanged
 #'   \item \code{selected = NULL} leaves selection unchanged
 #'   \item \code{selected = character(0)} clears the selection
+#'   \item \code{check_style = NULL} leaves the current style unchanged
 #' }
 #'
 #' When \code{choices} is supplied and \code{selected} is not, the browser side
@@ -250,12 +270,25 @@ glassSelect <- function(
 #' @param choices New choices, or \code{NULL} to keep current choices.
 #' @param selected New selected value, or \code{NULL} to keep the current
 #'   selection. Use \code{character(0)} to clear.
+#' @param check_style Optional new style string. One of \code{"checkbox"},
+#'   \code{"check-only"}, or \code{"filled"}. Defaults to \code{NULL}, which
+#'   keeps the current style unchanged.
 #'
 #' @return No return value. Called for its side effect of updating the client-side
 #'   widget.
 #'
 #' @export
-updateGlassSelect <- function(session, inputId, choices = NULL, selected = NULL) {
+updateGlassSelect <- function(
+    session,
+    inputId,
+    choices = NULL,
+    selected = NULL,
+    check_style = NULL
+) {
+  if (!is.null(check_style)) {
+    check_style <- match.arg(check_style, c("checkbox", "check-only", "filled"))
+  }
+
   message <- list()
 
   if (!is.null(choices)) {
@@ -281,6 +314,10 @@ updateGlassSelect <- function(session, inputId, choices = NULL, selected = NULL)
     }
 
     message$selected <- unname(selected)
+  }
+
+  if (!is.null(check_style)) {
+    message$style <- check_style
   }
 
   session$sendInputMessage(inputId, message)

@@ -15,6 +15,7 @@ glassSelect(
   include_all = FALSE,
   all_choice_label = "All categories",
   all_choice_value = "__all__",
+  check_style = c("checkbox", "check-only", "filled"),
   theme = "dark"
 )
 }
@@ -42,6 +43,9 @@ selection? Default \code{FALSE}.}
 
 \item{all_choice_value}{Value used for the explicit "All" option.}
 
+\item{check_style}{One of \code{"checkbox"} (default),
+\code{"check-only"}, or \code{"filled"}.}
+
 \item{theme}{Color theme. One of \code{"dark"} (default) or \code{"light"},
 or a \code{\link[=glass_select_theme]{glass_select_theme()}} object.}
 }
@@ -51,7 +55,7 @@ dropdown panel, and scoped \code{<style>} block.
 }
 \description{
 A stylized single-select Shiny input with optional search, clear control,
-and programmatic updates via \code{\link[=updateGlassSelect]{updateGlassSelect()}}.
+selection-marker styling, and programmatic updates via \code{\link[=updateGlassSelect]{updateGlassSelect()}}.
 }
 \details{
 The widget registers one Shiny input:
@@ -79,6 +83,12 @@ glassSelect(
   include_all = TRUE,
   all_choice_label = "All fruits",
   all_choice_value = "__all__"
+)
+
+glassSelect(
+  "fruit",
+  fruits,
+  check_style = "filled"
 )
 
 }

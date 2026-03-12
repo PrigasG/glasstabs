@@ -16,6 +16,6 @@ should reflect.}
 An \code{htmltools} tag.
 }
 \description{
-Renders a \verb{<div>} that the JS engine will populate with colored tag pills
+Renders a \code{<div>} that the JS engine will populate with colored tag pills
 whenever the corresponding \code{\link[=glassMultiSelect]{glassMultiSelect()}} selection changes.
 }

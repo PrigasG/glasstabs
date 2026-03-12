@@ -16,8 +16,10 @@ This is a resubmission.
 - Added `glassSelect()`, an animated single-select dropdown widget for Shiny.
 - Added `updateGlassSelect()` and `updateGlassMultiSelect()` for server-side widget updates.
 - Added `glassSelectValue()` and `glassMultiSelectValue()` convenience reactive helpers.
-- Updated documentation and vignettes to reflect direct Shiny input usage and server-side update patterns.
-- Expanded test coverage for new select widgets and update helpers.
+- Improved theming support for select widgets, including light mode behavior and custom theme handling via `glass_select_theme()`.
+- Added and refined selection style support for select widgets, including checkbox, check-only, and filled display modes.
+- Updated documentation, examples, and vignettes to reflect direct Shiny input usage, theming options, and server-side update patterns.
+- Expanded test coverage for select widgets, theming, and update helpers.
 
 ## Notes for reviewers
 
