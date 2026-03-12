@@ -2,23 +2,24 @@
 
 ## What is glasstabs?
 
-glasstabs provides two animated Shiny widgets:
+glasstabs provides animated Shiny widgets for tab navigation and
+selection controls:
 
-- **Tabs** — a glass-morphism tab navigation bar with a sliding halo,
+- **Tabs**: a glass-morphism tab navigation bar with a sliding halo,
   spring easing, and a luminous transfer trace between tabs
-- **Multi-select filter** — a dropdown filter with animated checkboxes,
+- **Multi-select filter**: a dropdown filter with animated checkboxes,
   live search, tag-pill display, and three checkbox styles
+- **Single-select dropdown**: an animated single-select input with
+  optional search and clear support
 
-Both widgets work in plain
+All widgets work in plain
 [`fluidPage()`](https://rdrr.io/pkg/shiny/man/fluidPage.html) and in
-bs4Dash. They can be used together or completely independently.
-
-------------------------------------------------------------------------
+bs4Dash. They can be used together or independently. —
 
 ## Installation
 
 ``` r
-# From CRAN (once available)
+# From CRAN 
 install.packages("glasstabs")
 
 # From GitHub
@@ -35,8 +36,7 @@ devtools::install_local("path/to/glasstabs")
 Every glasstabs app needs exactly one call to
 [`useGlassTabs()`](https://prigasg.github.io/glasstabs/reference/useGlassTabs.md)
 somewhere in the UI. It injects the CSS and JavaScript as a proper
-`htmltools` dependency — Shiny deduplicates it automatically so it is
-safe to call inside helper functions too.
+`htmltools` dependency.
 
 ``` r
 library(shiny)
@@ -136,14 +136,96 @@ shinyApp(ui, server)
 values — use it like any other Shiny input to filter data, drive
 outputs, or trigger reactives.
 
+### Optional reactive helper
+
+If you want a small convenience wrapper:
+
+``` r
+server <- function(input, output, session) {
+  ms <- glassMultiSelectValue(input, "category")
+
+  observe({
+    message("Selected: ", paste(ms$selected(), collapse = ", "))
+    message("Style: ", ms$style())
+  })
+}
+```
+
+### Updating from the server
+
+[`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md)
+also supports server-side updates:
+
+``` r
+server <- function(input, output, session) {
+  observeEvent(input$reset, {
+    updateGlassMultiSelect(
+      session,
+      "category",
+      selected = character(0)
+    )
+  })
+}
+```
+
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+
+## Single-select dropdown
+
+### Step 1: add a single-select input
+
+``` r
+choices <- c(
+  North = "north",
+  South = "south",
+  East  = "east",
+  West  = "west"
+)
+
+ui <- fluidPage(
+  useGlassTabs(),
+  glassSelect("region", choices, clearable = TRUE),
+  verbatimTextOutput("selected")
+)
+```
+
+### Step 2: read the value in the server
+
+``` r
+server <- function(input, output, session) {
+  output$selected <- renderPrint(input$region)
+}
+
+shinyApp(ui, server)
+```
+
+`input$region` is a single character value, or `NULL` when nothing is
+selected.
+
+### Updating from the server
+
+``` r
+server <- function(input, output, session) {
+  observeEvent(input$pick_south, {
+    updateGlassSelect(
+      session,
+      "region",
+      selected = "south"
+    )
+  })
+}
+```
+
 ------------------------------------------------------------------------
 
 ## Using them together
 
-The most common pattern is a filter in the tab bar driving content in
-each pane. Pass the dropdown to `extra_ui` and place
+A common pattern is using one or more filters to drive content inside
+tab panes. Pass a widget to `extra_ui` and place
 [`glassFilterTags()`](https://prigasg.github.io/glasstabs/reference/glassFilterTags.md)
-inside each pane to show the active selection as removable tag pills:
+inside panes to show active multi-select filters as removable tag pills.
 
 ``` r
 choices <- c(North = "north", South = "south", East = "east", West = "west")
@@ -223,6 +305,8 @@ card body rather than a full-page container. Pair with
 library(bs4Dash)
 library(glasstabs)
 
+choices <- c(Alpha = "alpha", Beta = "beta", Gamma = "gamma")
+
 ui <- bs4DashPage(
   header  = bs4DashNavbar(title = "My App"),
   sidebar = bs4DashSidebar(disable = TRUE),
@@ -231,11 +315,14 @@ ui <- bs4DashPage(
     bs4Card(
       title = "Analysis", width = 12,
       glassTabsUI("dash",
-        wrap     = FALSE,
-        theme    = "light",
-        extra_ui = glassMultiSelect("f", choices,
-                                    theme = "light",
-                                    show_style_switcher = FALSE),
+        wrap = FALSE,
+        theme = "light",
+        extra_ui = glassMultiSelect(
+          "f",
+          choices,
+          theme = "light",
+          show_style_switcher = FALSE
+        ),
         glassTabPanel("a", "Overview", selected = TRUE,
           shiny::p("Overview content.")
         ),
@@ -265,5 +352,9 @@ shinyApp(ui, server)
   — full reference for
   [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md):
   checkbox styles, custom hues, tag pills, theming
+- **[Single-Select
+  Dropdown](https://prigasg.github.io/glasstabs/articles/glassSelect.md)**:
+  search, clearable inputs, explicit “All” choices, and server-side
+  updates
 - **Reference** — complete function documentation at
   [`help(package = "glasstabs")`](https://prigasg.github.io/glasstabs/reference)

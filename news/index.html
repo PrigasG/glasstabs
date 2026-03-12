@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">glasstabs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -17,10 +17,11 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><hr class="dropdown-divider"></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/getting-started.html">Getting Started with glasstabs</a></li>
+    <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Widgets</h6></li>
-    <li><a class="dropdown-item" href="../articles/getting-started.html">Getting Started with glasstabs</a></li>
     <li><a class="dropdown-item" href="../articles/tabs.html">Animated Tabs with glasstabs</a></li>
+    <li><a class="dropdown-item" href="../articles/glassSelect.html">Single-Select Dropdown with glasstabs</a></li>
     <li><a class="dropdown-item" href="../articles/multiselect.html">Multi-Select Filter with glasstabs</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -39,7 +40,46 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.1.0" id="glasstabs-010">glasstabs 0.1.0<a class="anchor" aria-label="anchor" href="#glasstabs-010"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.1.1" id="glasstabs-011">glasstabs 0.1.1<a class="anchor" aria-label="anchor" href="#glasstabs-011"></a></h2>
+<div class="section level3">
+<h3 id="new-features-0-1-1">New features<a class="anchor" aria-label="anchor" href="#new-features-0-1-1"></a></h3>
+<div class="section level4">
+<h4 id="single-select-widget-0-1-1">Single-select widget<a class="anchor" aria-label="anchor" href="#single-select-widget-0-1-1"></a></h4>
+<ul><li>Added <code><a href="../reference/glassSelect.html">glassSelect()</a></code>, an animated single-select dropdown for Shiny.</li>
+<li>Added <code><a href="../reference/updateGlassSelect.html">updateGlassSelect()</a></code> for server-side updates to choices and selection.</li>
+<li>Added <code><a href="../reference/glassSelectValue.html">glassSelectValue()</a></code> as a convenience reactive helper for reading the selected value.</li>
+</ul></div>
+<div class="section level4">
+<h4 id="multi-select-widget-0-1-1">Multi-select widget<a class="anchor" aria-label="anchor" href="#multi-select-widget-0-1-1"></a></h4>
+<ul><li>Added <code><a href="../reference/updateGlassMultiSelect.html">updateGlassMultiSelect()</a></code> for server-side updates to choices, selection, and checkbox style.</li>
+<li>Added <code><a href="../reference/glassMultiSelectValue.html">glassMultiSelectValue()</a></code> as a convenience reactive helper for reading selected values and active style.</li>
+<li>Added optional <code>label</code> support to <code><a href="../reference/glassMultiSelect.html">glassMultiSelect()</a></code>.</li>
+<li>Added configurable <code>all_label</code> support to control the trigger text shown when all choices are selected.</li>
+</ul></div>
+</div>
+<div class="section level3">
+<h3 id="improvements-0-1-1">Improvements<a class="anchor" aria-label="anchor" href="#improvements-0-1-1"></a></h3>
+<ul><li>Aligned <code><a href="../reference/glassSelect.html">glassSelect()</a></code> and <code><a href="../reference/glassMultiSelect.html">glassMultiSelect()</a></code> more closely with standard Shiny input behavior.</li>
+<li>Added client-side input bindings so select widgets now support <code>session$sendInputMessage()</code> update patterns.</li>
+<li>Preserved current <code><a href="../reference/glassMultiSelect.html">glassMultiSelect()</a></code> default behavior where <code>selected = NULL</code> initializes all choices as selected.</li>
+<li>Improved choice normalization so named choices retain display labels correctly.</li>
+<li>Improved hue normalization for the <code>"filled"</code> multi-select style.</li>
+<li>Updated vignettes and examples to show direct Shiny input usage and server-side update patterns.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="documentation-0-1-1">Documentation<a class="anchor" aria-label="anchor" href="#documentation-0-1-1"></a></h3>
+<ul><li>Added a new vignette for <code><a href="../reference/glassSelect.html">glassSelect()</a></code>.</li>
+<li>Updated the getting started vignette to include <code><a href="../reference/glassSelect.html">glassSelect()</a></code>.</li>
+<li>Updated the multi-select vignette to document <code><a href="../reference/updateGlassMultiSelect.html">updateGlassMultiSelect()</a></code> and <code><a href="../reference/glassMultiSelectValue.html">glassMultiSelectValue()</a></code>.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="internal-changes-0-1-1">Internal changes<a class="anchor" aria-label="anchor" href="#internal-changes-0-1-1"></a></h3>
+<ul><li>Added tests for <code><a href="../reference/glassSelect.html">glassSelect()</a></code>, <code><a href="../reference/updateGlassSelect.html">updateGlassSelect()</a></code>, and <code><a href="../reference/glassSelectValue.html">glassSelectValue()</a></code>.</li>
+<li>Expanded tests for <code><a href="../reference/glassMultiSelect.html">glassMultiSelect()</a></code> server-side updates and helper utilities.</li>
+</ul><hr></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.1.0" id="glasstabs-010">glasstabs 0.1.0<a class="anchor" aria-label="anchor" href="#glasstabs-010"></a></h2><p class="text-muted">CRAN release: 2026-03-11</p>
 <p>Initial release.</p>
 <div class="section level3">
 <h3 id="new-features-0-1-0">New features<a class="anchor" aria-label="anchor" href="#new-features-0-1-0"></a></h3>
@@ -61,8 +101,6 @@
 <h4 id="multi-select-filter-widget-0-1-0">Multi-select filter widget<a class="anchor" aria-label="anchor" href="#multi-select-filter-widget-0-1-0"></a></h4>
 <ul><li>
 <code><a href="../reference/glassMultiSelect.html">glassMultiSelect()</a></code> — dropdown filter with live search, select-all with indeterminate state, and three checkbox indicator styles: <code>"checkbox"</code>, <code>"check-only"</code>, and <code>"filled"</code>.</li>
-<li>
-<code><a href="../reference/glassMultiSelectServer.html">glassMultiSelectServer()</a></code> — typed reactive wrapper exposing <code>selected</code> and <code>style</code> reactives.</li>
 <li>
 <code><a href="../reference/glassFilterTags.html">glassFilterTags()</a></code> — tag-pill display area that stays in sync with a <code><a href="../reference/glassMultiSelect.html">glassMultiSelect()</a></code> automatically via JavaScript; clicking × on a pill deselects that option.</li>
 <li>

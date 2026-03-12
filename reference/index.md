@@ -9,8 +9,8 @@ Load CSS and JavaScript into your Shiny page.
 
 ## Tab widget
 
-Animated glass-morphism tab navigation — sliding halo, spring easing,
-transfer trace.
+Animated glass-morphism tab navigation with a sliding halo, spring
+easing, and transfer trace.
 
 - [`glassTabsUI()`](https://prigasg.github.io/glasstabs/reference/glassTabsUI.md)
   : Animated glass-style tab navigation UI
@@ -21,17 +21,25 @@ transfer trace.
 - [`glass_tab_theme()`](https://prigasg.github.io/glasstabs/reference/glass_tab_theme.md)
   : Create a custom color theme for glassTabsUI
 
-## Multi-select filter
+## Select widgets
 
-Animated dropdown filter with live search, select-all, three checkbox
-styles, and tag-pill display.
+Animated single-select and multi-select dropdown widgets for Shiny, with
+theming, search, update helpers, and reactive value helpers.
 
+- [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md)
+  : Animated glass single-select dropdown
+- [`updateGlassSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassSelect.md)
+  : Update a glassSelect widget
+- [`glassSelectValue()`](https://prigasg.github.io/glasstabs/reference/glassSelectValue.md)
+  : Reactive helper for glassSelect values
 - [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md)
   : Animated glass multi-select dropdown filter
-- [`glassMultiSelectServer()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelectServer.md)
-  : Server logic for glassMultiSelect
+- [`updateGlassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassMultiSelect.md)
+  : Update a glassMultiSelect widget
+- [`glassMultiSelectValue()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelectValue.md)
+  : Reactive helpers for glassMultiSelect values
 - [`glassFilterTags()`](https://prigasg.github.io/glasstabs/reference/glassFilterTags.md)
   : Shiny tag helper for a filter-tags display area tied to a
   glassMultiSelect
 - [`glass_select_theme()`](https://prigasg.github.io/glasstabs/reference/glass_select_theme.md)
-  : Create a custom color theme for glassMultiSelect
+  : Create a custom color theme for glass select widgets

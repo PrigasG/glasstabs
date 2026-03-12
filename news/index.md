@@ -1,6 +1,81 @@
 # Changelog
 
+## glasstabs 0.1.1
+
+### New features
+
+#### Single-select widget
+
+- Added
+  [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md),
+  an animated single-select dropdown for Shiny.
+- Added
+  [`updateGlassSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassSelect.md)
+  for server-side updates to choices and selection.
+- Added
+  [`glassSelectValue()`](https://prigasg.github.io/glasstabs/reference/glassSelectValue.md)
+  as a convenience reactive helper for reading the selected value.
+
+#### Multi-select widget
+
+- Added
+  [`updateGlassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassMultiSelect.md)
+  for server-side updates to choices, selection, and checkbox style.
+- Added
+  [`glassMultiSelectValue()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelectValue.md)
+  as a convenience reactive helper for reading selected values and
+  active style.
+- Added optional `label` support to
+  [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md).
+- Added configurable `all_label` support to control the trigger text
+  shown when all choices are selected.
+
+### Improvements
+
+- Aligned
+  [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md)
+  and
+  [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md)
+  more closely with standard Shiny input behavior.
+- Added client-side input bindings so select widgets now support
+  `session$sendInputMessage()` update patterns.
+- Preserved current
+  [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md)
+  default behavior where `selected = NULL` initializes all choices as
+  selected.
+- Improved choice normalization so named choices retain display labels
+  correctly.
+- Improved hue normalization for the `"filled"` multi-select style.
+- Updated vignettes and examples to show direct Shiny input usage and
+  server-side update patterns.
+
+### Documentation
+
+- Added a new vignette for
+  [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md).
+- Updated the getting started vignette to include
+  [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md).
+- Updated the multi-select vignette to document
+  [`updateGlassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassMultiSelect.md)
+  and
+  [`glassMultiSelectValue()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelectValue.md).
+
+### Internal changes
+
+- Added tests for
+  [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md),
+  [`updateGlassSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassSelect.md),
+  and
+  [`glassSelectValue()`](https://prigasg.github.io/glasstabs/reference/glassSelectValue.md).
+- Expanded tests for
+  [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md)
+  server-side updates and helper utilities.
+
+------------------------------------------------------------------------
+
 ## glasstabs 0.1.0
+
+CRAN release: 2026-03-11
 
 Initial release.
 
@@ -32,8 +107,6 @@ Initial release.
   — dropdown filter with live search, select-all with indeterminate
   state, and three checkbox indicator styles: `"checkbox"`,
   `"check-only"`, and `"filled"`.
-- [`glassMultiSelectServer()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelectServer.md)
-  — typed reactive wrapper exposing `selected` and `style` reactives.
 - [`glassFilterTags()`](https://prigasg.github.io/glasstabs/reference/glassFilterTags.md)
   — tag-pill display area that stays in sync with a
   [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md)

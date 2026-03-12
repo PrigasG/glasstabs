@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">glasstabs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -17,10 +17,11 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><hr class="dropdown-divider"></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/getting-started.html">Getting Started with glasstabs</a></li>
+    <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Widgets</h6></li>
-    <li><a class="dropdown-item" href="../articles/getting-started.html">Getting Started with glasstabs</a></li>
     <li><a class="dropdown-item" href="../articles/tabs.html">Animated Tabs with glasstabs</a></li>
+    <li><a class="dropdown-item" href="../articles/glassSelect.html">Single-Select Dropdown with glasstabs</a></li>
     <li><a class="dropdown-item" href="../articles/multiselect.html">Multi-Select Filter with glasstabs</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -56,7 +57,7 @@
       </dl></div><div class="section level2">
       <h2 id="tab-widget">Tab widget<a class="anchor" aria-label="anchor" href="#tab-widget"></a></h2>
 
-      <div class="section-desc"><p>Animated glass-morphism tab navigation — sliding halo, spring easing, transfer trace.</p></div>
+      <div class="section-desc"><p>Animated glass-morphism tab navigation with a sliding halo, spring easing, and transfer trace.</p></div>
 
       <dl></dl></div><div class="section level2">
 
@@ -91,9 +92,9 @@
         </dt>
         <dd>Create a custom color theme for glassTabsUI</dd>
       </dl></div><div class="section level2">
-      <h2 id="multi-select-filter">Multi-select filter<a class="anchor" aria-label="anchor" href="#multi-select-filter"></a></h2>
+      <h2 id="select-widgets">Select widgets<a class="anchor" aria-label="anchor" href="#select-widgets"></a></h2>
 
-      <div class="section-desc"><p>Animated dropdown filter with live search, select-all, three checkbox styles, and tag-pill display.</p></div>
+      <div class="section-desc"><p>Animated single-select and multi-select dropdown widgets for Shiny, with theming, search, update helpers, and reactive value helpers.</p></div>
 
       <dl></dl></div><div class="section level2">
 
@@ -102,6 +103,27 @@
 
       <dl><dt>
 
+          <code><a href="glassSelect.html">glassSelect()</a></code>
+
+        </dt>
+        <dd>Animated glass single-select dropdown</dd>
+
+        <dt>
+
+          <code><a href="updateGlassSelect.html">updateGlassSelect()</a></code>
+
+        </dt>
+        <dd>Update a glassSelect widget</dd>
+
+        <dt>
+
+          <code><a href="glassSelectValue.html">glassSelectValue()</a></code>
+
+        </dt>
+        <dd>Reactive helper for glassSelect values</dd>
+
+        <dt>
+
           <code><a href="glassMultiSelect.html">glassMultiSelect()</a></code>
 
         </dt>
@@ -109,10 +131,17 @@
 
         <dt>
 
-          <code><a href="glassMultiSelectServer.html">glassMultiSelectServer()</a></code>
+          <code><a href="updateGlassMultiSelect.html">updateGlassMultiSelect()</a></code>
 
         </dt>
-        <dd>Server logic for glassMultiSelect</dd>
+        <dd>Update a glassMultiSelect widget</dd>
+
+        <dt>
+
+          <code><a href="glassMultiSelectValue.html">glassMultiSelectValue()</a></code>
+
+        </dt>
+        <dd>Reactive helpers for glassMultiSelect values</dd>
 
         <dt>
 
@@ -126,7 +155,7 @@
           <code><a href="glass_select_theme.html">glass_select_theme()</a></code>
 
         </dt>
-        <dd>Create a custom color theme for glassMultiSelect</dd>
+        <dd>Create a custom color theme for glass select widgets</dd>
       </dl></div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>

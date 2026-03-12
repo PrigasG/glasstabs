@@ -3,10 +3,16 @@
 ## Overview
 
 [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md)
-is a standalone animated dropdown filter for Shiny. It can be used
-inside a
+is an animated multi-select dropdown for Shiny. It can be used inside a
 [`glassTabsUI()`](https://prigasg.github.io/glasstabs/reference/glassTabsUI.md)
 layout or completely on its own in any Shiny page.
+
+The widget behaves like a standard Shiny input: `input$<inputId>` stores
+the selected values, and `input$<inputId>_style` stores the active
+indicator style.
+
+It also supports server-side updates with
+[`updateGlassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassMultiSelect.md).
 
 ## Basic usage
 
@@ -14,8 +20,11 @@ layout or completely on its own in any Shiny page.
 library(shiny)
 library(glasstabs)
 
-fruits <- c(Apple = "apple", Banana = "banana", Cherry = "cherry",
-            Mango  = "mango", Peach  = "peach")
+fruits <- c(Apple = "apple", 
+            Banana = "banana", 
+            Cherry = "cherry",
+            Mango  = "mango", 
+            Peach  = "peach")
 
 ui <- fluidPage(
   useGlassTabs(),
@@ -123,9 +132,8 @@ filter — all will stay in sync.
 
 ## Server-side access
 
-Read the selection directly from `input$<inputId>`, or use the
-convenience wrapper
-[`glassMultiSelectServer()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelectServer.md):
+Read the selection directly from `input$<inputId>` and the style from
+`input$<inputId>_style`:
 
 ``` r
 server <- function(input, output, session) {
@@ -135,15 +143,88 @@ server <- function(input, output, session) {
     message("Selected: ", paste(input$pick, collapse = ", "))
     message("Style: ",    input$pick_style)
   })
+}
+```
 
-  # Typed reactive wrapper
-  ms <- glassMultiSelectServer("pick")
+## Reactive helper
+
+If you want a small convenience wrapper, use
+[`glassMultiSelectValue()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelectValue.md):
+
+``` r
+server <- function(input, output, session) {
+  ms <- glassMultiSelectValue(input, "pick")
+
   observe({
     message("Selected: ", paste(ms$selected(), collapse = ", "))
-    message("Style: ",    ms$style())
+    message("Style: ", ms$style())
   })
 }
 ```
+
+## Updating choices and selection from the server
+
+[`updateGlassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassMultiSelect.md)
+can update: - available choices - current selection - active style
+
+It follows Shiny-style update semantics:
+
+- `choices = NULL` leaves choices unchanged
+- `selected = NULL` leaves selection unchanged
+- `selected = character(0)` clears the selection
+
+``` r
+ui <- fluidPage(
+  useGlassTabs(),
+  actionButton("subset", "Keep first 3 fruits"),
+  actionButton("pick2", "Select 2 fruits"),
+  actionButton("clear", "Clear"),
+  actionButton("fill", "Switch to filled style"),
+  glassMultiSelect("pick", fruits),
+  verbatimTextOutput("out")
+)
+
+server <- function(input, output, session) {
+  output$out <- renderPrint(input$pick)
+
+  observeEvent(input$subset, {
+    updateGlassMultiSelect(
+      session,
+      "pick",
+      choices = fruits[1:3]
+    )
+  })
+
+  observeEvent(input$pick2, {
+    updateGlassMultiSelect(
+      session,
+      "pick",
+      selected = c("apple", "cherry")
+    )
+  })
+
+  observeEvent(input$clear, {
+    updateGlassMultiSelect(
+      session,
+      "pick",
+      selected = character(0)
+    )
+  })
+
+  observeEvent(input$fill, {
+    updateGlassMultiSelect(
+      session,
+      "pick",
+      check_style = "filled"
+    )
+  })
+}
+
+shinyApp(ui, server)
+```
+
+When `choices` is updated without `selected`, the widget keeps the
+intersection of the current selection and the new choice set.
 
 ## Theming
 
