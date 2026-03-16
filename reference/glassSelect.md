@@ -117,7 +117,7 @@ glassSelect("fruit", fruits)
 #>         <input type="text" id="fruit-search" placeholder="Search options..." autocomplete="off"/>
 #>       </div>
 #>       <div id="fruit-options">
-#>         <div class="gt-gs-option " data-value="apple">
+#>         <div class="gt-gs-option" data-value="apple">
 #>           <div class="gt-gs-check">
 #>             <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
 #>               <path d="M1 4l2.8 3L9 1" stroke="#7ec3f7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -125,7 +125,7 @@ glassSelect("fruit", fruits)
 #>           </div>
 #>           <span>Apple</span>
 #>         </div>
-#>         <div class="gt-gs-option " data-value="banana">
+#>         <div class="gt-gs-option" data-value="banana">
 #>           <div class="gt-gs-check">
 #>             <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
 #>               <path d="M1 4l2.8 3L9 1" stroke="#7ec3f7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -133,7 +133,7 @@ glassSelect("fruit", fruits)
 #>           </div>
 #>           <span>Banana</span>
 #>         </div>
-#>         <div class="gt-gs-option " data-value="cherry">
+#>         <div class="gt-gs-option" data-value="cherry">
 #>           <div class="gt-gs-check">
 #>             <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
 #>               <path d="M1 4l2.8 3L9 1" stroke="#7ec3f7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -173,7 +173,7 @@ glassSelect(
 #>         <input type="text" id="fruit-search" placeholder="Search options..." autocomplete="off"/>
 #>       </div>
 #>       <div id="fruit-options">
-#>         <div class="gt-gs-option " data-value="apple">
+#>         <div class="gt-gs-option" data-value="apple">
 #>           <div class="gt-gs-check">
 #>             <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
 #>               <path d="M1 4l2.8 3L9 1" stroke="#7ec3f7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -189,7 +189,7 @@ glassSelect(
 #>           </div>
 #>           <span>Banana</span>
 #>         </div>
-#>         <div class="gt-gs-option " data-value="cherry">
+#>         <div class="gt-gs-option" data-value="cherry">
 #>           <div class="gt-gs-check">
 #>             <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
 #>               <path d="M1 4l2.8 3L9 1" stroke="#7ec3f7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -230,7 +230,7 @@ glassSelect(
 #>         <input type="text" id="fruit-search" placeholder="Search options..." autocomplete="off"/>
 #>       </div>
 #>       <div id="fruit-options">
-#>         <div class="gt-gs-option " data-value="__all__">
+#>         <div class="gt-gs-option" data-value="__all__">
 #>           <div class="gt-gs-check">
 #>             <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
 #>               <path d="M1 4l2.8 3L9 1" stroke="#7ec3f7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -238,7 +238,7 @@ glassSelect(
 #>           </div>
 #>           <span>All fruits</span>
 #>         </div>
-#>         <div class="gt-gs-option " data-value="apple">
+#>         <div class="gt-gs-option" data-value="apple">
 #>           <div class="gt-gs-check">
 #>             <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
 #>               <path d="M1 4l2.8 3L9 1" stroke="#7ec3f7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -246,7 +246,7 @@ glassSelect(
 #>           </div>
 #>           <span>Apple</span>
 #>         </div>
-#>         <div class="gt-gs-option " data-value="banana">
+#>         <div class="gt-gs-option" data-value="banana">
 #>           <div class="gt-gs-check">
 #>             <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
 #>               <path d="M1 4l2.8 3L9 1" stroke="#7ec3f7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -254,7 +254,7 @@ glassSelect(
 #>           </div>
 #>           <span>Banana</span>
 #>         </div>
-#>         <div class="gt-gs-option " data-value="cherry">
+#>         <div class="gt-gs-option" data-value="cherry">
 #>           <div class="gt-gs-check">
 #>             <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
 #>               <path d="M1 4l2.8 3L9 1" stroke="#7ec3f7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -293,7 +293,7 @@ glassSelect(
 #>         <input type="text" id="fruit-search" placeholder="Search options..." autocomplete="off"/>
 #>       </div>
 #>       <div id="fruit-options">
-#>         <div class="gt-gs-option " data-value="apple">
+#>         <div class="gt-gs-option" data-value="apple">
 #>           <div class="gt-gs-check">
 #>             <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
 #>               <path d="M1 4l2.8 3L9 1" stroke="#7ec3f7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -301,7 +301,7 @@ glassSelect(
 #>           </div>
 #>           <span>Apple</span>
 #>         </div>
-#>         <div class="gt-gs-option " data-value="banana">
+#>         <div class="gt-gs-option" data-value="banana">
 #>           <div class="gt-gs-check">
 #>             <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
 #>               <path d="M1 4l2.8 3L9 1" stroke="#7ec3f7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -309,7 +309,7 @@ glassSelect(
 #>           </div>
 #>           <span>Banana</span>
 #>         </div>
-#>         <div class="gt-gs-option " data-value="cherry">
+#>         <div class="gt-gs-option" data-value="cherry">
 #>           <div class="gt-gs-check">
 #>             <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
 #>               <path d="M1 4l2.8 3L9 1" stroke="#7ec3f7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
