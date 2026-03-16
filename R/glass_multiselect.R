@@ -77,9 +77,6 @@ glassMultiSelect <- function(
   vals <- normalized$values
   labels <- normalized$labels
 
-  if (!length(vals)) {
-    stop("`choices` must contain at least one value.", call. = FALSE)
-  }
 
   # Preserve existing CRAN behavior:
   # selected = NULL means all choices selected initially
@@ -112,7 +109,7 @@ glassMultiSelect <- function(
     placeholder = placeholder,
     all_label   = all_label
   )
-  badge_cls <- if (n_sel < 2 || n_sel == n_total) {
+  badge_cls <- if (n_sel < 2 || (n_total > 0 && n_sel == n_total)) {
     "gt-ms-badge hidden"
   } else {
     "gt-ms-badge"
@@ -225,7 +222,7 @@ glassMultiSelect <- function(
 
   all_cls <- paste(
     "gt-ms-all",
-    if (n_sel == n_total) "checked" else if (n_sel > 0) "indeterminate" else ""
+    if (n_total > 0 && n_sel == n_total) "checked" else if (n_sel > 0) "indeterminate" else ""
   )
 
   all_row <- if (isTRUE(show_select_all)) {
@@ -562,9 +559,4 @@ glassMultiSelectValue <- function(input, inputId) {
   names(out) <- vals
 
   out
-}
-
-#' @noRd
-`%||%` <- function(x, y) {
-  if (is.null(x) || length(x) == 0) y else x
 }

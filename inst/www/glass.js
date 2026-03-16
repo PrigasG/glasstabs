@@ -399,12 +399,14 @@
     }
 
     function open() {
+      wrap.classList.add('gt-layer-active');
       dropdown.classList.add('open');
       trigger.classList.add('open');
       if (searchIn) searchIn.focus();
     }
 
     function close() {
+      wrap.classList.remove('gt-layer-active');
       dropdown.classList.remove('open');
       trigger.classList.remove('open');
     }
@@ -691,12 +693,14 @@
     }
 
     function open() {
+      wrap.classList.add('gt-layer-active');
       dropdown.classList.add('open');
       trigger.classList.add('open');
       if (searchIn) searchIn.focus();
     }
 
     function close() {
+      wrap.classList.remove('gt-layer-active');
       dropdown.classList.remove('open');
       trigger.classList.remove('open');
     }

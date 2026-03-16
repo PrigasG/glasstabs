@@ -253,3 +253,19 @@ test_that("updateGlassSelect() sends empty message when no updates supplied", {
   expect_equal(args[[1]], "pick")
   expect_equal(args[[2]], list())
 })
+
+
+#testing empty choices-----------------------
+test_that("glassSelect() accepts empty choices", {
+  expect_no_error(glassSelect("f", character(0)))
+})
+
+test_that("glassSelect() with empty choices shows placeholder", {
+  html <- as.character(glassSelect("f", character(0), placeholder = "Choose"))
+  expect_true(grepl("Choose", html, fixed = TRUE))
+})
+
+test_that("glassSelect() with empty choices renders no option rows", {
+  html <- as.character(glassSelect("f", character(0)))
+  expect_false(grepl("gt-gs-option", html, fixed = TRUE))
+})

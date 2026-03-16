@@ -345,3 +345,25 @@ test_that("updateGlassMultiSelect() sends empty message when no updates supplied
   expect_equal(args[[1]], "pick")
   expect_equal(args[[2]], list())
 })
+
+
+#testing empty choices-------------
+test_that("glassMultiSelect() with empty choices does not mark select-all as checked", {
+  html <- as.character(glassMultiSelect("f", character(0)))
+  expect_false(grepl("gt-ms-all checked", html, fixed = TRUE))
+})
+
+test_that("glassMultiSelect() accepts empty choices", {
+  expect_no_error(glassMultiSelect("f", character(0)))
+})
+
+test_that("glassMultiSelect() with empty choices shows placeholder", {
+  html <- as.character(glassMultiSelect("f", character(0), placeholder = "Choose"))
+  expect_true(grepl("Choose", html, fixed = TRUE))
+})
+
+test_that("glassMultiSelect() with empty choices renders no option rows", {
+  html <- as.character(glassMultiSelect("f", character(0)))
+  expect_false(grepl("gt-ms-option", html, fixed = TRUE))
+})
+

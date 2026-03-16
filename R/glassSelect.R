@@ -88,13 +88,17 @@ glassSelect <- function(
     selected <- as.character(selected)
 
     if (length(selected) > 1) {
-      stop("`selected` must be NULL or a single value for glassSelect().", call. = FALSE)
+      stop("`selected` must be NULL, character(0), or a single value for glassSelect().", call. = FALSE)
     }
 
-    selected <- selected[[1]]
-
-    if (!selected %in% vals) {
+    if (length(selected) == 0) {
       selected <- NULL
+    } else {
+      selected <- selected[[1]]
+
+      if (!selected %in% vals) {
+        selected <- NULL
+      }
     }
   }
 
@@ -147,8 +151,11 @@ glassSelect <- function(
     v <- vals[[i]]
     lbl <- labels[[i]]
     cls <- paste(
-      "gt-gs-option",
-      if (!is.null(selected) && identical(v, selected)) "selected" else NULL
+      c(
+        "gt-gs-option",
+        if (!is.null(selected) && identical(v, selected)) "selected" else NULL
+      ),
+      collapse = " "
     )
 
     shiny::div(

@@ -95,9 +95,15 @@
      --ms-text    main text
      --ms-accent  tick / badge / checked states
 ══════════════════════════════════════════════ */
-.gt-ms-wrap{
+.gt-ms-wrap,
+.gt-gs-wrap{
   position:relative;
   z-index:100;
+}
+
+.gt-ms-wrap.gt-layer-active,
+.gt-gs-wrap.gt-layer-active{
+  z-index:1000;
 }
 
 /* ── Trigger button ── */
