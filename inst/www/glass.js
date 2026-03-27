@@ -53,6 +53,18 @@
     return el._gt || null;
   }
 
+  /** Close every open glasstabs dropdown except the one being opened */
+  function closeAllDropdowns(except) {
+    document.querySelectorAll('.gt-gs-wrap.gt-layer-active, .gt-ms-wrap.gt-layer-active').forEach(function (w) {
+      if (w === except) return;
+      w.classList.remove('gt-layer-active');
+      var dd = w.querySelector('.gt-gs-dropdown, .gt-ms-dropdown');
+      if (dd) dd.classList.remove('open');
+      var trig = w.querySelector('.gt-gs-trigger, .gt-ms-trigger');
+      if (trig) trig.classList.remove('open');
+    });
+  }
+
   /* ══════════════════════════════════════════════════════
      TAB ENGINE
   ══════════════════════════════════════════════════════ */
@@ -495,6 +507,7 @@
 
     /* ── Open / Close ── */
     function open() {
+      closeAllDropdowns(wrap);
       wrap.classList.add('gt-layer-active');
       dropdown.classList.add('open');
       trigger.classList.add('open');
@@ -681,7 +694,7 @@
       });
     }
 
-    /* ── syncUI: visual-only update (no Shiny notification) ── */
+    /* ── syncUI: visual-only update ── */
     function syncUI() {
       var total = state.choices.length;
       var selCount = state.selected.size;
@@ -913,6 +926,7 @@
 
     /* ── Open / Close ── */
     function open() {
+      closeAllDropdowns(wrap);
       wrap.classList.add('gt-layer-active');
       dropdown.classList.add('open');
       trigger.classList.add('open');
@@ -948,7 +962,6 @@
         wrap.classList.add('style-' + s);
         currentStyle = s;
 
-        /* Visual update only — style change doesn't change selection */
         syncUI();
         commitSelection();
       });
@@ -1176,12 +1189,10 @@
 
   window.addEventListener('load', bootAll);
 
-
   if (typeof Shiny !== 'undefined') {
     Shiny.addCustomMessageHandler('glasstabs_reinit', function () {
       bootAll();
     });
   }
-
 
 })();
