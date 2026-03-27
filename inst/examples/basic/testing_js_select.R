@@ -135,18 +135,17 @@ server <- function(input, output, session) {
     sec <- input$acs_demo_section %||% "race"
 
     if (identical(sec, "race")) {
-      glassMultiSelect(
+      glassMultiSelect(all_label = "All",
         "acs_demo_race_filter",
         label = "Race groups",
         choices = c(
-          "All races" = "all",
           "White alone" = "white",
           "Black alone" = "black"
         ),
         selected = "all",
         check_style = "check-only",
         show_style_switcher = FALSE,
-        show_select_all = FALSE,
+        show_select_all = TRUE,
         theme = GLASS_LIGHT
       )
     } else {

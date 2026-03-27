@@ -13,5 +13,25 @@ This is a resubmission.
 
 ## Changes in this version
 
-- Improved select widgets and fix empty-choice handling
+This release is a JavaScript and CSS update only. No R functions, 
+signatures, or exported APIs were changed.
+ 
+The JavaScript engine for `glassSelect()` and `glassMultiSelect()` was
+refactored to improve reliability in dynamic Shiny UI contexts
+(`renderUI()`, `conditionalPanel()`, `shinyjs::show()`/`hide()`):
+  
+- Removed a broad `shiny:value` DOM rescan that caused unnecessary 
+  re-initialization after unrelated Shiny output updates.
+- Added proper widget teardown (`destroy()`) to prevent document-level 
+  event listener leaks in long-running sessions.
+- Widgets now emit their initial value to Shiny immediately after 
+  initialization, fixing a class of timing bugs with `conditionalPanel()`.
+- Opening a dropdown now closes any other open glasstabs dropdown, 
+  fixing a visual stacking issue where multiple dropdowns could appear 
+  simultaneously.
+- Widget state is now maintained internally in JavaScript rather than 
+  derived from DOM classes, improving performance and predictability.
+- Search input is debounced and filters against cached lowercase labels.
+- CSS additions: scroll containers for long option lists, styled 
+  scrollbars, and `.gt-loading` / `.gt-disabled` utility classes.
 
