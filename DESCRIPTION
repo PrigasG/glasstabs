@@ -1,6 +1,6 @@
 Package: glasstabs
 Title: Animated Glass-Style Tabs and Multi-Select Filter for 'Shiny'
-Version: 0.1.1
+Version: 0.2.0
 Authors@R: 
     person("George", "Arthur", , "prigasgenthian48@gmail.com", role = c("aut", "cre"))
 Description: Tools for creating animated glassmorphism-style tab
