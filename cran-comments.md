@@ -13,18 +13,5 @@ This is a resubmission.
 
 ## Changes in this version
 
-- Added `glassSelect()`, an animated single-select dropdown widget for Shiny.
-- Added `updateGlassSelect()` and `updateGlassMultiSelect()` for server-side widget updates.
-- Added `glassSelectValue()` and `glassMultiSelectValue()` convenience reactive helpers.
-- Improved theming support for select widgets, including light mode behavior and custom theme handling via `glass_select_theme()`.
-- Added and refined selection style support for select widgets, including checkbox, check-only, and filled display modes.
-- Updated documentation, examples, and vignettes to reflect direct Shiny input usage, theming options, and server-side update patterns.
-- Expanded test coverage for select widgets, theming, and update helpers.
+- Improved select widgets and fix empty-choice handling
 
-## Notes for reviewers
-
-The package provides Shiny UI widgets implemented with HTML, CSS, and JavaScript bundled in `inst/www/`.
-
-The widgets do not perform any network access at runtime.
-
-Examples that launch Shiny apps are wrapped in `if (interactive())`.

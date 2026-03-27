@@ -1,7 +1,9 @@
-/* glasstabs patched */
 (function () {
   'use strict';
 
+  /* ══════════════════════════════════════════════════════
+     UTILITIES
+  ══════════════════════════════════════════════════════ */
   function px(n) { return Math.round(n) + 'px'; }
 
   function centerOf(el, container) {
@@ -28,10 +30,27 @@
       .replace(/'/g, '&#39;');
   }
 
+  function debounce(fn, ms) {
+    var timer;
+    return function () {
+      var ctx = this, args = arguments;
+      clearTimeout(timer);
+      timer = setTimeout(function () { fn.apply(ctx, args); }, ms);
+    };
+  }
+
   function triggerShinyChange(el) {
     if (window.jQuery) {
       window.jQuery(el).trigger('change');
     }
+  }
+
+  /** Lazy-init helper used by Shiny input bindings */
+  function ensureInit(el) {
+    if (el._gt) return el._gt;
+    if (el.classList.contains('gt-gs-wrap')) initGlassSelect(el);
+    else if (el.classList.contains('gt-ms-wrap')) initMultiSelect(el);
+    return el._gt || null;
   }
 
   /* ══════════════════════════════════════════════════════
@@ -285,83 +304,128 @@
     var inputId = wrap.getAttribute('data-input-id');
     var placeholder = wrap.getAttribute('data-placeholder') || 'Select an option';
 
+    /* ── DOM refs ── */
     var trigger = wrap.querySelector('.gt-gs-trigger');
     var dropdown = wrap.querySelector('.gt-gs-dropdown');
     var labelEl = wrap.querySelector('[id$="-label"]');
     var clearBtn = wrap.querySelector('.gt-gs-clear');
     var searchIn = wrap.querySelector('input[type="text"]');
     var optionsBox = wrap.querySelector('[id$="-options"]') || wrap;
+
     var STYLES = ['check-only', 'checkbox', 'filled'];
     var currentStyle = 'checkbox';
-
     STYLES.forEach(function (s) {
       if (wrap.classList.contains('style-' + s)) currentStyle = s;
     });
 
     if (!trigger || !dropdown || !labelEl) return;
 
-    function optionEls() {
-      return Array.from(wrap.querySelectorAll('.gt-gs-option'));
-    }
+    /* ── Capture check SVG template before any rebuilds ── */
+    var checkTemplate = wrap.querySelector('.gt-gs-check');
+    var checkHtml = checkTemplate ? checkTemplate.innerHTML : '';
 
-    function selectedEl() {
-      return wrap.querySelector('.gt-gs-option.selected');
-    }
+    /* ── Add scroll class to options container ── */
+    if (optionsBox) optionsBox.classList.add('gt-gs-options-scroll');
 
+    /* ── Internal state ── */
+    var state = {
+      choices: [],     // [{label, value, hidden, _labelLower}]
+      selected: null,  // string | null
+      query: ''
+    };
+
+    /* ── Read initial state from R-generated DOM ── */
+    Array.from(wrap.querySelectorAll('.gt-gs-option')).forEach(function (el) {
+      var value = el.getAttribute('data-value');
+      var span = el.querySelector('span');
+      var label = span ? span.textContent : value;
+      state.choices.push({
+        label: label,
+        value: value,
+        hidden: false,
+        _labelLower: label.toLowerCase()
+      });
+      if (el.classList.contains('selected')) {
+        state.selected = value;
+      }
+      bindOption(el);
+    });
+
+    /* ── State readers ── */
     function getValue() {
-      var el = selectedEl();
-      return el ? el.getAttribute('data-value') : null;
+      return state.selected;
     }
 
-    function updateLabel() {
-      var el = selectedEl();
-      labelEl.textContent = el ? el.querySelector('span').textContent : placeholder;
+    function findChoice(value) {
+      if (value === null) return null;
+      for (var i = 0; i < state.choices.length; i++) {
+        if (state.choices[i].value === value) return state.choices[i];
+      }
+      return null;
     }
 
-    function notify() {
+    /* ── DOM patching ── */
+    function patchOptionClasses() {
+      Array.from(wrap.querySelectorAll('.gt-gs-option')).forEach(function (el) {
+        var v = el.getAttribute('data-value');
+        el.classList.toggle('selected', state.selected !== null && v === state.selected);
+      });
+    }
+
+    function patchVisibility() {
+      Array.from(wrap.querySelectorAll('.gt-gs-option')).forEach(function (el) {
+        var v = el.getAttribute('data-value');
+        var ch = findChoice(v);
+        el.classList.toggle('hidden', ch ? ch.hidden : false);
+      });
+    }
+
+    /* ── UI sync (visual only, no Shiny notification) ── */
+    function syncUI() {
+      var ch = findChoice(state.selected);
+      labelEl.textContent = ch ? ch.label : placeholder;
+      patchOptionClasses();
+    }
+
+    /* ── Shiny notification ── */
+    function commitSelection() {
       triggerShinyChange(wrap);
       if (window.Shiny) {
-        Shiny.setInputValue(inputId, getValue(), { priority: 'event' });
+        Shiny.setInputValue(inputId, state.selected, { priority: 'event' });
       }
     }
 
-    function setValue(value, notifyShiny) {
-      var found = false;
+    /* ── setValue with opts ── */
+    function setValue(value, opts) {
+      opts = opts || {};
+      var doNotify = opts.notify !== false;
       var valueStr = (value === null || typeof value === 'undefined' || value === '') ? null : String(value);
 
-      optionEls().forEach(function (opt) {
-        var isSel = valueStr !== null && opt.getAttribute('data-value') === valueStr;
-        opt.classList.toggle('selected', isSel);
-        if (isSel) found = true;
-      });
-
-      if (!found) {
-        optionEls().forEach(function (opt) {
-          opt.classList.remove('selected');
-        });
+      if (valueStr !== null && !findChoice(valueStr)) {
+        valueStr = null;
       }
 
-      updateLabel();
-      if (notifyShiny !== false) notify();
+      state.selected = valueStr;
+      syncUI();
+      if (doNotify) commitSelection();
     }
 
+    /* ── Option click binding ── */
     function bindOption(opt) {
       if (!opt || opt._gtBound) return;
       opt._gtBound = true;
 
       opt.addEventListener('click', function () {
-        setValue(opt.getAttribute('data-value'), true);
+        setValue(opt.getAttribute('data-value'), { notify: true });
         close();
       });
     }
 
+    /* ── Build a single option DOM node ── */
     function buildOptionNode(ch) {
       var row = document.createElement('div');
       row.className = 'gt-gs-option';
-      row.setAttribute('data-value', String(ch.value));
-
-      var checkTemplate = wrap.querySelector('.gt-gs-check');
-      var checkHtml = checkTemplate ? checkTemplate.innerHTML : '';
+      row.setAttribute('data-value', ch.value);
 
       row.innerHTML =
         '<div class="gt-gs-check">' + checkHtml + '</div>' +
@@ -371,33 +435,65 @@
       return row;
     }
 
-    function setChoices(choices) {
-      var current = getValue();
-      optionsBox.innerHTML = '';
+    /* ── setChoices: rebuild from state ── */
+    function setChoices(choices, opts) {
+      opts = opts || {};
+      var preserveSel = opts.preserveSelection !== false;
+      var doNotify = opts.notify !== false;
 
-      (choices || []).forEach(function (ch) {
-        optionsBox.appendChild(buildOptionNode(ch));
+      var oldSelected = preserveSel ? state.selected : null;
+
+      /* Update state */
+      state.choices = (choices || []).map(function (ch) {
+        return {
+          label: String(ch.label),
+          value: String(ch.value),
+          hidden: false,
+          _labelLower: String(ch.label).toLowerCase()
+        };
       });
 
-      if (current !== null && (choices || []).some(function (x) { return String(x.value) === current; })) {
-        setValue(current, false);
+      /* Intersect selection */
+      if (oldSelected !== null && findChoice(oldSelected)) {
+        state.selected = oldSelected;
       } else {
-        setValue(null, false);
+        state.selected = null;
       }
 
-      applySearch();
-    }
-
-    function applySearch() {
-      if (!searchIn) return;
-
-      var q = searchIn.value.toLowerCase().trim();
-      optionEls().forEach(function (o) {
-        var txt = (o.querySelector('span') ? o.querySelector('span').textContent : '').toLowerCase();
-        o.classList.toggle('hidden', q !== '' && txt.indexOf(q) === -1);
+      /* Rebuild DOM */
+      var frag = document.createDocumentFragment();
+      state.choices.forEach(function (ch) {
+        frag.appendChild(buildOptionNode(ch));
       });
+      optionsBox.innerHTML = '';
+      optionsBox.appendChild(frag);
+
+      /* Re-apply search if active */
+      if (state.query) {
+        applySearchNow(state.query);
+      }
+
+      syncUI();
+      if (doNotify) commitSelection();
     }
 
+    /* ── Search (debounced) ── */
+    function applySearchNow(q) {
+      var qq = (q || '').toLowerCase().trim();
+      state.query = qq;
+
+      state.choices.forEach(function (ch) {
+        ch.hidden = qq !== '' && ch._labelLower.indexOf(qq) === -1;
+      });
+
+      patchVisibility();
+    }
+
+    var debouncedSearch = debounce(function () {
+      applySearchNow(searchIn ? searchIn.value : '');
+    }, 75);
+
+    /* ── Open / Close ── */
     function open() {
       wrap.classList.add('gt-layer-active');
       dropdown.classList.add('open');
@@ -411,56 +507,70 @@
       trigger.classList.remove('open');
     }
 
+    /* ── Event listeners ── */
     trigger.addEventListener('click', function (e) {
       e.stopPropagation();
       if (dropdown.classList.contains('open')) close(); else open();
     });
 
-    if (!wrap._gtDocClickHandler) {
-      wrap._gtDocClickHandler = function (e) {
-        if (!wrap.contains(e.target)) close();
-      };
-      document.addEventListener('click', wrap._gtDocClickHandler);
-    }
-
-    optionEls().forEach(bindOption);
+    wrap._gtDocClickHandler = function (e) {
+      if (!wrap.contains(e.target)) close();
+    };
+    document.addEventListener('click', wrap._gtDocClickHandler);
 
     if (clearBtn) {
       clearBtn.addEventListener('click', function (e) {
         e.stopPropagation();
-        setValue(null, true);
+        setValue(null, { notify: true });
       });
     }
 
     if (searchIn) {
-      searchIn.addEventListener('input', applySearch);
+      searchIn.addEventListener('input', debouncedSearch);
     }
 
-    updateLabel();
+    /* ── Destroy (lifecycle teardown) ── */
+    function destroy() {
+      if (wrap._gtDocClickHandler) {
+        document.removeEventListener('click', wrap._gtDocClickHandler);
+        wrap._gtDocClickHandler = null;
+      }
+      wrap._gt = null;
+      wrap._gtSelectInit = false;
+    }
 
+    /* ── Initial UI sync ── */
+    syncUI();
+
+    /* ── Emit initial value to Shiny ── */
+    if (window.Shiny && window.Shiny.setInputValue) {
+      Shiny.setInputValue(inputId, state.selected, { priority: 'deferred' });
+      Shiny.setInputValue(inputId + '_ready', true, { priority: 'deferred' });
+    }
+
+    /* ── Public controller ── */
     wrap._gt = {
       kind: 'single',
       getValue: getValue,
-      setValue: function (v) {
-        setValue(v, false);
+      setValue: function (v, opts) {
+        setValue(v, opts);
       },
-      setChoices: setChoices,
+      setChoices: function (choices, opts) {
+        setChoices(choices, opts);
+      },
       getStyle: function () {
         return currentStyle;
       },
-      setStyle: function (s) {
+      setStyle: function (s, opts) {
         if (STYLES.indexOf(s) === -1) return;
-
-        STYLES.forEach(function (st) {
-          wrap.classList.remove('style-' + st);
-        });
-
+        STYLES.forEach(function (st) { wrap.classList.remove('style-' + st); });
         wrap.classList.add('style-' + s);
         currentStyle = s;
       },
-      clear: function () {
-        setValue(null, false);
-      }
+      clear: function (opts) {
+        setValue(null, opts);
+      },
+      destroy: destroy
     };
   }
 
@@ -473,46 +583,158 @@
 
     var inputId = wrap.getAttribute('data-input-id');
     var placeholder = wrap.getAttribute('data-placeholder') || 'Filter by Category';
+    var allLabel = wrap.getAttribute('data-all-label') || 'All categories';
+
+    /* ── DOM refs ── */
     var trigger = wrap.querySelector('.gt-ms-trigger');
     var dropdown = wrap.querySelector('.gt-ms-dropdown');
     var allRow = wrap.querySelector('.gt-ms-all');
     var badge = wrap.querySelector('.gt-ms-badge');
-    var label = wrap.querySelector('[id$="-label"]');
+    var labelEl = wrap.querySelector('[id$="-label"]');
     var countEl = wrap.querySelector('.gt-ms-count');
     var clearBtn = wrap.querySelector('.gt-ms-clear');
     var searchIn = wrap.querySelector('input[type="text"]');
     var styleBtns = Array.from(wrap.querySelectorAll('.gt-style-btn'));
     var optionsBox = wrap.querySelector('[id$="-options"]') || wrap;
+
     var STYLES = ['check-only', 'checkbox', 'filled'];
     var currentStyle = 'checkbox';
-
     STYLES.forEach(function (s) {
       if (wrap.classList.contains('style-' + s)) currentStyle = s;
     });
 
-    function optionEls() {
-      return Array.from(wrap.querySelectorAll('.gt-ms-option'));
-    }
+    /* ── Capture check SVG template ── */
+    var checkTemplate = wrap.querySelector('.gt-ms-check');
+    var checkHtml = checkTemplate ? checkTemplate.innerHTML : '';
 
-    function visibleChecked() {
-      return optionEls().filter(function (o) {
-        return !o.classList.contains('hidden') && o.classList.contains('checked');
+    /* ── Add scroll class ── */
+    if (optionsBox) optionsBox.classList.add('gt-ms-options-scroll');
+
+    /* ── Internal state ── */
+    var state = {
+      choices: [],          // [{label, value, hidden, hue, _labelLower}]
+      selected: new Set(),  // Set of value strings
+      query: ''
+    };
+
+    /* ── Read initial state from R-generated DOM ── */
+    Array.from(wrap.querySelectorAll('.gt-ms-option')).forEach(function (el) {
+      var value = el.getAttribute('data-value');
+      var span = el.querySelector('span');
+      var label = span ? span.textContent : value;
+      var hue = el.style.getPropertyValue('--opt-hue') || '210';
+
+      state.choices.push({
+        label: label,
+        value: value,
+        hidden: false,
+        hue: parseInt(hue, 10) || 210,
+        _labelLower: label.toLowerCase()
       });
-    }
 
-    function visible() {
-      return optionEls().filter(function (o) {
-        return !o.classList.contains('hidden');
-      });
-    }
+      if (el.classList.contains('checked')) {
+        state.selected.add(value);
+      }
 
+      bindOption(el);
+    });
+
+    /* ── State readers ── */
     function getValue() {
-      return optionEls()
-        .filter(function (o) { return o.classList.contains('checked'); })
-        .map(function (o) { return o.getAttribute('data-value'); });
+      /* Return in choice order, not Set insertion order */
+      var out = [];
+      state.choices.forEach(function (ch) {
+        if (state.selected.has(ch.value)) out.push(ch.value);
+      });
+      return out;
     }
 
-    function notify() {
+    function visibleChoices() {
+      return state.choices.filter(function (ch) { return !ch.hidden; });
+    }
+
+    function visibleSelectedCount() {
+      var n = 0;
+      state.choices.forEach(function (ch) {
+        if (!ch.hidden && state.selected.has(ch.value)) n++;
+      });
+      return n;
+    }
+
+    /* ── DOM patching ── */
+    function patchOptionClasses() {
+      Array.from(wrap.querySelectorAll('.gt-ms-option')).forEach(function (el) {
+        var v = el.getAttribute('data-value');
+        el.classList.toggle('checked', state.selected.has(v));
+      });
+    }
+
+    function patchVisibility() {
+      Array.from(wrap.querySelectorAll('.gt-ms-option')).forEach(function (el) {
+        var v = el.getAttribute('data-value');
+        for (var i = 0; i < state.choices.length; i++) {
+          if (state.choices[i].value === v) {
+            el.classList.toggle('hidden', state.choices[i].hidden);
+            break;
+          }
+        }
+      });
+    }
+
+    /* ── syncUI: visual-only update (no Shiny notification) ── */
+    function syncUI() {
+      var total = state.choices.length;
+      var selCount = state.selected.size;
+      var vis = visibleChoices().length;
+      var visSel = visibleSelectedCount();
+
+      /* All row */
+      if (allRow) {
+        allRow.classList.remove('checked', 'indeterminate');
+        if (visSel > 0 && visSel === vis) {
+          allRow.classList.add('checked');
+        } else if (visSel > 0) {
+          allRow.classList.add('indeterminate');
+        }
+      }
+
+      /* Badge */
+      if (badge) {
+        badge.textContent = selCount;
+        badge.classList.toggle('hidden', selCount < 2 || selCount === total);
+      }
+
+      /* Count */
+      if (countEl) {
+        countEl.textContent = selCount + ' / ' + total + ' selected';
+      }
+
+      /* Label */
+      if (labelEl) {
+        if (selCount === 0) {
+          labelEl.textContent = placeholder;
+        } else if (total > 0 && selCount === total) {
+          labelEl.textContent = allLabel;
+        } else if (selCount === 1) {
+          var first = null;
+          for (var i = 0; i < state.choices.length; i++) {
+            if (state.selected.has(state.choices[i].value)) {
+              first = state.choices[i];
+              break;
+            }
+          }
+          labelEl.textContent = first ? first.label : placeholder;
+        } else {
+          labelEl.textContent = 'Multiple selection';
+        }
+      }
+
+      patchOptionClasses();
+      renderTags();
+    }
+
+    /* ── commitSelection: notify Shiny ── */
+    function commitSelection() {
       triggerShinyChange(wrap);
       if (window.Shiny) {
         Shiny.setInputValue(inputId, getValue(), { priority: 'event' });
@@ -520,41 +742,41 @@
       }
     }
 
+    /* ── renderTags: reads from state, not DOM ── */
     function renderTags() {
-      var sel = optionEls().filter(function (o) { return o.classList.contains('checked'); });
+      var tagPanes = document.querySelectorAll('[data-tags-for="' + inputId + '"]');
+      if (tagPanes.length === 0) return;
 
-      document.querySelectorAll('[data-tags-for="' + inputId + '"]').forEach(function (pane) {
+      tagPanes.forEach(function (pane) {
         pane.innerHTML = '';
 
-        if (sel.length === 0) {
+        if (state.selected.size === 0) {
           pane.innerHTML = '<span class="gt-no-filters">No filters active</span>';
           return;
         }
 
-        sel.forEach(function (o) {
-          var name = o.querySelector('span').textContent;
-          var val = o.getAttribute('data-value');
-          var hue = getComputedStyle(o).getPropertyValue('--opt-hue').trim() || '210';
+        state.choices.forEach(function (ch) {
+          if (!state.selected.has(ch.value)) return;
 
           var tag = document.createElement('div');
           tag.className = 'gt-filter-tag';
 
           if (currentStyle === 'filled') {
-            tag.style.background = 'hsla(' + hue + ',65%,50%,0.18)';
-            tag.style.borderColor = 'hsla(' + hue + ',65%,60%,0.35)';
-            tag.style.color = 'hsl(' + hue + ',80%,78%)';
+            tag.style.background = 'hsla(' + ch.hue + ',65%,50%,0.18)';
+            tag.style.borderColor = 'hsla(' + ch.hue + ',65%,60%,0.35)';
+            tag.style.color = 'hsl(' + ch.hue + ',80%,78%)';
           }
 
           tag.innerHTML =
-            escapeHtml(name) +
-            '<span class="gt-remove-tag" data-value="' + escapeHtml(val) + '">&times;</span>';
+            escapeHtml(ch.label) +
+            '<span class="gt-remove-tag" data-value="' + escapeHtml(ch.value) + '">&times;</span>';
 
           var remove = tag.querySelector('.gt-remove-tag');
           if (remove) {
             remove.addEventListener('click', function () {
-              var opt = wrap.querySelector('.gt-ms-option[data-value="' + CSS.escape(val) + '"]');
-              if (opt) opt.classList.remove('checked');
-              syncAll();
+              state.selected.delete(ch.value);
+              syncUI();
+              commitSelection();
             });
           }
 
@@ -563,66 +785,50 @@
       });
     }
 
-    function syncAll() {
-      var opts = optionEls();
-      var vc = visibleChecked().length;
-      var v = visible().length;
-      var allC = opts.filter(function (o) { return o.classList.contains('checked'); }).length;
-      var total = opts.length;
+    /* ── setValue with opts ── */
+    function setValue(vals, opts) {
+      opts = opts || {};
+      var doNotify = opts.notify !== false;
+      var arr = Array.isArray(vals) ? vals.map(String) : [];
 
-      if (allRow) {
-        allRow.classList.remove('checked', 'indeterminate');
-        if (vc > 0 && vc === v) {
-          allRow.classList.add('checked');
-        } else if (vc > 0) {
-          allRow.classList.add('indeterminate');
-        }
-      }
+      state.selected = new Set();
+      var validValues = new Set(state.choices.map(function (ch) { return ch.value; }));
 
-      if (badge) {
-        badge.textContent = allC;
-        badge.classList.toggle('hidden', allC < 2 || allC === total);
-      }
+      arr.forEach(function (v) {
+        if (validValues.has(v)) state.selected.add(v);
+      });
 
-      if (countEl) {
-        countEl.textContent = allC + ' / ' + total + ' selected';
-      }
-
-      if (label) {
-        if (allC === 0) {
-          label.textContent = placeholder;
-        } else if (allC === total) {
-          label.textContent = 'All categories';
-        } else if (allC === 1) {
-          var s = opts.find(function (o) { return o.classList.contains('checked'); });
-          label.textContent = s ? s.querySelector('span').textContent : placeholder;
-        } else {
-          label.textContent = 'Multiple selection';
-        }
-      }
-
-      renderTags();
-      notify();
+      syncUI();
+      if (doNotify) commitSelection();
     }
 
+    /* ── Option click binding ── */
     function bindOption(opt) {
       if (!opt || opt._gtBound) return;
       opt._gtBound = true;
 
       opt.addEventListener('click', function () {
-        opt.classList.toggle('checked');
-        syncAll();
+        var v = opt.getAttribute('data-value');
+        if (state.selected.has(v)) {
+          state.selected.delete(v);
+        } else {
+          state.selected.add(v);
+        }
+        syncUI();
+        commitSelection();
       });
     }
 
-    function buildOptionNode(ch, hue) {
+    /* ── Build a single option DOM node ── */
+    function buildOptionNode(ch) {
       var row = document.createElement('div');
       row.className = 'gt-ms-option';
-      row.setAttribute('data-value', String(ch.value));
-      row.style.setProperty('--opt-hue', String(hue));
+      row.setAttribute('data-value', ch.value);
+      row.style.setProperty('--opt-hue', String(ch.hue));
 
-      var checkTemplate = wrap.querySelector('.gt-ms-check');
-      var checkHtml = checkTemplate ? checkTemplate.innerHTML : '';
+      if (state.selected.has(ch.value)) {
+        row.className += ' checked';
+      }
 
       row.innerHTML =
         '<div class="gt-ms-check">' + checkHtml + '</div>' +
@@ -632,66 +838,80 @@
       return row;
     }
 
-    function setValue(vals, notifyShiny) {
-      vals = Array.isArray(vals) ? vals.map(String) : [];
+    /* ── setChoices: rebuild from state ── */
+    function setChoices(choices, opts) {
+      opts = opts || {};
+      var preserveSel = opts.preserveSelection !== false;
+      var doNotify = opts.notify !== false;
 
-      optionEls().forEach(function (o) {
-        o.classList.toggle('checked', vals.indexOf(o.getAttribute('data-value')) !== -1);
+      var oldSelected = preserveSel ? new Set(state.selected) : new Set();
+
+      /* Update state */
+      var n = (choices || []).length;
+      state.choices = (choices || []).map(function (ch, i) {
+        return {
+          label: String(ch.label),
+          value: String(ch.value),
+          hidden: false,
+          hue: ch.hue || Math.round((200 + 360 * i / Math.max(1, n)) % 360),
+          _labelLower: String(ch.label).toLowerCase()
+        };
       });
 
-      syncAll();
+      /* Intersect selection */
+      var newValues = new Set(state.choices.map(function (ch) { return ch.value; }));
+      state.selected = new Set();
+      oldSelected.forEach(function (v) {
+        if (newValues.has(v)) state.selected.add(v);
+      });
 
-      if (notifyShiny === false) {
-        /* syncAll already notifies. We suppress by restoring after a quiet set. */
+      /* Rebuild DOM using fragment */
+      var frag = document.createDocumentFragment();
+      state.choices.forEach(function (ch) {
+        frag.appendChild(buildOptionNode(ch));
+      });
+      optionsBox.innerHTML = '';
+      optionsBox.appendChild(frag);
+
+      /* Re-apply search if active */
+      if (state.query) {
+        applySearchNow(state.query);
+      }
+
+      syncUI();
+      if (doNotify) commitSelection();
+    }
+
+    /* ── Search (debounced) ── */
+    function applySearchNow(q) {
+      var qq = (q || '').toLowerCase().trim();
+      state.query = qq;
+
+      state.choices.forEach(function (ch) {
+        ch.hidden = qq !== '' && ch._labelLower.indexOf(qq) === -1;
+      });
+
+      patchVisibility();
+      /* Update allRow and counts without notifying Shiny */
+      var total = state.choices.length;
+      var vis = visibleChoices().length;
+      var visSel = visibleSelectedCount();
+
+      if (allRow) {
+        allRow.classList.remove('checked', 'indeterminate');
+        if (visSel > 0 && visSel === vis) {
+          allRow.classList.add('checked');
+        } else if (visSel > 0) {
+          allRow.classList.add('indeterminate');
+        }
       }
     }
 
-    function setValueQuiet(vals) {
-      vals = Array.isArray(vals) ? vals.map(String) : [];
+    var debouncedSearch = debounce(function () {
+      applySearchNow(searchIn ? searchIn.value : '');
+    }, 75);
 
-      optionEls().forEach(function (o) {
-        o.classList.toggle('checked', vals.indexOf(o.getAttribute('data-value')) !== -1);
-      });
-
-      var oldNotify = notify;
-      notify = function () {};
-      syncAll();
-      notify = oldNotify;
-    }
-
-    function setChoices(choices) {
-      var selectedNow = getValue();
-      optionsBox.innerHTML = '';
-
-      var n = (choices || []).length;
-      (choices || []).forEach(function (ch, i) {
-        var hue = Math.round((200 + 360 * i / Math.max(1, n)) % 360);
-        optionsBox.appendChild(buildOptionNode(ch, hue));
-      });
-
-      var keep = selectedNow.filter(function (v) {
-        return (choices || []).some(function (ch) { return String(ch.value) === v; });
-      });
-
-      setValueQuiet(keep);
-      applySearch();
-    }
-
-    function applySearch() {
-      if (!searchIn) return;
-
-      var q = searchIn.value.toLowerCase().trim();
-      optionEls().forEach(function (o) {
-        var txt = (o.querySelector('span') ? o.querySelector('span').textContent : '').toLowerCase();
-        o.classList.toggle('hidden', q !== '' && txt.indexOf(q) === -1);
-      });
-
-      var oldNotify = notify;
-      notify = function () {};
-      syncAll();
-      notify = oldNotify;
-    }
-
+    /* ── Open / Close ── */
     function open() {
       wrap.classList.add('gt-layer-active');
       dropdown.classList.add('open');
@@ -705,17 +925,16 @@
       trigger.classList.remove('open');
     }
 
+    /* ── Event listeners ── */
     trigger.addEventListener('click', function (e) {
       e.stopPropagation();
       if (dropdown.classList.contains('open')) close(); else open();
     });
 
-    if (!wrap._gtDocClickHandler) {
-      wrap._gtDocClickHandler = function (e) {
-        if (!wrap.contains(e.target)) close();
-      };
-      document.addEventListener('click', wrap._gtDocClickHandler);
-    }
+    wrap._gtDocClickHandler = function (e) {
+      if (!wrap.contains(e.target)) close();
+    };
+    document.addEventListener('click', wrap._gtDocClickHandler);
 
     styleBtns.forEach(function (btn) {
       btn.addEventListener('click', function () {
@@ -728,50 +947,78 @@
         STYLES.forEach(function (st) { wrap.classList.remove('style-' + st); });
         wrap.classList.add('style-' + s);
         currentStyle = s;
-        syncAll();
+
+        /* Visual update only — style change doesn't change selection */
+        syncUI();
+        commitSelection();
       });
     });
 
-    optionEls().forEach(bindOption);
-
     if (allRow) {
       allRow.addEventListener('click', function () {
-        var v = visible();
-        var anyUnchecked = v.some(function (o) { return !o.classList.contains('checked'); });
+        var vis = visibleChoices();
+        var anyUnchecked = vis.some(function (ch) { return !state.selected.has(ch.value); });
 
-        v.forEach(function (o) {
-          if (anyUnchecked) o.classList.add('checked');
-          else o.classList.remove('checked');
+        vis.forEach(function (ch) {
+          if (anyUnchecked) {
+            state.selected.add(ch.value);
+          } else {
+            state.selected.delete(ch.value);
+          }
         });
 
-        syncAll();
+        syncUI();
+        commitSelection();
       });
     }
 
     if (clearBtn) {
       clearBtn.addEventListener('click', function () {
-        optionEls().forEach(function (o) { o.classList.remove('checked'); });
-        syncAll();
+        state.selected = new Set();
+        syncUI();
+        commitSelection();
       });
     }
 
     if (searchIn) {
-      searchIn.addEventListener('input', applySearch);
+      searchIn.addEventListener('input', debouncedSearch);
     }
 
-    syncAll();
+    /* ── Destroy (lifecycle teardown) ── */
+    function destroy() {
+      if (wrap._gtDocClickHandler) {
+        document.removeEventListener('click', wrap._gtDocClickHandler);
+        wrap._gtDocClickHandler = null;
+      }
+      wrap._gt = null;
+      wrap._gtMultiInit = false;
+    }
 
+    /* ── Initial sync ── */
+    syncUI();
+
+    /* ── Emit initial value to Shiny ── */
+    if (window.Shiny && window.Shiny.setInputValue) {
+      Shiny.setInputValue(inputId, getValue(), { priority: 'deferred' });
+      Shiny.setInputValue(inputId + '_style', currentStyle, { priority: 'deferred' });
+      Shiny.setInputValue(inputId + '_ready', true, { priority: 'deferred' });
+    }
+
+    /* ── Public controller ── */
     wrap._gt = {
       kind: 'multi',
       getValue: getValue,
-      setValue: function (vals) {
-        setValueQuiet(Array.isArray(vals) ? vals : []);
+      setValue: function (vals, opts) {
+        setValue(Array.isArray(vals) ? vals : [], opts);
       },
-      setChoices: setChoices,
+      setChoices: function (choices, opts) {
+        setChoices(choices, opts);
+      },
       getStyle: function () {
         return currentStyle;
       },
-      setStyle: function (s) {
+      setStyle: function (s, opts) {
+        opts = opts || {};
         if (STYLES.indexOf(s) === -1) return;
 
         styleBtns.forEach(function (b) {
@@ -782,15 +1029,15 @@
         wrap.classList.add('style-' + s);
         currentStyle = s;
 
-        var oldNotify = notify;
-        notify = function () {};
-        syncAll();
-        notify = oldNotify;
+        syncUI();
+        if (opts.notify !== false) commitSelection();
       },
-      clear: function () {
-        setValueQuiet([]);
+      clear: function (opts) {
+        setValue([], opts);
       },
-      notify: notify
+      destroy: destroy,
+      /* Expose for binding — stable reference, not the closure var */
+      commitSelection: commitSelection
     };
   }
 
@@ -803,6 +1050,7 @@
 
     var $ = window.jQuery;
 
+    /* ── Single-select binding ── */
     var glassSelectBinding = new Shiny.InputBinding();
     $.extend(glassSelectBinding, {
       find: function (scope) {
@@ -812,40 +1060,47 @@
         return el.getAttribute('data-input-id');
       },
       getValue: function (el) {
-        return el._gt ? el._gt.getValue() : null;
+        var ctrl = ensureInit(el);
+        return ctrl ? ctrl.getValue() : null;
       },
       subscribe: function (el, callback) {
+        ensureInit(el);
         $(el).on('change.glasstabs', function () {
           callback();
         });
       },
       unsubscribe: function (el) {
         $(el).off('.glasstabs');
+        if (el._gt && typeof el._gt.destroy === 'function') {
+          el._gt.destroy();
+        }
       },
       receiveMessage: function (el, data) {
-        if (!el._gt) initGlassSelect(el);
-        if (!el._gt) return;
+        var ctrl = ensureInit(el);
+        if (!ctrl) return;
 
         if (hasOwn(data, 'choices')) {
-          el._gt.setChoices(data.choices || []);
+          ctrl.setChoices(data.choices || [], { notify: false });
         }
 
         if (hasOwn(data, 'selected')) {
           var sel = data.selected;
           if (Array.isArray(sel)) sel = sel.length ? sel[0] : null;
           if (sel === '') sel = null;
-          el._gt.setValue(sel);
+          ctrl.setValue(sel, { notify: false });
         }
 
         if (hasOwn(data, 'style')) {
-          el._gt.setStyle(data.style);
+          ctrl.setStyle(data.style, { notify: false });
         }
 
+        /* Single commit after all fields are set */
         triggerShinyChange(el);
       }
     });
     Shiny.inputBindings.register(glassSelectBinding, 'glasstabs.glassSelect');
 
+    /* ── Multi-select binding ── */
     var glassMultiSelectBinding = new Shiny.InputBinding();
     $.extend(glassMultiSelectBinding, {
       find: function (scope) {
@@ -855,33 +1110,39 @@
         return el.getAttribute('data-input-id');
       },
       getValue: function (el) {
-        return el._gt ? el._gt.getValue() : [];
+        var ctrl = ensureInit(el);
+        return ctrl ? ctrl.getValue() : [];
       },
       subscribe: function (el, callback) {
+        ensureInit(el);
         $(el).on('change.glasstabs', function () {
           callback();
         });
       },
       unsubscribe: function (el) {
         $(el).off('.glasstabs');
+        if (el._gt && typeof el._gt.destroy === 'function') {
+          el._gt.destroy();
+        }
       },
       receiveMessage: function (el, data) {
-        if (!el._gt) initMultiSelect(el);
-        if (!el._gt) return;
+        var ctrl = ensureInit(el);
+        if (!ctrl) return;
 
         if (hasOwn(data, 'choices')) {
-          el._gt.setChoices(data.choices || []);
+          ctrl.setChoices(data.choices || [], { notify: false });
         }
 
         if (hasOwn(data, 'selected')) {
-          el._gt.setValue(Array.isArray(data.selected) ? data.selected : []);
+          ctrl.setValue(Array.isArray(data.selected) ? data.selected : [], { notify: false });
         }
 
         if (hasOwn(data, 'style')) {
-          el._gt.setStyle(data.style);
+          ctrl.setStyle(data.style, { notify: false });
         }
 
-        if (el._gt.notify) el._gt.notify();
+        /* Single commit after all fields are set */
+        if (ctrl.commitSelection) ctrl.commitSelection();
         triggerShinyChange(el);
       }
     });
@@ -915,13 +1176,12 @@
 
   window.addEventListener('load', bootAll);
 
+
   if (typeof Shiny !== 'undefined') {
     Shiny.addCustomMessageHandler('glasstabs_reinit', function () {
       bootAll();
     });
   }
 
-  document.addEventListener('shiny:value', function () {
-    setTimeout(bootAll, 50);
-  });
+
 })();
