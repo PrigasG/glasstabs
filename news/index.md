@@ -1,5 +1,34 @@
 # Changelog
 
+## glasstabs 0.2.0
+
+### Bug fixes
+
+- Opening a dropdown now closes any other open glasstabs dropdown,
+  fixing a visual stacking issue where multiple dropdowns appeared
+  simultaneously.
+
+- Improved widget lifecycle in dynamic UI
+  ([`renderUI()`](https://rdrr.io/pkg/shiny/man/renderUI.html),
+  [`conditionalPanel()`](https://rdrr.io/pkg/shiny/man/conditionalPanel.html)).
+  Widgets initialize more reliably and clean up properly when removed.
+
+- Widgets now emit their initial value to Shiny immediately after
+  rendering, fixing timing issues with
+  [`conditionalPanel()`](https://rdrr.io/pkg/shiny/man/conditionalPanel.html)
+  and dynamic UI.
+
+### Internal improvements
+
+- JavaScript engine refactored to use internal state instead of DOM
+  scanning. No changes to the R API — all existing code works without
+  modification.
+
+- Added scroll containers for long option lists, debounced search, and
+  `.gt-loading` / `.gt-disabled` CSS utility classes.
+
+------------------------------------------------------------------------
+
 ## glasstabs 0.1.1
 
 CRAN release: 2026-03-13
