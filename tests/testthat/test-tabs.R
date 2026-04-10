@@ -125,3 +125,37 @@ test_that("glassTabsUI() respects explicit selected argument", {
   # second pane should be active, not first
   expect_true(grepl('data-value="second"', html, fixed = TRUE))
 })
+
+# ── updateGlassTabsUI ─────────────────────────────────────────────────────────
+
+test_that("updateGlassTabsUI() sends correct custom message", {
+  msgs <- list()
+  fake_session <- list(
+    sendCustomMessage = function(type, message) {
+      msgs[[length(msgs) + 1]] <<- list(type = type, message = message)
+    },
+    ns = shiny::NS(NULL)
+  )
+
+  updateGlassTabsUI(fake_session, "tabs", selected = "b")
+
+  expect_length(msgs, 1)
+  expect_equal(msgs[[1]]$type, "glasstabs_update_tabs")
+  expect_equal(msgs[[1]]$message$ns, "tabs")
+  expect_equal(msgs[[1]]$message$selected, "b")
+})
+
+test_that("updateGlassTabsUI() namespaces id via session$ns", {
+  msgs <- list()
+  fake_session <- list(
+    sendCustomMessage = function(type, message) {
+      msgs[[length(msgs) + 1]] <<- list(type = type, message = message)
+    },
+    ns = shiny::NS("mymodule")
+  )
+
+  updateGlassTabsUI(fake_session, "tabs", selected = "overview")
+
+  expect_equal(msgs[[1]]$message$ns, "mymodule-tabs")
+  expect_equal(msgs[[1]]$message$selected, "overview")
+})

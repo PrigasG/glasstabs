@@ -125,6 +125,45 @@ glassTabsUI <- function(
   }
 }
 
+#' Programmatically switch the active glass tab
+#'
+#' Server-side equivalent of Shiny's \code{updateTabsetPanel()}. Sends a
+#' message to the browser to animate the tab switch just as if the user had
+#' clicked the tab button.
+#'
+#' @param session Shiny session object.
+#' @param id      Module id matching the `id` passed to [glassTabsUI()].
+#' @param selected Value of the tab to activate.
+#'
+#' @return Called for its side effect; returns \code{NULL} invisibly.
+#'
+#' @examples
+#' if (interactive()) {
+#'   library(shiny)
+#'   ui <- fluidPage(
+#'     useGlassTabs(),
+#'     glassTabsUI(
+#'       "tabs",
+#'       glassTabPanel("a", "A", p("Tab A"), selected = TRUE),
+#'       glassTabPanel("b", "B", p("Tab B"))
+#'     ),
+#'     actionButton("go", "Go to B")
+#'   )
+#'   server <- function(input, output, session) {
+#'     observeEvent(input$go, {
+#'       updateGlassTabsUI(session, "tabs", selected = "b")
+#'     })
+#'   }
+#'   shinyApp(ui, server)
+#' }
+#' @export
+updateGlassTabsUI <- function(session, id, selected) {
+  session$sendCustomMessage(
+    "glasstabs_update_tabs",
+    list(ns = session$ns(id), selected = selected)
+  )
+}
+
 #' Server logic for glass tabs
 #'
 #' Tracks the active tab and exposes it as a reactive value.

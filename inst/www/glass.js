@@ -1193,6 +1193,18 @@
     Shiny.addCustomMessageHandler('glasstabs_reinit', function () {
       bootAll();
     });
+
+    Shiny.addCustomMessageHandler('glasstabs_update_tabs', function (msg) {
+      var ns = msg.ns;
+      var selected = msg.selected;
+      if (!ns || !selected) return;
+
+      var navbar = document.querySelector('.gt-navbar[data-ns="' + ns + '"]');
+      if (!navbar) return;
+
+      var link = navbar.querySelector('.gt-tab-link[data-value="' + selected + '"]');
+      if (link) link.click();
+    });
   }
 
 })();
