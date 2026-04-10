@@ -87,9 +87,7 @@
 <li>
 <strong><code><a href="reference/glassSelect.html">glassSelect()</a></code></strong> — an animated single-select dropdown with optional search, clear support, theming, selection styles, and server-side update support</li>
 </ul>
-<p>All widgets are self-contained, themeable, and work in plain <code><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage()</a></code>, <code>bs4DashPage()</code>, or other Shiny page wrappers.</p>
-<p><strong>Full documentation:</strong> <a href="https://prigasg.github.io/glasstabs/" class="uri">https://prigasg.github.io/glasstabs/</a></p>
-<p>Both widgets are self-contained, fully themeable, and work in plain <code><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage()</a></code>, <code>bs4DashPage()</code>, or any other Shiny page wrapper.</p>
+<p>All widgets are self-contained, fully themeable, and work in plain <code><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage()</a></code>, <code>bs4DashPage()</code>, or any other Shiny page wrapper.</p>
 <p><strong>Full documentation:</strong> <a href="https://prigasg.github.io/glasstabs/" class="uri">https://prigasg.github.io/glasstabs/</a></p>
 <hr>
 </div>
@@ -187,39 +185,59 @@
 <td>Reactive returning the active tab value</td>
 </tr>
 <tr class="odd">
+<td><code>updateGlassTabsUI(session, id, selected)</code></td>
+<td>Switch the active tab from the server</td>
+</tr>
+<tr class="even">
+<td><code>showGlassTab(session, id, value)</code></td>
+<td>Show a hidden tab</td>
+</tr>
+<tr class="odd">
+<td><code>hideGlassTab(session, id, value)</code></td>
+<td>Hide a tab from the navigation bar</td>
+</tr>
+<tr class="even">
+<td><code>appendGlassTab(session, id, tab, select)</code></td>
+<td>Add a new tab at runtime</td>
+</tr>
+<tr class="odd">
+<td><code>removeGlassTab(session, id, value)</code></td>
+<td>Remove a tab at runtime</td>
+</tr>
+<tr class="even">
 <td><code>glassMultiSelect(inputId, choices, ...)</code></td>
 <td>Multi-select dropdown widget</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>updateGlassMultiSelect(session, inputId, ...)</code></td>
 <td>Update multi-select choices, selection, or style</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>glassMultiSelectValue(input, inputId)</code></td>
 <td>Reactive helper for multi-select value and style</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>glassSelect(inputId, choices, ...)</code></td>
 <td>Single-select dropdown widget</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>updateGlassSelect(session, inputId, ...)</code></td>
 <td>Update single-select choices, selection, or style</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>glassSelectValue(input, inputId)</code></td>
 <td>Reactive helper for selected value</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>glassFilterTags(inputId)</code></td>
 <td>Tag-pill display area synced to a multi-select</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>glass_tab_theme(...)</code></td>
 <td>Custom color theme for <code><a href="reference/glassTabsUI.html">glassTabsUI()</a></code>
 </td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>glass_select_theme(...)</code></td>
 <td>Custom color theme for <code><a href="reference/glassSelect.html">glassSelect()</a></code> and <code><a href="reference/glassMultiSelect.html">glassMultiSelect()</a></code>
 </td>
@@ -586,10 +604,39 @@ server &lt;- function(input, output, session) {
 <hr>
 </div>
 <div class="section level2">
+<h2 id="server-side-tab-control">Server-side tab control<a class="anchor" aria-label="anchor" href="#server-side-tab-control"></a>
+</h2>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="co"># Switch to a tab programmatically</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/observeEvent.html" class="external-link">observeEvent</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">next_btn</span>, <span class="op">{</span></span>
+<span>    <span class="fu">updateGlassTabsUI</span><span class="op">(</span><span class="va">session</span>, <span class="st">"tabs"</span>, selected <span class="op">=</span> <span class="st">"details"</span><span class="op">)</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span></span>
+<span>  <span class="co"># Show/hide tabs conditionally</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/observeEvent.html" class="external-link">observeEvent</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">is_admin</span>, <span class="op">{</span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">is_admin</span><span class="op">)</span> <span class="fu">showGlassTab</span><span class="op">(</span><span class="va">session</span>, <span class="st">"tabs"</span>, <span class="st">"admin"</span><span class="op">)</span></span>
+<span>    <span class="kw">else</span>                <span class="fu">hideGlassTab</span><span class="op">(</span><span class="va">session</span>, <span class="st">"tabs"</span>, <span class="st">"admin"</span><span class="op">)</span></span>
+<span>  <span class="op">}</span>, ignoreInit <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span>  <span class="co"># Add and remove tabs dynamically</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/observeEvent.html" class="external-link">observeEvent</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">add_tab</span>, <span class="op">{</span></span>
+<span>    <span class="fu">appendGlassTab</span><span class="op">(</span><span class="va">session</span>, <span class="st">"tabs"</span>,</span>
+<span>      <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"dynamic"</span>, <span class="st">"Dynamic"</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"Added at runtime"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>      select <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/observeEvent.html" class="external-link">observeEvent</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">remove_tab</span>, <span class="op">{</span></span>
+<span>    <span class="fu">removeGlassTab</span><span class="op">(</span><span class="va">session</span>, <span class="st">"tabs"</span>, <span class="st">"dynamic"</span><span class="op">)</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<hr>
+</div>
+<div class="section level2">
 <h2 id="roadmap">Roadmap<a class="anchor" aria-label="anchor" href="#roadmap"></a>
 </h2>
 <ul>
-<li><p>Programmatic tab switching from the server</p></li>
 <li><p>Additional select widget presets and examples</p></li>
 <li><p>More layout examples for bs4Dash and standard Shiny apps</p></li>
 </ul>
@@ -598,7 +645,7 @@ server &lt;- function(input, output, session) {
 <div class="section level2">
 <h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
 </h2>
-<p>MIT © glasstabs authors</p>
+<p>MIT (c) glasstabs authors</p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
