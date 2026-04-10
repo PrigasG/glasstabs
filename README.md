@@ -100,6 +100,11 @@ shinyApp(ui, server)
 | `glassTabsUI(id, ..., selected, wrap, extra_ui, theme)` | Animated tab bar with content area |
 | `glassTabPanel(value, label, ..., selected)` | Define one tab and its content |
 | `glassTabsServer(id)` | Reactive returning the active tab value |
+| `updateGlassTabsUI(session, id, selected)` | Switch the active tab from the server |
+| `showGlassTab(session, id, value)` | Show a hidden tab |
+| `hideGlassTab(session, id, value)` | Hide a tab from the navigation bar |
+| `appendGlassTab(session, id, tab, select)` | Add a new tab at runtime |
+| `removeGlassTab(session, id, value)` | Remove a tab at runtime |
 | `glassMultiSelect(inputId, choices, ...)` | Multi-select dropdown widget |
 | `updateGlassMultiSelect(session, inputId, ...)` | Update multi-select choices, selection, or style |
 | `glassMultiSelectValue(input, inputId)` | Reactive helper for multi-select value and style |
@@ -378,9 +383,38 @@ Full vignettes are available on the documentation site:
 
 ---
 
-## Roadmap
+## Server-side tab control
 
-- Programmatic tab switching from the server
+```r
+server <- function(input, output, session) {
+  # Switch to a tab programmatically
+  observeEvent(input$next_btn, {
+    updateGlassTabsUI(session, "tabs", selected = "details")
+  })
+
+  # Show/hide tabs conditionally
+  observeEvent(input$is_admin, {
+    if (input$is_admin) showGlassTab(session, "tabs", "admin")
+    else                hideGlassTab(session, "tabs", "admin")
+  }, ignoreInit = FALSE)
+
+  # Add and remove tabs dynamically
+  observeEvent(input$add_tab, {
+    appendGlassTab(session, "tabs",
+      glassTabPanel("dynamic", "Dynamic", p("Added at runtime")),
+      select = TRUE
+    )
+  })
+
+  observeEvent(input$remove_tab, {
+    removeGlassTab(session, "tabs", "dynamic")
+  })
+}
+```
+
+---
+
+## Roadmap
 
 - Additional select widget presets and examples
 

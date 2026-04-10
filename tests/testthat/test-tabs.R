@@ -159,3 +159,120 @@ test_that("updateGlassTabsUI() namespaces id via session$ns", {
   expect_equal(msgs[[1]]$message$ns, "mymodule-tabs")
   expect_equal(msgs[[1]]$message$selected, "overview")
 })
+
+# ── showGlassTab / hideGlassTab ───────────────────────────────────────────────
+
+test_that("showGlassTab() sends correct message", {
+  msgs <- list()
+  fake_session <- list(
+    sendCustomMessage = function(type, message) msgs[[length(msgs) + 1]] <<- list(type = type, message = message),
+    ns = shiny::NS(NULL)
+  )
+  showGlassTab(fake_session, "tabs", "b")
+  expect_equal(msgs[[1]]$type, "glasstabs_show_tab")
+  expect_equal(msgs[[1]]$message$ns, "tabs")
+  expect_equal(msgs[[1]]$message$value, "b")
+})
+
+test_that("hideGlassTab() sends correct message", {
+  msgs <- list()
+  fake_session <- list(
+    sendCustomMessage = function(type, message) msgs[[length(msgs) + 1]] <<- list(type = type, message = message),
+    ns = shiny::NS(NULL)
+  )
+  hideGlassTab(fake_session, "tabs", "b")
+  expect_equal(msgs[[1]]$type, "glasstabs_hide_tab")
+  expect_equal(msgs[[1]]$message$ns, "tabs")
+  expect_equal(msgs[[1]]$message$value, "b")
+})
+
+test_that("showGlassTab() and hideGlassTab() namespace via session$ns", {
+  msgs <- list()
+  fake_session <- list(
+    sendCustomMessage = function(type, message) msgs[[length(msgs) + 1]] <<- list(type = type, message = message),
+    ns = shiny::NS("mod")
+  )
+  showGlassTab(fake_session, "tabs", "b")
+  hideGlassTab(fake_session, "tabs", "b")
+  expect_equal(msgs[[1]]$message$ns, "mod-tabs")
+  expect_equal(msgs[[2]]$message$ns, "mod-tabs")
+})
+
+# ── appendGlassTab / removeGlassTab ──────────────────────────────────────────
+
+test_that("appendGlassTab() errors on non-glassTabPanel input", {
+  fake_session <- list(
+    sendCustomMessage = function(...) NULL,
+    ns = shiny::NS(NULL)
+  )
+  expect_error(appendGlassTab(fake_session, "tabs", "not a panel"), "glassTabPanel")
+})
+
+test_that("appendGlassTab() sends correct message fields", {
+  msgs <- list()
+  fake_session <- list(
+    sendCustomMessage = function(type, message) msgs[[length(msgs) + 1]] <<- list(type = type, message = message),
+    ns = shiny::NS(NULL)
+  )
+  tab <- glassTabPanel("new", "New Tab", shiny::p("Content"))
+  appendGlassTab(fake_session, "tabs", tab)
+
+  expect_equal(msgs[[1]]$type, "glasstabs_append_tab")
+  expect_equal(msgs[[1]]$message$value, "new")
+  expect_equal(msgs[[1]]$message$ns, "tabs")
+  expect_false(msgs[[1]]$message$select)
+  expect_true(nchar(msgs[[1]]$message$link_html) > 0)
+  expect_true(nchar(msgs[[1]]$message$pane_html) > 0)
+})
+
+test_that("appendGlassTab() select = TRUE is passed through", {
+  msgs <- list()
+  fake_session <- list(
+    sendCustomMessage = function(type, message) msgs[[length(msgs) + 1]] <<- list(type = type, message = message),
+    ns = shiny::NS(NULL)
+  )
+  appendGlassTab(fake_session, "tabs", glassTabPanel("x", "X"), select = TRUE)
+  expect_true(msgs[[1]]$message$select)
+})
+
+test_that("appendGlassTab() link_html contains correct data-value", {
+  msgs <- list()
+  fake_session <- list(
+    sendCustomMessage = function(type, message) msgs[[length(msgs) + 1]] <<- list(type = type, message = message),
+    ns = shiny::NS(NULL)
+  )
+  appendGlassTab(fake_session, "tabs", glassTabPanel("mytab", "My Tab"))
+  expect_true(grepl('data-value="mytab"', msgs[[1]]$message$link_html, fixed = TRUE))
+})
+
+test_that("appendGlassTab() pane_html contains namespaced id", {
+  msgs <- list()
+  fake_session <- list(
+    sendCustomMessage = function(type, message) msgs[[length(msgs) + 1]] <<- list(type = type, message = message),
+    ns = shiny::NS("mod")
+  )
+  appendGlassTab(fake_session, "tabs", glassTabPanel("mytab", "My Tab"))
+  expect_true(grepl("mod-tabs-pane-mytab", msgs[[1]]$message$pane_html, fixed = TRUE))
+})
+
+test_that("removeGlassTab() sends correct message", {
+  msgs <- list()
+  fake_session <- list(
+    sendCustomMessage = function(type, message) msgs[[length(msgs) + 1]] <<- list(type = type, message = message),
+    ns = shiny::NS(NULL)
+  )
+  removeGlassTab(fake_session, "tabs", "old")
+  expect_equal(msgs[[1]]$type, "glasstabs_remove_tab")
+  expect_equal(msgs[[1]]$message$ns, "tabs")
+  expect_equal(msgs[[1]]$message$value, "old")
+})
+
+test_that("removeGlassTab() namespaces via session$ns", {
+  msgs <- list()
+  fake_session <- list(
+    sendCustomMessage = function(type, message) msgs[[length(msgs) + 1]] <<- list(type = type, message = message),
+    ns = shiny::NS("mod")
+  )
+  removeGlassTab(fake_session, "tabs", "old")
+  expect_equal(msgs[[1]]$message$ns, "mod-tabs")
+})
