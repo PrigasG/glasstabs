@@ -59,7 +59,19 @@ glassTabsUI <- function(
     stop("All `...` arguments to glassTabsUI() must be glassTabPanel() objects.", call. = FALSE)
   }
 
-  theme_vals <- .tab_resolve_theme(theme)
+  theme_vals  <- .tab_resolve_theme(theme)
+  panel_vals  <- vapply(panels, function(p) p$value, character(1))
+
+  if (!is.null(selected) && !selected %in% panel_vals) {
+    stop(
+      sprintf(
+        "'selected' value \"%s\" does not match any glassTabPanel() value. Valid values: %s",
+        selected,
+        paste(panel_vals, collapse = ", ")
+      ),
+      call. = FALSE
+    )
+  }
 
   active_val <- selected %||% {
     sel <- Filter(function(p) p$selected, panels)
@@ -67,11 +79,15 @@ glassTabsUI <- function(
   }
 
   tab_links <- lapply(panels, function(p) {
-    cls <- paste("gt-tab-link", if (p$value == active_val) "active" else "")
+    is_active <- p$value == active_val
+    cls <- paste("gt-tab-link", if (is_active) "active" else "")
     shiny::tags$div(
-      class = cls,
-      `data-value` = p$value,
-      `data-ns` = id,
+      class          = cls,
+      `data-value`   = p$value,
+      `data-ns`      = id,
+      role           = "tab",
+      tabindex       = "0",
+      `aria-selected` = if (is_active) "true" else "false",
       p$label
     )
   })
@@ -80,7 +96,8 @@ glassTabsUI <- function(
     cls <- paste("gt-tab-pane", if (p$value == active_val) "active" else "")
     shiny::div(
       class = cls,
-      id = ns(paste0("pane-", p$value)),
+      id    = ns(paste0("pane-", p$value)),
+      role  = "tabpanel",
       do.call(shiny::div, c(list(class = "gt-card"), p$content))
     )
   })
@@ -88,9 +105,10 @@ glassTabsUI <- function(
   navbar <- shiny::div(
     class = "gt-topbar",
     shiny::div(
-      class = "gt-navbar",
-      id = ns("navbar"),
+      class    = "gt-navbar",
+      id       = ns("navbar"),
       `data-ns` = id,
+      role     = "tablist",
       tab_links
     ),
     extra_ui
@@ -263,9 +281,12 @@ appendGlassTab <- function(session, id, tab, select = FALSE) {
   full_ns <- session$ns(id)
 
   link_html <- as.character(shiny::tags$div(
-    class       = "gt-tab-link",
-    `data-value` = tab$value,
-    `data-ns`   = full_ns,
+    class           = "gt-tab-link",
+    `data-value`    = tab$value,
+    `data-ns`       = full_ns,
+    role            = "tab",
+    tabindex        = "0",
+    `aria-selected` = "false",
     tab$label
   ))
 
@@ -273,6 +294,7 @@ appendGlassTab <- function(session, id, tab, select = FALSE) {
     shiny::div(
       class = "gt-tab-pane",
       id    = paste0(full_ns, "-pane-", tab$value),
+      role  = "tabpanel",
       do.call(shiny::div, c(list(class = "gt-card"), tab$content))
     )
   )

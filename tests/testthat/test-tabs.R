@@ -46,6 +46,25 @@ test_that("glassTabsUI() errors if non-glassTabPanel passed", {
   expect_error(glassTabsUI("nav", "not a panel"), "glassTabPanel")
 })
 
+test_that("glassTabsUI() errors on invalid selected value", {
+  expect_error(
+    glassTabsUI("nav",
+                glassTabPanel("a", "A"),
+                glassTabPanel("b", "B"),
+                selected = "zzz"),
+    "zzz"
+  )
+})
+
+test_that("glassTabsUI() accepts valid selected value without error", {
+  expect_no_error(
+    glassTabsUI("nav",
+                glassTabPanel("a", "A"),
+                glassTabPanel("b", "B"),
+                selected = "b")
+  )
+})
+
 test_that("glassTabsUI() accepts dark theme string", {
   expect_no_error(glassTabsUI("nav",
                               glassTabPanel("a", "A", selected = TRUE), theme = "dark"))
@@ -108,6 +127,25 @@ test_that("glassTabsUI() wrap = FALSE omits gt-container class", {
   html <- as.character(glassTabsUI("nav",
                                    glassTabPanel("a", "A", selected = TRUE), wrap = FALSE))
   expect_false(grepl("gt-container", html))
+})
+
+test_that("glassTabsUI() renders role=tablist on navbar", {
+  html <- as.character(glassTabsUI("nav", glassTabPanel("a", "A", selected = TRUE)))
+  expect_true(grepl('role="tablist"', html, fixed = TRUE))
+})
+
+test_that("glassTabsUI() renders role=tab and aria-selected on links", {
+  html <- as.character(glassTabsUI("nav",
+                                   glassTabPanel("a", "A", selected = TRUE),
+                                   glassTabPanel("b", "B")))
+  expect_true(grepl('role="tab"',          html, fixed = TRUE))
+  expect_true(grepl('aria-selected="true"',  html, fixed = TRUE))
+  expect_true(grepl('aria-selected="false"', html, fixed = TRUE))
+})
+
+test_that("glassTabsUI() renders role=tabpanel on panes", {
+  html <- as.character(glassTabsUI("nav", glassTabPanel("a", "A", selected = TRUE)))
+  expect_true(grepl('role="tabpanel"', html, fixed = TRUE))
 })
 
 test_that("glassTabsUI() first panel is active by default", {

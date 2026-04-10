@@ -17,11 +17,7 @@
 - **`glassMultiSelect()`** — a multi-select dropdown with three selection styles, live search, tag-pill syncing, and server-side update support
 - **`glassSelect()`** — an animated single-select dropdown with optional search, clear support, theming, selection styles, and server-side update support
 
-All widgets are self-contained, themeable, and work in plain `fluidPage()`, `bs4DashPage()`, or other Shiny page wrappers.
-
-**Full documentation:** <https://prigasg.github.io/glasstabs/>
-
-Both widgets are self-contained, fully themeable, and work in plain `fluidPage()`, `bs4DashPage()`, or any other Shiny page wrapper.
+All widgets are self-contained, fully themeable, and work in plain `fluidPage()`, `bs4DashPage()`, or any other Shiny page wrapper.
 
 **Full documentation:** <https://prigasg.github.io/glasstabs/>
 
@@ -424,4 +420,4 @@ server <- function(input, output, session) {
 
 ## License
 
-MIT © glasstabs authors
+MIT (c) glasstabs authors

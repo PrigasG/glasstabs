@@ -224,8 +224,12 @@
       var fromEl = skipFromAnim ? null
         : navbar.querySelector('.gt-tab-link[data-value="' + active + '"]');
 
-      navbar.querySelectorAll('.gt-tab-link').forEach(function (t) { t.classList.remove('active'); });
+      navbar.querySelectorAll('.gt-tab-link').forEach(function (t) {
+        t.classList.remove('active');
+        t.setAttribute('aria-selected', 'false');
+      });
       toEl.classList.add('active');
+      toEl.setAttribute('aria-selected', 'true');
 
       var animated = fromEl && !fromEl.classList.contains('gt-tab-hidden');
       if (animated) {
@@ -293,10 +297,8 @@
     navbar.addEventListener('click', navbar._gtClickHandler);
 
     navbar._gtKeyHandler = function (e) {
-      if (!container.contains(document.activeElement) &&
-          document.activeElement !== document.body) {
-        return;
-      }
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      if (!navbar.contains(document.activeElement)) return;
 
       var visibleOrder = order.filter(function (v) {
         var l = navbar.querySelector('.gt-tab-link[data-value="' + v + '"]');
@@ -1204,6 +1206,18 @@
   }
 
   window.addEventListener('load', bootAll);
+
+  /* Report the initial active tab for every navbar once the Shiny session
+     is ready — so glassTabsServer() is never NULL on first render. */
+  document.addEventListener('shiny:sessioninitialized', function () {
+    document.querySelectorAll('.gt-navbar').forEach(function (nb) {
+      var ns = nb.getAttribute('data-ns');
+      var activeLink = nb.querySelector('.gt-tab-link.active');
+      if (ns && activeLink && window.Shiny) {
+        Shiny.setInputValue(ns + '-active_tab', activeLink.getAttribute('data-value'));
+      }
+    });
+  });
 
   if (typeof Shiny !== 'undefined') {
     Shiny.addCustomMessageHandler('glasstabs_reinit', function () {
