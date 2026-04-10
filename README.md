@@ -372,6 +372,7 @@ Full vignettes are available on the documentation site:
 
 | Article | Description |
 |---|---|
+| [Cheatsheet](https://prigasg.github.io/glasstabs/articles/cheatsheet.html) | Quick reference for tabs, selects, updates, and server helpers |
 | [Getting started](https://prigasg.github.io/glasstabs/articles/getting-started.html) | Progressive walkthrough of both widgets |
 | [Animated tabs](https://prigasg.github.io/glasstabs/articles/tabs.html) | Full `glassTabsUI()` reference with theming and bs4Dash |
 | [Multi-select filter](https://prigasg.github.io/glasstabs/articles/multiselect.html) | Full `glassMultiSelect()` reference with styles, tags and updates |

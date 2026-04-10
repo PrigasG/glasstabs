@@ -12,26 +12,26 @@ Tested on:
 This is a resubmission.
 
 ## Changes in this version
-
-This release is a JavaScript and CSS update only. No R functions, 
-signatures, or exported APIs were changed.
  
-The JavaScript engine for `glassSelect()` and `glassMultiSelect()` was
-refactored to improve reliability in dynamic Shiny UI contexts
-(`renderUI()`, `conditionalPanel()`, `shinyjs::show()`/`hide()`):
-  
-- Removed a broad `shiny:value` DOM rescan that caused unnecessary 
-  re-initialization after unrelated Shiny output updates.
-- Added proper widget teardown (`destroy()`) to prevent document-level 
-  event listener leaks in long-running sessions.
-- Widgets now emit their initial value to Shiny immediately after 
-  initialization, fixing a class of timing bugs with `conditionalPanel()`.
-- Opening a dropdown now closes any other open glasstabs dropdown, 
-  fixing a visual stacking issue where multiple dropdowns could appear 
-  simultaneously.
-- Widget state is now maintained internally in JavaScript rather than 
-  derived from DOM classes, improving performance and predictability.
-- Search input is debounced and filters against cached lowercase labels.
-- CSS additions: scroll containers for long option lists, styled 
-  scrollbars, and `.gt-loading` / `.gt-disabled` utility classes.
+This release adds server-side tab management helpers and improves dynamic tab
+behavior, alongside JavaScript reliability improvements for the select widgets.
+
+Changes include:
+
+- New exported tab helpers:
+  `updateGlassTabsUI()`, `showGlassTab()`, `hideGlassTab()`,
+  `appendGlassTab()`, and `removeGlassTab()`.
+- `glassTabsUI()` now validates invalid `selected` tab ids early.
+- The tab widget now reports its initial active tab to Shiny on first render,
+  improving `glassTabsServer()` behavior.
+- Added ARIA roles and selected-state attributes to tab navigation markup.
+- Improved runtime tab behavior for hide/show/append/remove flows and rapid
+  successive tab updates.
+- The JavaScript engine for `glassSelect()` and `glassMultiSelect()` was
+  refactored to improve reliability in dynamic Shiny UI contexts
+  (`renderUI()`, `conditionalPanel()`, `shinyjs::show()`/`hide()`).
+- Opening a dropdown now closes any other open glasstabs dropdown, fixing a
+  visual stacking issue where multiple dropdowns could appear simultaneously.
+- Added a cheatsheet vignette and a smoke-test example app documenting the new
+  tab-management features and common usage patterns.
 
