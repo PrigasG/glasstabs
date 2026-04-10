@@ -69,7 +69,13 @@
      TAB ENGINE
   ══════════════════════════════════════════════════════ */
   function initTabs(navbar) {
-    if (navbar._gtTabsInit) return;
+    /* Clean up previous init so dynamic tabs can safely re-initialize */
+    if (navbar._gtTabsInit) {
+      if (navbar._gtClickHandler)  navbar.removeEventListener('click',   navbar._gtClickHandler);
+      if (navbar._gtKeyHandler)    document.removeEventListener('keydown', navbar._gtKeyHandler);
+      if (navbar._gtResizeHandler) window.removeEventListener('resize',  navbar._gtResizeHandler);
+      navbar._gtClickHandler = navbar._gtKeyHandler = navbar._gtResizeHandler = navbar._gtActivate = null;
+    }
     navbar._gtTabsInit = true;
 
     var ns = navbar.getAttribute('data-ns');
@@ -209,6 +215,59 @@
       return dur;
     }
 
+    /* Activate a tab by value. skipFromAnim = true skips the transfer
+       animation (used when the previous tab is hidden or removed). */
+    function activateTab(target, skipFromAnim) {
+      var toEl = navbar.querySelector('.gt-tab-link[data-value="' + target + '"]');
+      if (!toEl || target === active) return;
+
+      var fromEl = skipFromAnim ? null
+        : navbar.querySelector('.gt-tab-link[data-value="' + active + '"]');
+
+      navbar.querySelectorAll('.gt-tab-link').forEach(function (t) {
+        t.classList.remove('active');
+        t.setAttribute('aria-selected', 'false');
+      });
+      toEl.classList.add('active');
+      toEl.setAttribute('aria-selected', 'true');
+
+      var animated = fromEl && !fromEl.classList.contains('gt-tab-hidden');
+      if (animated) {
+        placeHalo(fromEl, true, 1.0);
+        halo.style.opacity = '0.38';
+      }
+
+      var dur = animated ? animateTransfer(fromEl, toEl) : 0;
+
+      setTimeout(function () {
+        var ap = container.querySelector('.gt-tab-pane.active');
+        if (ap) ap.classList.remove('active');
+        var next = document.getElementById(ns + '-pane-' + target);
+        if (next) next.classList.add('active');
+        active = target;
+        if (window.Shiny) Shiny.setInputValue(ns + '-active_tab', target, { priority: 'event' });
+      }, dur > 0 ? Math.max(100, dur * 0.50) : 0);
+
+      if (dur > 0) {
+        setTimeout(function () {
+          placeHalo(toEl, false, 0.90);
+          setTimeout(function () { placeHalo(toEl, false, 1.0); }, 80);
+        }, dur * 0.60);
+
+        setTimeout(function () {
+          placeHalo(toEl, true, 1.0);
+          halo.classList.remove('gt-arrival-pulse');
+          void halo.offsetWidth;
+          halo.classList.add('gt-arrival-pulse');
+        }, dur);
+      } else {
+        placeHalo(toEl, true, 1.0);
+        setTimeout(function () { placeHalo(toEl, false, 1.0); }, 80);
+      }
+    }
+
+    navbar._gtActivate = activateTab;
+
     function initHalo() {
       var el = navbar.querySelector('.gt-tab-link.active');
       if (!el) return;
@@ -229,81 +288,40 @@
       document.fonts.ready.then(initHalo).catch(function () {});
     }
 
-    links.forEach(function (link) {
-      link.addEventListener('click', function () {
-        var target = link.getAttribute('data-value');
-        if (target === active) return;
+    /* Single delegated click handler — covers dynamically appended tabs */
+    navbar._gtClickHandler = function (e) {
+      var link = e.target.closest ? e.target.closest('.gt-tab-link') : null;
+      if (!link || link.classList.contains('gt-tab-hidden')) return;
+      activateTab(link.getAttribute('data-value'));
+    };
+    navbar.addEventListener('click', navbar._gtClickHandler);
 
-        var fromEl = navbar.querySelector('.gt-tab-link[data-value="' + active + '"]');
-        var toEl = navbar.querySelector('.gt-tab-link[data-value="' + target + '"]');
-        if (!toEl) return;
+    navbar._gtKeyHandler = function (e) {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      if (!navbar.contains(document.activeElement)) return;
 
-        links.forEach(function (t) { t.classList.remove('active'); });
-        toEl.classList.add('active');
-
-        if (fromEl) placeHalo(fromEl, true, 1.0);
-        halo.style.opacity = '0.38';
-
-        var dur = animateTransfer(fromEl, toEl);
-
-        setTimeout(function () {
-          var ap = container.querySelector('.gt-tab-pane.active');
-          if (ap) ap.classList.remove('active');
-
-          var next = document.getElementById(ns + '-pane-' + target);
-          if (next) next.classList.add('active');
-
-          active = target;
-
-          if (window.Shiny) {
-            Shiny.setInputValue(ns + '-active_tab', target, { priority: 'event' });
-          }
-        }, Math.max(100, dur * 0.50));
-
-        setTimeout(function () {
-          placeHalo(toEl, false, 0.90);
-          setTimeout(function () { placeHalo(toEl, false, 1.0); }, 80);
-        }, dur * 0.60);
-
-        setTimeout(function () {
-          placeHalo(toEl, true, 1.0);
-          halo.classList.remove('gt-arrival-pulse');
-          void halo.offsetWidth;
-          halo.classList.add('gt-arrival-pulse');
-        }, dur);
+      var visibleOrder = order.filter(function (v) {
+        var l = navbar.querySelector('.gt-tab-link[data-value="' + v + '"]');
+        return l && !l.classList.contains('gt-tab-hidden');
       });
-    });
+      var idx = visibleOrder.indexOf(active);
+      if (idx < 0) return;
 
-    if (!navbar._gtKeyHandler) {
-      navbar._gtKeyHandler = function (e) {
-        if (!container.contains(document.activeElement) &&
-            document.activeElement !== document.body) {
-          return;
-        }
+      if (e.key === 'ArrowRight') {
+        activateTab(visibleOrder[(idx + 1) % visibleOrder.length]);
+      }
 
-        var idx = order.indexOf(active);
-        if (idx < 0) return;
+      if (e.key === 'ArrowLeft') {
+        activateTab(visibleOrder[(idx - 1 + visibleOrder.length) % visibleOrder.length]);
+      }
+    };
+    document.addEventListener('keydown', navbar._gtKeyHandler);
 
-        if (e.key === 'ArrowRight') {
-          var right = navbar.querySelector('.gt-tab-link[data-value="' + order[(idx + 1) % order.length] + '"]');
-          if (right) right.click();
-        }
-
-        if (e.key === 'ArrowLeft') {
-          var left = navbar.querySelector('.gt-tab-link[data-value="' + order[(idx - 1 + order.length) % order.length] + '"]');
-          if (left) left.click();
-        }
-      };
-      document.addEventListener('keydown', navbar._gtKeyHandler);
-    }
-
-    if (!navbar._gtResizeHandler) {
-      navbar._gtResizeHandler = function () {
-        var activeLink = navbar.querySelector('.gt-tab-link[data-value="' + active + '"]');
-        if (activeLink) placeHalo(activeLink, true, 1.0);
-      };
-      window.addEventListener('resize', navbar._gtResizeHandler);
-    }
+    navbar._gtResizeHandler = function () {
+      var activeLink = navbar.querySelector('.gt-tab-link[data-value="' + active + '"]');
+      if (activeLink) placeHalo(activeLink, true, 1.0);
+    };
+    window.addEventListener('resize', navbar._gtResizeHandler);
   }
 
   /* ══════════════════════════════════════════════════════
@@ -1189,9 +1207,132 @@
 
   window.addEventListener('load', bootAll);
 
+  /* Report the initial active tab for every navbar once the Shiny session
+     is ready — so glassTabsServer() is never NULL on first render. */
+  document.addEventListener('shiny:sessioninitialized', function () {
+    document.querySelectorAll('.gt-navbar').forEach(function (nb) {
+      var ns = nb.getAttribute('data-ns');
+      var activeLink = nb.querySelector('.gt-tab-link.active');
+      if (ns && activeLink && window.Shiny) {
+        Shiny.setInputValue(ns + '-active_tab', activeLink.getAttribute('data-value'));
+      }
+    });
+  });
+
   if (typeof Shiny !== 'undefined') {
     Shiny.addCustomMessageHandler('glasstabs_reinit', function () {
       bootAll();
+    });
+
+    Shiny.addCustomMessageHandler('glasstabs_update_tabs', function (msg) {
+      if (!msg.ns || !msg.selected) return;
+      var navbar = document.querySelector('.gt-navbar[data-ns="' + msg.ns + '"]');
+      if (navbar && navbar._gtActivate) navbar._gtActivate(msg.selected);
+    });
+
+    Shiny.addCustomMessageHandler('glasstabs_show_tab', function (msg) {
+      var navbar = document.querySelector('.gt-navbar[data-ns="' + msg.ns + '"]');
+      if (!navbar) return;
+      var link = navbar.querySelector('.gt-tab-link[data-value="' + msg.value + '"]');
+      if (!link) return;
+      link.classList.remove('gt-tab-hidden');
+      if (link.classList.contains('active') && navbar._gtResizeHandler) navbar._gtResizeHandler();
+    });
+
+    Shiny.addCustomMessageHandler('glasstabs_hide_tab', function (msg) {
+      var navbar = document.querySelector('.gt-navbar[data-ns="' + msg.ns + '"]');
+      if (!navbar) return;
+      var link = navbar.querySelector('.gt-tab-link[data-value="' + msg.value + '"]');
+      if (!link) return;
+      var wasActive = link.classList.contains('active');
+      link.classList.add('gt-tab-hidden');
+      if (wasActive && navbar._gtActivate) {
+        var first = navbar.querySelector('.gt-tab-link:not(.gt-tab-hidden)');
+        if (first) navbar._gtActivate(first.getAttribute('data-value'), true);
+      }
+    });
+
+    Shiny.addCustomMessageHandler('glasstabs_append_tab', function (msg) {
+      var navbar = document.querySelector('.gt-navbar[data-ns="' + msg.ns + '"]');
+      if (!navbar) return;
+      if (navbar.querySelector('.gt-tab-link[data-value="' + msg.value + '"]')) return;
+
+      var container = navbar.closest('.gt-container')
+        || navbar.closest('.card-body')
+        || navbar.closest('.box-body')
+        || (navbar.parentElement && navbar.parentElement.parentElement)
+        || navbar.parentElement;
+      if (!container) return;
+
+      var paneWrap = container.querySelector('.gt-tab-wrap');
+      if (!paneWrap) return;
+
+      if (msg.select) {
+        navbar.querySelectorAll('.gt-tab-link.active').forEach(function (l) { l.classList.remove('active'); });
+        container.querySelectorAll('.gt-tab-pane.active').forEach(function (p) { p.classList.remove('active'); });
+      }
+
+      var tmp = document.createElement('div');
+      tmp.innerHTML = msg.link_html;
+      var newLink = tmp.firstElementChild;
+      if (msg.select) newLink.classList.add('active');
+      navbar.appendChild(newLink);
+
+      tmp.innerHTML = msg.pane_html;
+      var newPane = tmp.firstElementChild;
+      if (msg.select) newPane.classList.add('active');
+      paneWrap.appendChild(newPane);
+
+      navbar._gtTabsInit = false;
+      initTabs(navbar);
+
+      if (msg.select && window.Shiny) {
+        Shiny.setInputValue(msg.ns + '-active_tab', msg.value, { priority: 'event' });
+      }
+    });
+
+    Shiny.addCustomMessageHandler('glasstabs_remove_tab', function (msg) {
+      var navbar = document.querySelector('.gt-navbar[data-ns="' + msg.ns + '"]');
+      if (!navbar) return;
+      var link = navbar.querySelector('.gt-tab-link[data-value="' + msg.value + '"]');
+      if (!link) return;
+
+      var container = navbar.closest('.gt-container')
+        || navbar.closest('.card-body')
+        || navbar.closest('.box-body')
+        || (navbar.parentElement && navbar.parentElement.parentElement)
+        || navbar.parentElement;
+
+      var wasActive = link.classList.contains('active');
+      var nextValue = null;
+
+      if (wasActive) {
+        var remaining = Array.from(navbar.querySelectorAll('.gt-tab-link:not(.gt-tab-hidden)'))
+          .filter(function (l) { return l.getAttribute('data-value') !== msg.value; });
+        if (remaining.length) {
+          nextValue = remaining[0].getAttribute('data-value');
+          remaining[0].classList.add('active');
+          if (container) {
+            var ap = container.querySelector('.gt-tab-pane.active');
+            if (ap) ap.classList.remove('active');
+            var nextPane = document.getElementById(msg.ns + '-pane-' + nextValue);
+            if (nextPane) nextPane.classList.add('active');
+          }
+        }
+      }
+
+      link.remove();
+      if (container) {
+        var pane = document.getElementById(msg.ns + '-pane-' + msg.value);
+        if (pane) pane.remove();
+      }
+
+      navbar._gtTabsInit = false;
+      initTabs(navbar);
+
+      if (wasActive && nextValue && window.Shiny) {
+        Shiny.setInputValue(msg.ns + '-active_tab', nextValue, { priority: 'event' });
+      }
     });
   }
 

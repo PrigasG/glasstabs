@@ -30,3 +30,8 @@ test_that("useGlassTabs() glass.js file exists on disk", {
   dep <- useGlassTabs()
   expect_true(file.exists(file.path(dep$src$file, "glass.js")))
 })
+
+test_that("useGlassTabs() version matches DESCRIPTION", {
+  desc_ver <- as.character(utils::packageVersion("glasstabs"))
+  expect_equal(useGlassTabs()$version, desc_ver)
+})
