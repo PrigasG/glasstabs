@@ -106,7 +106,7 @@ ui <- fluidPage(
       glassMultiSelect(
         "metrics", metrics,
         label               = "Metrics",
-        selected            = names(metrics),
+        selected            = unname(metrics),
         show_style_switcher = FALSE,
         show_select_all     = FALSE
       )
@@ -167,7 +167,7 @@ server <- function(input, output, session) {
   metrics_sel <- glassMultiSelectValue(input, "metrics")
 
   # Convenience shorthands
-  region  <- reactive(region_sel$selected()  %||% "all")
+  region  <- reactive(region_sel()  %||% "all")
   sel_met <- reactive(metrics_sel$selected() %||% character(0))
 
   # ── Admin tab: show / hide ─────────────────────────────────────────────────
