@@ -377,6 +377,7 @@ Full vignettes are available on the documentation site:
 
 | Article                                                                               | Description                                                                                                                            |
 |---------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------|
+| [Cheatsheet](https://prigasg.github.io/glasstabs/articles/cheatsheet.html)            | Quick reference for tabs, selects, updates, and server helpers                                                                         |
 | [Getting started](https://prigasg.github.io/glasstabs/articles/getting-started.html)  | Progressive walkthrough of both widgets                                                                                                |
 | [Animated tabs](https://prigasg.github.io/glasstabs/articles/tabs.html)               | Full [`glassTabsUI()`](https://prigasg.github.io/glasstabs/reference/glassTabsUI.md) reference with theming and bs4Dash                |
 | [Multi-select filter](https://prigasg.github.io/glasstabs/articles/multiselect.html)  | Full [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md) reference with styles, tags and updates |
@@ -447,6 +448,14 @@ easing, and transfer trace.
   : Define a single glass tab panel
 - [`glassTabsServer()`](https://prigasg.github.io/glasstabs/reference/glassTabsServer.md)
   : Server logic for glass tabs
+- [`updateGlassTabsUI()`](https://prigasg.github.io/glasstabs/reference/updateGlassTabsUI.md)
+  : Programmatically switch the active glass tab
+- [`showGlassTab()`](https://prigasg.github.io/glasstabs/reference/showGlassTab.md)
+  [`hideGlassTab()`](https://prigasg.github.io/glasstabs/reference/showGlassTab.md)
+  : Show or hide a glass tab
+- [`appendGlassTab()`](https://prigasg.github.io/glasstabs/reference/appendGlassTab.md)
+  [`removeGlassTab()`](https://prigasg.github.io/glasstabs/reference/appendGlassTab.md)
+  : Append or remove a glass tab at runtime
 - [`glass_tab_theme()`](https://prigasg.github.io/glasstabs/reference/glass_tab_theme.md)
   : Create a custom color theme for glassTabsUI
 
@@ -474,6 +483,11 @@ theming, search, update helpers, and reactive value helpers.
   : Create a custom color theme for glass select widgets
 
 # Articles
+
+### Cheatsheet
+
+- [glasstabs
+  Cheatsheet](https://prigasg.github.io/glasstabs/articles/cheatsheet.md):
 
 ### Getting started
 

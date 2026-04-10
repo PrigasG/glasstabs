@@ -2,6 +2,42 @@
 
 ## glasstabs 0.2.0
 
+### New features
+
+#### Tab widget
+
+- Added
+  [`updateGlassTabsUI()`](https://prigasg.github.io/glasstabs/reference/updateGlassTabsUI.md)
+  for programmatic tab switching from the server.
+- Added
+  [`showGlassTab()`](https://prigasg.github.io/glasstabs/reference/showGlassTab.md)
+  and
+  [`hideGlassTab()`](https://prigasg.github.io/glasstabs/reference/showGlassTab.md)
+  for dynamically showing and hiding tabs at runtime.
+- Added
+  [`appendGlassTab()`](https://prigasg.github.io/glasstabs/reference/appendGlassTab.md)
+  and
+  [`removeGlassTab()`](https://prigasg.github.io/glasstabs/reference/appendGlassTab.md)
+  for adding and removing tabs at runtime.
+
+### Improvements
+
+- [`glassTabsUI()`](https://prigasg.github.io/glasstabs/reference/glassTabsUI.md)
+  now validates `selected` against the available
+  [`glassTabPanel()`](https://prigasg.github.io/glasstabs/reference/glassTabPanel.md)
+  values and errors early on invalid tab ids.
+- The tab widget now reports its initial active tab to Shiny immediately
+  after session startup, so
+  [`glassTabsServer()`](https://prigasg.github.io/glasstabs/reference/glassTabsServer.md)
+  is populated on first render.
+- Added ARIA roles and selected-state attributes to tab navigation
+  markup.
+- Improved tab re-initialization and transition handling for dynamic tab
+  changes, including show/hide, append/remove, and rapid successive
+  updates.
+- Improved halo and transfer-trace positioning after runtime tab layout
+  changes.
+
 ### Bug fixes
 
 - Opening a dropdown now closes any other open glasstabs dropdown,
@@ -26,6 +62,16 @@
 
 - Added scroll containers for long option lists, debounced search, and
   `.gt-loading` / `.gt-disabled` CSS utility classes.
+
+### Documentation
+
+- Added a dedicated cheatsheet vignette for common widget patterns and
+  server-side helpers.
+- Added a smoke-test example app covering programmatic tab switching,
+  dynamic tab visibility, runtime tab insertion/removal, and rapid
+  interaction paths.
+- Expanded README and pkgdown navigation to surface the new server-side
+  tab controls and cheatsheet more clearly.
 
 ------------------------------------------------------------------------
 

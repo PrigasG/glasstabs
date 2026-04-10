@@ -18,6 +18,14 @@ easing, and transfer trace.
   : Define a single glass tab panel
 - [`glassTabsServer()`](https://prigasg.github.io/glasstabs/reference/glassTabsServer.md)
   : Server logic for glass tabs
+- [`updateGlassTabsUI()`](https://prigasg.github.io/glasstabs/reference/updateGlassTabsUI.md)
+  : Programmatically switch the active glass tab
+- [`showGlassTab()`](https://prigasg.github.io/glasstabs/reference/showGlassTab.md)
+  [`hideGlassTab()`](https://prigasg.github.io/glasstabs/reference/showGlassTab.md)
+  : Show or hide a glass tab
+- [`appendGlassTab()`](https://prigasg.github.io/glasstabs/reference/appendGlassTab.md)
+  [`removeGlassTab()`](https://prigasg.github.io/glasstabs/reference/appendGlassTab.md)
+  : Append or remove a glass tab at runtime
 - [`glass_tab_theme()`](https://prigasg.github.io/glasstabs/reference/glass_tab_theme.md)
   : Create a custom color theme for glassTabsUI
 

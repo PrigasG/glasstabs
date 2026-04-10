@@ -17,7 +17,10 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/getting-started.html">Getting Started with glasstabs</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Cheatsheet</h6></li>
+    <li><a class="dropdown-item" href="../articles/cheatsheet.html">glasstabs Cheatsheet</a></li>
+    <li><a class="dropdown-item" href="../articles/getting-started.html">Getting Started with glasstabs</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Widgets</h6></li>
     <li><a class="dropdown-item" href="../articles/tabs.html">Animated Tabs with glasstabs</a></li>
@@ -42,6 +45,24 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2.0" id="glasstabs-020">glasstabs 0.2.0<a class="anchor" aria-label="anchor" href="#glasstabs-020"></a></h2>
 <div class="section level3">
+<h3 id="new-features-0-2-0">New features<a class="anchor" aria-label="anchor" href="#new-features-0-2-0"></a></h3>
+<div class="section level4">
+<h4 id="tab-widget-0-2-0">Tab widget<a class="anchor" aria-label="anchor" href="#tab-widget-0-2-0"></a></h4>
+<ul><li>Added <code><a href="../reference/updateGlassTabsUI.html">updateGlassTabsUI()</a></code> for programmatic tab switching from the server.</li>
+<li>Added <code><a href="../reference/showGlassTab.html">showGlassTab()</a></code> and <code><a href="../reference/showGlassTab.html">hideGlassTab()</a></code> for dynamically showing and hiding tabs at runtime.</li>
+<li>Added <code><a href="../reference/appendGlassTab.html">appendGlassTab()</a></code> and <code><a href="../reference/appendGlassTab.html">removeGlassTab()</a></code> for adding and removing tabs at runtime.</li>
+</ul></div>
+</div>
+<div class="section level3">
+<h3 id="improvements-0-2-0">Improvements<a class="anchor" aria-label="anchor" href="#improvements-0-2-0"></a></h3>
+<ul><li>
+<code><a href="../reference/glassTabsUI.html">glassTabsUI()</a></code> now validates <code>selected</code> against the available <code><a href="../reference/glassTabPanel.html">glassTabPanel()</a></code> values and errors early on invalid tab ids.</li>
+<li>The tab widget now reports its initial active tab to Shiny immediately after session startup, so <code><a href="../reference/glassTabsServer.html">glassTabsServer()</a></code> is populated on first render.</li>
+<li>Added ARIA roles and selected-state attributes to tab navigation markup.</li>
+<li>Improved tab re-initialization and transition handling for dynamic tab changes, including show/hide, append/remove, and rapid successive updates.</li>
+<li>Improved halo and transfer-trace positioning after runtime tab layout changes.</li>
+</ul></div>
+<div class="section level3">
 <h3 id="bug-fixes-0-2-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-2-0"></a></h3>
 <ul><li><p>Opening a dropdown now closes any other open glasstabs dropdown, fixing a visual stacking issue where multiple dropdowns appeared simultaneously.</p></li>
 <li><p>Improved widget lifecycle in dynamic UI (<code><a href="https://rdrr.io/pkg/shiny/man/renderUI.html" class="external-link">renderUI()</a></code>, <code><a href="https://rdrr.io/pkg/shiny/man/conditionalPanel.html" class="external-link">conditionalPanel()</a></code>). Widgets initialize more reliably and clean up properly when removed.</p></li>
@@ -51,6 +72,12 @@
 <h3 id="internal-improvements-0-2-0">Internal improvements<a class="anchor" aria-label="anchor" href="#internal-improvements-0-2-0"></a></h3>
 <ul><li><p>JavaScript engine refactored to use internal state instead of DOM scanning. No changes to the R API — all existing code works without modification.</p></li>
 <li><p>Added scroll containers for long option lists, debounced search, and <code>.gt-loading</code> / <code>.gt-disabled</code> CSS utility classes.</p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="documentation-0-2-0">Documentation<a class="anchor" aria-label="anchor" href="#documentation-0-2-0"></a></h3>
+<ul><li>Added a dedicated cheatsheet vignette for common widget patterns and server-side helpers.</li>
+<li>Added a smoke-test example app covering programmatic tab switching, dynamic tab visibility, runtime tab insertion/removal, and rapid interaction paths.</li>
+<li>Expanded README and pkgdown navigation to surface the new server-side tab controls and cheatsheet more clearly.</li>
 </ul><hr></div>
 </div>
     <div class="section level2">
