@@ -1283,9 +1283,6 @@
       if (msg.select) newPane.classList.add('active');
       paneWrap.appendChild(newPane);
 
-      /* Bind any Shiny inputs/outputs inside the new pane */
-      if (window.Shiny && Shiny.bindAll) Shiny.bindAll(newPane);
-
       navbar._gtTabsInit = false;
       initTabs(navbar);
 
