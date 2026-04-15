@@ -42,21 +42,31 @@ articles:
 
 reference:
   - title: Setup
-    desc: Load CSS and JavaScript into your Shiny page.
+    desc: Load CSS/JavaScript and launch built-in examples.
     contents:
       - useGlassTabs
+      - runGlassExample
 
-  - title: Tab widget
+  - title: Tab widget — UI
     desc: |
       Animated glass-morphism tab navigation with a sliding halo, spring easing, and transfer trace.
     contents:
       - glassTabsUI
       - glassTabPanel
-      - glassTabsServer
-      - updateGlassTabsUI
-      - showGlassTab
-      - appendGlassTab
+      - glassTabsOutput
       - glass_tab_theme
+
+  - title: Tab widget — server
+    desc: |
+      Server-side helpers for reading, switching, showing/hiding, disabling, badging, and dynamically rendering tabs.
+    contents:
+      - glassTabsServer
+      - renderGlassTabs
+      - updateGlassTabsUI
+      - updateGlassTabBadge
+      - showGlassTab
+      - disableGlassTab
+      - appendGlassTab
 
   - title: Select widgets
     desc: |

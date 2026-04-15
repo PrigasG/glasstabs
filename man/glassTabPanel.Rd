@@ -4,7 +4,7 @@
 \alias{glassTabPanel}
 \title{Define a single glass tab panel}
 \usage{
-glassTabPanel(value, label, ..., selected = FALSE)
+glassTabPanel(value, label, ..., icon = NULL, selected = FALSE)
 }
 \arguments{
 \item{value}{A unique string identifier for this tab (e.g. \code{"A"}).}
@@ -12,6 +12,10 @@ glassTabPanel(value, label, ..., selected = FALSE)
 \item{label}{The text shown on the tab button.}
 
 \item{...}{UI elements for the pane content.}
+
+\item{icon}{Optional icon shown to the left of the tab label. Accepts
+any htmltools-compatible tag, e.g. \code{shiny::icon("table")} or
+\code{fontawesome::fa("house")}. Pass \code{NULL} (default) for no icon.}
 
 \item{selected}{Logical. Whether this tab starts selected. Only the first
 \code{selected = TRUE} tab takes effect; defaults to \code{FALSE}.}
@@ -24,9 +28,16 @@ Used as child arguments inside \code{\link[=glassTabsUI]{glassTabsUI()}}. Each c
 button and its associated content pane.
 }
 \examples{
+# Plain text label
 glassTabPanel("overview", "Overview",
   shiny::h3("Welcome"),
   shiny::p("This is the overview tab.")
+)
+
+# With a Shiny icon
+glassTabPanel("data", "Data",
+  icon = shiny::icon("table"),
+  shiny::p("Data content here.")
 )
 
 }

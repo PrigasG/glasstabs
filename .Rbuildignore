@@ -8,5 +8,6 @@
 ^\.github$
 ^CRAN-SUBMISSION$
 ^CLAUDE.md
+^\.claude$
 ^doc$
 ^Meta$

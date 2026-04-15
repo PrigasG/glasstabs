@@ -6,23 +6,34 @@
 #' @param value    A unique string identifier for this tab (e.g. `"A"`).
 #' @param label    The text shown on the tab button.
 #' @param ...      UI elements for the pane content.
+#' @param icon     Optional icon shown to the left of the tab label. Accepts
+#'   any htmltools-compatible tag, e.g. `shiny::icon("table")` or
+#'   `fontawesome::fa("house")`. Pass `NULL` (default) for no icon.
 #' @param selected Logical. Whether this tab starts selected. Only the first
 #'   `selected = TRUE` tab takes effect; defaults to `FALSE`.
 #'
 #' @return A list of class `"glassTabPanel"` consumed by [glassTabsUI()].
 #'
 #' @examples
+#' # Plain text label
 #' glassTabPanel("overview", "Overview",
 #'   shiny::h3("Welcome"),
 #'   shiny::p("This is the overview tab.")
 #' )
 #'
+#' # With a Shiny icon
+#' glassTabPanel("data", "Data",
+#'   icon = shiny::icon("table"),
+#'   shiny::p("Data content here.")
+#' )
+#'
 #' @export
-glassTabPanel <- function(value, label, ..., selected = FALSE) {
+glassTabPanel <- function(value, label, ..., icon = NULL, selected = FALSE) {
   structure(
     list(
       value    = value,
       label    = label,
+      icon     = icon,
       content  = list(...),
       selected = isTRUE(selected)
     ),
@@ -92,6 +103,14 @@ glassTabsUI <- function(
   tab_links <- lapply(panels, function(p) {
     is_active <- p$value == active_val
     cls <- paste("gt-tab-link", if (is_active) "active" else "")
+    label_content <- if (!is.null(p$icon)) {
+      list(
+        shiny::tags$span(class = "gt-tab-icon", p$icon),
+        shiny::tags$span(class = "gt-tab-label", p$label)
+      )
+    } else {
+      list(p$label)
+    }
     shiny::tags$div(
       class          = cls,
       `data-value`   = p$value,
@@ -99,7 +118,7 @@ glassTabsUI <- function(
       role           = "tab",
       tabindex       = "0",
       `aria-selected` = if (is_active) "true" else "false",
-      p$label
+      label_content
     )
   })
 
@@ -193,6 +212,50 @@ updateGlassTabsUI <- function(session, id, selected) {
   )
 }
 
+#' Update the badge count on a glass tab
+#'
+#' Adds or updates a small numeric badge on a tab button — useful for
+#' surfacing counts such as unread items, pending rows, or notification
+#' totals. Set `count` to `0` or `NA` to hide the badge.
+#'
+#' @param session Shiny session object.
+#' @param id      Module id matching the `id` passed to [glassTabsUI()].
+#' @param value   Value of the tab to update.
+#' @param count   Integer count to display. Values above 99 are shown as
+#'   `"99+"`. `0` or `NA` hides the badge.
+#'
+#' @return Called for its side effect; returns \code{NULL} invisibly.
+#'
+#' @examples
+#' if (interactive()) {
+#'   library(shiny)
+#'   ui <- fluidPage(
+#'     useGlassTabs(),
+#'     glassTabsUI(
+#'       "tabs",
+#'       glassTabPanel("inbox",  "Inbox",  p("Messages here"), selected = TRUE),
+#'       glassTabPanel("sent",   "Sent",   p("Sent items")),
+#'       glassTabPanel("drafts", "Drafts", p("Draft items"))
+#'     ),
+#'     actionButton("refresh", "Refresh counts")
+#'   )
+#'   server <- function(input, output, session) {
+#'     observeEvent(input$refresh, {
+#'       updateGlassTabBadge(session, "tabs", "inbox",  count = sample(1:20, 1))
+#'       updateGlassTabBadge(session, "tabs", "drafts", count = sample(0:5, 1))
+#'     })
+#'   }
+#'   shinyApp(ui, server)
+#' }
+#' @export
+updateGlassTabBadge <- function(session, id, value, count) {
+  count <- if (is.na(count)) 0L else as.integer(count)
+  session$sendCustomMessage(
+    "glasstabs_tab_badge",
+    list(ns = session$ns(id), value = value, count = count)
+  )
+}
+
 #' Show or hide a glass tab
 #'
 #' `showGlassTab()` makes a hidden tab visible again.
@@ -239,6 +302,57 @@ showGlassTab <- function(session, id, value) {
 hideGlassTab <- function(session, id, value) {
   session$sendCustomMessage(
     "glasstabs_hide_tab",
+    list(ns = session$ns(id), value = value)
+  )
+}
+
+#' Disable or enable a glass tab
+#'
+#' `disableGlassTab()` grays out a tab and prevents the user from clicking it
+#' without removing it from the navigation bar. `enableGlassTab()` reverses
+#' this. Unlike [hideGlassTab()], a disabled tab remains visible.
+#'
+#' @param session Shiny session object.
+#' @param id      Module id matching the `id` passed to [glassTabsUI()].
+#' @param value   Value of the tab to disable or enable.
+#'
+#' @return Called for its side effect; returns \code{NULL} invisibly.
+#'
+#' @examples
+#' if (interactive()) {
+#'   library(shiny)
+#'   ui <- fluidPage(
+#'     useGlassTabs(),
+#'     glassTabsUI(
+#'       "tabs",
+#'       glassTabPanel("a", "A", p("Tab A"), selected = TRUE),
+#'       glassTabPanel("b", "B", p("Tab B")),
+#'       glassTabPanel("locked", "Locked", p("Locked content"))
+#'     ),
+#'     checkboxInput("unlocked", "Unlock tab", FALSE)
+#'   )
+#'   server <- function(input, output, session) {
+#'     # Start with "locked" tab disabled
+#'     observe({
+#'       if (input$unlocked) enableGlassTab(session, "tabs", "locked")
+#'       else                disableGlassTab(session, "tabs", "locked")
+#'     })
+#'   }
+#'   shinyApp(ui, server)
+#' }
+#' @export
+disableGlassTab <- function(session, id, value) {
+  session$sendCustomMessage(
+    "glasstabs_disable_tab",
+    list(ns = session$ns(id), value = value)
+  )
+}
+
+#' @rdname disableGlassTab
+#' @export
+enableGlassTab <- function(session, id, value) {
+  session$sendCustomMessage(
+    "glasstabs_enable_tab",
     list(ns = session$ns(id), value = value)
   )
 }
@@ -333,16 +447,21 @@ removeGlassTab <- function(session, id, value) {
 
 #' Server logic for glass tabs
 #'
-#' Tracks the active tab and exposes it as a reactive value.
+#' Tracks the active tab and exposes it as a reactive value. Optionally
+#' integrates with Shiny's bookmarking system so the active tab is preserved
+#' in bookmarked URLs.
 #'
 #' `glassTabsServer()` follows the same calling convention as all Shiny module
 #' server functions: pass the **bare** module id, not a namespaced one.
 #' Inside a parent module, pair it with `glassTabsUI(ns("tabs"), ...)` in the
 #' UI, and call `glassTabsServer("tabs")` (without `ns()`) in the server.
 #'
-#' @param id Module id matching the `id` passed to [glassTabsUI()].
+#' @param id       Module id matching the `id` passed to [glassTabsUI()].
 #'   Do **not** wrap this in `ns()` — `glassTabsServer()` handles namespacing
 #'   internally via [shiny::moduleServer()].
+#' @param bookmark Logical. When `TRUE` (default), registers [shiny::onBookmark()]
+#'   and [shiny::onRestored()] hooks so the active tab is saved and restored
+#'   automatically when Shiny bookmarking is enabled. Set to `FALSE` to opt out.
 #'
 #' @return A reactive expression returning the active tab value.
 #'
@@ -363,6 +482,26 @@ removeGlassTab <- function(session, id, value) {
 #'     observe(print(active()))
 #'   }
 #'   shinyApp(ui, server)
+#' }
+#'
+#' # --- Bookmarking ---
+#' if (interactive()) {
+#'   library(shiny)
+#'   ui <- function(request) {
+#'     fluidPage(
+#'       useGlassTabs(),
+#'       bookmarkButton(),
+#'       glassTabsUI(
+#'         "tabs",
+#'         glassTabPanel("a", "A", p("Tab A"), selected = TRUE),
+#'         glassTabPanel("b", "B", p("Tab B"))
+#'       )
+#'     )
+#'   }
+#'   server <- function(input, output, session) {
+#'     active <- glassTabsServer("tabs", bookmark = TRUE)
+#'   }
+#'   shinyApp(ui, server, enableBookmarking = "url")
 #' }
 #'
 #' # --- Inside a Shiny module ---
@@ -387,7 +526,7 @@ removeGlassTab <- function(session, id, value) {
 #'   })
 #' }
 #' @export
-glassTabsServer <- function(id) {
+glassTabsServer <- function(id, bookmark = TRUE) {
   if (grepl("-", id, fixed = TRUE)) {
     warning(
       sprintf(
@@ -403,8 +542,128 @@ glassTabsServer <- function(id) {
   }
 
   shiny::moduleServer(id, function(input, output, session) {
-    shiny::reactive({
+    active <- shiny::reactive({
       input[["active_tab"]] %||% NULL
     })
+
+    if (isTRUE(bookmark)) {
+      session$onBookmark(function(state) {
+        state$values$active_tab <- active()
+      })
+
+      session$onRestored(function(state) {
+        val <- state$values$active_tab
+        if (!is.null(val) && nzchar(val)) {
+          # Reconstruct the fully-qualified namespace that the navbar uses as
+          # data-ns.  Inside moduleServer("tabs"), session$ns("") = "tabs-";
+          # strip the trailing separator to get "tabs" (or "parent-tabs").
+          ns_str <- gsub("-$", "", session$ns(""))
+          session$sendCustomMessage(
+            "glasstabs_update_tabs",
+            list(ns = ns_str, selected = val)
+          )
+        }
+      })
+    }
+
+    active
+  })
+}
+
+#' Dynamic glass tab UI output
+#'
+#' A drop-in replacement for [shiny::uiOutput()] that pairs with
+#' [renderGlassTabs()]. It creates a placeholder `<div>` that Shiny fills
+#' with a fully reactive [glassTabsUI()] when the server-side render function
+#' runs. The JavaScript engine is automatically (re-)initialised after each
+#' render.
+#'
+#' @param outputId The output id used in the paired [renderGlassTabs()] call.
+#' @param ...      Additional arguments forwarded to [shiny::uiOutput()].
+#'
+#' @return A `shiny.tag` suitable for use in a Shiny UI.
+#'
+#' @examples
+#' if (interactive()) {
+#'   library(shiny)
+#'
+#'   tab_data <- list(
+#'     list(value = "a", label = "Alpha"),
+#'     list(value = "b", label = "Beta"),
+#'     list(value = "c", label = "Gamma")
+#'   )
+#'
+#'   ui <- fluidPage(
+#'     useGlassTabs(),
+#'     selectInput("n", "Show tabs", choices = 2:3, selected = 2),
+#'     glassTabsOutput("dynamic_tabs")
+#'   )
+#'
+#'   server <- function(input, output, session) {
+#'     output$dynamic_tabs <- renderGlassTabs({
+#'       panels <- lapply(
+#'         head(tab_data, as.integer(input$n)),
+#'         function(t) glassTabPanel(t$value, t$label, p(t$label))
+#'       )
+#'       do.call(glassTabsUI, c(list("dyn"), panels))
+#'     })
+#'   }
+#'
+#'   shinyApp(ui, server)
+#' }
+#' @export
+glassTabsOutput <- function(outputId, ...) {
+  shiny::uiOutput(outputId, ...)
+}
+
+#' Render a reactive glass tab UI
+#'
+#' Server-side render function that pairs with [glassTabsOutput()]. The
+#' expression should return a [glassTabsUI()] call. After each render the
+#' glasstabs JavaScript engine is automatically reinitialised so animations and
+#' event handlers are correctly attached to the new DOM nodes.
+#'
+#' @param expr   An expression that returns a [glassTabsUI()] tag object.
+#' @param env    The environment in which to evaluate `expr`.
+#' @param quoted Logical. Whether `expr` is already quoted.
+#'
+#' @return A render function suitable for assigning to an `output` slot.
+#'
+#' @examples
+#' if (interactive()) {
+#'   library(shiny)
+#'
+#'   ui <- fluidPage(
+#'     useGlassTabs(),
+#'     radioButtons("theme", "Theme", c("dark", "light"), inline = TRUE),
+#'     glassTabsOutput("tabs_out")
+#'   )
+#'
+#'   server <- function(input, output, session) {
+#'     output$tabs_out <- renderGlassTabs({
+#'       glassTabsUI(
+#'         "themed",
+#'         glassTabPanel("x", "X", selected = TRUE, p("X content")),
+#'         glassTabPanel("y", "Y", p("Y content")),
+#'         theme = input$theme
+#'       )
+#'     })
+#'   }
+#'
+#'   shinyApp(ui, server)
+#' }
+#' @export
+renderGlassTabs <- function(expr, env = parent.frame(), quoted = FALSE) {
+  func <- shiny::exprToFunction(expr, env, quoted)
+
+  shiny::renderUI({
+    result <- func()
+    session <- shiny::getDefaultReactiveDomain()
+    if (!is.null(session)) {
+      session$onFlushed(function() {
+        session$sendCustomMessage("glasstabs_reinit", list())
+      }, once = TRUE)
+    }
+    result
   })
 }

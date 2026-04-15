@@ -654,3 +654,43 @@
 .gt-ms-wrap.gt-disabled .gt-ms-trigger{
   cursor:not-allowed;
 }
+
+/* ── Tab disabled state ───────────────────────────────────────────────── */
+.gt-tab-link.gt-tab-disabled{
+  opacity:0.38;
+  pointer-events:none;
+  cursor:not-allowed;
+}
+
+/* ── Tab icon ─────────────────────────────────────────────────────────── */
+.gt-tab-icon{
+  display:inline-flex;
+  align-items:center;
+  margin-right:0.35em;
+  font-size:0.9em;
+  opacity:0.85;
+  vertical-align:middle;
+}
+.gt-tab-label{
+  vertical-align:middle;
+}
+
+/* ── Tab badge ────────────────────────────────────────────────────────── */
+.gt-tab-badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  background:var(--gt-halo-border,rgba(126,195,247,0.55));
+  color:#fff;
+  border-radius:9999px;
+  font-size:0.62em;
+  font-weight:700;
+  line-height:1;
+  min-width:1.5em;
+  height:1.5em;
+  padding:0 0.4em;
+  margin-left:0.38em;
+  vertical-align:middle;
+  letter-spacing:0.01em;
+}
+

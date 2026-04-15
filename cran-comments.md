@@ -3,7 +3,7 @@
 0 errors | 0 warnings | 0 notes
 
 Tested on:
-- local macOS: R 4.4.x
+- local Windows 11: R 4.5.1
 - GitHub Actions CI: macOS, Windows, Ubuntu on R release and devel
 - win-builder: R release and devel
 
@@ -11,27 +11,26 @@ Tested on:
 
 This is a resubmission.
 
-## Changes in this version
- 
-This release adds server-side tab management helpers and improves dynamic tab
-behavior, alongside JavaScript reliability improvements for the select widgets.
+## Changes in this version (0.3.0)
 
-Changes include:
+New exported functions:
 
-- New exported tab helpers:
-  `updateGlassTabsUI()`, `showGlassTab()`, `hideGlassTab()`,
-  `appendGlassTab()`, and `removeGlassTab()`.
-- `glassTabsUI()` now validates invalid `selected` tab ids early.
-- The tab widget now reports its initial active tab to Shiny on first render,
-  improving `glassTabsServer()` behavior.
-- Added ARIA roles and selected-state attributes to tab navigation markup.
-- Improved runtime tab behavior for hide/show/append/remove flows and rapid
-  successive tab updates.
-- The JavaScript engine for `glassSelect()` and `glassMultiSelect()` was
-  refactored to improve reliability in dynamic Shiny UI contexts
-  (`renderUI()`, `conditionalPanel()`, `shinyjs::show()`/`hide()`).
-- Opening a dropdown now closes any other open glasstabs dropdown, fixing a
-  visual stacking issue where multiple dropdowns could appear simultaneously.
-- Added a cheatsheet vignette and a smoke-test example app documenting the new
-  tab-management features and common usage patterns.
+- `runGlassExample()` — launches built-in example Shiny apps.
+- `glassTabPanel()` gains an `icon` argument accepting any
+  htmltools-compatible tag (e.g. `shiny::icon("table")`).
+- `disableGlassTab()` / `enableGlassTab()` — gray out a tab without hiding it.
+- `updateGlassTabBadge()` — display a live numeric count badge on a tab button.
+- `glassTabsServer()` gains a `bookmark` argument (default `TRUE`) for Shiny
+  URL bookmark integration.
+- `glassTabsOutput()` / `renderGlassTabs()` — server-driven reactive tab
+  rendering; JS reinitialises automatically after each render.
+
+Other improvements:
+
+- `glassTabsUI()` now errors early on duplicate `glassTabPanel()` values.
+- `glassTabsServer()` warns on namespaced ids (containing `"-"`).
+- CSS: added `.gt-tab-disabled`, `.gt-tab-icon`, `.gt-tab-label`, `.gt-tab-badge`.
+- JS: scoped `shiny:value` listener for automatic reinit on `renderGlassTabs()`.
+- Added `inst/cheatsheet/glasstabs-cheatsheet.tex` — printable LaTeX reference.
+- Cheatsheet vignette extended with module usage, dynamic values, and bs4Dash.
 

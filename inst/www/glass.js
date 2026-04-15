@@ -1396,11 +1396,63 @@
       }
     });
 
+    Shiny.addCustomMessageHandler('glasstabs_disable_tab', function (msg) {
+      var navbar = document.querySelector('.gt-navbar[data-ns="' + msg.ns + '"]');
+      if (!navbar) return;
+      var link = navbar.querySelector('.gt-tab-link[data-value="' + msg.value + '"]');
+      if (!link) return;
+      link.classList.add('gt-tab-disabled');
+      link.setAttribute('aria-disabled', 'true');
+      link.setAttribute('tabindex', '-1');
+    });
+
+    Shiny.addCustomMessageHandler('glasstabs_enable_tab', function (msg) {
+      var navbar = document.querySelector('.gt-navbar[data-ns="' + msg.ns + '"]');
+      if (!navbar) return;
+      var link = navbar.querySelector('.gt-tab-link[data-value="' + msg.value + '"]');
+      if (!link) return;
+      link.classList.remove('gt-tab-disabled');
+      link.removeAttribute('aria-disabled');
+      link.setAttribute('tabindex', '0');
+    });
+
+    Shiny.addCustomMessageHandler('glasstabs_tab_badge', function (msg) {
+      var navbar = document.querySelector('.gt-navbar[data-ns="' + msg.ns + '"]');
+      if (!navbar) return;
+      var link = navbar.querySelector('.gt-tab-link[data-value="' + msg.value + '"]');
+      if (!link) return;
+      var badge = link.querySelector('.gt-tab-badge');
+      if (!badge) {
+        badge = document.createElement('span');
+        badge.className = 'gt-tab-badge';
+        link.appendChild(badge);
+      }
+      var n = parseInt(msg.count, 10);
+      if (isNaN(n) || n <= 0) {
+        badge.textContent = '';
+        badge.style.display = 'none';
+      } else {
+        badge.textContent = n > 99 ? '99+' : String(n);
+        badge.style.display = '';
+      }
+    });
+
     registerCustomMessageHandlers._done = true;
     if (window.Shiny && window.Shiny.setInputValue) {
       Shiny.setInputValue('glasstabs_debug_handlers_registered', true, { priority: 'event' });
     }
   }
+
+  /* Re-init glasstabs elements injected by renderGlassTabs / renderUI.
+     Only fires bootAll() when the updated output actually contains glasstabs
+     nodes, so ordinary Shiny outputs are not affected. */
+  document.addEventListener('shiny:value', function (e) {
+    var el = e.target || (e.binding && e.binding.el);
+    if (!el) return;
+    if (el.querySelector('.gt-navbar, .gt-gs-wrap, .gt-ms-wrap')) {
+      setTimeout(bootAll, 0);
+    }
+  });
 
   registerCustomMessageHandlers();
   document.addEventListener('shiny:sessioninitialized', registerCustomMessageHandlers);

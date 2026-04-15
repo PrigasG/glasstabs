@@ -1,14 +1,18 @@
 Package: glasstabs
 Title: Animated Glass-Style Tabs and Multi-Select Filter for 'Shiny'
-Version: 0.2.1
+Version: 0.3.0
 Authors@R: 
     person("George", "Arthur", , "prigasgenthian48@gmail.com", role = c("aut", "cre"))
 Description: Tools for creating animated glassmorphism-style tab
     navigation and multi-select dropdown filters in 'shiny' applications.
     The package provides a tab navigation component and a searchable
     multi-select widget with multiple checkbox indicator styles,
-    select-all controls, and customizable colour themes. The widgets are
-    compatible with standard 'shiny' layouts and 'bs4Dash' dashboards.
+    select-all controls, and customizable colour themes. Additional
+    helpers allow tabs to be disabled, badged with numeric counts, rendered
+    reactively via 'renderGlassTabs()', and bookmarked via Shiny's URL
+    bookmarking system. Built-in example apps can be launched with
+    'runGlassExample()'. The widgets are compatible with standard 'shiny'
+    layouts and 'bs4Dash' dashboards.
 License: MIT + file LICENSE
 URL: https://github.com/PrigasG/glasstabs,
     https://prigasg.github.io/glasstabs/

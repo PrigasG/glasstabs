@@ -1,3 +1,53 @@
+# glasstabs 0.3.0
+
+## New features
+
+### Tab widget
+
+* Added `runGlassExample()` to launch any of the built-in example apps
+  directly from the R console (`runGlassExample("smoke-test")`, etc.).
+* Added `icon` argument to `glassTabPanel()` — accepts any htmltools-compatible
+  tag (e.g. `shiny::icon("table")`). Renders with `gt-tab-icon` / `gt-tab-label`
+  spans so icon and text can be styled independently.
+* Added `disableGlassTab()` and `enableGlassTab()` — gray out a tab without
+  hiding it. Completes the visibility/disabled/removal trio alongside
+  `showGlassTab()` / `hideGlassTab()`.
+* Added `updateGlassTabBadge()` — set a numeric count badge on any tab button.
+  Pass `count = 0` or `count = NA` to hide the badge. Values above 99 display
+  as `"99+"`.
+* `glassTabsServer()` now integrates with Shiny's URL bookmarking: the active
+  tab is automatically saved and restored when `enableBookmarking = "url"` is
+  set on the app. Opt out per widget with `bookmark = FALSE`.
+* Added `glassTabsOutput()` / `renderGlassTabs()` for server-driven tab
+  rendering. The JavaScript engine re-initialises automatically after each
+  render via a scoped `shiny:value` listener, so no manual `glasstabs_reinit`
+  calls are needed.
+
+## Improvements
+
+* `glassTabsUI()` now errors early on duplicate `glassTabPanel()` values,
+  reporting the offending value(s) by name.
+* `glassTabsServer()` emits a `warning()` when the `id` argument contains `"-"`,
+  which is the most common sign that `ns("tabs")` was passed instead of the bare
+  `"tabs"` id. The warning includes corrective guidance.
+* CSS: added `.gt-tab-disabled`, `.gt-tab-icon`, `.gt-tab-label`, and
+  `.gt-tab-badge` rules. Badges adapt their background to the active halo colour
+  via the existing CSS custom property.
+* `shiny:value` listener limits bootAll re-initialisation to outputs that
+  actually contain glasstabs elements, so ordinary Shiny outputs are unaffected.
+* Added `inst/cheatsheet/glasstabs-cheatsheet.tex` — a printable two-column
+  LaTeX reference card covering the full API, module pattern, bs4Dash integration,
+  theming, and common gotchas.
+
+## Documentation
+
+* Cheatsheet vignette (`vignettes/cheatsheet.Rmd`) extended with new sections:
+  "Tabs inside a Shiny module", "Dynamic tab values and selected",
+  "Tabs inside bs4Dash", and updated common gotchas.
+* All new functions have full roxygen docs, `@examples`, and cross-links.
+
+---
+
 # glasstabs 0.2.1
  
 ## New features

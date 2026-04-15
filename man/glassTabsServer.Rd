@@ -4,18 +4,33 @@
 \alias{glassTabsServer}
 \title{Server logic for glass tabs}
 \usage{
-glassTabsServer(id)
+glassTabsServer(id, bookmark = TRUE)
 }
 \arguments{
-\item{id}{Module id matching the \code{id} passed to \code{\link[=glassTabsUI]{glassTabsUI()}}.}
+\item{id}{Module id matching the \code{id} passed to \code{\link[=glassTabsUI]{glassTabsUI()}}.
+Do \strong{not} wrap this in \code{ns()} — \code{glassTabsServer()} handles namespacing
+internally via \code{\link[shiny:moduleServer]{shiny::moduleServer()}}.}
+
+\item{bookmark}{Logical. When \code{TRUE} (default), registers \code{\link[shiny:onBookmark]{shiny::onBookmark()}}
+and \code{\link[shiny:onBookmark]{shiny::onRestored()}} hooks so the active tab is saved and restored
+automatically when Shiny bookmarking is enabled. Set to \code{FALSE} to opt out.}
 }
 \value{
 A reactive expression returning the active tab value.
 }
 \description{
-Tracks the active tab and exposes it as a reactive value.
+Tracks the active tab and exposes it as a reactive value. Optionally
+integrates with Shiny's bookmarking system so the active tab is preserved
+in bookmarked URLs.
+}
+\details{
+\code{glassTabsServer()} follows the same calling convention as all Shiny module
+server functions: pass the \strong{bare} module id, not a namespaced one.
+Inside a parent module, pair it with \code{glassTabsUI(ns("tabs"), ...)} in the
+UI, and call \code{glassTabsServer("tabs")} (without \code{ns()}) in the server.
 }
 \examples{
+# --- Standalone app ---
 if (interactive()) {
   library(shiny)
   ui <- fluidPage(
@@ -31,5 +46,47 @@ if (interactive()) {
     observe(print(active()))
   }
   shinyApp(ui, server)
+}
+
+# --- Bookmarking ---
+if (interactive()) {
+  library(shiny)
+  ui <- function(request) {
+    fluidPage(
+      useGlassTabs(),
+      bookmarkButton(),
+      glassTabsUI(
+        "tabs",
+        glassTabPanel("a", "A", p("Tab A"), selected = TRUE),
+        glassTabPanel("b", "B", p("Tab B"))
+      )
+    )
+  }
+  server <- function(input, output, session) {
+    active <- glassTabsServer("tabs", bookmark = TRUE)
+  }
+  shinyApp(ui, server, enableBookmarking = "url")
+}
+
+# --- Inside a Shiny module ---
+# UI side: use ns() to namespace the widget id
+my_module_ui <- function(id) {
+  ns <- shiny::NS(id)
+  shiny::tagList(
+    useGlassTabs(),
+    glassTabsUI(
+      ns("tabs"),                          # <-- ns() wraps the id here
+      glassTabPanel("a", "A", p("Tab A"), selected = TRUE),
+      glassTabPanel("b", "B", p("Tab B"))
+    )
+  )
+}
+
+# Server side: pass the bare id — NOT ns("tabs")
+my_module_server <- function(id) {
+  shiny::moduleServer(id, function(input, output, session) {
+    active <- glassTabsServer("tabs")     # <-- bare id, no ns()
+    shiny::observe(print(active()))
+  })
 }
 }
