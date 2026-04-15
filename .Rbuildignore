@@ -11,3 +11,6 @@
 ^\.claude$
 ^doc$
 ^Meta$
+^inst/cheatsheet/.*\.aux$
+^inst/cheatsheet/.*\.log$
+^inst/cheatsheet/.*\.out$

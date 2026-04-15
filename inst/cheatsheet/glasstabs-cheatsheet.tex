@@ -1,367 +1,400 @@
-% glasstabs cheatsheet
+% glasstabs cheatsheet  v0.3.0
 % Compile with: pdflatex glasstabs-cheatsheet.tex
-% Requires: geometry, multicol, parskip, xcolor, fancyvrb, hyperref, fontenc, inputenc
-\documentclass[10pt,a4paper]{article}
+\documentclass[9pt,a4paper]{article}
 
-\usepackage[a4paper,margin=1cm,landscape]{geometry}
+\usepackage[a4paper,margin=0.9cm,landscape]{geometry}
 \usepackage{multicol}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
-\usepackage{parskip}
 \usepackage{xcolor}
-\usepackage{fancyvrb}
+\usepackage{listings}
 \usepackage{hyperref}
-\usepackage{microtype}
-\usepackage{mdframed}
-\usepackage{titlesec}
+\usepackage[expansion=false]{microtype}
 \usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{array}
 
 % ── Colours ──────────────────────────────────────────────────────────────────
 \definecolor{gtblue}{RGB}{30,64,175}
 \definecolor{gtaccent}{RGB}{126,195,247}
-\definecolor{gtdark}{RGB}{9,20,42}
 \definecolor{gtgray}{RGB}{100,116,139}
 \definecolor{gtgreen}{RGB}{22,163,74}
-\definecolor{gtyellow}{RGB}{202,138,4}
-\definecolor{codebackground}{RGB}{241,245,249}
-\definecolor{codetextcolor}{RGB}{15,23,42}
+\definecolor{gtyellow}{RGB}{180,120,0}
+\definecolor{codebg}{RGB}{241,245,249}
+\definecolor{codefg}{RGB}{15,23,42}
+\definecolor{codecomment}{RGB}{100,116,139}
+\definecolor{codestring}{RGB}{21,128,61}
+\definecolor{codekw}{RGB}{30,64,175}
 \definecolor{sectionbg}{RGB}{30,64,175}
 
 % ── Fonts ────────────────────────────────────────────────────────────────────
 \renewcommand{\familydefault}{\sfdefault}
 
-% ── Section styles ───────────────────────────────────────────────────────────
-\titleformat{\section}[block]{\normalsize\bfseries\color{white}}%
-  {}{0pt}{\colorbox{sectionbg}{\parbox{\dimexpr\linewidth-2\fboxsep}{\strut #1\strut}}}
-\titlespacing*{\section}{0pt}{4pt}{2pt}
-
-\titleformat{\subsection}[block]{\small\bfseries\color{gtblue}}%
-  {}{0pt}{#1}
-\titlespacing*{\subsection}{0pt}{3pt}{1pt}
-
-% ── Code style ───────────────────────────────────────────────────────────────
-\fvset{
-  fontsize=\footnotesize,
+% ── Listings (R code blocks) ─────────────────────────────────────────────────
+\lstdefinestyle{Rstyle}{
+  language=R,
+  basicstyle=\ttfamily\tiny,
+  backgroundcolor=\color{codebg},
+  commentstyle=\color{codecomment}\itshape,
+  stringstyle=\color{codestring},
+  keywordstyle=\color{codekw}\bfseries,
+  breaklines=true,
+  breakatwhitespace=false,
+  columns=flexible,
+  keepspaces=true,
   frame=none,
-  bgcolor=codebackground,
-  rulecolor=\color{gtaccent},
-  commandchars=\\\{\}
+  xleftmargin=3pt,
+  xrightmargin=3pt,
+  aboveskip=2pt,
+  belowskip=1pt,
+  showstringspaces=false
+}
+\lstset{style=Rstyle}
+
+% ── Inline helpers ───────────────────────────────────────────────────────────
+\newcommand{\code}[1]{\texttt{\footnotesize\color{codefg}#1}}
+\newcommand{\gtfn}[1]{\texttt{\footnotesize\color{codekw}#1()}}
+\newcommand{\gtarg}[1]{\texttt{\footnotesize\color{gtgreen}#1}}
+\newcommand{\gtval}[1]{\texttt{\footnotesize\color{gtyellow}#1}}
+
+% ── Section header (no titlesec — avoids # conflicts) ────────────────────────
+\newcommand{\mysection}[1]{%
+  \vspace{4pt}%
+  \noindent\colorbox{sectionbg}{%
+    \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+      \strut\textbf{\small\color{white}#1}\strut%
+    }%
+  }%
+  \vspace{2pt}\par%
 }
 
-\newcommand{\code}[1]{\texttt{\small\color{codetextcolor}#1}}
-\newcommand{\pkg}[1]{\textbf{\color{gtblue}#1}}
-\newcommand{\fn}[1]{\code{\color{gtblue}#1()}}
-\newcommand{\arg}[1]{\code{\color{gtgreen}#1}}
-\newcommand{\val}[1]{\code{\color{gtyellow}#1}}
-
 % ── List tweaks ───────────────────────────────────────────────────────────────
-\setlist[itemize]{noitemsep,topsep=1pt,leftmargin=*,label=\textcolor{gtaccent}{\textbullet}}
+\setlist[itemize]{
+  noitemsep, topsep=1pt, leftmargin=*,
+  label=\textcolor{gtaccent}{\textbullet}
+}
 
-% ── Misc ─────────────────────────────────────────────────────────────────────
+% ── Page layout ──────────────────────────────────────────────────────────────
 \setlength{\columnseprule}{0.4pt}
 \setlength{\columnsep}{8pt}
 \setlength{\parskip}{2pt}
+\setlength{\parindent}{0pt}
 \pagestyle{empty}
 \hypersetup{hidelinks}
 
+% ─────────────────────────────────────────────────────────────────────────────
 \begin{document}
 \begin{multicols}{4}
 
 % ── Header ───────────────────────────────────────────────────────────────────
-{\Large\bfseries\color{gtblue} glasstabs}\hfill{\footnotesize\color{gtgray} v0.3.0}\\
-{\footnotesize\color{gtgray}Animated glass-morphism Shiny widgets}\\[-2pt]
-\rule{\linewidth}{0.8pt}
+{\large\bfseries\color{gtblue}glasstabs}%
+\hfill{\footnotesize\color{gtgray}v0.3.0}\\[1pt]
+{\footnotesize\color{gtgray}Glass-morphism Shiny widgets}\\[-3pt]
+\rule{\linewidth}{0.6pt}
 
 % ══════════════════════════════════════════════════════
-\section{Setup}
+\mysection{Setup}
 
 Call once in every UI:
-\begin{Verbatim}
+\begin{lstlisting}
 library(glasstabs)
 ui <- fluidPage(
-  \fn{useGlassTabs},
+  useGlassTabs(),
   # widgets go here
 )
-\end{Verbatim}
+\end{lstlisting}
 
 Run a built-in demo:
-\begin{Verbatim}
-\fn{runGlassExample}         # list all
+\begin{lstlisting}
+runGlassExample()       # list all
 runGlassExample("smoke-test")
 runGlassExample("basic")
 runGlassExample("bs4dash")
-\end{Verbatim}
+\end{lstlisting}
 
 % ══════════════════════════════════════════════════════
-\section{Tab widget — UI}
+\mysection{Tab widget --- UI}
 
-\begin{Verbatim}
+\begin{lstlisting}
 glassTabsUI(
-  id,            # module id
-  ...,           # glassTabPanel() calls
-  selected=NULL, # initial tab value
-  wrap=TRUE,
-  extra_ui=NULL, # right-side widget
-  theme="dark"   # or "light" / theme obj
+  id,             # module id
+  ...,            # glassTabPanel()s
+  selected = NULL,# initial tab value
+  wrap     = TRUE,
+  extra_ui = NULL,# right-side widget
+  theme    = "dark" # or "light"
 )
 
 glassTabPanel(
-  value,         # unique tab id
-  label,         # button text
-  ...,           # pane content
-  icon=NULL,     # shiny::icon() etc.
-  selected=FALSE
+  value,          # unique tab id
+  label,          # button text
+  ...,            # pane content
+  icon = NULL,    # shiny::icon() etc.
+  selected = FALSE
 )
-\end{Verbatim}
+\end{lstlisting}
 
-\textbf{Minimal example:}
-\begin{Verbatim}
+\textbf{Example:}
+\begin{lstlisting}
 glassTabsUI(
   "main",
-  glassTabPanel("a","Alpha",selected=TRUE,
+  glassTabPanel("a", "Alpha",
+    selected = TRUE,
     p("Alpha content")),
-  glassTabPanel("b","Beta",
-    icon=icon("star"),
+  glassTabPanel("b", "Beta",
+    icon = icon("star"),
     p("Beta content"))
 )
-\end{Verbatim}
+\end{lstlisting}
 
 % ══════════════════════════════════════════════════════
-\section{Tab widget — server}
+\mysection{Tab widget --- server}
 
-\begin{Verbatim}
+\begin{lstlisting}
 server <- function(input, output, session) {
-  # Returns reactive active tab value
+  # Reactive active tab value
   active <- glassTabsServer("main")
-  # With bookmark support (default TRUE)
+  # With bookmarking (default TRUE)
   active <- glassTabsServer("main",
-              bookmark=TRUE)
+              bookmark = TRUE)
   observe(print(active()))
 }
-\end{Verbatim}
+\end{lstlisting}
 
 \textbf{Module pattern:}\\
-UI: \code{glassTabsUI(\textbf{ns("tabs")}, ...)}\\
-Server: \code{glassTabsServer(\textbf{"tabs"})} \\
-{\footnotesize\color{gtgray}Pass bare id, not \code{ns("tabs")}, to server.}
+UI:~\code{glassTabsUI(\textbf{ns("tabs")}, ...)}\\
+Server:~\code{glassTabsServer(\textbf{"tabs"})}\\
+{\tiny\color{gtgray}Pass bare id to server --- not \code{ns("tabs")}.}
 
 % ══════════════════════════════════════════════════════
-\section{Tab server actions}
+\mysection{Tab server actions}
 
-\begin{Verbatim}
+\begin{lstlisting}
 # Switch active tab
-updateGlassTabsUI(session,"main","b")
+updateGlassTabsUI(session, "main", "b")
 
 # Show / hide
-showGlassTab(session,"main","admin")
-hideGlassTab(session,"main","admin")
+showGlassTab(session, "main", "admin")
+hideGlassTab(session, "main", "admin")
 
 # Disable / enable (stays visible)
-disableGlassTab(session,"main","beta")
-enableGlassTab(session,"main","beta")
+disableGlassTab(session, "main", "b")
+enableGlassTab(session,  "main", "b")
 
-# Badge counts (0 = hide badge)
-updateGlassTabBadge(session,"main",
-  "inbox", count=5L)
-updateGlassTabBadge(session,"main",
-  "inbox", count=0L)
+# Badge counts  (0 or NA = hide)
+updateGlassTabBadge(session, "main",
+  "inbox", count = 5L)
+updateGlassTabBadge(session, "main",
+  "inbox", count = 0L)
 
 # Add / remove at runtime
-appendGlassTab(session,"main",
-  glassTabPanel("new","New",p("...")),
-  select=TRUE)
-removeGlassTab(session,"main","new")
-\end{Verbatim}
+appendGlassTab(session, "main",
+  glassTabPanel("new", "New", p("...")),
+  select = TRUE)
+removeGlassTab(session, "main", "new")
+\end{lstlisting}
 
 % ══════════════════════════════════════════════════════
-\section{Dynamic tabs (renderGlassTabs)}
+\mysection{Dynamic tabs}
 
-\begin{Verbatim}
-# UI
+\begin{lstlisting}
+# UI placeholder
 glassTabsOutput("dyn_tabs")
 
-# Server
+# Server render
 output$dyn_tabs <- renderGlassTabs({
-  panels <- lapply(my_data(), function(r)
-    glassTabPanel(r$id, r$label, p(r$id)))
+  panels <- lapply(my_data(),
+    function(r)
+      glassTabPanel(r$id, r$label,
+        p(r$id)))
   do.call(glassTabsUI,
     c(list("dyn"), panels))
 })
-\end{Verbatim}
-
-{\footnotesize\color{gtgray}JS re-initialises automatically after each render.}
+\end{lstlisting}
+{\tiny\color{gtgray}JS re-initialises automatically after each render.}
 
 % ══════════════════════════════════════════════════════
-\section{Bookmarking}
+\mysection{Bookmarking}
 
-Enable in the app, then \fn{glassTabsServer} handles save/restore automatically:
-\begin{Verbatim}
+Enable on the app, \gtfn{glassTabsServer} handles save/restore:
+\begin{lstlisting}
 shinyApp(ui, server,
-  enableBookmarking="url")
-\end{Verbatim}
-Opt out per widget: \code{bookmark=FALSE}.
+  enableBookmarking = "url")
+\end{lstlisting}
+
+Opt out per widget:
+\begin{lstlisting}
+glassTabsServer("tabs",
+  bookmark = FALSE)
+\end{lstlisting}
 
 % ══════════════════════════════════════════════════════
-\section{Tab theming}
+\mysection{Tab theming}
 
-\begin{Verbatim}
+\begin{lstlisting}
 # String preset
-glassTabsUI("t",...,theme="light")
-glassTabsUI("t",...,theme="dark")
+glassTabsUI("t", ..., theme = "light")
+glassTabsUI("t", ..., theme = "dark")
 
 # Custom object
-glassTabsUI("t",...,
-  theme=glass_tab_theme(
-    halo_bg="rgba(251,191,36,.15)",
-    tab_active_text="#fef3c7"
+glassTabsUI("t", ...,
+  theme = glass_tab_theme(
+    halo_bg = "rgba(251,191,36,.15)",
+    tab_active_text = "#fef3c7"
   )
 )
-\end{Verbatim}
+\end{lstlisting}
 
-\textbf{All} \fn{glass\_tab\_theme} \textbf{args:}
+\gtfn{glass\_tab\_theme} args:
 \begin{itemize}
-  \item \arg{tab\_text}, \arg{tab\_active\_text}
-  \item \arg{halo\_bg}, \arg{halo\_border}
-  \item \arg{content\_bg}, \arg{content\_border}
-  \item \arg{card\_bg}, \arg{card\_text}
+  \item \gtarg{tab\_text}, \gtarg{tab\_active\_text}
+  \item \gtarg{halo\_bg}, \gtarg{halo\_border}
+  \item \gtarg{content\_bg}, \gtarg{content\_border}
+  \item \gtarg{card\_bg}, \gtarg{card\_text}
 \end{itemize}
 
 % ══════════════════════════════════════════════════════
-\section{Multi-select — UI}
+\mysection{Multi-select --- UI}
 
-\begin{Verbatim}
-choices <- c(Revenue="rev",
-             Orders="ord")
+\begin{lstlisting}
+choices <- c(Revenue = "rev",
+             Orders  = "ord")
 
 glassMultiSelect(
   inputId,
   choices,
-  selected=NULL,
-  label=NULL,
-  placeholder="Select...",
-  all_label="All",
-  check_style="checkbox",# filled|dot
-  show_style_switcher=FALSE,
-  show_select_all=TRUE,
-  show_clear_all=TRUE,
-  searchable=TRUE,
-  theme="dark"
+  selected          = NULL,
+  label             = NULL,
+  placeholder       = "Select...",
+  all_label         = "All",
+  check_style       = "checkbox",
+  show_style_switcher = FALSE,
+  show_select_all   = TRUE,
+  show_clear_all    = TRUE,
+  searchable        = TRUE,
+  theme             = "dark"
 )
-\end{Verbatim}
+\end{lstlisting}
 
 % ══════════════════════════════════════════════════════
-\section{Multi-select — server}
+\mysection{Multi-select --- server}
 
-\begin{Verbatim}
-# Reactive list: selected() and style()
-vals <- glassMultiSelectValue(input,"m")
+\begin{lstlisting}
+# Reactive: selected() and style()
+vals <- glassMultiSelectValue(input, "m")
 vals$selected()
-vals$style()     # "checkbox"|"filled"|"dot"
+vals$style() # "checkbox"|"filled"|"dot"
 
-# Update from server
-updateGlassMultiSelect(session,"m",
-  selected=c("rev","ord"),
-  check_style="filled")
+# Update
+updateGlassMultiSelect(session, "m",
+  selected    = c("rev", "ord"),
+  check_style = "filled")
+
 # Clear all
-updateGlassMultiSelect(session,"m",
-  selected=character(0))
+updateGlassMultiSelect(session, "m",
+  selected = character(0))
 
-# Filter-tag display
-glassFilterTags("m")  # in UI
-\end{Verbatim}
+# Filter-tag display (in UI)
+glassFilterTags("m")
+\end{lstlisting}
 
 % ══════════════════════════════════════════════════════
-\section{Single-select — UI}
+\mysection{Single-select --- UI}
 
-\begin{Verbatim}
-regions <- c("All"="all",North="n")
+\begin{lstlisting}
+regions <- c("All" = "all",
+             North = "n")
 
 glassSelect(
   inputId,
   choices,
-  selected=NULL,
-  label=NULL,
-  placeholder="Pick one...",
-  searchable=FALSE,
-  clearable=FALSE,
-  include_all=FALSE,
-  check_style="checkbox",
-  theme="dark"
+  selected    = NULL,
+  label       = NULL,
+  placeholder = "Pick one...",
+  searchable  = FALSE,
+  clearable   = FALSE,
+  include_all = FALSE,
+  check_style = "checkbox",
+  theme       = "dark"
 )
-\end{Verbatim}
+\end{lstlisting}
 
 % ══════════════════════════════════════════════════════
-\section{Single-select — server}
+\mysection{Single-select --- server}
 
-\begin{Verbatim}
+\begin{lstlisting}
 # Reactive value
-region <- glassSelectValue(input,"r")
+region <- glassSelectValue(input, "r")
 region()
 
 # Update from server
-updateGlassSelect(session,"r",
-  selected="south")
+updateGlassSelect(session, "r",
+  selected = "south")
+
 # Clear
-updateGlassSelect(session,"r",
-  selected=character(0))
-\end{Verbatim}
+updateGlassSelect(session, "r",
+  selected = character(0))
+\end{lstlisting}
 
 % ══════════════════════════════════════════════════════
-\section{Select theming}
+\mysection{Select theming}
 
-\begin{Verbatim}
+\begin{lstlisting}
 glassMultiSelect("m", choices,
-  theme=glass_select_theme(
-    mode="dark",
-    accent_color="#38bdf8",
-    bg_color="rgba(9,20,42,.97)",
-    text_color="#cfe6ff"
+  theme = glass_select_theme(
+    mode         = "dark",
+    accent_color = "#38bdf8",
+    bg_color     = "rgba(9,20,42,.97)",
+    text_color   = "#cfe6ff"
   )
 )
-\end{Verbatim}
+\end{lstlisting}
 
-\textbf{All} \fn{glass\_select\_theme} \textbf{args:}
+\gtfn{glass\_select\_theme} args:
 \begin{itemize}
-  \item \arg{mode}: \val{"dark"} or \val{"light"}
-  \item \arg{bg\_color}, \arg{border\_color}
-  \item \arg{text\_color}, \arg{accent\_color}
-  \item \arg{label\_color}
+  \item \gtarg{mode}: \gtval{"dark"} or \gtval{"light"}
+  \item \gtarg{bg\_color}, \gtarg{border\_color}
+  \item \gtarg{text\_color}, \gtarg{accent\_color}
+  \item \gtarg{label\_color}
 \end{itemize}
 
 % ══════════════════════════════════════════════════════
-\section{Input values at a glance}
+\mysection{Input values}
 
 {\footnotesize
-\begin{tabular}{@{}ll@{}}
+\begin{tabular}{@{}p{1.6cm}p{3.1cm}@{}}
+\toprule
 \textbf{Widget} & \textbf{Input key} \\
-\hline
-tabs            & \code{input[["id-active\_tab"]]} \\
-multi-select    & \code{input\$inputId} \\
-multi style     & \code{input\$inputId\_style} \\
-single-select   & \code{input\$inputId} \\
+\midrule
+tabs         & \code{\tiny input[["id-active\_tab"]]} \\
+multi-select & \code{input\$inputId} \\
+multi style  & \code{\tiny input\$inputId\_style} \\
+single       & \code{input\$inputId} \\
+\bottomrule
 \end{tabular}
 }
 
-Or use the reactive helpers:
+\vspace{3pt}
+Reactive helpers:
 \begin{itemize}
-  \item \fn{glassTabsServer} → \code{active()}
-  \item \fn{glassMultiSelectValue} → \code{vals\$selected()}
-  \item \fn{glassSelectValue} → \code{region()}
+  \item \gtfn{glassTabsServer} $\to$ \code{active()}
+  \item \gtfn{glassMultiSelectValue} $\to$ \code{vals\$selected()}
+  \item \gtfn{glassSelectValue} $\to$ \code{region()}
 \end{itemize}
 
 % ══════════════════════════════════════════════════════
-\section{bs4Dash integration}
+\mysection{bs4Dash integration}
 
-\begin{Verbatim}
+\begin{lstlisting}
 library(bs4Dash)
 ui <- bs4DashPage(
-  header=bs4DashNavbar(),
-  sidebar=bs4DashSidebar(...),
-  body=bs4DashBody(
-    useGlassTabs(), # once here
+  header  = bs4DashNavbar(),
+  sidebar = bs4DashSidebar(...),
+  body    = bs4DashBody(
+    useGlassTabs(), # place once here
     bs4TabItems(
       bs4TabItem("explorer",
-        bs4Card(width=12,
+        bs4Card(width = 12,
           glassTabsUI("tabs",
             glassTabPanel("a","A",...),
             glassTabPanel("b","B",...))
@@ -370,31 +403,30 @@ ui <- bs4DashPage(
     )
   )
 )
-server <- function(input,output,session){
+server <- function(input, output, session) {
   active <- glassTabsServer("tabs")
 }
-\end{Verbatim}
+\end{lstlisting}
 
 % ══════════════════════════════════════════════════════
-\section{Common gotchas}
+\mysection{Common gotchas}
 
 \begin{itemize}
-  \item \fn{useGlassTabs} must appear once in UI.
-  \item In modules: \code{ns("tabs")} in UI, bare \code{"tabs"} in server.
-  \item Duplicate \code{glassTabPanel()} values → error.
-  \item \arg{selected} = tab \textbf{value}, not label.
-  \item \fn{glassSelectValue} returns a reactive, not a list.
-  \item \fn{glassMultiSelectValue} returns \code{list(selected(), style())}.
-  \item \code{selected} in multi-select uses \textbf{values}, not labels.
-  \item After \code{load\_all()}, reload the browser to pick up JS changes.
+  \item \gtfn{useGlassTabs} once in UI.
+  \item Modules: \code{ns("tabs")} in UI, bare \code{"tabs"} in server.
+  \item Duplicate \code{glassTabPanel()} values $\to$ error.
+  \item \gtarg{selected} = tab \textbf{value}, not label.
+  \item \gtfn{glassSelectValue} returns reactive, not list.
+  \item \gtfn{glassMultiSelectValue} returns
+        \code{list(selected(), style())}.
+  \item Multi-select \gtarg{selected} uses values, not labels.
+  \item After \code{load\_all()}, reload browser to pick up JS changes.
 \end{itemize}
 
 \vfill
-{\footnotesize\color{gtgray}
+{\tiny\color{gtgray}
 \href{https://prigasg.github.io/glasstabs/}{prigasg.github.io/glasstabs}
-\hfill
-MIT \copyright\ glasstabs authors
-}
+\hfill MIT \copyright\ glasstabs authors}
 
 \end{multicols}
 \end{document}
