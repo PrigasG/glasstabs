@@ -62,6 +62,17 @@ glassTabsUI <- function(
   theme_vals  <- .tab_resolve_theme(theme)
   panel_vals  <- vapply(panels, function(p) p$value, character(1))
 
+  if (anyDuplicated(panel_vals)) {
+    dupes <- unique(panel_vals[duplicated(panel_vals)])
+    stop(
+      sprintf(
+        "Duplicate glassTabPanel() values are not allowed: %s",
+        paste(dupes, collapse = ", ")
+      ),
+      call. = FALSE
+    )
+  }
+
   if (!is.null(selected) && !selected %in% panel_vals) {
     stop(
       sprintf(
@@ -324,11 +335,19 @@ removeGlassTab <- function(session, id, value) {
 #'
 #' Tracks the active tab and exposes it as a reactive value.
 #'
+#' `glassTabsServer()` follows the same calling convention as all Shiny module
+#' server functions: pass the **bare** module id, not a namespaced one.
+#' Inside a parent module, pair it with `glassTabsUI(ns("tabs"), ...)` in the
+#' UI, and call `glassTabsServer("tabs")` (without `ns()`) in the server.
+#'
 #' @param id Module id matching the `id` passed to [glassTabsUI()].
+#'   Do **not** wrap this in `ns()` — `glassTabsServer()` handles namespacing
+#'   internally via [shiny::moduleServer()].
 #'
 #' @return A reactive expression returning the active tab value.
 #'
 #' @examples
+#' # --- Standalone app ---
 #' if (interactive()) {
 #'   library(shiny)
 #'   ui <- fluidPage(
@@ -345,8 +364,44 @@ removeGlassTab <- function(session, id, value) {
 #'   }
 #'   shinyApp(ui, server)
 #' }
+#'
+#' # --- Inside a Shiny module ---
+#' # UI side: use ns() to namespace the widget id
+#' my_module_ui <- function(id) {
+#'   ns <- shiny::NS(id)
+#'   shiny::tagList(
+#'     useGlassTabs(),
+#'     glassTabsUI(
+#'       ns("tabs"),                          # <-- ns() wraps the id here
+#'       glassTabPanel("a", "A", p("Tab A"), selected = TRUE),
+#'       glassTabPanel("b", "B", p("Tab B"))
+#'     )
+#'   )
+#' }
+#'
+#' # Server side: pass the bare id — NOT ns("tabs")
+#' my_module_server <- function(id) {
+#'   shiny::moduleServer(id, function(input, output, session) {
+#'     active <- glassTabsServer("tabs")     # <-- bare id, no ns()
+#'     shiny::observe(print(active()))
+#'   })
+#' }
 #' @export
 glassTabsServer <- function(id) {
+  if (grepl("-", id, fixed = TRUE)) {
+    warning(
+      sprintf(
+        paste0(
+          "glassTabsServer() received id \"%s\" which contains \"-\". ",
+          "This looks like a fully-namespaced id (e.g. the result of ns(\"tabs\")). ",
+          "Pass the bare module id instead and let moduleServer() handle namespacing."
+        ),
+        id
+      ),
+      call. = FALSE
+    )
+  }
+
   shiny::moduleServer(id, function(input, output, session) {
     shiny::reactive({
       input[["active_tab"]] %||% NULL

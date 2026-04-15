@@ -1,4 +1,4 @@
-# glasstabs 0.2.0
+# glasstabs 0.2.1
  
 ## New features
 

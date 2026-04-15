@@ -39,6 +39,68 @@ server <- function(input, output, session) {
 }
 ```
 
+## Tabs: inside a Shiny module
+
+The key rule: use `ns()` in the UI, use the **bare** id in the server.
+
+```{r}
+# UI function
+my_ui <- function(id) {
+  ns <- NS(id)
+  tagList(
+    useGlassTabs(),
+    glassTabsUI(
+      ns("tabs"),                          # ns() wraps the id in the UI
+      glassTabPanel("summary", "Summary", selected = TRUE, h3("Summary")),
+      glassTabPanel("detail",  "Detail",  h3("Detail"))
+    )
+  )
+}
+
+# Server function
+my_server <- function(id) {
+  moduleServer(id, function(input, output, session) {
+    active <- glassTabsServer("tabs")    # bare id — no ns() here
+
+    observeEvent(active(), {
+      message("Active tab: ", active())
+    })
+  })
+}
+
+# App
+ui     <- fluidPage(my_ui("explorer"))
+server <- function(input, output, session) my_server("explorer")
+shinyApp(ui, server)
+```
+
+## Tabs: dynamic values and selected
+
+```{r}
+# Build panels from data
+tab_defs <- list(
+  list(value = "revenue", label = "Revenue"),
+  list(value = "orders",  label = "Orders"),
+  list(value = "returns", label = "Returns")
+)
+
+panels <- lapply(tab_defs, function(t) {
+  glassTabPanel(t$value, t$label, h3(t$label))
+})
+
+ui <- fluidPage(
+  useGlassTabs(),
+  do.call(glassTabsUI, c(list("metrics", selected = "orders"), panels))
+)
+
+server <- function(input, output, session) {
+  active <- glassTabsServer("metrics")
+}
+```
+
+> Note: tab `value` strings must be unique — `glassTabsUI()` will error on
+> duplicates. Values are plain strings; they do not need to match labels.
+
 ## Tabs: server actions
 
 ```{r}
@@ -161,6 +223,58 @@ glassSelect(
 )
 ```
 
+## Tabs: inside bs4Dash
+
+`glassTabsUI()` works inside `bs4Dash::tabItem()`. Place `useGlassTabs()` in
+the `dashboardBody()` (or anywhere before the first widget — once is enough).
+
+```{r}
+library(shiny)
+library(bs4Dash)
+
+ui <- bs4DashPage(
+  header  = bs4DashNavbar(),
+  sidebar = bs4DashSidebar(
+    bs4SidebarMenu(
+      bs4SidebarMenuItem("Explorer", tabName = "explorer", icon = icon("table"))
+    )
+  ),
+  body = bs4DashBody(
+    useGlassTabs(),                     # place once, anywhere in the body
+    bs4TabItems(
+      bs4TabItem(
+        tabName = "explorer",
+        bs4Card(
+          title = "Data explorer",
+          width = 12,
+          glassTabsUI(
+            "s3_tabs",
+            glassTabPanel("buckets", "Buckets", selected = TRUE,
+              p("List of S3 buckets here.")
+            ),
+            glassTabPanel("objects", "Objects",
+              p("Object browser here.")
+            ),
+            glassTabPanel("preview", "Preview",
+              p("File preview here.")
+            )
+          )
+        )
+      )
+    )
+  )
+)
+
+server <- function(input, output, session) {
+  active <- glassTabsServer("s3_tabs")
+}
+
+shinyApp(ui, server)
+```
+
+> `useGlassTabs()` only needs to appear once. Inside a module that renders
+> into a bs4Dash layout, call it in your module's UI function.
+
 ## Theme helpers
 
 ```{r}
@@ -187,7 +301,7 @@ glassMultiSelect(
 ## Input values at a glance
 
 | Widget | Server value |
-|---|---|
+|----|----|
 | `glassTabsUI("main", ...)` | `input[["main-active_tab"]]` or `glassTabsServer("main")()` |
 | `glassMultiSelect("metric", ...)` | `input$metric` or `glassMultiSelectValue(input, "metric")$selected()` |
 | multi-select style | `input$metric_style` or `glassMultiSelectValue(input, "metric")$style()` |
@@ -195,8 +309,11 @@ glassMultiSelect(
 
 ## Common gotchas
 
-- `useGlassTabs()` must be called once in the UI.
-- `glassSelectValue()` returns a reactive function, not a list.
-- `glassMultiSelectValue()` returns a list with `selected()` and `style()`.
-- For `glassMultiSelect()`, `selected` should use choice values, not labels.
-- If you add new JS/CSS behavior during development, reinstall or `load_all()` before retesting.
+-   `useGlassTabs()` must be called once in the UI.
+-   In a module, use `ns("tabs")` in the UI but pass the bare `"tabs"` to `glassTabsServer()` — not `ns("tabs")`. Passing a namespaced id (containing `-`) will produce a warning.
+-   `glassTabPanel()` values must be unique within a `glassTabsUI()` call — duplicates cause an error.
+-   `selected` in `glassTabsUI()` refers to the tab **value**, not the label.
+-   `glassSelectValue()` returns a reactive function, not a list.
+-   `glassMultiSelectValue()` returns a list with `selected()` and `style()`.
+-   For `glassMultiSelect()`, `selected` should use choice values, not labels.
+-   If you add new JS/CSS behavior during development, reinstall or `load_all()` before retesting.
