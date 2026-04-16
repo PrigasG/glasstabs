@@ -500,7 +500,15 @@ glassMultiSelectValue <- function(input, inputId) {
 #' @noRd
 .gt_normalize_choices <- function(choices) {
   if (is.null(choices)) {
-    stop("`choices` cannot be NULL.", call. = FALSE)
+    stop(
+      paste0(
+        "`choices` cannot be NULL.\n",
+        "Provide a character vector, e.g.:\n",
+        "  choices = c(\"Option A\", \"Option B\")\n",
+        "  choices = c(Label = \"value\", Other = \"other\")"
+      ),
+      call. = FALSE
+    )
   }
 
   if (!length(choices)) {
@@ -511,7 +519,14 @@ glassMultiSelectValue <- function(input, inputId) {
   }
 
   if (is.list(choices) && !is.atomic(choices)) {
-    stop("`choices` must be a named or unnamed atomic vector.", call. = FALSE)
+    stop(
+      paste0(
+        "`choices` must be a named or unnamed atomic vector, not a list.\n",
+        "Use: choices = c(\"A\", \"B\") or choices = c(Label = \"a\", Other = \"b\")\n",
+        "For grouped choices, flatten to a single vector first."
+      ),
+      call. = FALSE
+    )
   }
 
   orig_names <- names(choices)

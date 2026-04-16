@@ -14,24 +14,54 @@ glass_select_theme(
 )
 }
 \arguments{
-\item{mode}{Base theme preset. One of \code{"dark"} (default) or
-\code{"light"}. Custom colors are applied on top of this base mode.}
+\item{mode}{Base preset. One of \code{"dark"} (default) or \code{"light"}.
+Custom colors are layered on top.}
 
-\item{bg_color}{Background color of the trigger button and dropdown panel.}
+\item{bg_color}{Background of the trigger button and dropdown panel.}
 
-\item{border_color}{Border color.}
+\item{border_color}{Border color of the trigger and dropdown.}
 
-\item{text_color}{Main text color.}
+\item{text_color}{Main text color for options and the trigger label.}
 
-\item{accent_color}{Accent color used for the animated tick, badge,
-checked-state highlights, and clear controls.}
+\item{accent_color}{Highlight color for checkmarks, badges, and selected
+states. Also used for the focus ring.}
 
-\item{label_color}{Optional label color. If \code{NULL}, the label defaults to
-\code{text_color}.}
+\item{label_color}{Widget label color. Defaults to \code{text_color} when \code{NULL}.}
 }
 \value{
-A named list of class \code{"glass_select_theme"}.
+A named list of class \code{"glass_select_theme"} for passing to the
+\code{theme} argument of \code{\link[=glassMultiSelect]{glassMultiSelect()}} or \code{\link[=glassSelect]{glassSelect()}}.
 }
 \description{
-Create a custom color theme for glass select widgets
+All color arguments accept any valid CSS color string (hex, \code{rgb()},
+\code{rgba()}, named colors). Unset fields inherit from the \code{mode} base preset.
+}
+\examples{
+# Teal accent on a dark base
+teal_theme <- glass_select_theme(
+  mode         = "dark",
+  accent_color = "#2dd4bf",
+  bg_color     = "rgba(9, 20, 42, 0.97)"
+)
+
+# Light mode with a custom purple accent
+purple_light <- glass_select_theme(
+  mode         = "light",
+  accent_color = "#7c3aed",
+  border_color = "rgba(124, 58, 237, 0.35)"
+)
+
+if (interactive()) {
+  library(shiny)
+  choices <- c(Revenue = "rev", Orders = "ord", Returns = "ret")
+  ui <- fluidPage(
+    useGlassTabs(),
+    glassMultiSelect("metric", choices, theme = teal_theme),
+    glassSelect("region", c(All = "all", North = "n", South = "s"),
+                theme = purple_light)
+  )
+  server <- function(input, output, session) {}
+  shinyApp(ui, server)
+}
+
 }

@@ -1,3 +1,27 @@
+# glasstabs 0.3.1
+
+## New features
+
+* Added `glassTabCondition(id, value)` — generates the correct JavaScript
+  condition string for [shiny::conditionalPanel()] without needing to remember
+  the `input[["id-active_tab"]]` key pattern.
+* Added `glasstabs_news()` — prints the package changelog to the R console.
+* Added `ROADMAP.md` tracking planned features and known limitations (not
+  shipped in the package).
+
+## Improvements
+
+* Error messages across all functions are now actionable: they name the bad
+  argument class, show what was received, and suggest the correct fix.
+* `glass_tab_theme()` and `glass_select_theme()` now have full `@examples`
+  with interactive app snippets.
+* `.gt-container` no longer forces `max-width:960px` or `margin:48px auto` —
+  the widget now behaves like a normal block element inside Shiny layouts.
+* Light-mode halo box-shadow replaced with a soft blue-tinted shadow via the
+  `--gt-halo-shadow` CSS variable, replacing the harsh dark drop shadow.
+
+---
+
 # glasstabs 0.3.0
 
 ## New features

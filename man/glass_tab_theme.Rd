@@ -18,23 +18,50 @@ glass_tab_theme(
 \arguments{
 \item{tab_text}{Inactive tab text color.}
 
-\item{tab_active_text}{Active tab text color.}
+\item{tab_active_text}{Active tab text color (and headings inside cards).}
 
-\item{halo_bg}{Halo background.}
+\item{halo_bg}{Background fill of the animated glass halo.}
 
-\item{halo_border}{Halo border.}
+\item{halo_border}{Border color of the glass halo.}
 
-\item{content_bg}{Tab content background.}
+\item{content_bg}{Tab content area background.}
 
-\item{content_border}{Tab content border.}
+\item{content_border}{Tab content area border.}
 
-\item{card_bg}{Inner card background.}
+\item{card_bg}{Inner \code{.gt-card} background.}
 
-\item{card_text}{Inner card text color.}
+\item{card_text}{Inner \code{.gt-card} text color.}
 }
 \value{
-A named list of class \code{"glass_tab_theme"}.
+A named list of class \code{"glass_tab_theme"} for passing to
+the \code{theme} argument of \code{\link[=glassTabsUI]{glassTabsUI()}}.
 }
 \description{
-Create a custom color theme for glassTabsUI
+All arguments accept any valid CSS color string (hex, \code{rgb()}, \code{rgba()},
+named colors). Pass only the fields you want to override — unset fields
+fall back to the dark-mode defaults.
+}
+\examples{
+# Amber / warm accent on a dark base
+amber <- glass_tab_theme(
+  halo_bg         = "rgba(251, 191, 36, 0.15)",
+  halo_border     = "rgba(251, 191, 36, 0.40)",
+  tab_active_text = "#fef3c7"
+)
+
+if (interactive()) {
+  library(shiny)
+  ui <- fluidPage(
+    useGlassTabs(),
+    glassTabsUI(
+      "demo",
+      glassTabPanel("a", "Alpha", selected = TRUE, p("Alpha content")),
+      glassTabPanel("b", "Beta",  p("Beta content")),
+      theme = amber
+    )
+  )
+  server <- function(input, output, session) {}
+  shinyApp(ui, server)
+}
+
 }

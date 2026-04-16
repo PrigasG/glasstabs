@@ -68,10 +68,26 @@ glassTabsUI <- function(
   panels <- list(...)
 
   if (length(panels) == 0) {
-    stop("glassTabsUI() requires at least one glassTabPanel().", call. = FALSE)
+    stop(
+      "glassTabsUI() requires at least one glassTabPanel() child.\n",
+      "Add tabs like: glassTabPanel(\"tab1\", \"Tab Label\", p(\"Content\"))",
+      call. = FALSE
+    )
   }
-  if (!all(vapply(panels, inherits, logical(1), "glassTabPanel"))) {
-    stop("All `...` arguments to glassTabsUI() must be glassTabPanel() objects.", call. = FALSE)
+  bad_panels <- Filter(function(p) !inherits(p, "glassTabPanel"), panels)
+  if (length(bad_panels) > 0) {
+    bad_cls <- unique(vapply(bad_panels, function(x) class(x)[1], character(1)))
+    stop(
+      sprintf(
+        paste0(
+          "glassTabsUI() received %d non-panel argument(s) of class: %s.\n",
+          "All `...` arguments must be glassTabPanel() objects.\n",
+          "Wrap content in: glassTabPanel(value, label, ...content...)"
+        ),
+        length(bad_panels), paste(bad_cls, collapse = ", ")
+      ),
+      call. = FALSE
+    )
   }
 
   theme_vals  <- .tab_resolve_theme(theme)
@@ -81,7 +97,10 @@ glassTabsUI <- function(
     dupes <- unique(panel_vals[duplicated(panel_vals)])
     stop(
       sprintf(
-        "Duplicate glassTabPanel() values are not allowed: %s",
+        paste0(
+          "Duplicate glassTabPanel() values found: %s\n",
+          "Each tab must have a unique `value` string."
+        ),
         paste(dupes, collapse = ", ")
       ),
       call. = FALSE
@@ -91,7 +110,10 @@ glassTabsUI <- function(
   if (!is.null(selected) && !selected %in% panel_vals) {
     stop(
       sprintf(
-        "'selected' value \"%s\" does not match any glassTabPanel() value. Valid values: %s",
+        paste0(
+          "glassTabsUI(): `selected = \"%s\"` does not match any tab value.\n",
+          "Valid tab values: %s"
+        ),
         selected,
         paste(panel_vals, collapse = ", ")
       ),
@@ -406,7 +428,16 @@ enableGlassTab <- function(session, id, value) {
 #' @export
 appendGlassTab <- function(session, id, tab, select = FALSE) {
   if (!inherits(tab, "glassTabPanel")) {
-    stop("'tab' must be a glassTabPanel() object.", call. = FALSE)
+    stop(
+      sprintf(
+        paste0(
+          "appendGlassTab(): `tab` must be a glassTabPanel() object, got %s.\n",
+          "Create one with: glassTabPanel(value, label, ...content...)"
+        ),
+        class(tab)[1]
+      ),
+      call. = FALSE
+    )
   }
 
   full_ns <- session$ns(id)
@@ -537,9 +568,10 @@ glassTabsServer <- function(id, bookmark = TRUE) {
     warning(
       sprintf(
         paste0(
-          "glassTabsServer() received id \"%s\" which contains \"-\". ",
-          "This looks like a fully-namespaced id (e.g. the result of ns(\"tabs\")). ",
-          "Pass the bare module id instead and let moduleServer() handle namespacing."
+          "glassTabsServer() received id \"%s\" which contains \"-\".\n",
+          "This usually means ns(\"tabs\") was passed instead of the bare id \"tabs\".\n",
+          "Fix: glassTabsServer(\"tabs\")  # NOT glassTabsServer(ns(\"tabs\"))\n",
+          "moduleServer() handles namespacing automatically."
         ),
         id
       ),
@@ -672,4 +704,63 @@ renderGlassTabs <- function(expr, env = parent.frame(), quoted = FALSE) {
     }
     result
   })
+}
+
+#' Build a conditionalPanel condition for a glasstabs widget
+#'
+#' Returns a JavaScript condition string that evaluates to `TRUE` when the
+#' specified glasstabs widget has a given active tab. Pass the result directly
+#' to the `condition` argument of [shiny::conditionalPanel()].
+#'
+#' @param id    The `id` passed to [glassTabsUI()]. **Inside a Shiny module**
+#'   use `ns("tabs")` here (same id you passed to `glassTabsUI()`), NOT the
+#'   bare id you pass to [glassTabsServer()].
+#' @param value The tab value string (the `value` argument of the target
+#'   [glassTabPanel()]) that should trigger the condition.
+#'
+#' @return A single character string for use in [shiny::conditionalPanel()].
+#'
+#' @examples
+#' # Basic usage in a plain Shiny app:
+#' if (interactive()) {
+#'   library(shiny)
+#'   ui <- fluidPage(
+#'     useGlassTabs(),
+#'     glassTabsUI(
+#'       "main",
+#'       glassTabPanel("overview", "Overview", selected = TRUE,
+#'         p("Always visible.")),
+#'       glassTabPanel("details", "Details",
+#'         p("Detail pane."))
+#'     ),
+#'     conditionalPanel(
+#'       condition = glassTabCondition("main", "details"),
+#'       wellPanel("This panel only shows on the Details tab.")
+#'     )
+#'   )
+#'   server <- function(input, output, session) {}
+#'   shinyApp(ui, server)
+#' }
+#'
+#' # Inside a module — use ns() for the id:
+#' # UI:   glassTabCondition(ns("tabs"), "details")
+#' # This produces: "input['mymod-tabs-active_tab'] === 'details'"
+#'
+#' @export
+glassTabCondition <- function(id, value) {
+  if (!is.character(id) || length(id) != 1 || !nzchar(id)) {
+    stop(
+      "glassTabCondition(): `id` must be a single non-empty string matching ",
+      "the id passed to glassTabsUI().",
+      call. = FALSE
+    )
+  }
+  if (!is.character(value) || length(value) != 1 || !nzchar(value)) {
+    stop(
+      "glassTabCondition(): `value` must be a single non-empty string matching ",
+      "a glassTabPanel() value.",
+      call. = FALSE
+    )
+  }
+  sprintf("input['%s-active_tab'] === '%s'", id, value)
 }

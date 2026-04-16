@@ -196,7 +196,7 @@ test_that("glassTabsServer() warns when id contains '-'", {
   expect_warning(
     # moduleServer will error without a reactive context, so catch that too
     tryCatch(glassTabsServer("parent-tabs"), error = function(e) NULL),
-    "namespaced"
+    "ns\\("
   )
 })
 

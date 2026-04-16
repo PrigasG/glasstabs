@@ -96,16 +96,18 @@ shinyApp(ui, server)
 |---|---|
 | `useGlassTabs()` | Inject package CSS and JavaScript — call once in the UI |
 | `runGlassExample(example)` | Launch a built-in example app (`runGlassExample()` to list all) |
+| `glasstabs_news()` | Print the package changelog to the R console |
 
 ### Tab widget
 
 | Function | Description |
 |---|---|
-| `glassTabsUI(id, ..., selected, wrap, extra_ui, theme)` | Animated tab bar with content area |
+| `glassTabsUI(id, ..., selected, wrap, compact, extra_ui, theme)` | Animated tab bar with content area; `compact=TRUE` for dashboard cards |
 | `glassTabPanel(value, label, ..., icon, selected)` | Define one tab and its content; `icon` accepts `shiny::icon()` |
 | `glassTabsServer(id, bookmark)` | Reactive returning the active tab; bookmarks active tab in URL |
 | `glassTabsOutput(outputId)` | UI placeholder for a server-rendered tab widget |
 | `renderGlassTabs({expr})` | Render a `glassTabsUI()` reactively; JS reinitialises automatically |
+| `glassTabCondition(id, value)` | JS condition string for `conditionalPanel()` |
 | `updateGlassTabsUI(session, id, selected)` | Switch the active tab from the server |
 | `updateGlassTabBadge(session, id, value, count)` | Set a numeric badge on a tab button (`0` hides it) |
 | `showGlassTab(session, id, value)` | Show a hidden tab |
@@ -139,6 +141,22 @@ shinyApp(ui, server)
 | `input$<inputId>` | `character vector` | Selected values from `glassMultiSelect()` |
 | `input$<inputId>_style` | `character` | Active selection style from `glassMultiSelect()` |
 | `input$<inputId>` | `character` or `NULL` | Selected value from `glassSelect()` |
+
+### conditionalPanel integration
+
+Use `glassTabCondition()` to avoid constructing the input key manually:
+
+```r
+# Instead of: condition = "input['main-active_tab'] === 'details'"
+conditionalPanel(
+  condition = glassTabCondition("main", "details"),
+  p("Only visible on the Details tab.")
+)
+
+# Inside a module — pass the same id as glassTabsUI():
+# glassTabsUI(ns("tabs"), ...)
+# conditionalPanel(condition = glassTabCondition(ns("tabs"), "details"), ...)
+```
 
 ---
 

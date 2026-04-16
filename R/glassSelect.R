@@ -88,7 +88,16 @@ glassSelect <- function(
     selected <- as.character(selected)
 
     if (length(selected) > 1) {
-      stop("`selected` must be NULL, character(0), or a single value for glassSelect().", call. = FALSE)
+      stop(
+        sprintf(
+          paste0(
+            "glassSelect(): `selected` must be a single value, got %d values: %s\n",
+            "For multi-selection use glassMultiSelect() instead."
+          ),
+          length(selected), paste(utils::head(selected, 3), collapse = ", ")
+        ),
+        call. = FALSE
+      )
     }
 
     if (length(selected) == 0) {
@@ -315,7 +324,13 @@ updateGlassSelect <- function(
 
     if (length(selected) > 1) {
       stop(
-        "`selected` must be NULL, character(0), or a single value in updateGlassSelect().",
+        sprintf(
+          paste0(
+            "updateGlassSelect(): `selected` must be a single value or character(0) to clear,\n",
+            "got %d values. For multi-selection use updateGlassMultiSelect() instead."
+          ),
+          length(selected)
+        ),
         call. = FALSE
       )
     }

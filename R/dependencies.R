@@ -47,6 +47,35 @@ runGlassExample <- function(example = NULL, ...) {
   shiny::runApp(app_dir, ...)
 }
 
+#' Display the glasstabs changelog
+#'
+#' Prints the package NEWS to the R console. Useful for quickly checking what
+#' changed between versions without leaving your R session.
+#'
+#' @return Called for its side effect; returns `NULL` invisibly.
+#'
+#' @examples
+#' glasstabs_news()
+#'
+#' @export
+glasstabs_news <- function() {
+  pkg  <- "glasstabs"
+  news <- tryCatch(
+    utils::news(package = pkg),
+    error = function(e) NULL
+  )
+  if (!is.null(news)) {
+    print(news)
+  } else {
+    url <- "https://github.com/prigasG/glasstabs/blob/main/NEWS.md"
+    message(
+      "Could not retrieve glasstabs changelog from the installed package.\n",
+      "View the full changelog online: ", url
+    )
+  }
+  invisible(NULL)
+}
+
 #' Attach glasstabs CSS and JS dependencies
 #'
 #' Call this once in your UI — either inside `fluidPage()`, `bs4DashPage()`,

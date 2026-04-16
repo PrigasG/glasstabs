@@ -7,30 +7,25 @@ Tested on:
 - GitHub Actions CI: macOS, Windows, Ubuntu on R release and devel
 - win-builder: R release and devel
 
-## Resubmission
-
-This is a resubmission.
-
-## Changes in this version (0.3.0)
+## Changes in this version (0.3.1)
 
 New exported functions:
 
-- `runGlassExample()` — launches built-in example Shiny apps.
-- `glassTabPanel()` gains an `icon` argument accepting any
-  htmltools-compatible tag (e.g. `shiny::icon("table")`).
-- `disableGlassTab()` / `enableGlassTab()` — gray out a tab without hiding it.
-- `updateGlassTabBadge()` — display a live numeric count badge on a tab button.
-- `glassTabsServer()` gains a `bookmark` argument (default `TRUE`) for Shiny
-  URL bookmark integration.
-- `glassTabsOutput()` / `renderGlassTabs()` — server-driven reactive tab
-  rendering; JS reinitialises automatically after each render.
+- `glassTabCondition(id, value)` — generates the correct JavaScript condition
+  string for `conditionalPanel()`, removing the need to recall the
+  `input[["id-active_tab"]]` key pattern manually.
+- `glasstabs_news()` — prints the package changelog to the R console.
 
-Other improvements:
+Improvements:
 
-- `glassTabsUI()` now errors early on duplicate `glassTabPanel()` values.
-- `glassTabsServer()` warns on namespaced ids (containing `"-"`).
-- CSS: added `.gt-tab-disabled`, `.gt-tab-icon`, `.gt-tab-label`, `.gt-tab-badge`.
-- JS: scoped `shiny:value` listener for automatic reinit on `renderGlassTabs()`.
-- Added `inst/cheatsheet/glasstabs-cheatsheet.tex` — printable LaTeX reference.
-- Cheatsheet vignette extended with module usage, dynamic values, and bs4Dash.
-
+- Error messages across all functions are now actionable: they identify the
+  bad argument class, show what was received, and suggest the corrective fix.
+- `glass_tab_theme()` and `glass_select_theme()` now have full `@examples`
+  with interactive Shiny app snippets.
+- `.gt-container` no longer forces `max-width:960px` or `margin:48px auto`;
+  the widget now flows naturally inside Shiny columns and dashboard cards.
+- Light-mode halo shadow improved via `--gt-halo-shadow` CSS variable
+  (soft blue-tinted shadow instead of a harsh black drop shadow).
+- `ROADMAP.md` added to the repository (excluded from the built package).
+- 27 new tests covering `glassTabCondition()`, `glasstabs_news()`, and all
+  improved error message paths.
