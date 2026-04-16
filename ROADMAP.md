@@ -15,12 +15,12 @@ Living document tracking completed features and planned work. Updated with each 
 
 | # | Feature | Status |
 |---|---------|--------|
-| 1 | `glassTabCondition()` — `conditionalPanel()` helper | 📋 |
+| 1 | `glassTabCondition()` — `conditionalPanel()` helper | ✅ v0.3.1 |
 | 2 | Hidden navbar mode (`show_navbar = FALSE`) | 📋 |
 | 3 | `header` / `footer` args for content area | 📋 |
 | 4 | `localStorage` tab persistence (`persist = "local"`) | 📋 |
-| 5 | `glasstabs_news()` — in-console changelog utility | 📋 |
-| 6 | Improved, actionable error messages across all functions | 📋 |
+| 5 | `glasstabs_news()` — in-console changelog utility | ✅ v0.3.1 |
+| 6 | Improved, actionable error messages across all functions | ✅ v0.3.1 |
 
 ---
 
@@ -52,6 +52,7 @@ Living document tracking completed features and planned work. Updated with each 
 
 | Version | Highlights |
 |---------|-----------|
+| v0.3.1  | `glassTabCondition()`, `glasstabs_news()`, actionable error messages, examples for theme helpers, container spacing fix, light-mode halo shadow |
 | v0.3.0  | Icons on tabs, numeric badges, disable/enable, URL bookmarking, `renderGlassTabs` / `glassTabsOutput`, `compact` mode, light theme CSS fix, z-index fix for bs4Dash |
 | v0.2.1  | CRAN release — `glassTabsUI`, `glassMultiSelect`, `glassSelect`, full theming API |
 
