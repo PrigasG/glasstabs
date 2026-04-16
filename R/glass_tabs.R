@@ -150,12 +150,13 @@ glassTabsUI <- function(
 
   scope_id <- ns("wrap")
   theme_css <- sprintf(
-    "#%s{--gt-tab-text:%s;--gt-tab-active-text:%s;--gt-halo-bg:%s;--gt-halo-border:%s;--gt-content-bg:%s;--gt-content-border:%s;--gt-card-bg:%s;--gt-card-text:%s;}",
+    "#%s{--gt-tab-text:%s;--gt-tab-active-text:%s;--gt-halo-bg:%s;--gt-halo-border:%s;--gt-halo-shadow:%s;--gt-content-bg:%s;--gt-content-border:%s;--gt-card-bg:%s;--gt-card-text:%s;}",
     scope_id,
     theme_vals$tab_text,
     theme_vals$tab_active_text,
     theme_vals$halo_bg,
     theme_vals$halo_border,
+    theme_vals$halo_shadow,
     theme_vals$content_bg,
     theme_vals$content_border,
     theme_vals$card_bg,
