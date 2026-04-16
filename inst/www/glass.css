@@ -10,20 +10,22 @@
 /* ── Tab links ── */
 .gt-tab-link{
   position:relative;padding:10px 18px;border-radius:12px;
-  background:rgba(255,255,255,0.02);color:#cfe6ff;cursor:pointer;
-  font-weight:600;font-size:14px;
+  background:rgba(255,255,255,0.02);
+  color:var(--gt-tab-text,#cfe6ff);
+  cursor:pointer;font-weight:600;font-size:14px;
   transition:color 120ms ease,background 120ms ease;
   z-index:6;user-select:none;white-space:nowrap;
 }
 .gt-tab-link:hover{background:rgba(255,255,255,0.04);}
+.gt-tab-link.active{color:var(--gt-tab-active-text,#ffffff);}
 .gt-tab-link.gt-tab-hidden{display:none;}
 
 /* ── Glass halo ── */
 .gt-halo{
   position:absolute;pointer-events:none;border-radius:14px;
-  background:rgba(255,255,255,0.07);
+  background:var(--gt-halo-bg,rgba(255,255,255,0.07));
   backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
-  border:1px solid rgba(255,255,255,0.14);
+  border:1px solid var(--gt-halo-border,rgba(255,255,255,0.14));
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.22),
     inset 0 -1px 0 rgba(255,255,255,0.06),
@@ -58,7 +60,8 @@
 /* ── Content area ── */
 .gt-tab-wrap{
   position:relative;overflow:hidden;border-radius:14px;padding:22px;
-  background:linear-gradient(180deg,rgba(255,255,255,0.016),rgba(255,255,255,0.010));
+  background:var(--gt-content-bg,rgba(9,20,42,0.72));
+  border:1px solid var(--gt-content-border,rgba(255,255,255,0.10));
   box-shadow:0 10px 32px rgba(2,6,23,0.65);min-height:200px;z-index:5;
 }
 .gt-tab-pane{
@@ -70,11 +73,14 @@
 .gt-tab-pane.active{opacity:1;transform:translateY(0) scale(1);position:relative;pointer-events:auto;}
 
 /* ── Card ── */
-.gt-card{border-radius:10px;padding:18px;color:#eaf6ff;
-  background:linear-gradient(180deg,rgba(255,255,255,0.016),rgba(255,255,255,0.010));
-  box-shadow:inset 0 1px 0 rgba(255,255,255,0.025);}
-.gt-card h2,.gt-card h3{margin-top:0;color:#d4eeff;}
-.gt-card p{margin:0 0 12px;color:#a9c8e4;font-size:14px;line-height:1.65;}
+.gt-card{
+  border-radius:10px;padding:18px;
+  color:var(--gt-card-text,#eaf6ff);
+  background:var(--gt-card-bg,rgba(255,255,255,0.03));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.025);
+}
+.gt-card h2,.gt-card h3{margin-top:0;color:var(--gt-tab-active-text,#d4eeff);}
+.gt-card p{margin:0 0 12px;color:var(--gt-card-text,#a9c8e4);font-size:14px;line-height:1.65;}
 
 /* ── Tag pills ── */
 .gt-filter-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;min-height:26px;}
@@ -694,3 +700,26 @@
   letter-spacing:0.01em;
 }
 
+/* ── Compact / dense mode ─────────────────────────────────────────────── */
+/* Applied when glassTabsUI(compact = TRUE) */
+.gt-compact.gt-container{margin-top:4px;margin-bottom:4px;}
+.gt-compact .gt-topbar{margin-bottom:6px;}
+.gt-compact .gt-navbar{gap:4px;}
+.gt-compact .gt-tab-link{padding:5px 10px;font-size:13px;border-radius:8px;}
+.gt-compact .gt-tab-wrap{padding:12px;min-height:60px;}
+.gt-compact .gt-tab-pane{padding:12px;}
+.gt-compact .gt-card{padding:10px;}
+.gt-compact .gt-halo{border-radius:10px;}
+
+/* ── Dropdown z-index — raised for bs4Dash card stacking contexts ─────── */
+/* bs4Dash cards set overflow:hidden; raising z-index ensures the dropdown
+   clears any card/sidebar overlays. The layer-active class is set by JS
+   the moment a trigger is opened. */
+.gt-ms-wrap.gt-layer-active,
+.gt-gs-wrap.gt-layer-active{
+  z-index:9000;
+}
+.gt-ms-dropdown,
+.gt-gs-dropdown{
+  z-index:9001;
+}

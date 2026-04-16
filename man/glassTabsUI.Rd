@@ -9,6 +9,7 @@ glassTabsUI(
   ...,
   selected = NULL,
   wrap = TRUE,
+  compact = FALSE,
   extra_ui = NULL,
   theme = NULL
 )
@@ -21,6 +22,10 @@ glassTabsUI(
 \item{selected}{Value of the initially selected tab.}
 
 \item{wrap}{Logical. When \code{TRUE} wraps everything in a \code{div.gt-container}.}
+
+\item{compact}{Logical. When \code{TRUE} applies reduced padding and spacing via
+the \code{.gt-compact} CSS modifier — useful inside dashboard cards or tight
+layouts (e.g. bs4Dash).}
 
 \item{extra_ui}{Optional additional UI placed to the right of the tab bar.}
 

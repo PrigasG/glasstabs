@@ -27,15 +27,24 @@
 
 * `glassTabsUI()` now errors early on duplicate `glassTabPanel()` values,
   reporting the offending value(s) by name.
+* `glassTabsUI()` gains a `compact = FALSE` argument. Setting `compact = TRUE`
+  applies the `.gt-compact` CSS modifier which reduces margins, tab-link padding,
+  font size, and content area padding — ideal for embedding inside bs4Dash cards
+  or any tight dashboard layout.
 * `glassTabsServer()` emits a `warning()` when the `id` argument contains `"-"`,
   which is the most common sign that `ns("tabs")` was passed instead of the bare
   `"tabs"` id. The warning includes corrective guidance.
 * CSS: added `.gt-tab-disabled`, `.gt-tab-icon`, `.gt-tab-label`, and
   `.gt-tab-badge` rules. Badges adapt their background to the active halo colour
   via the existing CSS custom property.
+* CSS: all color values are now consumed via `var(--gt-xxx, fallback)` instead
+  of being hardcoded — this was the root cause of light theme appearing invisible.
+  Light theme defaults were also strengthened for better contrast.
+* CSS: dropdown active-state z-index raised to 9000/9001 so glasstabs dropdowns
+  render above bs4Dash card stacking contexts.
 * `shiny:value` listener limits bootAll re-initialisation to outputs that
   actually contain glasstabs elements, so ordinary Shiny outputs are unaffected.
-* Added `inst/cheatsheet/glasstabs-cheatsheet.tex` — a printable two-column
+* Added `inst/cheatsheet/glasstabs-cheatsheet.tex` — a printable four-column
   LaTeX reference card covering the full API, module pattern, bs4Dash integration,
   theming, and common gotchas.
 

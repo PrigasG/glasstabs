@@ -5,7 +5,6 @@ Dropdown
 HSL
 JS
 README
-Roadmap
 Shiny's
 Theming
 UI
@@ -21,11 +20,9 @@ dropdown
 dropdowns
 glassMultiSelect
 glassSelect
-glassTabPanel
-glassTabsOutput
-glassTabsServer
 glassTabsUI
 glassmorphism
+hardcoded
 htmltools
 initialisation
 initialised

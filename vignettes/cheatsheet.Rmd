@@ -129,8 +129,27 @@ glassTabsUI(
   glassTabPanel("b", "B", p("B")),
   selected = "a",
   wrap = TRUE,
+  compact = FALSE,      # set TRUE inside dashboard cards for tighter layout
   extra_ui = tags$div("Right side UI"),
   theme = "light"
+)
+```
+
+## Tabs: compact mode (dashboard cards)
+
+Use `compact = TRUE` when embedding glasstabs inside a tight layout such as a
+`bs4Dash::bs4Card()`. It reduces margins, padding, and font size so the widget
+does not overflow the card.
+
+```{r}
+bs4Card(
+  title = "Explorer", width = 12,
+  glassTabsUI(
+    "tabs",
+    glassTabPanel("a", "A", selected = TRUE, p("Content")),
+    glassTabPanel("b", "B", p("More content")),
+    compact = TRUE      # reduced spacing for card context
+  )
 )
 ```
 

@@ -51,13 +51,13 @@ glass_tab_theme <- function(
   )
 
   light_defaults <- list(
-    tab_text        = "#475569",
+    tab_text        = "#334155",
     tab_active_text = "#0f172a",
-    halo_bg         = "rgba(37,99,235,0.10)",
-    halo_border     = "rgba(37,99,235,0.24)",
-    content_bg      = "rgba(255,255,255,0.88)",
-    content_border  = "rgba(0,0,0,0.08)",
-    card_bg         = "rgba(255,255,255,0.70)",
+    halo_bg         = "rgba(37,99,235,0.13)",
+    halo_border     = "rgba(37,99,235,0.42)",
+    content_bg      = "rgba(255,255,255,0.92)",
+    content_border  = "rgba(0,0,0,0.10)",
+    card_bg         = "rgba(248,250,252,0.80)",
     card_text       = "#1e293b"
   )
 

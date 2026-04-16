@@ -48,6 +48,9 @@ glassTabPanel <- function(value, label, ..., icon = NULL, selected = FALSE) {
 #' @param ... One or more [glassTabPanel()] objects.
 #' @param selected Value of the initially selected tab.
 #' @param wrap Logical. When `TRUE` wraps everything in a `div.gt-container`.
+#' @param compact Logical. When `TRUE` applies reduced padding and spacing via
+#'   the `.gt-compact` CSS modifier — useful inside dashboard cards or tight
+#'   layouts (e.g. bs4Dash).
 #' @param extra_ui Optional additional UI placed to the right of the tab bar.
 #' @param theme One of `"dark"`, `"light"`, or a [glass_tab_theme()] object.
 #'
@@ -57,6 +60,7 @@ glassTabsUI <- function(
     id, ...,
     selected = NULL,
     wrap = TRUE,
+    compact = FALSE,
     extra_ui = NULL,
     theme = NULL
 ) {
@@ -166,11 +170,12 @@ glassTabsUI <- function(
     shiny::div(class = "gt-tab-wrap", panes)
   )
 
-  if (wrap) {
-    shiny::div(class = "gt-container", id = scope_id, inner)
-  } else {
-    shiny::div(id = scope_id, inner)
-  }
+  container_cls <- trimws(paste(
+    c(if (isTRUE(wrap)) "gt-container", if (isTRUE(compact)) "gt-compact"),
+    collapse = " "
+  ))
+  shiny::div(class = if (nzchar(container_cls)) container_cls else NULL,
+             id = scope_id, inner)
 }
 
 #' Programmatically switch the active glass tab

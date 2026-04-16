@@ -277,3 +277,45 @@ test_that("glassTabsUI() error message names the duplicate value", {
   )
   expect_true(grepl("dup", err))
 })
+
+# ── Compact mode ──────────────────────────────────────────────────────────────
+
+test_that("glassTabsUI() without compact does not add gt-compact class", {
+  html <- as.character(glassTabsUI(
+    "tabs",
+    glassTabPanel("a", "A", shiny::p("A")),
+    compact = FALSE
+  ))
+  expect_false(grepl("gt-compact", html))
+})
+
+test_that("glassTabsUI() with compact = TRUE adds gt-compact class", {
+  html <- as.character(glassTabsUI(
+    "tabs",
+    glassTabPanel("a", "A", shiny::p("A")),
+    compact = TRUE
+  ))
+  expect_true(grepl("gt-compact", html))
+})
+
+test_that("glassTabsUI() compact = TRUE keeps gt-container class when wrap = TRUE", {
+  html <- as.character(glassTabsUI(
+    "tabs",
+    glassTabPanel("a", "A", shiny::p("A")),
+    wrap = TRUE,
+    compact = TRUE
+  ))
+  expect_true(grepl("gt-container", html))
+  expect_true(grepl("gt-compact", html))
+})
+
+test_that("glassTabsUI() compact = TRUE without wrap has only gt-compact class", {
+  html <- as.character(glassTabsUI(
+    "tabs",
+    glassTabPanel("a", "A", shiny::p("A")),
+    wrap = FALSE,
+    compact = TRUE
+  ))
+  expect_false(grepl("gt-container", html))
+  expect_true(grepl("gt-compact", html))
+})
