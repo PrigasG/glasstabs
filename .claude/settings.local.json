@@ -23,7 +23,18 @@
       "Bash(grep -n \"stop\\(\\\\|warning\\(\\\\|message\\(\" R/*.R)",
       "Bash(grep -n \"@examples\" R/*.R)",
       "Bash(\"/c/Program Files/R/R-4.5.1/bin/Rscript.exe\" -e \"devtools::test\\(filter='roadmap'\\)\")",
-      "Bash(\"/c/Program Files/R/R-4.5.1/bin/Rscript.exe\" -e \"spelling::spell_check_package\\(\\)\")"
+      "Bash(\"/c/Program Files/R/R-4.5.1/bin/Rscript.exe\" -e \"spelling::spell_check_package\\(\\)\")",
+      "Bash(\"/c/Program Files/R/R-4.5.1/bin/Rscript.exe\" -e \"devtools::build\\(\\) |> invisible\\(\\)\")",
+      "Bash(\"/c/Program Files/R/R-4.5.1/bin/Rscript.exe\" -e \"devtools::check\\(args='--as-cran'\\)\")",
+      "Bash(\"/c/Program Files/R/R-4.5.1/bin/Rscript.exe\" -e \"devtools::build\\(\\)\")",
+      "Bash(tar -tzf \"C:/Users/priga/OneDrive/Documents/glasstabs_0.3.1.tar.gz\")",
+      "Bash(grep -v \"/$\")",
+      "Read(//c/Users/priga/OneDrive/Documents/**)",
+      "Bash(tar -tzf glasstabs_0.3.1.tar.gz)",
+      "Bash(\"/c/Program Files/R/R-4.5.1/bin/Rscript.exe\" -e \"devtools::build\\(quiet=TRUE\\)\")",
+      "Bash(grep -E \"testing|synctex|aux$|\\\\.log$|\\\\.out$|ROADMAP|cran-comment|\\\\.claude|\\\\.github\")",
+      "Bash(grep -E \"testing|synctex|\\\\.aux$|\\\\.log$|\\\\.out$|ROADMAP|cran-comment|\\\\.claude|\\\\.github\")",
+      "Bash(echo \"exit:$?\")"
     ]
   }
 }
