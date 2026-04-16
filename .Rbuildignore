@@ -7,11 +7,13 @@
 ^pkgdown$
 ^\.github$
 ^CRAN-SUBMISSION$
-^CLAUDE.md
-^ROADMAP\.md
+^CLAUDE\.md$
+^ROADMAP\.md$
 ^\.claude$
 ^doc$
 ^Meta$
 ^inst/cheatsheet/.*\.aux$
 ^inst/cheatsheet/.*\.log$
 ^inst/cheatsheet/.*\.out$
+^inst/cheatsheet/.*\.synctex\.gz$
+^inst/examples/basic/testing_js_select\.R$
