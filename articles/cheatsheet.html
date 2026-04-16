@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">glasstabs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,7 +70,7 @@
       <img src="../logo.svg" class="logo" alt=""><h1>glasstabs Cheatsheet</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/PrigasG/glasstabs/blob/v0.2.1/vignettes/cheatsheet.Rmd" class="external-link"><code>vignettes/cheatsheet.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/PrigasG/glasstabs/blob/main/vignettes/cheatsheet.Rmd" class="external-link"><code>vignettes/cheatsheet.Rmd</code></a></small>
       <div class="d-none name"><code>cheatsheet.Rmd</code></div>
     </div>
 
@@ -105,9 +105,73 @@ using any widget.</p>
 <span><span class="op">}</span></span></code></pre></div>
 </div>
 <div class="section level2">
+<h2 id="tabs-inside-a-shiny-module">Tabs: inside a Shiny module<a class="anchor" aria-label="anchor" href="#tabs-inside-a-shiny-module"></a>
+</h2>
+<p>The key rule: use <code>ns()</code> in the UI, use the
+<strong>bare</strong> id in the server.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># UI function</span></span>
+<span><span class="va">my_ui</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">id</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">ns</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/NS.html" class="external-link">NS</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/tagList.html" class="external-link">tagList</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="../reference/useGlassTabs.html">useGlassTabs</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="../reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
+<span>      <span class="fu">ns</span><span class="op">(</span><span class="st">"tabs"</span><span class="op">)</span>,                          <span class="co"># ns() wraps the id in the UI</span></span>
+<span>      <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"summary"</span>, <span class="st">"Summary"</span>, selected <span class="op">=</span> <span class="cn">TRUE</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">h3</a></span><span class="op">(</span><span class="st">"Summary"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"detail"</span>,  <span class="st">"Detail"</span>,  <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">h3</a></span><span class="op">(</span><span class="st">"Detail"</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co"># Server function</span></span>
+<span><span class="va">my_server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">id</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/moduleServer.html" class="external-link">moduleServer</a></span><span class="op">(</span><span class="va">id</span>, <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">active</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/glassTabsServer.html">glassTabsServer</a></span><span class="op">(</span><span class="st">"tabs"</span><span class="op">)</span>    <span class="co"># bare id — no ns() here</span></span>
+<span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/observeEvent.html" class="external-link">observeEvent</a></span><span class="op">(</span><span class="fu">active</span><span class="op">(</span><span class="op">)</span>, <span class="op">{</span></span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"Active tab: "</span>, <span class="fu">active</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="op">}</span><span class="op">)</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co"># App</span></span>
+<span><span class="va">ui</span>     <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span><span class="fu">my_ui</span><span class="op">(</span><span class="st">"explorer"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="fu">my_server</span><span class="op">(</span><span class="st">"explorer"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/shinyApp.html" class="external-link">shinyApp</a></span><span class="op">(</span><span class="va">ui</span>, <span class="va">server</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="tabs-dynamic-values-and-selected">Tabs: dynamic values and selected<a class="anchor" aria-label="anchor" href="#tabs-dynamic-values-and-selected"></a>
+</h2>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Build panels from data</span></span>
+<span><span class="va">tab_defs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>value <span class="op">=</span> <span class="st">"revenue"</span>, label <span class="op">=</span> <span class="st">"Revenue"</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>value <span class="op">=</span> <span class="st">"orders"</span>,  label <span class="op">=</span> <span class="st">"Orders"</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>value <span class="op">=</span> <span class="st">"returns"</span>, label <span class="op">=</span> <span class="st">"Returns"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">panels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">tab_defs</span>, <span class="kw">function</span><span class="op">(</span><span class="va">t</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="va">t</span><span class="op">$</span><span class="va">value</span>, <span class="va">t</span><span class="op">$</span><span class="va">label</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">h3</a></span><span class="op">(</span><span class="va">t</span><span class="op">$</span><span class="va">label</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="../reference/useGlassTabs.html">useGlassTabs</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">glassTabsUI</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"metrics"</span>, selected <span class="op">=</span> <span class="st">"orders"</span><span class="op">)</span>, <span class="va">panels</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">active</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/glassTabsServer.html">glassTabsServer</a></span><span class="op">(</span><span class="st">"metrics"</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<blockquote>
+<p>Note: tab <code>value</code> strings must be unique —
+<code><a href="../reference/glassTabsUI.html">glassTabsUI()</a></code> will error on duplicates. Values are plain
+strings; they do not need to match labels.</p>
+</blockquote>
+</div>
+<div class="section level2">
 <h2 id="tabs-server-actions">Tabs: server actions<a class="anchor" aria-label="anchor" href="#tabs-server-actions"></a>
 </h2>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Switch active tab</span></span>
 <span><span class="fu"><a href="../reference/updateGlassTabsUI.html">updateGlassTabsUI</a></span><span class="op">(</span><span class="va">session</span>, <span class="st">"main"</span>, <span class="st">"details"</span><span class="op">)</span></span>
 <span></span>
@@ -126,21 +190,40 @@ using any widget.</p>
 <div class="section level2">
 <h2 id="tabs-common-options">Tabs: common options<a class="anchor" aria-label="anchor" href="#tabs-common-options"></a>
 </h2>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
 <span>  <span class="st">"main"</span>,</span>
 <span>  <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"A"</span>, selected <span class="op">=</span> <span class="cn">TRUE</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"A"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"b"</span>, <span class="st">"B"</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"B"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  selected <span class="op">=</span> <span class="st">"a"</span>,</span>
 <span>  wrap <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  compact <span class="op">=</span> <span class="cn">FALSE</span>,      <span class="co"># set TRUE inside dashboard cards for tighter layout</span></span>
 <span>  extra_ui <span class="op">=</span> <span class="va">tags</span><span class="op">$</span><span class="fu">div</span><span class="op">(</span><span class="st">"Right side UI"</span><span class="op">)</span>,</span>
 <span>  theme <span class="op">=</span> <span class="st">"light"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
+<h2 id="tabs-compact-mode-dashboard-cards">Tabs: compact mode (dashboard cards)<a class="anchor" aria-label="anchor" href="#tabs-compact-mode-dashboard-cards"></a>
+</h2>
+<p>Use <code>compact = TRUE</code> when embedding glasstabs inside a
+tight layout such as a <code><a href="https://bs4dash.rinterface.com/reference/box.html" class="external-link">bs4Dash::bs4Card()</a></code>. It reduces
+margins, padding, and font size so the widget does not overflow the
+card.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">bs4Card</span><span class="op">(</span></span>
+<span>  title <span class="op">=</span> <span class="st">"Explorer"</span>, width <span class="op">=</span> <span class="fl">12</span>,</span>
+<span>  <span class="fu"><a href="../reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
+<span>    <span class="st">"tabs"</span>,</span>
+<span>    <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"A"</span>, selected <span class="op">=</span> <span class="cn">TRUE</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"Content"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"b"</span>, <span class="st">"B"</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"More content"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    compact <span class="op">=</span> <span class="cn">TRUE</span>      <span class="co"># reduced spacing for card context</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
 <h2 id="multi-select-basic-pattern">Multi-select: basic pattern<a class="anchor" aria-label="anchor" href="#multi-select-basic-pattern"></a>
 </h2>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">choices</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Revenue <span class="op">=</span> <span class="st">"revenue"</span>, Orders <span class="op">=</span> <span class="st">"orders"</span>, Returns <span class="op">=</span> <span class="st">"returns"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span>
@@ -156,7 +239,7 @@ using any widget.</p>
 <div class="section level2">
 <h2 id="multi-select-update-from-server">Multi-select: update from server<a class="anchor" aria-label="anchor" href="#multi-select-update-from-server"></a>
 </h2>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/updateGlassMultiSelect.html">updateGlassMultiSelect</a></span><span class="op">(</span></span>
 <span>  <span class="va">session</span>,</span>
 <span>  <span class="st">"metric"</span>,</span>
@@ -170,7 +253,7 @@ using any widget.</p>
 <div class="section level2">
 <h2 id="multi-select-useful-arguments">Multi-select: useful arguments<a class="anchor" aria-label="anchor" href="#multi-select-useful-arguments"></a>
 </h2>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span></span>
 <span>  <span class="st">"metric"</span>,</span>
 <span>  <span class="va">choices</span>,</span>
@@ -188,7 +271,7 @@ using any widget.</p>
 <div class="section level2">
 <h2 id="single-select-basic-pattern">Single-select: basic pattern<a class="anchor" aria-label="anchor" href="#single-select-basic-pattern"></a>
 </h2>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">regions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"All Regions"</span> <span class="op">=</span> <span class="st">"all"</span>, North <span class="op">=</span> <span class="st">"north"</span>, South <span class="op">=</span> <span class="st">"south"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span>
@@ -203,7 +286,7 @@ using any widget.</p>
 <div class="section level2">
 <h2 id="single-select-update-from-server">Single-select: update from server<a class="anchor" aria-label="anchor" href="#single-select-update-from-server"></a>
 </h2>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/updateGlassSelect.html">updateGlassSelect</a></span><span class="op">(</span><span class="va">session</span>, <span class="st">"region"</span>, selected <span class="op">=</span> <span class="st">"south"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Clear value</span></span>
@@ -212,7 +295,7 @@ using any widget.</p>
 <div class="section level2">
 <h2 id="single-select-useful-arguments">Single-select: useful arguments<a class="anchor" aria-label="anchor" href="#single-select-useful-arguments"></a>
 </h2>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/glassSelect.html">glassSelect</a></span><span class="op">(</span></span>
 <span>  <span class="st">"region"</span>,</span>
 <span>  <span class="va">regions</span>,</span>
@@ -227,9 +310,64 @@ using any widget.</p>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
+<h2 id="tabs-inside-bs4dash">Tabs: inside bs4Dash<a class="anchor" aria-label="anchor" href="#tabs-inside-bs4dash"></a>
+</h2>
+<p><code><a href="../reference/glassTabsUI.html">glassTabsUI()</a></code> works inside
+<code><a href="https://bs4dash.rinterface.com/reference/dashboardBody.html" class="external-link">bs4Dash::tabItem()</a></code>. Place <code><a href="../reference/useGlassTabs.html">useGlassTabs()</a></code> in
+the <code><a href="https://bs4dash.rinterface.com/reference/dashboardBody.html" class="external-link">dashboardBody()</a></code> (or anywhere before the first widget —
+once is enough).</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny.posit.co/" class="external-link">shiny</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RinteRface/bs4Dash" class="external-link">bs4Dash</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://bs4dash.rinterface.com/reference/dashboardPage.html" class="external-link">bs4DashPage</a></span><span class="op">(</span></span>
+<span>  header  <span class="op">=</span> <span class="fu"><a href="https://bs4dash.rinterface.com/reference/dashboardHeader.html" class="external-link">bs4DashNavbar</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  sidebar <span class="op">=</span> <span class="fu"><a href="https://bs4dash.rinterface.com/reference/dashboardSidebar.html" class="external-link">bs4DashSidebar</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://bs4dash.rinterface.com/reference/dashboardSidebar.html" class="external-link">bs4SidebarMenu</a></span><span class="op">(</span></span>
+<span>      <span class="fu"><a href="https://bs4dash.rinterface.com/reference/dashboardSidebar.html" class="external-link">bs4SidebarMenuItem</a></span><span class="op">(</span><span class="st">"Explorer"</span>, tabName <span class="op">=</span> <span class="st">"explorer"</span>, icon <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/icon.html" class="external-link">icon</a></span><span class="op">(</span><span class="st">"table"</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  body <span class="op">=</span> <span class="fu"><a href="https://bs4dash.rinterface.com/reference/dashboardBody.html" class="external-link">bs4DashBody</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="../reference/useGlassTabs.html">useGlassTabs</a></span><span class="op">(</span><span class="op">)</span>,                     <span class="co"># place once, anywhere in the body</span></span>
+<span>    <span class="fu"><a href="https://bs4dash.rinterface.com/reference/dashboardBody.html" class="external-link">bs4TabItems</a></span><span class="op">(</span></span>
+<span>      <span class="fu"><a href="https://bs4dash.rinterface.com/reference/dashboardBody.html" class="external-link">bs4TabItem</a></span><span class="op">(</span></span>
+<span>        tabName <span class="op">=</span> <span class="st">"explorer"</span>,</span>
+<span>        <span class="fu"><a href="https://bs4dash.rinterface.com/reference/box.html" class="external-link">bs4Card</a></span><span class="op">(</span></span>
+<span>          title <span class="op">=</span> <span class="st">"Data explorer"</span>,</span>
+<span>          width <span class="op">=</span> <span class="fl">12</span>,</span>
+<span>          <span class="fu"><a href="../reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
+<span>            <span class="st">"s3_tabs"</span>,</span>
+<span>            <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"buckets"</span>, <span class="st">"Buckets"</span>, selected <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>              <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"List of S3 buckets here."</span><span class="op">)</span></span>
+<span>            <span class="op">)</span>,</span>
+<span>            <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"objects"</span>, <span class="st">"Objects"</span>,</span>
+<span>              <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"Object browser here."</span><span class="op">)</span></span>
+<span>            <span class="op">)</span>,</span>
+<span>            <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"preview"</span>, <span class="st">"Preview"</span>,</span>
+<span>              <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"File preview here."</span><span class="op">)</span></span>
+<span>            <span class="op">)</span></span>
+<span>          <span class="op">)</span></span>
+<span>        <span class="op">)</span></span>
+<span>      <span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">active</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/glassTabsServer.html">glassTabsServer</a></span><span class="op">(</span><span class="st">"s3_tabs"</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/shinyApp.html" class="external-link">shinyApp</a></span><span class="op">(</span><span class="va">ui</span>, <span class="va">server</span><span class="op">)</span></span></code></pre></div>
+<blockquote>
+<p><code><a href="../reference/useGlassTabs.html">useGlassTabs()</a></code> only needs to appear once. Inside a
+module that renders into a bs4Dash layout, call it in your module’s UI
+function.</p>
+</blockquote>
+</div>
+<div class="section level2">
 <h2 id="theme-helpers">Theme helpers<a class="anchor" aria-label="anchor" href="#theme-helpers"></a>
 </h2>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Tabs</span></span>
 <span><span class="fu"><a href="../reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
 <span>  <span class="st">"main"</span>,</span>
@@ -294,11 +432,47 @@ using any widget.</p>
 </table>
 </div>
 <div class="section level2">
+<h2 id="conditionalpanel-integration">conditionalPanel integration<a class="anchor" aria-label="anchor" href="#conditionalpanel-integration"></a>
+</h2>
+<p>Use <code><a href="../reference/glassTabCondition.html">glassTabCondition()</a></code> to avoid constructing the input
+key manually:</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Instead of: condition = "input['main-active_tab'] === 'details'"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/conditionalPanel.html" class="external-link">conditionalPanel</a></span><span class="op">(</span></span>
+<span>  condition <span class="op">=</span> <span class="fu"><a href="../reference/glassTabCondition.html">glassTabCondition</a></span><span class="op">(</span><span class="st">"main"</span>, <span class="st">"details"</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"Only visible on the Details tab."</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Inside a module — pass the same id as glassTabsUI():</span></span>
+<span><span class="co"># glassTabsUI(ns("tabs"), ...)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/conditionalPanel.html" class="external-link">conditionalPanel</a></span><span class="op">(</span></span>
+<span>  condition <span class="op">=</span> <span class="fu"><a href="../reference/glassTabCondition.html">glassTabCondition</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/NS.html" class="external-link">NS</a></span><span class="op">(</span><span class="st">"mymod"</span><span class="op">)</span><span class="op">(</span><span class="st">"tabs"</span><span class="op">)</span>, <span class="st">"details"</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"Only visible on the Details tab."</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="view-the-changelog">View the changelog<a class="anchor" aria-label="anchor" href="#view-the-changelog"></a>
+</h2>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/glasstabs_news.html">glasstabs_news</a></span><span class="op">(</span><span class="op">)</span>      <span class="co"># prints changelog to the console</span></span></code></pre></div>
+</div>
+<div class="section level2">
 <h2 id="common-gotchas">Common gotchas<a class="anchor" aria-label="anchor" href="#common-gotchas"></a>
 </h2>
 <ul>
 <li>
 <code><a href="../reference/useGlassTabs.html">useGlassTabs()</a></code> must be called once in the UI.</li>
+<li>In a module, use <code>ns("tabs")</code> in the UI but pass the bare
+<code>"tabs"</code> to <code><a href="../reference/glassTabsServer.html">glassTabsServer()</a></code> — not
+<code>ns("tabs")</code>. Passing a namespaced id (containing
+<code>-</code>) will produce a warning with a suggested fix.</li>
+<li>
+<code><a href="../reference/glassTabPanel.html">glassTabPanel()</a></code> values must be unique within a
+<code><a href="../reference/glassTabsUI.html">glassTabsUI()</a></code> call — duplicates cause an error naming the
+offending value.</li>
+<li>
+<code>selected</code> in <code><a href="../reference/glassTabsUI.html">glassTabsUI()</a></code> refers to the
+tab <strong>value</strong>, not the label.</li>
 <li>
 <code><a href="../reference/glassSelectValue.html">glassSelectValue()</a></code> returns a reactive function, not a
 list.</li>
@@ -307,6 +481,8 @@ list.</li>
 <code>selected()</code> and <code>style()</code>.</li>
 <li>For <code><a href="../reference/glassMultiSelect.html">glassMultiSelect()</a></code>, <code>selected</code> should
 use choice values, not labels.</li>
+<li>Use <code>compact = TRUE</code> inside bs4Dash cards or any tight
+layout to reduce widget spacing.</li>
 <li>If you add new JS/CSS behavior during development, reinstall or
 <code>load_all()</code> before retesting.</li>
 </ul>

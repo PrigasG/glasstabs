@@ -10,6 +10,7 @@ glassTabsUI(
   ...,
   selected = NULL,
   wrap = TRUE,
+  compact = FALSE,
   extra_ui = NULL,
   theme = NULL
 )
@@ -34,6 +35,12 @@ glassTabsUI(
 - wrap:
 
   Logical. When `TRUE` wraps everything in a `div.gt-container`.
+
+- compact:
+
+  Logical. When `TRUE` applies reduced padding and spacing via the
+  `.gt-compact` CSS modifier — useful inside dashboard cards or tight
+  layouts (e.g. bs4Dash).
 
 - extra_ui:
 

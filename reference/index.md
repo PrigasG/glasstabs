@@ -2,12 +2,16 @@
 
 ## Setup
 
-Load CSS and JavaScript into your Shiny page.
+Load CSS/JavaScript, launch built-in examples, and view the changelog.
 
 - [`useGlassTabs()`](https://prigasg.github.io/glasstabs/reference/useGlassTabs.md)
   : Attach glasstabs CSS and JS dependencies
+- [`runGlassExample()`](https://prigasg.github.io/glasstabs/reference/runGlassExample.md)
+  : Run a built-in glasstabs example app
+- [`glasstabs_news()`](https://prigasg.github.io/glasstabs/reference/glasstabs_news.md)
+  : Display the glasstabs changelog
 
-## Tab widget
+## Tab widget — UI
 
 Animated glass-morphism tab navigation with a sliding halo, spring
 easing, and transfer trace.
@@ -16,18 +20,35 @@ easing, and transfer trace.
   : Animated glass-style tab navigation UI
 - [`glassTabPanel()`](https://prigasg.github.io/glasstabs/reference/glassTabPanel.md)
   : Define a single glass tab panel
+- [`glassTabsOutput()`](https://prigasg.github.io/glasstabs/reference/glassTabsOutput.md)
+  : Dynamic glass tab UI output
+- [`glass_tab_theme()`](https://prigasg.github.io/glasstabs/reference/glass_tab_theme.md)
+  : Create a custom color theme for glassTabsUI
+- [`glassTabCondition()`](https://prigasg.github.io/glasstabs/reference/glassTabCondition.md)
+  : Build a conditionalPanel condition for a glasstabs widget
+
+## Tab widget — server
+
+Server-side helpers for reading, switching, showing/hiding, disabling,
+badging, and dynamically rendering tabs.
+
 - [`glassTabsServer()`](https://prigasg.github.io/glasstabs/reference/glassTabsServer.md)
   : Server logic for glass tabs
+- [`renderGlassTabs()`](https://prigasg.github.io/glasstabs/reference/renderGlassTabs.md)
+  : Render a reactive glass tab UI
 - [`updateGlassTabsUI()`](https://prigasg.github.io/glasstabs/reference/updateGlassTabsUI.md)
   : Programmatically switch the active glass tab
+- [`updateGlassTabBadge()`](https://prigasg.github.io/glasstabs/reference/updateGlassTabBadge.md)
+  : Update the badge count on a glass tab
 - [`showGlassTab()`](https://prigasg.github.io/glasstabs/reference/showGlassTab.md)
   [`hideGlassTab()`](https://prigasg.github.io/glasstabs/reference/showGlassTab.md)
   : Show or hide a glass tab
+- [`disableGlassTab()`](https://prigasg.github.io/glasstabs/reference/disableGlassTab.md)
+  [`enableGlassTab()`](https://prigasg.github.io/glasstabs/reference/disableGlassTab.md)
+  : Disable or enable a glass tab
 - [`appendGlassTab()`](https://prigasg.github.io/glasstabs/reference/appendGlassTab.md)
   [`removeGlassTab()`](https://prigasg.github.io/glasstabs/reference/appendGlassTab.md)
   : Append or remove a glass tab at runtime
-- [`glass_tab_theme()`](https://prigasg.github.io/glasstabs/reference/glass_tab_theme.md)
-  : Create a custom color theme for glassTabsUI
 
 ## Select widgets
 

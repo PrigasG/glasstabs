@@ -30,7 +30,7 @@
 
     <a class="navbar-brand me-2" href="index.html">glasstabs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -161,6 +161,9 @@
 <div class="section level2">
 <h2 id="function-reference">Function reference<a class="anchor" aria-label="anchor" href="#function-reference"></a>
 </h2>
+<div class="section level3">
+<h3 id="setup">Setup<a class="anchor" aria-label="anchor" href="#setup"></a>
+</h3>
 <table class="table">
 <colgroup>
 <col width="50%">
@@ -173,81 +176,148 @@
 <tbody>
 <tr class="odd">
 <td><code><a href="reference/useGlassTabs.html">useGlassTabs()</a></code></td>
-<td>Inject package CSS and JavaScript, call once in the UI</td>
+<td>Inject package CSS and JavaScript — call once in the UI</td>
 </tr>
 <tr class="even">
-<td><code>glassTabsUI(id, ..., selected, wrap, extra_ui, theme)</code></td>
-<td>Animated tab bar with content area</td>
+<td><code>runGlassExample(example)</code></td>
+<td>Launch a built-in example app (<code><a href="reference/runGlassExample.html">runGlassExample()</a></code> to list all)</td>
 </tr>
 <tr class="odd">
-<td><code>glassTabPanel(value, label, ..., selected)</code></td>
-<td>Define one tab and its content</td>
+<td><code><a href="reference/glasstabs_news.html">glasstabs_news()</a></code></td>
+<td>Print the package changelog to the R console</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section level3">
+<h3 id="tab-widget">Tab widget<a class="anchor" aria-label="anchor" href="#tab-widget"></a>
+</h3>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead><tr class="header">
+<th>Function</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>glassTabsUI(id, ..., selected, wrap, compact, extra_ui, theme)</code></td>
+<td>Animated tab bar with content area; <code>compact=TRUE</code> for dashboard cards</td>
 </tr>
 <tr class="even">
-<td><code>glassTabsServer(id)</code></td>
-<td>Reactive returning the active tab value</td>
+<td><code>glassTabPanel(value, label, ..., icon, selected)</code></td>
+<td>Define one tab and its content; <code>icon</code> accepts <code><a href="https://rdrr.io/pkg/shiny/man/icon.html" class="external-link">shiny::icon()</a></code>
+</td>
+</tr>
+<tr class="odd">
+<td><code>glassTabsServer(id, bookmark)</code></td>
+<td>Reactive returning the active tab; bookmarks active tab in URL</td>
+</tr>
+<tr class="even">
+<td><code>glassTabsOutput(outputId)</code></td>
+<td>UI placeholder for a server-rendered tab widget</td>
+</tr>
+<tr class="odd">
+<td><code>renderGlassTabs({expr})</code></td>
+<td>Render a <code><a href="reference/glassTabsUI.html">glassTabsUI()</a></code> reactively; JS reinitialises automatically</td>
+</tr>
+<tr class="even">
+<td><code>glassTabCondition(id, value)</code></td>
+<td>JS condition string for <code><a href="https://rdrr.io/pkg/shiny/man/conditionalPanel.html" class="external-link">conditionalPanel()</a></code>
+</td>
 </tr>
 <tr class="odd">
 <td><code>updateGlassTabsUI(session, id, selected)</code></td>
 <td>Switch the active tab from the server</td>
 </tr>
 <tr class="even">
+<td><code>updateGlassTabBadge(session, id, value, count)</code></td>
+<td>Set a numeric badge on a tab button (<code>0</code> hides it)</td>
+</tr>
+<tr class="odd">
 <td><code>showGlassTab(session, id, value)</code></td>
 <td>Show a hidden tab</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>hideGlassTab(session, id, value)</code></td>
 <td>Hide a tab from the navigation bar</td>
 </tr>
+<tr class="odd">
+<td><code>disableGlassTab(session, id, value)</code></td>
+<td>Gray out a tab (stays visible, not clickable)</td>
+</tr>
 <tr class="even">
+<td><code>enableGlassTab(session, id, value)</code></td>
+<td>Re-enable a disabled tab</td>
+</tr>
+<tr class="odd">
 <td><code>appendGlassTab(session, id, tab, select)</code></td>
 <td>Add a new tab at runtime</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>removeGlassTab(session, id, value)</code></td>
 <td>Remove a tab at runtime</td>
 </tr>
-<tr class="even">
+<tr class="odd">
+<td><code>glass_tab_theme(...)</code></td>
+<td>Custom colour theme for <code><a href="reference/glassTabsUI.html">glassTabsUI()</a></code>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section level3">
+<h3 id="select-widgets">Select widgets<a class="anchor" aria-label="anchor" href="#select-widgets"></a>
+</h3>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead><tr class="header">
+<th>Function</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
 <td><code>glassMultiSelect(inputId, choices, ...)</code></td>
 <td>Multi-select dropdown widget</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>updateGlassMultiSelect(session, inputId, ...)</code></td>
 <td>Update multi-select choices, selection, or style</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>glassMultiSelectValue(input, inputId)</code></td>
 <td>Reactive helper for multi-select value and style</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>glassSelect(inputId, choices, ...)</code></td>
 <td>Single-select dropdown widget</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>updateGlassSelect(session, inputId, ...)</code></td>
 <td>Update single-select choices, selection, or style</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>glassSelectValue(input, inputId)</code></td>
 <td>Reactive helper for selected value</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>glassFilterTags(inputId)</code></td>
 <td>Tag-pill display area synced to a multi-select</td>
 </tr>
-<tr class="odd">
-<td><code>glass_tab_theme(...)</code></td>
-<td>Custom color theme for <code><a href="reference/glassTabsUI.html">glassTabsUI()</a></code>
-</td>
-</tr>
 <tr class="even">
 <td><code>glass_select_theme(...)</code></td>
-<td>Custom color theme for <code><a href="reference/glassSelect.html">glassSelect()</a></code> and <code><a href="reference/glassMultiSelect.html">glassMultiSelect()</a></code>
+<td>Custom colour theme for <code><a href="reference/glassSelect.html">glassSelect()</a></code> and <code><a href="reference/glassMultiSelect.html">glassMultiSelect()</a></code>
 </td>
 </tr>
 </tbody>
 </table>
 <hr>
+</div>
 </div>
 <div class="section level2">
 <h2 id="shiny-inputs">Shiny inputs<a class="anchor" aria-label="anchor" href="#shiny-inputs"></a>
@@ -292,12 +362,27 @@
 </tr>
 </tbody>
 </table>
+<div class="section level3">
+<h3 id="conditionalpanel-integration">conditionalPanel integration<a class="anchor" aria-label="anchor" href="#conditionalpanel-integration"></a>
+</h3>
+<p>Use <code><a href="reference/glassTabCondition.html">glassTabCondition()</a></code> to avoid constructing the input key manually:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Instead of: condition = "input['main-active_tab'] === 'details'"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/conditionalPanel.html" class="external-link">conditionalPanel</a></span><span class="op">(</span></span>
+<span>  condition <span class="op">=</span> <span class="fu"><a href="reference/glassTabCondition.html">glassTabCondition</a></span><span class="op">(</span><span class="st">"main"</span>, <span class="st">"details"</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"Only visible on the Details tab."</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Inside a module — pass the same id as glassTabsUI():</span></span>
+<span><span class="co"># glassTabsUI(ns("tabs"), ...)</span></span>
+<span><span class="co"># conditionalPanel(condition = glassTabCondition(ns("tabs"), "details"), ...)</span></span></code></pre></div>
 <hr>
+</div>
 </div>
 <div class="section level2">
 <h2 id="multi-select-example">Multi-select example<a class="anchor" aria-label="anchor" href="#multi-select-example"></a>
 </h2>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny.posit.co/" class="external-link">shiny</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/PrigasG/glasstabs" class="external-link">glasstabs</a></span><span class="op">)</span></span>
 <span></span>
@@ -326,7 +411,7 @@
 <div class="section level2">
 <h2 id="server-side-updates">Server-side updates<a class="anchor" aria-label="anchor" href="#server-side-updates"></a>
 </h2>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/observeEvent.html" class="external-link">observeEvent</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">clear</span>, <span class="op">{</span></span>
 <span>    <span class="fu"><a href="reference/updateGlassMultiSelect.html">updateGlassMultiSelect</a></span><span class="op">(</span></span>
@@ -389,7 +474,7 @@ server &lt;- function(input, output, session) {
 <h2 id="theming">Theming<a class="anchor" aria-label="anchor" href="#theming"></a>
 </h2>
 <p>All widgets default to <code>"dark"</code>. You can switch to <code>"light"</code> or supply a custom theme object.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Tab widget</span></span>
 <span><span class="fu"><a href="reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
 <span>  <span class="st">"nav"</span>,</span>
@@ -531,7 +616,7 @@ server &lt;- function(input, output, session) {
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span></span>
 <span>  <span class="st">"f"</span>, <span class="va">choices</span>,</span>
 <span>  check_style <span class="op">=</span> <span class="st">"filled"</span>,</span>
@@ -543,7 +628,7 @@ server &lt;- function(input, output, session) {
 <span>  check_style <span class="op">=</span> <span class="st">"check-only"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Hues distribute automatically around the color wheel or can be set manually under multi-select:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span><span class="st">"f"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Apple <span class="op">=</span> <span class="st">"apple"</span>, Banana <span class="op">=</span> <span class="st">"banana"</span>, Cherry <span class="op">=</span> <span class="st">"cherry"</span><span class="op">)</span>,</span>
 <span>  check_style <span class="op">=</span> <span class="st">"filled"</span>,</span>
 <span>  hues <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>apple <span class="op">=</span> <span class="fl">10L</span>, banana <span class="op">=</span> <span class="fl">50L</span>, cherry <span class="op">=</span> <span class="fl">340L</span><span class="op">)</span></span>
@@ -554,7 +639,7 @@ server &lt;- function(input, output, session) {
 <h2 id="bs4dash-compatibility">bs4Dash compatibility<a class="anchor" aria-label="anchor" href="#bs4dash-compatibility"></a>
 </h2>
 <p>Pass <code>wrap = FALSE</code> when embedding inside a bs4Dash card.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">bs4Card</span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span><span class="st">"dash"</span>,</span>
 <span>    wrap     <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -613,7 +698,7 @@ server &lt;- function(input, output, session) {
 <div class="section level2">
 <h2 id="server-side-tab-control">Server-side tab control<a class="anchor" aria-label="anchor" href="#server-side-tab-control"></a>
 </h2>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="co"># Switch to a tab programmatically</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/observeEvent.html" class="external-link">observeEvent</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">next_btn</span>, <span class="op">{</span></span>
@@ -641,11 +726,23 @@ server &lt;- function(input, output, session) {
 <hr>
 </div>
 <div class="section level2">
-<h2 id="roadmap">Roadmap<a class="anchor" aria-label="anchor" href="#roadmap"></a>
+<h2 id="whats-new-in-030">What’s new in 0.3.0<a class="anchor" aria-label="anchor" href="#whats-new-in-030"></a>
 </h2>
 <ul>
-<li><p>Additional select widget presets and examples</p></li>
-<li><p>More layout examples for bs4Dash and standard Shiny apps</p></li>
+<li>
+<code><a href="reference/runGlassExample.html">runGlassExample()</a></code> — launch any built-in example from the console</li>
+<li>
+<code>icon</code> argument in <code><a href="reference/glassTabPanel.html">glassTabPanel()</a></code> — add <code><a href="https://rdrr.io/pkg/shiny/man/icon.html" class="external-link">shiny::icon()</a></code> or any tag to a tab button</li>
+<li>
+<code><a href="reference/disableGlassTab.html">disableGlassTab()</a></code> / <code><a href="reference/disableGlassTab.html">enableGlassTab()</a></code> — gray out tabs without hiding them</li>
+<li>
+<code><a href="reference/updateGlassTabBadge.html">updateGlassTabBadge()</a></code> — set live numeric count badges on tab buttons</li>
+<li>
+<code>glassTabsServer(bookmark = TRUE)</code> — active tab preserved in Shiny URL bookmarks</li>
+<li>
+<code><a href="reference/glassTabsOutput.html">glassTabsOutput()</a></code> / <code><a href="reference/renderGlassTabs.html">renderGlassTabs()</a></code> — fully server-driven reactive tab sets</li>
+<li>
+<code>inst/cheatsheet/glasstabs-cheatsheet.tex</code> — printable two-column LaTeX reference card</li>
 </ul>
 <hr>
 </div>

@@ -1,6 +1,121 @@
 # Changelog
 
-## glasstabs 0.2.0
+## glasstabs 0.3.1
+
+### New features
+
+- Added `glassTabCondition(id, value)` — generates the correct
+  JavaScript condition string for \[shiny::conditionalPanel()\] without
+  needing to remember the `input[["id-active_tab"]]` key pattern.
+- Added
+  [`glasstabs_news()`](https://prigasg.github.io/glasstabs/reference/glasstabs_news.md)
+  — prints the package changelog to the R console.
+- Added `ROADMAP.md` tracking planned features and known limitations
+  (not shipped in the package).
+
+### Improvements
+
+- Error messages across all functions are now actionable: they name the
+  bad argument class, show what was received, and suggest the correct
+  fix.
+- [`glass_tab_theme()`](https://prigasg.github.io/glasstabs/reference/glass_tab_theme.md)
+  and
+  [`glass_select_theme()`](https://prigasg.github.io/glasstabs/reference/glass_select_theme.md)
+  now have full `@examples` with interactive app snippets.
+- `.gt-container` no longer forces `max-width:960px` or
+  `margin:48px auto` — the widget now behaves like a normal block
+  element inside Shiny layouts.
+- Light-mode halo box-shadow replaced with a soft blue-tinted shadow via
+  the `--gt-halo-shadow` CSS variable, replacing the harsh dark drop
+  shadow.
+
+------------------------------------------------------------------------
+
+## glasstabs 0.3.0
+
+### New features
+
+#### Tab widget
+
+- Added
+  [`runGlassExample()`](https://prigasg.github.io/glasstabs/reference/runGlassExample.md)
+  to launch any of the built-in example apps directly from the R console
+  (`runGlassExample("smoke-test")`, etc.).
+- Added `icon` argument to
+  [`glassTabPanel()`](https://prigasg.github.io/glasstabs/reference/glassTabPanel.md)
+  — accepts any htmltools-compatible tag (e.g. `shiny::icon("table")`).
+  Renders with `gt-tab-icon` / `gt-tab-label` spans so icon and text can
+  be styled independently.
+- Added
+  [`disableGlassTab()`](https://prigasg.github.io/glasstabs/reference/disableGlassTab.md)
+  and
+  [`enableGlassTab()`](https://prigasg.github.io/glasstabs/reference/disableGlassTab.md)
+  — gray out a tab without hiding it. Completes the
+  visibility/disabled/removal trio alongside
+  [`showGlassTab()`](https://prigasg.github.io/glasstabs/reference/showGlassTab.md)
+  /
+  [`hideGlassTab()`](https://prigasg.github.io/glasstabs/reference/showGlassTab.md).
+- Added
+  [`updateGlassTabBadge()`](https://prigasg.github.io/glasstabs/reference/updateGlassTabBadge.md)
+  — set a numeric count badge on any tab button. Pass `count = 0` or
+  `count = NA` to hide the badge. Values above 99 display as `"99+"`.
+- [`glassTabsServer()`](https://prigasg.github.io/glasstabs/reference/glassTabsServer.md)
+  now integrates with Shiny’s URL bookmarking: the active tab is
+  automatically saved and restored when `enableBookmarking = "url"` is
+  set on the app. Opt out per widget with `bookmark = FALSE`.
+- Added
+  [`glassTabsOutput()`](https://prigasg.github.io/glasstabs/reference/glassTabsOutput.md)
+  /
+  [`renderGlassTabs()`](https://prigasg.github.io/glasstabs/reference/renderGlassTabs.md)
+  for server-driven tab rendering. The JavaScript engine re-initialises
+  automatically after each render via a scoped `shiny:value` listener,
+  so no manual `glasstabs_reinit` calls are needed.
+
+### Improvements
+
+- [`glassTabsUI()`](https://prigasg.github.io/glasstabs/reference/glassTabsUI.md)
+  now errors early on duplicate
+  [`glassTabPanel()`](https://prigasg.github.io/glasstabs/reference/glassTabPanel.md)
+  values, reporting the offending value(s) by name.
+- [`glassTabsUI()`](https://prigasg.github.io/glasstabs/reference/glassTabsUI.md)
+  gains a `compact = FALSE` argument. Setting `compact = TRUE` applies
+  the `.gt-compact` CSS modifier which reduces margins, tab-link
+  padding, font size, and content area padding — ideal for embedding
+  inside bs4Dash cards or any tight dashboard layout.
+- [`glassTabsServer()`](https://prigasg.github.io/glasstabs/reference/glassTabsServer.md)
+  emits a [`warning()`](https://rdrr.io/r/base/warning.html) when the
+  `id` argument contains `"-"`, which is the most common sign that
+  `ns("tabs")` was passed instead of the bare `"tabs"` id. The warning
+  includes corrective guidance.
+- CSS: added `.gt-tab-disabled`, `.gt-tab-icon`, `.gt-tab-label`, and
+  `.gt-tab-badge` rules. Badges adapt their background to the active
+  halo colour via the existing CSS custom property.
+- CSS: all color values are now consumed via `var(--gt-xxx, fallback)`
+  instead of being hardcoded — this was the root cause of light theme
+  appearing invisible. Light theme defaults were also strengthened for
+  better contrast.
+- CSS: dropdown active-state z-index raised to 9000/9001 so glasstabs
+  dropdowns render above bs4Dash card stacking contexts.
+- `shiny:value` listener limits bootAll re-initialisation to outputs
+  that actually contain glasstabs elements, so ordinary Shiny outputs
+  are unaffected.
+- Added `inst/cheatsheet/glasstabs-cheatsheet.tex` — a printable
+  four-column LaTeX reference card covering the full API, module
+  pattern, bs4Dash integration, theming, and common gotchas.
+
+### Documentation
+
+- Cheatsheet vignette (`vignettes/cheatsheet.Rmd`) extended with new
+  sections: “Tabs inside a Shiny module”, “Dynamic tab values and
+  selected”, “Tabs inside bs4Dash”, and updated common gotchas.
+- All new functions have full roxygen docs, `@examples`, and
+  cross-links.
+
+------------------------------------------------------------------------
+
+## glasstabs 0.2.1
+
+CRAN release: 2026-04-11
 
 ### New features
 

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">glasstabs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,7 +44,7 @@
     <div class="section level2">
       <h2 id="setup">Setup<a class="anchor" aria-label="anchor" href="#setup"></a></h2>
 
-      <div class="section-desc"><p>Load CSS and JavaScript into your Shiny page.</p></div>
+      <div class="section-desc"><p>Load CSS/JavaScript, launch built-in examples, and view the changelog.</p></div>
 
       <dl></dl></div><div class="section level2">
 
@@ -57,8 +57,22 @@
 
         </dt>
         <dd>Attach glasstabs CSS and JS dependencies</dd>
+
+        <dt>
+
+          <code><a href="runGlassExample.html">runGlassExample()</a></code>
+
+        </dt>
+        <dd>Run a built-in glasstabs example app</dd>
+
+        <dt>
+
+          <code><a href="glasstabs_news.html">glasstabs_news()</a></code>
+
+        </dt>
+        <dd>Display the glasstabs changelog</dd>
       </dl></div><div class="section level2">
-      <h2 id="tab-widget">Tab widget<a class="anchor" aria-label="anchor" href="#tab-widget"></a></h2>
+      <h2 id="tab-widget-ui">Tab widget — UI<a class="anchor" aria-label="anchor" href="#tab-widget-ui"></a></h2>
 
       <div class="section-desc"><p>Animated glass-morphism tab navigation with a sliding halo, spring easing, and transfer trace.</p></div>
 
@@ -83,10 +97,47 @@
 
         <dt>
 
+          <code><a href="glassTabsOutput.html">glassTabsOutput()</a></code>
+
+        </dt>
+        <dd>Dynamic glass tab UI output</dd>
+
+        <dt>
+
+          <code><a href="glass_tab_theme.html">glass_tab_theme()</a></code>
+
+        </dt>
+        <dd>Create a custom color theme for glassTabsUI</dd>
+
+        <dt>
+
+          <code><a href="glassTabCondition.html">glassTabCondition()</a></code>
+
+        </dt>
+        <dd>Build a conditionalPanel condition for a glasstabs widget</dd>
+      </dl></div><div class="section level2">
+      <h2 id="tab-widget-server">Tab widget — server<a class="anchor" aria-label="anchor" href="#tab-widget-server"></a></h2>
+
+      <div class="section-desc"><p>Server-side helpers for reading, switching, showing/hiding, disabling, badging, and dynamically rendering tabs.</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
           <code><a href="glassTabsServer.html">glassTabsServer()</a></code>
 
         </dt>
         <dd>Server logic for glass tabs</dd>
+
+        <dt>
+
+          <code><a href="renderGlassTabs.html">renderGlassTabs()</a></code>
+
+        </dt>
+        <dd>Render a reactive glass tab UI</dd>
 
         <dt>
 
@@ -97,6 +148,13 @@
 
         <dt>
 
+          <code><a href="updateGlassTabBadge.html">updateGlassTabBadge()</a></code>
+
+        </dt>
+        <dd>Update the badge count on a glass tab</dd>
+
+        <dt>
+
           <code><a href="showGlassTab.html">showGlassTab()</a></code> <code><a href="showGlassTab.html">hideGlassTab()</a></code>
 
         </dt>
@@ -104,17 +162,17 @@
 
         <dt>
 
+          <code><a href="disableGlassTab.html">disableGlassTab()</a></code> <code><a href="disableGlassTab.html">enableGlassTab()</a></code>
+
+        </dt>
+        <dd>Disable or enable a glass tab</dd>
+
+        <dt>
+
           <code><a href="appendGlassTab.html">appendGlassTab()</a></code> <code><a href="appendGlassTab.html">removeGlassTab()</a></code>
 
         </dt>
         <dd>Append or remove a glass tab at runtime</dd>
-
-        <dt>
-
-          <code><a href="glass_tab_theme.html">glass_tab_theme()</a></code>
-
-        </dt>
-        <dd>Create a custom color theme for glassTabsUI</dd>
       </dl></div><div class="section level2">
       <h2 id="select-widgets">Select widgets<a class="anchor" aria-label="anchor" href="#select-widgets"></a></h2>
 

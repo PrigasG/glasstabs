@@ -7,7 +7,7 @@ Each call defines one tab button and its associated content pane.
 ## Usage
 
 ``` r
-glassTabPanel(value, label, ..., selected = FALSE)
+glassTabPanel(value, label, ..., icon = NULL, selected = FALSE)
 ```
 
 ## Arguments
@@ -24,6 +24,12 @@ glassTabPanel(value, label, ..., selected = FALSE)
 
   UI elements for the pane content.
 
+- icon:
+
+  Optional icon shown to the left of the tab label. Accepts any
+  htmltools-compatible tag, e.g. `shiny::icon("table")` or
+  `fontawesome::fa("house")`. Pass `NULL` (default) for no icon.
+
 - selected:
 
   Logical. Whether this tab starts selected. Only the first
@@ -37,6 +43,7 @@ A list of class `"glassTabPanel"` consumed by
 ## Examples
 
 ``` r
+# Plain text label
 glassTabPanel("overview", "Overview",
   shiny::h3("Welcome"),
   shiny::p("This is the overview tab.")
@@ -47,12 +54,39 @@ glassTabPanel("overview", "Overview",
 #> $label
 #> [1] "Overview"
 #> 
+#> $icon
+#> NULL
+#> 
 #> $content
 #> $content[[1]]
 #> <h3>Welcome</h3>
 #> 
 #> $content[[2]]
 #> <p>This is the overview tab.</p>
+#> 
+#> 
+#> $selected
+#> [1] FALSE
+#> 
+#> attr(,"class")
+#> [1] "glassTabPanel"
+
+# With a Shiny icon
+glassTabPanel("data", "Data",
+  icon = shiny::icon("table"),
+  shiny::p("Data content here.")
+)
+#> $value
+#> [1] "data"
+#> 
+#> $label
+#> [1] "Data"
+#> 
+#> $icon
+#> 
+#> $content
+#> $content[[1]]
+#> <p>Data content here.</p>
 #> 
 #> 
 #> $selected

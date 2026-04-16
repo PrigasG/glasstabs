@@ -102,26 +102,46 @@ shinyApp(ui, server)
 
 ## Function reference
 
-| Function                                                                          | Description                                                                                                                                                                                          |
-|-----------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| [`useGlassTabs()`](https://prigasg.github.io/glasstabs/reference/useGlassTabs.md) | Inject package CSS and JavaScript, call once in the UI                                                                                                                                               |
-| `glassTabsUI(id, ..., selected, wrap, extra_ui, theme)`                           | Animated tab bar with content area                                                                                                                                                                   |
-| `glassTabPanel(value, label, ..., selected)`                                      | Define one tab and its content                                                                                                                                                                       |
-| `glassTabsServer(id)`                                                             | Reactive returning the active tab value                                                                                                                                                              |
-| `updateGlassTabsUI(session, id, selected)`                                        | Switch the active tab from the server                                                                                                                                                                |
-| `showGlassTab(session, id, value)`                                                | Show a hidden tab                                                                                                                                                                                    |
-| `hideGlassTab(session, id, value)`                                                | Hide a tab from the navigation bar                                                                                                                                                                   |
-| `appendGlassTab(session, id, tab, select)`                                        | Add a new tab at runtime                                                                                                                                                                             |
-| `removeGlassTab(session, id, value)`                                              | Remove a tab at runtime                                                                                                                                                                              |
-| `glassMultiSelect(inputId, choices, ...)`                                         | Multi-select dropdown widget                                                                                                                                                                         |
-| `updateGlassMultiSelect(session, inputId, ...)`                                   | Update multi-select choices, selection, or style                                                                                                                                                     |
-| `glassMultiSelectValue(input, inputId)`                                           | Reactive helper for multi-select value and style                                                                                                                                                     |
-| `glassSelect(inputId, choices, ...)`                                              | Single-select dropdown widget                                                                                                                                                                        |
-| `updateGlassSelect(session, inputId, ...)`                                        | Update single-select choices, selection, or style                                                                                                                                                    |
-| `glassSelectValue(input, inputId)`                                                | Reactive helper for selected value                                                                                                                                                                   |
-| `glassFilterTags(inputId)`                                                        | Tag-pill display area synced to a multi-select                                                                                                                                                       |
-| `glass_tab_theme(...)`                                                            | Custom color theme for [`glassTabsUI()`](https://prigasg.github.io/glasstabs/reference/glassTabsUI.md)                                                                                               |
-| `glass_select_theme(...)`                                                         | Custom color theme for [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md) and [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md) |
+### Setup
+
+| Function                                                                              | Description                                                                                                                         |
+|---------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
+| [`useGlassTabs()`](https://prigasg.github.io/glasstabs/reference/useGlassTabs.md)     | Inject package CSS and JavaScript — call once in the UI                                                                             |
+| `runGlassExample(example)`                                                            | Launch a built-in example app ([`runGlassExample()`](https://prigasg.github.io/glasstabs/reference/runGlassExample.md) to list all) |
+| [`glasstabs_news()`](https://prigasg.github.io/glasstabs/reference/glasstabs_news.md) | Print the package changelog to the R console                                                                                        |
+
+### Tab widget
+
+| Function                                                         | Description                                                                                                                         |
+|------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
+| `glassTabsUI(id, ..., selected, wrap, compact, extra_ui, theme)` | Animated tab bar with content area; `compact=TRUE` for dashboard cards                                                              |
+| `glassTabPanel(value, label, ..., icon, selected)`               | Define one tab and its content; `icon` accepts [`shiny::icon()`](https://rdrr.io/pkg/shiny/man/icon.html)                           |
+| `glassTabsServer(id, bookmark)`                                  | Reactive returning the active tab; bookmarks active tab in URL                                                                      |
+| `glassTabsOutput(outputId)`                                      | UI placeholder for a server-rendered tab widget                                                                                     |
+| `renderGlassTabs({expr})`                                        | Render a [`glassTabsUI()`](https://prigasg.github.io/glasstabs/reference/glassTabsUI.md) reactively; JS reinitialises automatically |
+| `glassTabCondition(id, value)`                                   | JS condition string for [`conditionalPanel()`](https://rdrr.io/pkg/shiny/man/conditionalPanel.html)                                 |
+| `updateGlassTabsUI(session, id, selected)`                       | Switch the active tab from the server                                                                                               |
+| `updateGlassTabBadge(session, id, value, count)`                 | Set a numeric badge on a tab button (`0` hides it)                                                                                  |
+| `showGlassTab(session, id, value)`                               | Show a hidden tab                                                                                                                   |
+| `hideGlassTab(session, id, value)`                               | Hide a tab from the navigation bar                                                                                                  |
+| `disableGlassTab(session, id, value)`                            | Gray out a tab (stays visible, not clickable)                                                                                       |
+| `enableGlassTab(session, id, value)`                             | Re-enable a disabled tab                                                                                                            |
+| `appendGlassTab(session, id, tab, select)`                       | Add a new tab at runtime                                                                                                            |
+| `removeGlassTab(session, id, value)`                             | Remove a tab at runtime                                                                                                             |
+| `glass_tab_theme(...)`                                           | Custom colour theme for [`glassTabsUI()`](https://prigasg.github.io/glasstabs/reference/glassTabsUI.md)                             |
+
+### Select widgets
+
+| Function                                        | Description                                                                                                                                                                                           |
+|-------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `glassMultiSelect(inputId, choices, ...)`       | Multi-select dropdown widget                                                                                                                                                                          |
+| `updateGlassMultiSelect(session, inputId, ...)` | Update multi-select choices, selection, or style                                                                                                                                                      |
+| `glassMultiSelectValue(input, inputId)`         | Reactive helper for multi-select value and style                                                                                                                                                      |
+| `glassSelect(inputId, choices, ...)`            | Single-select dropdown widget                                                                                                                                                                         |
+| `updateGlassSelect(session, inputId, ...)`      | Update single-select choices, selection, or style                                                                                                                                                     |
+| `glassSelectValue(input, inputId)`              | Reactive helper for selected value                                                                                                                                                                    |
+| `glassFilterTags(inputId)`                      | Tag-pill display area synced to a multi-select                                                                                                                                                        |
+| `glass_select_theme(...)`                       | Custom colour theme for [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md) and [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md) |
 
 ------------------------------------------------------------------------
 
@@ -133,6 +153,24 @@ shinyApp(ui, server)
 | `input$<inputId>`            | `character vector`    | Selected values from [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md)        |
 | `input$<inputId>_style`      | `character`           | Active selection style from [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md) |
 | `input$<inputId>`            | `character` or `NULL` | Selected value from [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md)                   |
+
+### conditionalPanel integration
+
+Use
+[`glassTabCondition()`](https://prigasg.github.io/glasstabs/reference/glassTabCondition.md)
+to avoid constructing the input key manually:
+
+``` r
+# Instead of: condition = "input['main-active_tab'] === 'details'"
+conditionalPanel(
+  condition = glassTabCondition("main", "details"),
+  p("Only visible on the Details tab.")
+)
+
+# Inside a module — pass the same id as glassTabsUI():
+# glassTabsUI(ns("tabs"), ...)
+# conditionalPanel(condition = glassTabCondition(ns("tabs"), "details"), ...)
+```
 
 ------------------------------------------------------------------------
 
@@ -416,11 +454,28 @@ server <- function(input, output, session) {
 
 ------------------------------------------------------------------------
 
-## Roadmap
+## What’s new in 0.3.0
 
-- Additional select widget presets and examples
-
-- More layout examples for bs4Dash and standard Shiny apps
+- [`runGlassExample()`](https://prigasg.github.io/glasstabs/reference/runGlassExample.md)
+  — launch any built-in example from the console
+- `icon` argument in
+  [`glassTabPanel()`](https://prigasg.github.io/glasstabs/reference/glassTabPanel.md)
+  — add [`shiny::icon()`](https://rdrr.io/pkg/shiny/man/icon.html) or
+  any tag to a tab button
+- [`disableGlassTab()`](https://prigasg.github.io/glasstabs/reference/disableGlassTab.md)
+  /
+  [`enableGlassTab()`](https://prigasg.github.io/glasstabs/reference/disableGlassTab.md)
+  — gray out tabs without hiding them
+- [`updateGlassTabBadge()`](https://prigasg.github.io/glasstabs/reference/updateGlassTabBadge.md)
+  — set live numeric count badges on tab buttons
+- `glassTabsServer(bookmark = TRUE)` — active tab preserved in Shiny URL
+  bookmarks
+- [`glassTabsOutput()`](https://prigasg.github.io/glasstabs/reference/glassTabsOutput.md)
+  /
+  [`renderGlassTabs()`](https://prigasg.github.io/glasstabs/reference/renderGlassTabs.md)
+  — fully server-driven reactive tab sets
+- `inst/cheatsheet/glasstabs-cheatsheet.tex` — printable two-column
+  LaTeX reference card
 
 ------------------------------------------------------------------------
 

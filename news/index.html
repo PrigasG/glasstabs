@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">glasstabs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,22 +39,76 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/PrigasG/glasstabs/blob/v0.2.1/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/PrigasG/glasstabs/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.2.0" id="glasstabs-020">glasstabs 0.2.0<a class="anchor" aria-label="anchor" href="#glasstabs-020"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.3.1" id="glasstabs-031">glasstabs 0.3.1<a class="anchor" aria-label="anchor" href="#glasstabs-031"></a></h2>
 <div class="section level3">
-<h3 id="new-features-0-2-0">New features<a class="anchor" aria-label="anchor" href="#new-features-0-2-0"></a></h3>
+<h3 id="new-features-0-3-1">New features<a class="anchor" aria-label="anchor" href="#new-features-0-3-1"></a></h3>
+<ul><li>Added <code>glassTabCondition(id, value)</code> — generates the correct JavaScript condition string for [shiny::conditionalPanel()] without needing to remember the <code>input[["id-active_tab"]]</code> key pattern.</li>
+<li>Added <code><a href="../reference/glasstabs_news.html">glasstabs_news()</a></code> — prints the package changelog to the R console.</li>
+<li>Added <code>ROADMAP.md</code> tracking planned features and known limitations (not shipped in the package).</li>
+</ul></div>
+<div class="section level3">
+<h3 id="improvements-0-3-1">Improvements<a class="anchor" aria-label="anchor" href="#improvements-0-3-1"></a></h3>
+<ul><li>Error messages across all functions are now actionable: they name the bad argument class, show what was received, and suggest the correct fix.</li>
+<li>
+<code><a href="../reference/glass_tab_theme.html">glass_tab_theme()</a></code> and <code><a href="../reference/glass_select_theme.html">glass_select_theme()</a></code> now have full <code>@examples</code> with interactive app snippets.</li>
+<li>
+<code>.gt-container</code> no longer forces <code>max-width:960px</code> or <code>margin:48px auto</code> — the widget now behaves like a normal block element inside Shiny layouts.</li>
+<li>Light-mode halo box-shadow replaced with a soft blue-tinted shadow via the <code>--gt-halo-shadow</code> CSS variable, replacing the harsh dark drop shadow.</li>
+</ul><hr></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.3.0" id="glasstabs-030">glasstabs 0.3.0<a class="anchor" aria-label="anchor" href="#glasstabs-030"></a></h2>
+<div class="section level3">
+<h3 id="new-features-0-3-0">New features<a class="anchor" aria-label="anchor" href="#new-features-0-3-0"></a></h3>
 <div class="section level4">
-<h4 id="tab-widget-0-2-0">Tab widget<a class="anchor" aria-label="anchor" href="#tab-widget-0-2-0"></a></h4>
+<h4 id="tab-widget-0-3-0">Tab widget<a class="anchor" aria-label="anchor" href="#tab-widget-0-3-0"></a></h4>
+<ul><li>Added <code><a href="../reference/runGlassExample.html">runGlassExample()</a></code> to launch any of the built-in example apps directly from the R console (<code>runGlassExample("smoke-test")</code>, etc.).</li>
+<li>Added <code>icon</code> argument to <code><a href="../reference/glassTabPanel.html">glassTabPanel()</a></code> — accepts any htmltools-compatible tag (e.g. <code>shiny::icon("table")</code>). Renders with <code>gt-tab-icon</code> / <code>gt-tab-label</code> spans so icon and text can be styled independently.</li>
+<li>Added <code><a href="../reference/disableGlassTab.html">disableGlassTab()</a></code> and <code><a href="../reference/disableGlassTab.html">enableGlassTab()</a></code> — gray out a tab without hiding it. Completes the visibility/disabled/removal trio alongside <code><a href="../reference/showGlassTab.html">showGlassTab()</a></code> / <code><a href="../reference/showGlassTab.html">hideGlassTab()</a></code>.</li>
+<li>Added <code><a href="../reference/updateGlassTabBadge.html">updateGlassTabBadge()</a></code> — set a numeric count badge on any tab button. Pass <code>count = 0</code> or <code>count = NA</code> to hide the badge. Values above 99 display as <code>"99+"</code>.</li>
+<li>
+<code><a href="../reference/glassTabsServer.html">glassTabsServer()</a></code> now integrates with Shiny’s URL bookmarking: the active tab is automatically saved and restored when <code>enableBookmarking = "url"</code> is set on the app. Opt out per widget with <code>bookmark = FALSE</code>.</li>
+<li>Added <code><a href="../reference/glassTabsOutput.html">glassTabsOutput()</a></code> / <code><a href="../reference/renderGlassTabs.html">renderGlassTabs()</a></code> for server-driven tab rendering. The JavaScript engine re-initialises automatically after each render via a scoped <code>shiny:value</code> listener, so no manual <code>glasstabs_reinit</code> calls are needed.</li>
+</ul></div>
+</div>
+<div class="section level3">
+<h3 id="improvements-0-3-0">Improvements<a class="anchor" aria-label="anchor" href="#improvements-0-3-0"></a></h3>
+<ul><li>
+<code><a href="../reference/glassTabsUI.html">glassTabsUI()</a></code> now errors early on duplicate <code><a href="../reference/glassTabPanel.html">glassTabPanel()</a></code> values, reporting the offending value(s) by name.</li>
+<li>
+<code><a href="../reference/glassTabsUI.html">glassTabsUI()</a></code> gains a <code>compact = FALSE</code> argument. Setting <code>compact = TRUE</code> applies the <code>.gt-compact</code> CSS modifier which reduces margins, tab-link padding, font size, and content area padding — ideal for embedding inside bs4Dash cards or any tight dashboard layout.</li>
+<li>
+<code><a href="../reference/glassTabsServer.html">glassTabsServer()</a></code> emits a <code><a href="https://rdrr.io/r/base/warning.html" class="external-link">warning()</a></code> when the <code>id</code> argument contains <code>"-"</code>, which is the most common sign that <code>ns("tabs")</code> was passed instead of the bare <code>"tabs"</code> id. The warning includes corrective guidance.</li>
+<li>CSS: added <code>.gt-tab-disabled</code>, <code>.gt-tab-icon</code>, <code>.gt-tab-label</code>, and <code>.gt-tab-badge</code> rules. Badges adapt their background to the active halo colour via the existing CSS custom property.</li>
+<li>CSS: all color values are now consumed via <code>var(--gt-xxx, fallback)</code> instead of being hardcoded — this was the root cause of light theme appearing invisible. Light theme defaults were also strengthened for better contrast.</li>
+<li>CSS: dropdown active-state z-index raised to 9000/9001 so glasstabs dropdowns render above bs4Dash card stacking contexts.</li>
+<li>
+<code>shiny:value</code> listener limits bootAll re-initialisation to outputs that actually contain glasstabs elements, so ordinary Shiny outputs are unaffected.</li>
+<li>Added <code>inst/cheatsheet/glasstabs-cheatsheet.tex</code> — a printable four-column LaTeX reference card covering the full API, module pattern, bs4Dash integration, theming, and common gotchas.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="documentation-0-3-0">Documentation<a class="anchor" aria-label="anchor" href="#documentation-0-3-0"></a></h3>
+<ul><li>Cheatsheet vignette (<code>vignettes/cheatsheet.Rmd</code>) extended with new sections: “Tabs inside a Shiny module”, “Dynamic tab values and selected”, “Tabs inside bs4Dash”, and updated common gotchas.</li>
+<li>All new functions have full roxygen docs, <code>@examples</code>, and cross-links.</li>
+</ul><hr></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.2.1" id="glasstabs-021">glasstabs 0.2.1<a class="anchor" aria-label="anchor" href="#glasstabs-021"></a></h2><p class="text-muted">CRAN release: 2026-04-11</p>
+<div class="section level3">
+<h3 id="new-features-0-2-1">New features<a class="anchor" aria-label="anchor" href="#new-features-0-2-1"></a></h3>
+<div class="section level4">
+<h4 id="tab-widget-0-2-1">Tab widget<a class="anchor" aria-label="anchor" href="#tab-widget-0-2-1"></a></h4>
 <ul><li>Added <code><a href="../reference/updateGlassTabsUI.html">updateGlassTabsUI()</a></code> for programmatic tab switching from the server.</li>
 <li>Added <code><a href="../reference/showGlassTab.html">showGlassTab()</a></code> and <code><a href="../reference/showGlassTab.html">hideGlassTab()</a></code> for dynamically showing and hiding tabs at runtime.</li>
 <li>Added <code><a href="../reference/appendGlassTab.html">appendGlassTab()</a></code> and <code><a href="../reference/appendGlassTab.html">removeGlassTab()</a></code> for adding and removing tabs at runtime.</li>
 </ul></div>
 </div>
 <div class="section level3">
-<h3 id="improvements-0-2-0">Improvements<a class="anchor" aria-label="anchor" href="#improvements-0-2-0"></a></h3>
+<h3 id="improvements-0-2-1">Improvements<a class="anchor" aria-label="anchor" href="#improvements-0-2-1"></a></h3>
 <ul><li>
 <code><a href="../reference/glassTabsUI.html">glassTabsUI()</a></code> now validates <code>selected</code> against the available <code><a href="../reference/glassTabPanel.html">glassTabPanel()</a></code> values and errors early on invalid tab ids.</li>
 <li>The tab widget now reports its initial active tab to Shiny immediately after session startup, so <code><a href="../reference/glassTabsServer.html">glassTabsServer()</a></code> is populated on first render.</li>
@@ -63,18 +117,18 @@
 <li>Improved halo and transfer-trace positioning after runtime tab layout changes.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="bug-fixes-0-2-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-2-0"></a></h3>
+<h3 id="bug-fixes-0-2-1">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-2-1"></a></h3>
 <ul><li><p>Opening a dropdown now closes any other open glasstabs dropdown, fixing a visual stacking issue where multiple dropdowns appeared simultaneously.</p></li>
 <li><p>Improved widget lifecycle in dynamic UI (<code><a href="https://rdrr.io/pkg/shiny/man/renderUI.html" class="external-link">renderUI()</a></code>, <code><a href="https://rdrr.io/pkg/shiny/man/conditionalPanel.html" class="external-link">conditionalPanel()</a></code>). Widgets initialize more reliably and clean up properly when removed.</p></li>
 <li><p>Widgets now emit their initial value to Shiny immediately after rendering, fixing timing issues with <code><a href="https://rdrr.io/pkg/shiny/man/conditionalPanel.html" class="external-link">conditionalPanel()</a></code> and dynamic UI.</p></li>
 </ul></div>
 <div class="section level3">
-<h3 id="internal-improvements-0-2-0">Internal improvements<a class="anchor" aria-label="anchor" href="#internal-improvements-0-2-0"></a></h3>
+<h3 id="internal-improvements-0-2-1">Internal improvements<a class="anchor" aria-label="anchor" href="#internal-improvements-0-2-1"></a></h3>
 <ul><li><p>JavaScript engine refactored to use internal state instead of DOM scanning. No changes to the R API — all existing code works without modification.</p></li>
 <li><p>Added scroll containers for long option lists, debounced search, and <code>.gt-loading</code> / <code>.gt-disabled</code> CSS utility classes.</p></li>
 </ul></div>
 <div class="section level3">
-<h3 id="documentation-0-2-0">Documentation<a class="anchor" aria-label="anchor" href="#documentation-0-2-0"></a></h3>
+<h3 id="documentation-0-2-1">Documentation<a class="anchor" aria-label="anchor" href="#documentation-0-2-1"></a></h3>
 <ul><li>Added a dedicated cheatsheet vignette for common widget patterns and server-side helpers.</li>
 <li>Added a smoke-test example app covering programmatic tab switching, dynamic tab visibility, runtime tab insertion/removal, and rapid interaction paths.</li>
 <li>Expanded README and pkgdown navigation to surface the new server-side tab controls and cheatsheet more clearly.</li>
