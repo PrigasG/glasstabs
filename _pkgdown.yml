@@ -42,10 +42,11 @@ articles:
 
 reference:
   - title: Setup
-    desc: Load CSS/JavaScript and launch built-in examples.
+    desc: Load CSS/JavaScript, launch built-in examples, and view the changelog.
     contents:
       - useGlassTabs
       - runGlassExample
+      - glasstabs_news
 
   - title: Tab widget — UI
     desc: |
@@ -55,6 +56,7 @@ reference:
       - glassTabPanel
       - glassTabsOutput
       - glass_tab_theme
+      - glassTabCondition
 
   - title: Tab widget — server
     desc: |
@@ -65,7 +67,9 @@ reference:
       - updateGlassTabsUI
       - updateGlassTabBadge
       - showGlassTab
+      - hideGlassTab
       - disableGlassTab
+      - enableGlassTab
       - appendGlassTab
 
   - title: Select widgets

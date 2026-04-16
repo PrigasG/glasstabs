@@ -326,13 +326,39 @@ glassMultiSelect(
 | multi-select style | `input$metric_style` or `glassMultiSelectValue(input, "metric")$style()` |
 | `glassSelect("region", ...)` | `input$region` or `glassSelectValue(input, "region")()` |
 
+## conditionalPanel integration
+
+Use `glassTabCondition()` to avoid constructing the input key manually:
+
+```{r}
+# Instead of: condition = "input['main-active_tab'] === 'details'"
+conditionalPanel(
+  condition = glassTabCondition("main", "details"),
+  p("Only visible on the Details tab.")
+)
+
+# Inside a module — pass the same id as glassTabsUI():
+# glassTabsUI(ns("tabs"), ...)
+conditionalPanel(
+  condition = glassTabCondition(NS("mymod")("tabs"), "details"),
+  p("Only visible on the Details tab.")
+)
+```
+
+## View the changelog
+
+```{r}
+glasstabs_news()      # prints changelog to the console
+```
+
 ## Common gotchas
 
 -   `useGlassTabs()` must be called once in the UI.
--   In a module, use `ns("tabs")` in the UI but pass the bare `"tabs"` to `glassTabsServer()` — not `ns("tabs")`. Passing a namespaced id (containing `-`) will produce a warning.
--   `glassTabPanel()` values must be unique within a `glassTabsUI()` call — duplicates cause an error.
+-   In a module, use `ns("tabs")` in the UI but pass the bare `"tabs"` to `glassTabsServer()` — not `ns("tabs")`. Passing a namespaced id (containing `-`) will produce a warning with a suggested fix.
+-   `glassTabPanel()` values must be unique within a `glassTabsUI()` call — duplicates cause an error naming the offending value.
 -   `selected` in `glassTabsUI()` refers to the tab **value**, not the label.
 -   `glassSelectValue()` returns a reactive function, not a list.
 -   `glassMultiSelectValue()` returns a list with `selected()` and `style()`.
 -   For `glassMultiSelect()`, `selected` should use choice values, not labels.
+-   Use `compact = TRUE` inside bs4Dash cards or any tight layout to reduce widget spacing.
 -   If you add new JS/CSS behavior during development, reinstall or `load_all()` before retesting.

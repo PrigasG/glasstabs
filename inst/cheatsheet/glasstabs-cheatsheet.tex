@@ -1,4 +1,4 @@
-% glasstabs cheatsheet  v0.3.0
+% glasstabs cheatsheet  v0.3.1
 % Compile with: pdflatex glasstabs-cheatsheet.tex
 \documentclass[9pt,a4paper]{article}
 
@@ -88,7 +88,7 @@
 
 % ── Header ───────────────────────────────────────────────────────────────────
 {\large\bfseries\color{gtblue}glasstabs}%
-\hfill{\footnotesize\color{gtgray}v0.3.0}\\[1pt]
+\hfill{\footnotesize\color{gtgray}v0.3.1}\\[1pt]
 {\footnotesize\color{gtgray}Glass-morphism Shiny widgets}\\[-3pt]
 \rule{\linewidth}{0.6pt}
 
@@ -112,17 +112,23 @@ runGlassExample("basic")
 runGlassExample("bs4dash")
 \end{lstlisting}
 
+View changelog in console:
+\begin{lstlisting}
+glasstabs_news()
+\end{lstlisting}
+
 % ══════════════════════════════════════════════════════
 \mysection{Tab widget --- UI}
 
 \begin{lstlisting}
 glassTabsUI(
-  id,             # module id
-  ...,            # glassTabPanel()s
-  selected = NULL,# initial tab value
+  id,              # module id
+  ...,             # glassTabPanel()s
+  selected = NULL, # initial tab value
   wrap     = TRUE,
-  extra_ui = NULL,# right-side widget
-  theme    = "dark" # or "light"
+  compact  = FALSE,# reduced spacing
+  extra_ui = NULL, # right-side widget
+  theme    = "dark"# or "light"
 )
 
 glassTabPanel(
@@ -192,6 +198,23 @@ appendGlassTab(session, "main",
   glassTabPanel("new", "New", p("...")),
   select = TRUE)
 removeGlassTab(session, "main", "new")
+\end{lstlisting}
+
+% ══════════════════════════════════════════════════════
+\mysection{conditionalPanel helper}
+
+\gtfn{glassTabCondition} builds the JS condition string:
+\begin{lstlisting}
+# Instead of:
+# "input['main-active_tab'] === 'b'"
+conditionalPanel(
+  condition =
+    glassTabCondition("main", "b"),
+  p("Only on tab b")
+)
+
+# Inside a module (same id as UI):
+glassTabCondition(ns("tabs"), "b")
 \end{lstlisting}
 
 % ══════════════════════════════════════════════════════

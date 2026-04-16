@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Rscript -e \"devtools::test\\(\\)\")",
+      "Bash(\"C:/Program Files/R/R-4.4.3/bin/Rscript.exe\" -e \"devtools::test\\(\\)\")",
+      "Bash(\"/c/Program Files/R/R-4.5.1/bin/Rscript.exe\" -e \"devtools::test\\(\\)\")",
+      "Bash(\"/c/Program Files/R/R-4.5.1/bin/Rscript.exe\" -e \"devtools::document\\(\\)\")",
+      "Bash(\"/c/Program Files/R/R-4.5.1/bin/Rscript.exe\" -e \"devtools::check\\(\\)\")",
+      "Bash(pdflatex -interaction=nonstopmode glasstabs-cheatsheet.tex)",
+      "Bash(echo \"^inst/cheatsheet/.*\\\\.aux$\")",
+      "Bash(echo \"^inst/cheatsheet/.*\\\\.log$\")",
+      "Bash(echo \"^inst/cheatsheet/.*\\\\.out$\")",
+      "Bash(git add:*)",
+      "Bash(git commit -m ':*)",
+      "Bash(Rscript -e \"devtools::test\\(filter='new-features'\\)\")",
+      "Bash(\"/c/Program Files/R/R-4.4.2/bin/Rscript.exe\" -e \"devtools::test\\(filter='new-features'\\)\")",
+      "Read(//c/Program Files/R//**)",
+      "Read(//c/Program Files/R/**)",
+      "Bash(find /c -maxdepth 4 -name \"Rscript.exe\")",
+      "Bash(\"/c/Program Files/R/R-4.5.1/bin/Rscript.exe\" -e \"devtools::test\\(filter='new-features'\\)\")",
+      "Bash(\"/c/Program Files/R/R-4.5.1/bin/Rscript.exe\" -e \"spelling::update_wordlist\\(\\)\")",
+      "Bash(wc -l R/*.R)",
+      "Bash(grep -n \"stop\\(\\\\|warning\\(\\\\|message\\(\" R/*.R)",
+      "Bash(grep -n \"@examples\" R/*.R)",
+      "Bash(\"/c/Program Files/R/R-4.5.1/bin/Rscript.exe\" -e \"devtools::test\\(filter='roadmap'\\)\")",
+      "Bash(\"/c/Program Files/R/R-4.5.1/bin/Rscript.exe\" -e \"spelling::spell_check_package\\(\\)\")"
+    ]
+  }
+}
