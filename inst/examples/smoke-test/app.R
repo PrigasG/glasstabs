@@ -182,7 +182,7 @@ server <- function(input, output, session) {
 
   observeEvent(input$go_admin, {
     if (isTRUE(input$show_admin)) {
-      updateGlassTabsUI(session, "main", "admin")
+      updateGlassTabsUI(session, "main", selected = "admin")
     }
   })
 
@@ -225,7 +225,7 @@ server <- function(input, output, session) {
       idx <- 1L
     }
     next_idx <- if (idx < length(tabs)) idx + 1L else 1L
-    updateGlassTabsUI(session, "main", tabs[[next_idx]])
+    updateGlassTabsUI(session, "main", selected = tabs[[next_idx]])
   })
 
   observeEvent(input$reset_tabs, {
@@ -236,7 +236,7 @@ server <- function(input, output, session) {
       removeGlassTab(session, "main", "compare")
       compare_present(FALSE)
     }
-    updateGlassTabsUI(session, "main", "overview")
+    updateGlassTabsUI(session, "main", selected = "overview")
   })
 
   output$state <- renderPrint({

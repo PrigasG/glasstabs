@@ -53,13 +53,60 @@
     return el._gt || null;
   }
 
+  var MS_VARS = ['--ms-bg','--ms-border','--ms-text','--ms-accent','--ms-label'];
+
+  var TELEPORT_CLASSES = ['style-checkbox','style-check-only','style-filled','theme-light'];
+
+  /** Teleport a dropdown to <body> so no parent overflow/transform can clip it */
+  function teleportOpen(wrap, dropdown) {
+    if (dropdown.parentNode === document.body) return;
+    /* Read CSS vars from the field ancestor which has them via the scoped <style> tag.
+       Falling back up the tree ensures we find them even in deeply nested layouts. */
+    var source = wrap.closest ? (wrap.closest('.gt-ms-field, .gt-gs-field') || wrap) : wrap;
+    var cs = getComputedStyle(source);
+    var isLight = wrap.classList.contains('theme-light');
+    var fallbacks = isLight
+      ? { '--ms-bg': 'rgba(255,255,255,0.98)', '--ms-border': 'rgba(0,0,0,0.12)',
+          '--ms-text': '#111111', '--ms-accent': '#2563eb', '--ms-label': '#111111' }
+      : { '--ms-bg': 'rgba(9,20,42,0.97)', '--ms-border': 'rgba(255,255,255,0.10)',
+          '--ms-text': '#cfe6ff', '--ms-accent': '#7ec3f7', '--ms-label': '#cfe6ff' };
+    MS_VARS.forEach(function (v) {
+      var val = cs.getPropertyValue(v).trim();
+      dropdown.style.setProperty(v, val || fallbacks[v]);
+    });
+    /* Copy style/theme classes onto the dropdown so CSS ancestor selectors still match */
+    TELEPORT_CLASSES.forEach(function (cls) {
+      if (wrap.classList.contains(cls)) dropdown.classList.add(cls);
+      else dropdown.classList.remove(cls);
+    });
+    document.body.appendChild(dropdown);
+    /* Use absolute positioning so AdminLTE's overflow-x:hidden on body/html
+       doesn't clip the dropdown (position:fixed breaks in those scroll contexts) */
+    dropdown.style.position = 'absolute';
+  }
+
+  /** Move a teleported dropdown back to its wrap */
+  function teleportClose(wrap, dropdown) {
+    if (dropdown.parentNode !== document.body) return;
+    MS_VARS.forEach(function (v) { dropdown.style.removeProperty(v); });
+    dropdown.style.removeProperty('position');
+    dropdown.style.removeProperty('top');
+    dropdown.style.removeProperty('right');
+    dropdown.style.removeProperty('left');
+    TELEPORT_CLASSES.forEach(function (cls) { dropdown.classList.remove(cls); });
+    wrap.appendChild(dropdown);
+  }
+
   /** Close every open glasstabs dropdown except the one being opened */
   function closeAllDropdowns(except) {
     document.querySelectorAll('.gt-gs-wrap.gt-layer-active, .gt-ms-wrap.gt-layer-active').forEach(function (w) {
       if (w === except) return;
       w.classList.remove('gt-layer-active');
-      var dd = w.querySelector('.gt-gs-dropdown, .gt-ms-dropdown');
-      if (dd) dd.classList.remove('open');
+      var dd = w._gtDropdown || w.querySelector('.gt-gs-dropdown, .gt-ms-dropdown');
+      if (dd) {
+        dd.classList.remove('open');
+        teleportClose(w, dd);
+      }
       var trig = w.querySelector('.gt-gs-trigger, .gt-ms-trigger');
       if (trig) trig.classList.remove('open');
     });
@@ -89,7 +136,7 @@
 
     var ns = navbar.getAttribute('data-ns');
 
-    var container = navbar.closest('.gt-container')
+    var container = navbar.closest('.gt-container, .gt-wrap-shell')
       || navbar.closest('.card-body')
       || navbar.closest('.box-body')
       || (navbar.parentElement && navbar.parentElement.parentElement)
@@ -105,6 +152,22 @@
     if (!halo || !trf || links.length === 0 || !activeEl) return;
 
     var active = activeEl.getAttribute('data-value');
+
+    /* Repair pane visibility to match link state.  When bootAll() re-runs
+       initTabs mid-animation (e.g. triggered by shiny:value on dyn_out),
+       clearTabTimers() kills the deferred pane-swap — leaving the active link
+       and the visible pane out of sync.  Syncing here makes every re-init
+       self-healing regardless of when it fires. */
+    links.forEach(function (l) {
+      var v = l.getAttribute('data-value');
+      var pane = document.getElementById(ns + '-pane-' + v);
+      if (!pane) return;
+      if (l === activeEl) {
+        pane.classList.add('active');
+      } else {
+        pane.classList.remove('active');
+      }
+    });
 
     function currentVisibleOrder() {
       return Array.from(navbar.querySelectorAll('.gt-tab-link'))
@@ -257,7 +320,9 @@
       var dur = animated ? animateTransfer(fromEl, toEl) : 0;
 
       navbar._gtTabTimers.push(setTimeout(function () {
-        var ap = container.querySelector('.gt-tab-pane.active');
+        /* Use the namespace-qualified ID so we never accidentally deactivate
+           a nested glassTabsUI pane that also carries gt-tab-pane.active */
+        var ap = document.getElementById(ns + '-pane-' + active);
         if (ap) ap.classList.remove('active');
         var next = document.getElementById(ns + '-pane-' + target);
         if (next) next.classList.add('active');
@@ -366,6 +431,8 @@
 
     if (!trigger || !dropdown || !labelEl) return;
 
+    wrap._gtDropdown = dropdown;
+
     /* ── Capture check SVG template before any rebuilds ── */
     var checkTemplate = wrap.querySelector('.gt-gs-check');
     var checkHtml = checkTemplate ? checkTemplate.innerHTML : '';
@@ -412,14 +479,14 @@
 
     /* ── DOM patching ── */
     function patchOptionClasses() {
-      Array.from(wrap.querySelectorAll('.gt-gs-option')).forEach(function (el) {
+      Array.from(dropdown.querySelectorAll('.gt-gs-option')).forEach(function (el) {
         var v = el.getAttribute('data-value');
         el.classList.toggle('selected', state.selected !== null && v === state.selected);
       });
     }
 
     function patchVisibility() {
-      Array.from(wrap.querySelectorAll('.gt-gs-option')).forEach(function (el) {
+      Array.from(dropdown.querySelectorAll('.gt-gs-option')).forEach(function (el) {
         var v = el.getAttribute('data-value');
         var ch = findChoice(v);
         el.classList.toggle('hidden', ch ? ch.hidden : false);
@@ -539,31 +606,80 @@
       applySearchNow(searchIn ? searchIn.value : '');
     }, 75);
 
+    /* ── Position the dropdown below the trigger ──
+       Uses document-space coordinates (viewport + scrollY) to match
+       position:absolute on the body-appended teleported element.
+       This avoids the position:fixed + overflow:hidden quirk in AdminLTE. */
+    function positionDropdown() {
+      var rect = trigger.getBoundingClientRect();
+      var scrollY = window.pageYOffset || 0;
+      var vw = window.innerWidth;
+      var vh = window.innerHeight;
+      var ddHeight = dropdown.offsetHeight || 0;
+      var top = rect.bottom + scrollY + 8;
+      /* Flip upward if not enough room below */
+      if (rect.bottom + ddHeight + 8 > vh - 8 && rect.top - ddHeight - 8 > 0) {
+        top = rect.top + scrollY - ddHeight - 8;
+      }
+      /* Right-align with trigger; clamp to viewport edge */
+      var right = vw - rect.right;
+      if (right < 4) right = 4;
+      dropdown.style.top = top + 'px';
+      dropdown.style.right = right + 'px';
+      dropdown.style.left = 'auto';
+    }
+
+    var openedAt = 0;
+
     /* ── Open / Close ── */
     function open() {
       closeAllDropdowns(wrap);
       wrap.classList.add('gt-layer-active');
-      dropdown.classList.add('open');
-      trigger.classList.add('open');
-      if (searchIn) searchIn.focus();
+      teleportOpen(wrap, dropdown);
+      /* rAF ensures the browser has laid out the element in body before we
+         read offsetHeight (needed for the upward-flip calculation) */
+      requestAnimationFrame(function () {
+        positionDropdown();
+        dropdown.classList.add('open');
+        trigger.classList.add('open');
+      });
+      openedAt = Date.now();
+      /* Delay focus so synthetic-click re-fires from AdminLTE don't close us */
+      if (searchIn) setTimeout(function () { searchIn.focus(); }, 100);
     }
 
     function close() {
       wrap.classList.remove('gt-layer-active');
       dropdown.classList.remove('open');
       trigger.classList.remove('open');
+      teleportClose(wrap, dropdown);
     }
 
     /* ── Event listeners ── */
     trigger.addEventListener('click', function (e) {
       e.stopPropagation();
-      if (dropdown.classList.contains('open')) close(); else open();
+      if (dropdown.classList.contains('open')) {
+        /* Ignore close triggers within 500 ms of opening — prevents synthetic
+           re-fires from focus changes (e.g. bs4Dash / AdminLTE environments) */
+        if (Date.now() - openedAt < 500) return;
+        close();
+      } else {
+        open();
+      }
     });
 
     wrap._gtDocClickHandler = function (e) {
-      if (!wrap.contains(e.target)) close();
+      if (Date.now() - openedAt < 500) return;
+      if (!wrap.contains(e.target) && !dropdown.contains(e.target)) close();
     };
     document.addEventListener('click', wrap._gtDocClickHandler);
+
+    /* Reposition on scroll/resize while open */
+    wrap._gtScrollHandler = function () {
+      if (dropdown.classList.contains('open')) positionDropdown();
+    };
+    window.addEventListener('scroll', wrap._gtScrollHandler, true);
+    window.addEventListener('resize', wrap._gtScrollHandler);
 
     if (clearBtn) {
       clearBtn.addEventListener('click', function (e) {
@@ -582,6 +698,13 @@
         document.removeEventListener('click', wrap._gtDocClickHandler);
         wrap._gtDocClickHandler = null;
       }
+      if (wrap._gtScrollHandler) {
+        window.removeEventListener('scroll', wrap._gtScrollHandler, true);
+        window.removeEventListener('resize', wrap._gtScrollHandler);
+        wrap._gtScrollHandler = null;
+      }
+      teleportClose(wrap, dropdown);
+      wrap._gtDropdown = null;
       wrap._gt = null;
       wrap._gtSelectInit = false;
     }
@@ -610,8 +733,9 @@
       },
       setStyle: function (s, opts) {
         if (STYLES.indexOf(s) === -1) return;
-        STYLES.forEach(function (st) { wrap.classList.remove('style-' + st); });
+        STYLES.forEach(function (st) { wrap.classList.remove('style-' + st); dropdown.classList.remove('style-' + st); });
         wrap.classList.add('style-' + s);
+        dropdown.classList.add('style-' + s);
         currentStyle = s;
       },
       clear: function (opts) {
@@ -643,6 +767,8 @@
     var searchIn = wrap.querySelector('input[type="text"]');
     var styleBtns = Array.from(wrap.querySelectorAll('.gt-style-btn'));
     var optionsBox = wrap.querySelector('[id$="-options"]') || wrap;
+
+    wrap._gtDropdown = dropdown;
 
     var STYLES = ['check-only', 'checkbox', 'filled'];
     var currentStyle = 'checkbox';
@@ -710,14 +836,14 @@
 
     /* ── DOM patching ── */
     function patchOptionClasses() {
-      Array.from(wrap.querySelectorAll('.gt-ms-option')).forEach(function (el) {
+      Array.from(dropdown.querySelectorAll('.gt-ms-option')).forEach(function (el) {
         var v = el.getAttribute('data-value');
         el.classList.toggle('checked', state.selected.has(v));
       });
     }
 
     function patchVisibility() {
-      Array.from(wrap.querySelectorAll('.gt-ms-option')).forEach(function (el) {
+      Array.from(dropdown.querySelectorAll('.gt-ms-option')).forEach(function (el) {
         var v = el.getAttribute('data-value');
         for (var i = 0; i < state.choices.length; i++) {
           if (state.choices[i].value === v) {
@@ -958,31 +1084,77 @@
       applySearchNow(searchIn ? searchIn.value : '');
     }, 75);
 
+    /* ── Position the dropdown below the trigger ──
+       Uses document-space coordinates (viewport + scrollY) to match
+       position:absolute on the body-appended teleported element. */
+    function positionDropdown() {
+      var rect = trigger.getBoundingClientRect();
+      var scrollY = window.pageYOffset || 0;
+      var vw = window.innerWidth;
+      var vh = window.innerHeight;
+      var ddHeight = dropdown.offsetHeight || 0;
+      var top = rect.bottom + scrollY + 8;
+      /* Flip upward if not enough room below */
+      if (rect.bottom + ddHeight + 8 > vh - 8 && rect.top - ddHeight - 8 > 0) {
+        top = rect.top + scrollY - ddHeight - 8;
+      }
+      /* Right-align with trigger; clamp to viewport edge */
+      var right = vw - rect.right;
+      if (right < 4) right = 4;
+      dropdown.style.top = top + 'px';
+      dropdown.style.right = right + 'px';
+      dropdown.style.left = 'auto';
+    }
+
+    var openedAt = 0;
+
     /* ── Open / Close ── */
     function open() {
       closeAllDropdowns(wrap);
       wrap.classList.add('gt-layer-active');
-      dropdown.classList.add('open');
-      trigger.classList.add('open');
-      if (searchIn) searchIn.focus();
+      teleportOpen(wrap, dropdown);
+      requestAnimationFrame(function () {
+        positionDropdown();
+        dropdown.classList.add('open');
+        trigger.classList.add('open');
+      });
+      openedAt = Date.now();
+      /* Delay focus so synthetic-click re-fires from AdminLTE don't close us */
+      if (searchIn) setTimeout(function () { searchIn.focus(); }, 100);
     }
 
     function close() {
       wrap.classList.remove('gt-layer-active');
       dropdown.classList.remove('open');
       trigger.classList.remove('open');
+      teleportClose(wrap, dropdown);
     }
 
     /* ── Event listeners ── */
     trigger.addEventListener('click', function (e) {
       e.stopPropagation();
-      if (dropdown.classList.contains('open')) close(); else open();
+      if (dropdown.classList.contains('open')) {
+        /* Ignore close triggers within 500 ms of opening — prevents synthetic
+           re-fires from focus changes (e.g. bs4Dash / AdminLTE environments) */
+        if (Date.now() - openedAt < 500) return;
+        close();
+      } else {
+        open();
+      }
     });
 
     wrap._gtDocClickHandler = function (e) {
-      if (!wrap.contains(e.target)) close();
+      if (Date.now() - openedAt < 500) return;
+      if (!wrap.contains(e.target) && !dropdown.contains(e.target)) close();
     };
     document.addEventListener('click', wrap._gtDocClickHandler);
+
+    /* Reposition on scroll/resize while open */
+    wrap._gtScrollHandler = function () {
+      if (dropdown.classList.contains('open')) positionDropdown();
+    };
+    window.addEventListener('scroll', wrap._gtScrollHandler, true);
+    window.addEventListener('resize', wrap._gtScrollHandler);
 
     styleBtns.forEach(function (btn) {
       btn.addEventListener('click', function () {
@@ -992,8 +1164,9 @@
         styleBtns.forEach(function (b) { b.classList.remove('active'); });
         btn.classList.add('active');
 
-        STYLES.forEach(function (st) { wrap.classList.remove('style-' + st); });
+        STYLES.forEach(function (st) { wrap.classList.remove('style-' + st); dropdown.classList.remove('style-' + st); });
         wrap.classList.add('style-' + s);
+        dropdown.classList.add('style-' + s);
         currentStyle = s;
 
         syncUI();
@@ -1037,6 +1210,13 @@
         document.removeEventListener('click', wrap._gtDocClickHandler);
         wrap._gtDocClickHandler = null;
       }
+      if (wrap._gtScrollHandler) {
+        window.removeEventListener('scroll', wrap._gtScrollHandler, true);
+        window.removeEventListener('resize', wrap._gtScrollHandler);
+        wrap._gtScrollHandler = null;
+      }
+      teleportClose(wrap, dropdown);
+      wrap._gtDropdown = null;
       wrap._gt = null;
       wrap._gtMultiInit = false;
     }
@@ -1072,8 +1252,9 @@
           b.classList.toggle('active', b.getAttribute('data-style') === s);
         });
 
-        STYLES.forEach(function (st) { wrap.classList.remove('style-' + st); });
+        STYLES.forEach(function (st) { wrap.classList.remove('style-' + st); dropdown.classList.remove('style-' + st); });
         wrap.classList.add('style-' + s);
+        dropdown.classList.add('style-' + s);
         currentStyle = s;
 
         syncUI();
@@ -1272,7 +1453,7 @@
       if (!navbar) return;
       var link = navbar.querySelector('.gt-tab-link[data-value="' + msg.value + '"]');
       if (!link) return;
-      var container = navbar.closest('.gt-container')
+      var container = navbar.closest('.gt-container, .gt-wrap-shell')
         || navbar.closest('.card-body')
         || navbar.closest('.box-body')
         || (navbar.parentElement && navbar.parentElement.parentElement)
@@ -1290,11 +1471,11 @@
       if (wasActive && navbar._gtActivate) {
         var first = navbar.querySelector('.gt-tab-link:not(.gt-tab-hidden)');
         if (first) navbar._gtActivate(first.getAttribute('data-value'), true);
-      } else if (!wasActive && container && !container.querySelector('.gt-tab-pane.active')) {
+      } else if (!wasActive) {
         var currentActive = navbar.querySelector('.gt-tab-link.active:not(.gt-tab-hidden)');
         if (currentActive) {
           var currentPane = document.getElementById(msg.ns + '-pane-' + currentActive.getAttribute('data-value'));
-          if (currentPane) currentPane.classList.add('active');
+          if (currentPane && !currentPane.classList.contains('active')) currentPane.classList.add('active');
         }
       }
       if (!wasActive && navbar._gtResizeHandler) {
@@ -1307,7 +1488,7 @@
       if (!navbar) return;
       if (navbar.querySelector('.gt-tab-link[data-value="' + msg.value + '"]')) return;
 
-      var container = navbar.closest('.gt-container')
+      var container = navbar.closest('.gt-container, .gt-wrap-shell')
         || navbar.closest('.card-body')
         || navbar.closest('.box-body')
         || (navbar.parentElement && navbar.parentElement.parentElement)
@@ -1321,8 +1502,11 @@
         navbar.querySelectorAll('.gt-tab-link.active').forEach(function (l) {
           l.classList.remove('active');
           l.setAttribute('aria-selected', 'false');
+          /* Deactivate only this namespace's pane — not nested glassTabsUI panes */
+          var v = l.getAttribute('data-value');
+          var p = document.getElementById(msg.ns + '-pane-' + v);
+          if (p) p.classList.remove('active');
         });
-        container.querySelectorAll('.gt-tab-pane.active').forEach(function (p) { p.classList.remove('active'); });
       }
 
       var tmp = document.createElement('div');
@@ -1355,7 +1539,7 @@
       var link = navbar.querySelector('.gt-tab-link[data-value="' + msg.value + '"]');
       if (!link) return;
 
-      var container = navbar.closest('.gt-container')
+      var container = navbar.closest('.gt-container, .gt-wrap-shell')
         || navbar.closest('.card-body')
         || navbar.closest('.box-body')
         || (navbar.parentElement && navbar.parentElement.parentElement)
@@ -1371,12 +1555,10 @@
           nextValue = remaining[0].getAttribute('data-value');
           remaining[0].classList.add('active');
           remaining[0].setAttribute('aria-selected', 'true');
-          if (container) {
-            var ap = container.querySelector('.gt-tab-pane.active');
-            if (ap) ap.classList.remove('active');
-            var nextPane = document.getElementById(msg.ns + '-pane-' + nextValue);
-            if (nextPane) nextPane.classList.add('active');
-          }
+          var ap = document.getElementById(msg.ns + '-pane-' + msg.value);
+          if (ap) ap.classList.remove('active');
+          var nextPane = document.getElementById(msg.ns + '-pane-' + nextValue);
+          if (nextPane) nextPane.classList.add('active');
         }
       }
 

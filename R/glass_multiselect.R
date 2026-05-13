@@ -31,6 +31,10 @@
 #'   or a [glass_select_theme()] object.
 #' @param hues Optional named integer vector of HSL hue angles (0 to 360) for
 #'   the \code{"filled"} style. Auto-assigned if \code{NULL}.
+#' @param dark_selector Optional CSS selector that signals dark mode (e.g.
+#'   \code{"body.dark-mode"} for bs4Dash). When provided and
+#'   \code{theme = "light"}, emits an extra scoped \code{<style>} block that
+#'   reverts colors to the dark-mode defaults whenever that selector is active.
 #'
 #' @return An \code{htmltools::tagList} containing the trigger button, dropdown
 #'   panel, and scoped \code{<style>} block.
@@ -67,8 +71,15 @@ glassMultiSelect <- function(
     show_select_all     = TRUE,
     show_clear_all      = TRUE,
     theme               = "dark",
-    hues                = NULL
+    hues                = NULL,
+    dark_selector       = NULL
 ) {
+  if (!is.character(inputId) || length(inputId) != 1L || !nzchar(inputId)) {
+    stop(
+      "glassMultiSelect(): `inputId` must be a single non-empty string.",
+      call. = FALSE
+    )
+  }
   check_style <- match.arg(check_style)
   colors <- .ms_resolve_theme(theme)
 
@@ -122,6 +133,18 @@ glassMultiSelect <- function(
     "#%s{--ms-bg:%s;--ms-border:%s;--ms-text:%s;--ms-accent:%s;--ms-label:%s;}",
     field_id, colors$bg, colors$border, colors$text, colors$accent, colors$label
   )
+
+  dark_override_style <- if (!is.null(dark_selector) && nzchar(dark_selector)) {
+    dark_colors <- .ms_resolve_theme("dark")
+    shiny::tags$style(sprintf(
+      "%s #%s{--ms-bg:%s;--ms-border:%s;--ms-text:%s;--ms-accent:%s;--ms-label:%s;}",
+      dark_selector, field_id,
+      dark_colors$bg, dark_colors$border, dark_colors$text,
+      dark_colors$accent, dark_colors$label
+    ))
+  } else {
+    NULL
+  }
 
   check_svg <- shiny::tags$svg(
     width = "10",
@@ -287,6 +310,7 @@ glassMultiSelect <- function(
 
   htmltools::tagList(
     shiny::tags$style(theme_css),
+    dark_override_style,
     shiny::div(
       class = "gt-ms-field",
       label_tag,
@@ -417,6 +441,9 @@ glassMultiSelect <- function(
 #' @param check_style Optional new style string. One of \code{"checkbox"},
 #'   \code{"check-only"}, or \code{"filled"}. Defaults to \code{NULL}, which
 #'   keeps the current style unchanged.
+#'
+#' @return No return value. Called for its side effect of updating the
+#'   client-side widget.
 #'
 #' @export
 updateGlassMultiSelect <- function(

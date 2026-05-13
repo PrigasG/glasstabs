@@ -41,6 +41,13 @@ All arguments accept any valid CSS color string (hex, \code{rgb()}, \code{rgba()
 named colors). Pass only the fields you want to override — unset fields
 fall back to the dark-mode defaults.
 }
+\note{
+\strong{Light mode color accessibility:} When building a light-mode theme,
+ensure \code{tab_text} is dark enough to read on a white background (e.g. at
+least \code{"#374151"}) and \code{tab_active_text} provides strong contrast (e.g.
+\code{"#1d4ed8"} or darker). Light-grey or near-white values that look fine on
+dark backgrounds become invisible on light ones.
+}
 \examples{
 # Amber / warm accent on a dark base
 amber <- glass_tab_theme(

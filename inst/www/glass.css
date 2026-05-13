@@ -3,6 +3,8 @@
 /* ── Container ── */
 /* No max-width or centering — behaves like a regular block inside Shiny layouts */
 .gt-container{width:100%;position:relative;}
+/* wrap=FALSE: no content box, but still needs position:relative for halo animation */
+.gt-wrap-shell{width:100%;position:relative;}
 
 /* ── Top bar ── */
 .gt-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:12px;flex-wrap:wrap;}
@@ -61,9 +63,9 @@
 /* ── Content area ── */
 .gt-tab-wrap{
   position:relative;overflow:hidden;border-radius:14px;padding:22px;
-  background:var(--gt-content-bg,rgba(9,20,42,0.72));
-  border:1px solid var(--gt-content-border,rgba(255,255,255,0.10));
-  box-shadow:0 10px 32px rgba(2,6,23,0.65);min-height:200px;z-index:5;
+  background:var(--gt-content-bg,transparent);
+  border:1px solid var(--gt-content-border,transparent);
+  box-shadow:var(--gt-content-shadow,none);min-height:200px;z-index:5;
 }
 .gt-tab-pane{
   position:absolute;inset:0;padding:22px;opacity:0;
@@ -150,7 +152,7 @@
 
 /* ── Dropdown panel ── */
 .gt-ms-dropdown{
-  position:absolute;top:calc(100% + 8px);right:0;min-width:232px;
+  position:fixed;min-width:232px;
   border-radius:14px;
   background:var(--ms-bg);
   border:1px solid var(--ms-border);
@@ -160,6 +162,7 @@
   transition:opacity 180ms cubic-bezier(.2,.9,.25,1),transform 180ms cubic-bezier(.2,.9,.25,1);
   transform-origin:top right;
   backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  z-index:9001;
 }
 .gt-ms-wrap.theme-light .gt-ms-dropdown{
   box-shadow:0 12px 40px rgba(0,0,0,0.15),0 0 0 1px rgba(0,0,0,0.06);
@@ -322,7 +325,6 @@
 @media(max-width:600px){
   .gt-navbar{gap:8px;}.gt-tab-link{padding:8px 12px;border-radius:10px;}
   .gt-topbar{flex-direction:column;align-items:flex-start;}
-  .gt-ms-dropdown{right:auto;left:0;}
 }
 
 
@@ -423,9 +425,7 @@
 
 /* ── Dropdown panel ── */
 .gt-gs-dropdown{
-  position:absolute;
-  top:calc(100% + 8px);
-  right:0;
+  position:fixed;
   min-width:232px;
   border-radius:14px;
   background:var(--ms-bg);
@@ -443,6 +443,7 @@
   transform-origin:top right;
   backdrop-filter:blur(20px);
   -webkit-backdrop-filter:blur(20px);
+  z-index:9001;
 }
 
 .gt-gs-wrap.theme-light .gt-gs-dropdown{
@@ -578,12 +579,6 @@
   gap:1px;
 }
 
-@media(max-width:600px){
-  .gt-gs-dropdown{
-    right:auto;
-    left:0;
-  }
-}
 
 
 /* ══════════════════════════════════════════════
@@ -701,6 +696,81 @@
   letter-spacing:0.01em;
 }
 
+/* ══════════════════════════════════════════════
+   LIGHT MODE — tab widget overrides
+   Activated by .theme-light class on the outer wrapper.
+   Replaces every hardcoded rgba(255,255,255,...) value that
+   reads as invisible on a white/light background.
+══════════════════════════════════════════════ */
+
+/* Tab link idle / hover backgrounds */
+.theme-light .gt-tab-link{
+  background:rgba(0,0,0,0.03);
+  color:var(--gt-tab-text,#475569);
+}
+.theme-light .gt-tab-link:hover{
+  background:rgba(37,99,235,0.06);
+}
+.theme-light .gt-tab-link.active{
+  color:var(--gt-tab-active-text,#1e40af);
+}
+
+/* Halo shimmer — replace white gradient with blue-tinted glass */
+.theme-light .gt-halo::before{
+  background:linear-gradient(
+    120deg,
+    rgba(37,99,235,0.18) 0%,
+    rgba(37,99,235,0.07) 30%,
+    rgba(255,255,255,0.50) 55%,
+    transparent 70%
+  );
+  opacity:0.85;
+}
+
+/* Transfer trace particle — replace white glow with blue */
+.theme-light .gt-transfer{
+  background:radial-gradient(
+    closest-side,
+    rgba(37,99,235,0.60),
+    rgba(37,99,235,0.22) 55%,
+    transparent 85%
+  );
+  box-shadow:0 0 18px rgba(37,99,235,0.28);
+}
+
+/* Content area — transparent by default in light mode so glasstabs
+   acts as "just tabs" inside whatever container the user provides.
+   Users who want a card feel can override via glass_tab_theme(). */
+.theme-light .gt-tab-wrap{
+  background:var(--gt-content-bg,transparent);
+  border-color:var(--gt-content-border,transparent);
+  box-shadow:none;
+  min-height:0;
+}
+
+/* Card inner — also transparent; content flows on the page */
+.theme-light .gt-card{
+  background:var(--gt-card-bg,transparent);
+  box-shadow:none;
+  color:var(--gt-card-text,#1e293b);
+}
+.theme-light .gt-card h2,
+.theme-light .gt-card h3{
+  color:var(--gt-tab-active-text,#1d4ed8);
+}
+.theme-light .gt-card p{
+  color:var(--gt-card-text,#374151);
+}
+
+/* Filter tag pills — replace the blue-on-dark pill style */
+.theme-light .gt-filter-tag{
+  background:rgba(37,99,235,0.08);
+  border-color:rgba(37,99,235,0.25);
+  color:#1d4ed8;
+}
+.theme-light .gt-filter-tag .gt-remove-tag{color:#2563eb;}
+.theme-light .gt-no-filters{color:rgba(71,85,105,0.45);}
+
 /* ── Compact / dense mode ─────────────────────────────────────────────── */
 /* Applied when glassTabsUI(compact = TRUE) */
 /* compact has no extra container margin to override — spacing handled below */
@@ -712,15 +782,80 @@
 .gt-compact .gt-card{padding:10px;}
 .gt-compact .gt-halo{border-radius:10px;}
 
-/* ── Dropdown z-index — raised for bs4Dash card stacking contexts ─────── */
-/* bs4Dash cards set overflow:hidden; raising z-index ensures the dropdown
-   clears any card/sidebar overlays. The layer-active class is set by JS
-   the moment a trigger is opened. */
-.gt-ms-wrap.gt-layer-active,
-.gt-gs-wrap.gt-layer-active{
-  z-index:9000;
+/* Dropdowns use position:fixed so they escape overflow:hidden parents
+   (e.g. bs4Dash card bodies). z-index is set directly on the dropdown
+   element in its base rule above. */
+
+/* ══════════════════════════════════════════════
+   TELEPORTED DROPDOWN STYLES
+   When a dropdown is moved to <body> via teleportOpen(), it loses its
+   .gt-ms-wrap / .gt-gs-wrap ancestor. JS copies the style/theme classes
+   directly onto the dropdown element so these rules apply instead.
+══════════════════════════════════════════════ */
+
+/* Light theme box-shadow override for teleported dropdowns */
+.gt-ms-dropdown.theme-light{box-shadow:0 12px 40px rgba(0,0,0,0.15),0 0 0 1px rgba(0,0,0,0.06);}
+.gt-gs-dropdown.theme-light{box-shadow:0 12px 40px rgba(0,0,0,0.15),0 0 0 1px rgba(0,0,0,0.06);}
+
+/* Multi-select: checkbox style */
+.gt-ms-dropdown.style-checkbox .gt-ms-option.checked .gt-ms-check,
+.gt-ms-dropdown.style-checkbox .gt-ms-all.checked    .gt-ms-check{
+  background:color-mix(in srgb,var(--ms-accent) 22%,transparent);
+  border-color:color-mix(in srgb,var(--ms-accent) 75%,transparent);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--ms-accent) 12%,transparent);
 }
-.gt-ms-dropdown,
-.gt-gs-dropdown{
-  z-index:9001;
+
+/* Multi-select: check-only style */
+.gt-ms-dropdown.style-check-only .gt-ms-check{
+  border-color:transparent!important;background:transparent!important;box-shadow:none!important;
+}
+.gt-ms-dropdown.style-check-only .gt-ms-option.checked .gt-ms-check svg,
+.gt-ms-dropdown.style-check-only .gt-ms-all.checked    .gt-ms-check svg{opacity:1;transform:scale(1.15);}
+.gt-ms-dropdown.style-check-only .gt-ms-check::before{
+  content:'';position:absolute;width:4px;height:4px;border-radius:50%;
+  background:color-mix(in srgb,var(--ms-accent) 22%,transparent);transition:opacity 120ms;
+}
+.gt-ms-dropdown.style-check-only .gt-ms-option.checked .gt-ms-check::before,
+.gt-ms-dropdown.style-check-only .gt-ms-all.checked    .gt-ms-check::before{opacity:0;}
+
+/* Multi-select: filled style */
+.gt-ms-dropdown.style-filled .gt-ms-check{
+  border-color:color-mix(in srgb,var(--ms-accent) 28%,transparent)!important;
+}
+.gt-ms-dropdown.style-filled .gt-ms-option.checked .gt-ms-check{
+  border-color:transparent!important;
+  box-shadow:0 0 0 2px rgba(255,255,255,0.06)!important;
+  background:hsl(var(--opt-hue,210),72%,52%)!important;
+}
+.gt-ms-dropdown.style-filled .gt-ms-option.checked .gt-ms-check svg{
+  opacity:0!important;transform:scale(0.5)!important;
+}
+.gt-ms-dropdown.style-filled .gt-ms-all.checked .gt-ms-check{
+  background:color-mix(in srgb,var(--ms-accent) 32%,transparent)!important;
+  border-color:color-mix(in srgb,var(--ms-accent) 60%,transparent)!important;
+}
+.gt-ms-dropdown.style-filled .gt-ms-all.checked .gt-ms-check svg{
+  opacity:0!important;transform:scale(0.5)!important;
+}
+.gt-ms-dropdown.style-filled .gt-ms-option.checked{
+  background:color-mix(in srgb,hsl(var(--opt-hue,210),72%,52%) 12%,transparent);
+}
+
+/* Single-select: check-only style */
+.gt-gs-dropdown.style-check-only .gt-gs-check{
+  border-color:transparent!important;background:transparent!important;box-shadow:none!important;
+}
+.gt-gs-dropdown.style-check-only .gt-gs-option.selected .gt-gs-check svg{opacity:1;transform:scale(1.15);}
+
+/* Single-select: filled style */
+.gt-gs-dropdown.style-filled .gt-gs-check{
+  border-color:color-mix(in srgb,var(--ms-accent) 28%,transparent)!important;
+}
+.gt-gs-dropdown.style-filled .gt-gs-option.selected .gt-gs-check{
+  border-color:transparent!important;
+  background:var(--ms-accent)!important;
+  box-shadow:0 0 0 2px rgba(255,255,255,0.06)!important;
+}
+.gt-gs-dropdown.style-filled .gt-gs-option.selected .gt-gs-check svg{
+  opacity:0!important;transform:scale(0.5)!important;
 }

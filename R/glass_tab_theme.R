@@ -4,6 +4,12 @@
 #' named colors). Pass only the fields you want to override — unset fields
 #' fall back to the dark-mode defaults.
 #'
+#' @note **Light mode color accessibility:** When building a light-mode theme,
+#'   ensure `tab_text` is dark enough to read on a white background (e.g. at
+#'   least `"#374151"`) and `tab_active_text` provides strong contrast (e.g.
+#'   `"#1d4ed8"` or darker). Light-grey or near-white values that look fine on
+#'   dark backgrounds become invisible on light ones.
+#'
 #' @param tab_text   Inactive tab text color.
 #' @param tab_active_text Active tab text color (and headings inside cards).
 #' @param halo_bg    Background fill of the animated glass halo.
@@ -74,21 +80,21 @@ glass_tab_theme <- function(
     halo_bg         = "rgba(126,195,247,0.16)",
     halo_border     = "rgba(126,195,247,0.38)",
     halo_shadow     = "inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(255,255,255,.06),0 6px 20px rgba(0,0,0,.38),0 0 0 1px rgba(255,255,255,.03)",
-    content_bg      = "rgba(9,20,42,0.72)",
-    content_border  = "rgba(255,255,255,0.10)",
-    card_bg         = "rgba(255,255,255,0.03)",
+    content_bg      = "transparent",
+    content_border  = "transparent",
+    card_bg         = "transparent",
     card_text       = "#cfe6ff"
   )
 
   light_defaults <- list(
-    tab_text        = "#334155",
-    tab_active_text = "#0f172a",
-    halo_bg         = "rgba(37,99,235,0.13)",
-    halo_border     = "rgba(37,99,235,0.42)",
-    halo_shadow     = "inset 0 1px 0 rgba(255,255,255,.60),0 4px 12px rgba(37,99,235,.12),0 0 0 1px rgba(37,99,235,.05)",
-    content_bg      = "rgba(255,255,255,0.92)",
-    content_border  = "rgba(0,0,0,0.10)",
-    card_bg         = "rgba(248,250,252,0.80)",
+    tab_text        = "#374151",
+    tab_active_text = "#1d4ed8",
+    halo_bg         = "rgba(37,99,235,0.12)",
+    halo_border     = "rgba(37,99,235,0.60)",
+    halo_shadow     = "inset 0 1px 0 rgba(255,255,255,.80),0 4px 16px rgba(37,99,235,.20),0 0 0 1px rgba(37,99,235,.12)",
+    content_bg      = "transparent",
+    content_border  = "transparent",
+    card_bg         = "transparent",
     card_text       = "#1e293b"
   )
 

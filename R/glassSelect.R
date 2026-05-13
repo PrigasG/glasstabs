@@ -72,6 +72,12 @@ glassSelect <- function(
     check_style = c("checkbox", "check-only", "filled"),
     theme = "dark"
 ) {
+  if (!is.character(inputId) || length(inputId) != 1L || !nzchar(inputId)) {
+    stop(
+      "glassSelect(): `inputId` must be a single non-empty string.",
+      call. = FALSE
+    )
+  }
   check_style <- match.arg(check_style)
   colors <- .ms_resolve_theme(theme)
 

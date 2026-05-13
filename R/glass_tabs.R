@@ -53,6 +53,12 @@ glassTabPanel <- function(value, label, ..., icon = NULL, selected = FALSE) {
 #'   layouts (e.g. bs4Dash).
 #' @param extra_ui Optional additional UI placed to the right of the tab bar.
 #' @param theme One of `"dark"`, `"light"`, or a [glass_tab_theme()] object.
+#' @param dark_selector Optional CSS selector for a parent element that signals
+#'   dark mode (e.g. `"body.dark-mode"` for bs4Dash, `"[data-bs-theme=dark]"`
+#'   for Bootstrap 5). When provided and `theme = "light"`, a second scoped
+#'   `<style>` block overrides the CSS variables back to the dark-mode defaults
+#'   whenever that selector is active — so the tabs stay readable after a
+#'   dark-mode toggle without any server-side intervention.
 #'
 #' @return An `htmltools::tagList` ready to use in a Shiny UI.
 #' @export
@@ -62,7 +68,8 @@ glassTabsUI <- function(
     wrap = TRUE,
     compact = FALSE,
     extra_ui = NULL,
-    theme = NULL
+    theme = NULL,
+    dark_selector = NULL
 ) {
   ns     <- shiny::NS(id)
   panels <- list(...)
@@ -170,6 +177,14 @@ glassTabsUI <- function(
     extra_ui
   )
 
+  if (!is.null(dark_selector) &&
+      (!is.character(dark_selector) || length(dark_selector) != 1L || !nzchar(dark_selector))) {
+    stop(
+      "glassTabsUI(): `dark_selector` must be a single non-empty CSS selector string, e.g. \"body.dark-mode\".",
+      call. = FALSE
+    )
+  }
+
   scope_id <- ns("wrap")
   theme_css <- sprintf(
     "#%s{--gt-tab-text:%s;--gt-tab-active-text:%s;--gt-halo-bg:%s;--gt-halo-border:%s;--gt-halo-shadow:%s;--gt-content-bg:%s;--gt-content-border:%s;--gt-card-bg:%s;--gt-card-text:%s;}",
@@ -185,16 +200,44 @@ glassTabsUI <- function(
     theme_vals$card_text
   )
 
+  dark_override_style <- if (!is.null(dark_selector)) {
+    dark_vals <- .tab_resolve_theme("dark")
+    dark_css <- sprintf(
+      "%s #%s{--gt-tab-text:%s;--gt-tab-active-text:%s;--gt-halo-bg:%s;--gt-halo-border:%s;--gt-halo-shadow:%s;--gt-content-bg:%s;--gt-content-border:%s;--gt-card-bg:%s;--gt-card-text:%s;}",
+      dark_selector,
+      scope_id,
+      dark_vals$tab_text,
+      dark_vals$tab_active_text,
+      dark_vals$halo_bg,
+      dark_vals$halo_border,
+      dark_vals$halo_shadow,
+      theme_vals$content_bg,
+      theme_vals$content_border,
+      theme_vals$card_bg,
+      dark_vals$card_text
+    )
+    shiny::tags$style(dark_css)
+  } else {
+    NULL
+  }
+
   inner <- htmltools::tagList(
     shiny::tags$style(theme_css),
+    dark_override_style,
     navbar,
     shiny::tags$div(class = "gt-halo", id = ns("halo")),
     shiny::tags$div(class = "gt-transfer", id = ns("transfer")),
     shiny::div(class = "gt-tab-wrap", panes)
   )
 
+  is_light <- identical(theme, "light") ||
+    (inherits(theme, "glass_tab_theme") && isTRUE(attr(theme, "mode") == "light"))
+
   container_cls <- trimws(paste(
-    c(if (isTRUE(wrap)) "gt-container", if (isTRUE(compact)) "gt-compact"),
+    c(if (isTRUE(wrap))    "gt-container",
+      if (!isTRUE(wrap))   "gt-wrap-shell",
+      if (isTRUE(compact)) "gt-compact",
+      if (is_light)        "theme-light"),
     collapse = " "
   ))
   shiny::div(class = if (nzchar(container_cls)) container_cls else NULL,

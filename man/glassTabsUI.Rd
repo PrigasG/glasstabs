@@ -11,7 +11,8 @@ glassTabsUI(
   wrap = TRUE,
   compact = FALSE,
   extra_ui = NULL,
-  theme = NULL
+  theme = NULL,
+  dark_selector = NULL
 )
 }
 \arguments{
@@ -30,6 +31,13 @@ layouts (e.g. bs4Dash).}
 \item{extra_ui}{Optional additional UI placed to the right of the tab bar.}
 
 \item{theme}{One of \code{"dark"}, \code{"light"}, or a \code{\link[=glass_tab_theme]{glass_tab_theme()}} object.}
+
+\item{dark_selector}{Optional CSS selector for a parent element that signals
+dark mode (e.g. \code{"body.dark-mode"} for bs4Dash, \code{"[data-bs-theme=dark]"}
+for Bootstrap 5). When provided and \code{theme = "light"}, a second scoped
+\verb{<style>} block overrides the CSS variables back to the dark-mode defaults
+whenever that selector is active — so the tabs stay readable after a
+dark-mode toggle without any server-side intervention.}
 }
 \value{
 An \code{htmltools::tagList} ready to use in a Shiny UI.

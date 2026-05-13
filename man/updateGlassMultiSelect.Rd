@@ -26,6 +26,10 @@ selection. Use \code{character(0)} to clear.}
 \code{"check-only"}, or \code{"filled"}. Defaults to \code{NULL}, which
 keeps the current style unchanged.}
 }
+\value{
+No return value. Called for its side effect of updating the
+client-side widget.
+}
 \description{
 Update the available choices and/or current selection of an existing
 \code{\link[=glassMultiSelect]{glassMultiSelect()}} input.

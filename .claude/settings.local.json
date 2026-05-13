@@ -34,7 +34,13 @@
       "Bash(\"/c/Program Files/R/R-4.5.1/bin/Rscript.exe\" -e \"devtools::build\\(quiet=TRUE\\)\")",
       "Bash(grep -E \"testing|synctex|aux$|\\\\.log$|\\\\.out$|ROADMAP|cran-comment|\\\\.claude|\\\\.github\")",
       "Bash(grep -E \"testing|synctex|\\\\.aux$|\\\\.log$|\\\\.out$|ROADMAP|cran-comment|\\\\.claude|\\\\.github\")",
-      "Bash(echo \"exit:$?\")"
+      "Bash(echo \"exit:$?\")",
+      "Bash(\"/c/Program Files/R/R-4.5.1/bin/Rscript.exe\" -e \"library\\(glasstabs\\); html <- as.character\\(glassTabsUI\\('t', glassTabPanel\\('a','A', selected=TRUE\\), theme='light'\\)\\); cat\\(grepl\\('theme-light', html\\), '\\\\n'\\)\")",
+      "Bash(\"/c/Program Files/R/R-4.5.1/bin/Rscript.exe\" -e \"devtools::load_all\\('.', quiet=TRUE\\); html <- as.character\\(glassTabsUI\\('t', glassTabPanel\\('a','A', selected=TRUE\\), theme='light'\\)\\); cat\\(grepl\\('theme-light', html\\), '\\\\n'\\)\")",
+      "Bash('/c/Program Files/R/R-4.5.1/bin/Rscript.exe' -e ' *)",
+      "Bash(\"/c/Program Files/R/R-4.5.1/bin/Rscript.exe\" -e \"devtools::load_all\\('.',quiet=TRUE\\); light <- as.character\\(glassTabsUI\\('t', glassTabPanel\\('a','A',selected=TRUE\\), theme='light'\\)\\); dark <- as.character\\(glassTabsUI\\('t', glassTabPanel\\('a','A',selected=TRUE\\), theme='dark'\\)\\); cat\\(grepl\\('theme-light',light\\), grepl\\('theme-light',dark\\), grepl\\('rgba\\(37,99,235,0.60\\)',light,fixed=TRUE\\), '\\\\n'\\)\")",
+      "Bash(\"/c/Program Files/R/R-4.5.1/bin/Rscript.exe\" -e \"devtools::load_all\\('.',quiet=TRUE\\); h <- as.character\\(glassTabsUI\\('t',glassTabPanel\\('a','A',selected=TRUE\\),theme='light'\\)\\); cat\\('theme-light class:', grepl\\('theme-light',h\\), '\\\\ntab_text dark:', grepl\\('374151',h\\), '\\\\nactive_text blue:', grepl\\('1d4ed8',h\\), '\\\\ncontent transparent:', grepl\\('transparent',h\\), '\\\\n'\\)\")",
+      "Bash(grep -v \"^--$\")"
     ]
   }
 }

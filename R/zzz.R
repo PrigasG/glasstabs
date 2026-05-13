@@ -47,6 +47,13 @@
 #' @return An \code{htmltools} tag.
 #' @export
 glassFilterTags <- function(inputId, class = NULL) {
+  if (!is.character(inputId) || length(inputId) != 1L || !nzchar(inputId)) {
+    stop(
+      "glassFilterTags(): `inputId` must be a single non-empty string matching ",
+      "the inputId of the glassMultiSelect() widget.",
+      call. = FALSE
+    )
+  }
   classes <- c("gt-filter-tags", class)
   classes <- classes[!is.na(classes) & nzchar(classes)]
 

@@ -16,7 +16,8 @@ glassMultiSelect(
   show_select_all = TRUE,
   show_clear_all = TRUE,
   theme = "dark",
-  hues = NULL
+  hues = NULL,
+  dark_selector = NULL
 )
 }
 \arguments{
@@ -48,6 +49,11 @@ or a \code{\link[=glass_select_theme]{glass_select_theme()}} object.}
 
 \item{hues}{Optional named integer vector of HSL hue angles (0 to 360) for
 the \code{"filled"} style. Auto-assigned if \code{NULL}.}
+
+\item{dark_selector}{Optional CSS selector that signals dark mode (e.g.
+\code{"body.dark-mode"} for bs4Dash). When provided and
+\code{theme = "light"}, emits an extra scoped \code{<style>} block that
+reverts colors to the dark-mode defaults whenever that selector is active.}
 }
 \value{
 An \code{htmltools::tagList} containing the trigger button, dropdown
