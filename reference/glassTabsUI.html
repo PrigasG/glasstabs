@@ -56,7 +56,8 @@
 <span>  wrap <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  compact <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  extra_ui <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  theme <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  theme <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  dark_selector <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -92,6 +93,15 @@ layouts (e.g. bs4Dash).</p></dd>
 
 <dt id="arg-theme">theme<a class="anchor" aria-label="anchor" href="#arg-theme"></a></dt>
 <dd><p>One of <code>"dark"</code>, <code>"light"</code>, or a <code><a href="glass_tab_theme.html">glass_tab_theme()</a></code> object.</p></dd>
+
+
+<dt id="arg-dark-selector">dark_selector<a class="anchor" aria-label="anchor" href="#arg-dark-selector"></a></dt>
+<dd><p>Optional CSS selector for a parent element that signals
+dark mode (e.g. <code>"body.dark-mode"</code> for bs4Dash, <code>"[data-bs-theme=dark]"</code>
+for Bootstrap 5). When provided and <code>theme = "light"</code>, a second scoped
+<code>&lt;style&gt;</code> block overrides the CSS variables back to the dark-mode defaults
+whenever that selector is active — so the tabs stay readable after a
+dark-mode toggle without any server-side intervention.</p></dd>
 
 </dl></div>
     <div class="section level2">

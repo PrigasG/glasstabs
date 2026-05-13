@@ -64,7 +64,8 @@ select-all behavior, and programmatic updates via <code><a href="updateGlassMult
 <span>  show_select_all <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  show_clear_all <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  theme <span class="op">=</span> <span class="st">"dark"</span>,</span>
-<span>  hues <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  hues <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  dark_selector <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -123,6 +124,13 @@ or a <code><a href="glass_select_theme.html">glass_select_theme()</a></code> obj
 <dt id="arg-hues">hues<a class="anchor" aria-label="anchor" href="#arg-hues"></a></dt>
 <dd><p>Optional named integer vector of HSL hue angles (0 to 360) for
 the <code>"filled"</code> style. Auto-assigned if <code>NULL</code>.</p></dd>
+
+
+<dt id="arg-dark-selector">dark_selector<a class="anchor" aria-label="anchor" href="#arg-dark-selector"></a></dt>
+<dd><p>Optional CSS selector that signals dark mode (e.g.
+<code>"body.dark-mode"</code> for bs4Dash). When provided and
+<code>theme = "light"</code>, emits an extra scoped <code>&lt;style&gt;</code> block that
+reverts colors to the dark-mode defaults whenever that selector is active.</p></dd>
 
 </dl></div>
     <div class="section level2">

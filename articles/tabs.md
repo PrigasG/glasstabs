@@ -20,6 +20,7 @@ Three functions work together:
   — defines one tab button and its associated content pane
 
 ``` r
+
 library(shiny)
 library(glasstabs)
 
@@ -52,6 +53,7 @@ The active tab value is pushed to Shiny automatically on every click via
 `Shiny.setInputValue`. Access it as `input[["<id>-active_tab"]]`:
 
 ``` r
+
 server <- function(input, output, session) {
   observe({
     req(input[["nav-active_tab"]])
@@ -77,6 +79,7 @@ bar. The most common use is a
 filter:
 
 ``` r
+
 choices <- c(Alpha = "alpha", Beta = "beta", Gamma = "gamma")
 
 ui <- fluidPage(
@@ -100,6 +103,7 @@ ui <- fluidPage(
 ### Built-in presets
 
 ``` r
+
 # Dark (default)
 glassTabsUI("nav", theme = "dark", ...)
 
@@ -113,6 +117,7 @@ Supply only the values you want to change — everything else falls back
 to the dark preset:
 
 ``` r
+
 # Change only the halo colour
 glassTabsUI("nav",
   theme = glass_tab_theme(
@@ -145,6 +150,7 @@ card body already provides a constrained container. Pair with
 `theme = "light"` to match the card’s white background:
 
 ``` r
+
 library(bs4Dash)
 library(glasstabs)
 
@@ -176,6 +182,7 @@ instance is scoped to its own `id`, so multiple widgets work fully
 independently:
 
 ``` r
+
 ui <- fluidPage(
   useGlassTabs(),    # only needed once per page
   glassTabsUI("widget1",

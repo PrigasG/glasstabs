@@ -12,7 +12,8 @@ glassTabsUI(
   wrap = TRUE,
   compact = FALSE,
   extra_ui = NULL,
-  theme = NULL
+  theme = NULL,
+  dark_selector = NULL
 )
 ```
 
@@ -51,6 +52,15 @@ glassTabsUI(
   One of `"dark"`, `"light"`, or a
   [`glass_tab_theme()`](https://prigasg.github.io/glasstabs/reference/glass_tab_theme.md)
   object.
+
+- dark_selector:
+
+  Optional CSS selector for a parent element that signals dark mode
+  (e.g. `"body.dark-mode"` for bs4Dash, `"[data-bs-theme=dark]"` for
+  Bootstrap 5). When provided and `theme = "light"`, a second scoped
+  `<style>` block overrides the CSS variables back to the dark-mode
+  defaults whenever that selector is active — so the tabs stay readable
+  after a dark-mode toggle without any server-side intervention.
 
 ## Value
 

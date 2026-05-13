@@ -19,6 +19,7 @@ bs4Dash. They can be used together or independently. —
 ## Installation
 
 ``` r
+
 # From CRAN 
 install.packages("glasstabs")
 
@@ -39,6 +40,7 @@ somewhere in the UI. It injects the CSS and JavaScript as a proper
 `htmltools` dependency.
 
 ``` r
+
 library(shiny)
 library(glasstabs)
 
@@ -59,6 +61,7 @@ Each
 takes a unique `value`, a display `label`, and any UI content:
 
 ``` r
+
 glassTabPanel("overview", "Overview", selected = TRUE,
   h3("Welcome"),
   p("This is the overview pane.")
@@ -72,6 +75,7 @@ Pass your panels to
 along with a namespace `id`:
 
 ``` r
+
 ui <- fluidPage(
   useGlassTabs(),
   glassTabsUI("nav",
@@ -96,6 +100,7 @@ ui <- fluidPage(
 The active tab value is pushed to Shiny automatically on every click:
 
 ``` r
+
 server <- function(input, output, session) {
   observe({
     req(input[["nav-active_tab"]])
@@ -113,6 +118,7 @@ shinyApp(ui, server)
 ### Step 1 — define choices and place the widget
 
 ``` r
+
 choices <- c(Alpha = "alpha", Beta = "beta", Gamma = "gamma", Delta = "delta")
 
 ui <- fluidPage(
@@ -125,6 +131,7 @@ ui <- fluidPage(
 ### Step 2 — read the selection in the server
 
 ``` r
+
 server <- function(input, output, session) {
   output$selected <- renderPrint(input$category)
 }
@@ -141,6 +148,7 @@ outputs, or trigger reactives.
 If you want a small convenience wrapper:
 
 ``` r
+
 server <- function(input, output, session) {
   ms <- glassMultiSelectValue(input, "category")
 
@@ -157,6 +165,7 @@ server <- function(input, output, session) {
 also supports server-side updates:
 
 ``` r
+
 server <- function(input, output, session) {
   observeEvent(input$reset, {
     updateGlassMultiSelect(
@@ -177,6 +186,7 @@ server <- function(input, output, session) {
 ### Step 1: add a single-select input
 
 ``` r
+
 choices <- c(
   North = "north",
   South = "south",
@@ -194,6 +204,7 @@ ui <- fluidPage(
 ### Step 2: read the value in the server
 
 ``` r
+
 server <- function(input, output, session) {
   output$selected <- renderPrint(input$region)
 }
@@ -207,6 +218,7 @@ selected.
 ### Updating from the server
 
 ``` r
+
 server <- function(input, output, session) {
   observeEvent(input$pick_south, {
     updateGlassSelect(
@@ -228,6 +240,7 @@ tab panes. Pass a widget to `extra_ui` and place
 inside panes to show active multi-select filters as removable tag pills.
 
 ``` r
+
 choices <- c(North = "north", South = "south", East = "east", West = "west")
 
 ui <- fluidPage(
@@ -278,6 +291,7 @@ Both widgets default to `"dark"`. Switch to `"light"` or supply a custom
 theme object — in each case you only override what you need:
 
 ``` r
+
 # Built-in light preset
 glassTabsUI("nav",    theme = "light", ...)
 glassMultiSelect("f", theme = "light", ...)
@@ -302,6 +316,7 @@ card body rather than a full-page container. Pair with
 `theme = "light"`:
 
 ``` r
+
 library(bs4Dash)
 library(glasstabs)
 

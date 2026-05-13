@@ -60,6 +60,14 @@ A named list of class `"glass_tab_theme"` for passing to the `theme`
 argument of
 [`glassTabsUI()`](https://prigasg.github.io/glasstabs/reference/glassTabsUI.md).
 
+## Note
+
+**Light mode color accessibility:** When building a light-mode theme,
+ensure `tab_text` is dark enough to read on a white background (e.g. at
+least `"#374151"`) and `tab_active_text` provides strong contrast (e.g.
+`"#1d4ed8"` or darker). Light-grey or near-white values that look fine
+on dark backgrounds become invisible on light ones.
+
 ## Examples
 
 ``` r

@@ -169,20 +169,20 @@
 <col width="50%">
 <col width="50%">
 </colgroup>
-<thead><tr class="header">
+<thead><tr>
 <th>Function</th>
 <th>Description</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td><code><a href="reference/useGlassTabs.html">useGlassTabs()</a></code></td>
 <td>Inject package CSS and JavaScript — call once in the UI</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>runGlassExample(example)</code></td>
 <td>Launch a built-in example app (<code><a href="reference/runGlassExample.html">runGlassExample()</a></code> to list all)</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code><a href="reference/glasstabs_news.html">glasstabs_news()</a></code></td>
 <td>Print the package changelog to the R console</td>
 </tr>
@@ -197,70 +197,70 @@
 <col width="50%">
 <col width="50%">
 </colgroup>
-<thead><tr class="header">
+<thead><tr>
 <th>Function</th>
 <th>Description</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td><code>glassTabsUI(id, ..., selected, wrap, compact, extra_ui, theme)</code></td>
 <td>Animated tab bar with content area; <code>compact=TRUE</code> for dashboard cards</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>glassTabPanel(value, label, ..., icon, selected)</code></td>
 <td>Define one tab and its content; <code>icon</code> accepts <code><a href="https://rdrr.io/pkg/shiny/man/icon.html" class="external-link">shiny::icon()</a></code>
 </td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>glassTabsServer(id, bookmark)</code></td>
 <td>Reactive returning the active tab; bookmarks active tab in URL</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>glassTabsOutput(outputId)</code></td>
 <td>UI placeholder for a server-rendered tab widget</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>renderGlassTabs({expr})</code></td>
 <td>Render a <code><a href="reference/glassTabsUI.html">glassTabsUI()</a></code> reactively; JS reinitialises automatically</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>glassTabCondition(id, value)</code></td>
 <td>JS condition string for <code><a href="https://rdrr.io/pkg/shiny/man/conditionalPanel.html" class="external-link">conditionalPanel()</a></code>
 </td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>updateGlassTabsUI(session, id, selected)</code></td>
 <td>Switch the active tab from the server</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>updateGlassTabBadge(session, id, value, count)</code></td>
 <td>Set a numeric badge on a tab button (<code>0</code> hides it)</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>showGlassTab(session, id, value)</code></td>
 <td>Show a hidden tab</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>hideGlassTab(session, id, value)</code></td>
 <td>Hide a tab from the navigation bar</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>disableGlassTab(session, id, value)</code></td>
 <td>Gray out a tab (stays visible, not clickable)</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>enableGlassTab(session, id, value)</code></td>
 <td>Re-enable a disabled tab</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>appendGlassTab(session, id, tab, select)</code></td>
 <td>Add a new tab at runtime</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>removeGlassTab(session, id, value)</code></td>
 <td>Remove a tab at runtime</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>glass_tab_theme(...)</code></td>
 <td>Custom colour theme for <code><a href="reference/glassTabsUI.html">glassTabsUI()</a></code>
 </td>
@@ -276,40 +276,40 @@
 <col width="50%">
 <col width="50%">
 </colgroup>
-<thead><tr class="header">
+<thead><tr>
 <th>Function</th>
 <th>Description</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td><code>glassMultiSelect(inputId, choices, ...)</code></td>
 <td>Multi-select dropdown widget</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>updateGlassMultiSelect(session, inputId, ...)</code></td>
 <td>Update multi-select choices, selection, or style</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>glassMultiSelectValue(input, inputId)</code></td>
 <td>Reactive helper for multi-select value and style</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>glassSelect(inputId, choices, ...)</code></td>
 <td>Single-select dropdown widget</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>updateGlassSelect(session, inputId, ...)</code></td>
 <td>Update single-select choices, selection, or style</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>glassSelectValue(input, inputId)</code></td>
 <td>Reactive helper for selected value</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>glassFilterTags(inputId)</code></td>
 <td>Tag-pill display area synced to a multi-select</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>glass_select_theme(...)</code></td>
 <td>Custom colour theme for <code><a href="reference/glassSelect.html">glassSelect()</a></code> and <code><a href="reference/glassMultiSelect.html">glassMultiSelect()</a></code>
 </td>
@@ -328,31 +328,31 @@
 <col width="33%">
 <col width="33%">
 </colgroup>
-<thead><tr class="header">
+<thead><tr>
 <th>Input</th>
 <th>Type</th>
 <th>Description</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td><code>input[["&lt;id&gt;-active_tab"]]</code></td>
 <td><code>character</code></td>
 <td>Currently active tab value from <code><a href="reference/glassTabsUI.html">glassTabsUI()</a></code>
 </td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>input$&lt;inputId&gt;</code></td>
 <td><code>character vector</code></td>
 <td>Selected values from <code><a href="reference/glassMultiSelect.html">glassMultiSelect()</a></code>
 </td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>input$&lt;inputId&gt;_style</code></td>
 <td><code>character</code></td>
 <td>Active selection style from <code><a href="reference/glassMultiSelect.html">glassMultiSelect()</a></code>
 </td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>input$&lt;inputId&gt;</code></td>
 <td>
 <code>character</code> or <code>NULL</code>
@@ -437,7 +437,7 @@
 <p>```{r single-select} library(shiny) library(glasstabs)</p>
 <p>choices &lt;- c( North = “north”, South = “south”, East = “east”, West = “west” )</p>
 <p>ui &lt;- fluidPage( useGlassTabs(), glassSelect( “region”, choices, clearable = TRUE, check_style = “checkbox”, theme = “light” ), verbatimTextOutput(“out”) )</p>
-<p>server &lt;- function(input, output, session) { output<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>o</mi><mi>u</mi><mi>t</mi><mo>&lt;</mo><mo>−</mo><mi>r</mi><mi>e</mi><mi>n</mi><mi>d</mi><mi>e</mi><mi>r</mi><mi>P</mi><mi>r</mi><mi>i</mi><mi>n</mi><mi>t</mi><mo stretchy="false" form="prefix">(</mo><mi>i</mi><mi>n</mi><mi>p</mi><mi>u</mi><mi>t</mi></mrow><annotation encoding="application/x-tex">out &lt;- renderPrint(input</annotation></semantics></math>region) }</p>
+<p>server &lt;- function(input, output, session) { output<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>o</mi><mi>u</mi><mi>t</mi><mo>&lt;</mo><mi>−</mi><mi>r</mi><mi>e</mi><mi>n</mi><mi>d</mi><mi>e</mi><mi>r</mi><mi>P</mi><mi>r</mi><mi>i</mi><mi>n</mi><mi>t</mi><mo stretchy="false" form="prefix">(</mo><mi>i</mi><mi>n</mi><mi>p</mi><mi>u</mi><mi>t</mi></mrow><annotation encoding="application/x-tex">out &lt;- renderPrint(input</annotation></semantics></math>region) }</p>
 <p>shinyApp(ui, server)</p>
 <pre><code>
 ## Server-side updates
@@ -512,40 +512,40 @@ server &lt;- function(input, output, session) {
 <code>glass_tab_theme()</code> handles<a class="anchor" aria-label="anchor" href="#glass_tab_theme-handles"></a>
 </h3>
 <table class="table">
-<thead><tr class="header">
+<thead><tr>
 <th>Argument</th>
 <th>Controls</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td><code>tab_text</code></td>
 <td>Inactive tab label color</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>tab_active_text</code></td>
 <td>Active tab label color</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>halo_bg</code></td>
 <td>Sliding glass halo fill</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>halo_border</code></td>
 <td>Sliding glass halo border</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>content_bg</code></td>
 <td>Tab content panel background</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>content_border</code></td>
 <td>Tab content panel border</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>card_bg</code></td>
 <td>Inner card background</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>card_text</code></td>
 <td>Inner card text color</td>
 </tr>
@@ -557,33 +557,33 @@ server &lt;- function(input, output, session) {
 <code>glass_select_theme()</code> handles<a class="anchor" aria-label="anchor" href="#glass_select_theme-handles"></a>
 </h3>
 <table class="table">
-<thead><tr class="header">
+<thead><tr>
 <th>Argument</th>
 <th>Controls</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td><code>mode</code></td>
 <td>Base preset, either <code>"dark"</code> or <code>"light"</code>
 </td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>bg_color</code></td>
 <td>Dropdown panel and trigger background</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>border_color</code></td>
 <td>Border color</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>text_color</code></td>
 <td>Main text color</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>accent_color</code></td>
 <td>Ticks, badges, checked states, and clear controls</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>label_color</code></td>
 <td>Optional field label color</td>
 </tr>
@@ -597,20 +597,20 @@ server &lt;- function(input, output, session) {
 </h2>
 <p><code><a href="reference/glassMultiSelect.html">glassMultiSelect()</a></code> and <code><a href="reference/glassSelect.html">glassSelect()</a></code> support three selection indicator styles:</p>
 <table class="table">
-<thead><tr class="header">
+<thead><tr>
 <th>Style</th>
 <th>Appearance</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td><code>"checkbox"</code></td>
 <td>Ghost box with animated tick</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>"check-only"</code></td>
 <td>Tick only, no box</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>"filled"</code></td>
 <td>Solid colored box with no tick</td>
 </tr>
@@ -666,28 +666,28 @@ server &lt;- function(input, output, session) {
 <col width="50%">
 <col width="50%">
 </colgroup>
-<thead><tr class="header">
+<thead><tr>
 <th>Article</th>
 <th>Description</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td><a href="https://prigasg.github.io/glasstabs/articles/cheatsheet.html">Cheatsheet</a></td>
 <td>Quick reference for tabs, selects, updates, and server helpers</td>
 </tr>
-<tr class="even">
+<tr>
 <td><a href="https://prigasg.github.io/glasstabs/articles/getting-started.html">Getting started</a></td>
 <td>Progressive walkthrough of both widgets</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><a href="https://prigasg.github.io/glasstabs/articles/tabs.html">Animated tabs</a></td>
 <td>Full <code><a href="reference/glassTabsUI.html">glassTabsUI()</a></code> reference with theming and bs4Dash</td>
 </tr>
-<tr class="even">
+<tr>
 <td><a href="https://prigasg.github.io/glasstabs/articles/multiselect.html">Multi-select filter</a></td>
 <td>Full <code><a href="reference/glassMultiSelect.html">glassMultiSelect()</a></code> reference with styles, tags and updates</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><a href="https://prigasg.github.io/glasstabs/articles/glassSelect.html">Single-select filter</a></td>
 <td>Full <code><a href="reference/glassSelect.html">glassSelect()</a></code> reference with search, clear, and updates</td>
 </tr>

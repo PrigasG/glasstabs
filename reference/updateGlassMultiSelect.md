@@ -41,6 +41,11 @@ updateGlassMultiSelect(
   `"filled"`. Defaults to `NULL`, which keeps the current style
   unchanged.
 
+## Value
+
+No return value. Called for its side effect of updating the client-side
+widget.
+
 ## Details
 
 This function now follows Shiny-style update semantics more closely:

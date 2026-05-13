@@ -19,7 +19,8 @@ glassMultiSelect(
   show_select_all = TRUE,
   show_clear_all = TRUE,
   theme = "dark",
-  hues = NULL
+  hues = NULL,
+  dark_selector = NULL
 )
 ```
 
@@ -76,6 +77,13 @@ glassMultiSelect(
 
   Optional named integer vector of HSL hue angles (0 to 360) for the
   `"filled"` style. Auto-assigned if `NULL`.
+
+- dark_selector:
+
+  Optional CSS selector that signals dark mode (e.g. `"body.dark-mode"`
+  for bs4Dash). When provided and `theme = "light"`, emits an extra
+  scoped `<style>` block that reverts colors to the dark-mode defaults
+  whenever that selector is active.
 
 ## Value
 

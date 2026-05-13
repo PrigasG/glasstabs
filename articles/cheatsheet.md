@@ -7,6 +7,7 @@ Call
 once somewhere in your UI before using any widget.
 
 ``` r
+
 ui <- fluidPage(
   useGlassTabs(),
   # widgets go here
@@ -16,6 +17,7 @@ ui <- fluidPage(
 ## Tabs: basic pattern
 
 ``` r
+
 ui <- fluidPage(
   useGlassTabs(),
   glassTabsUI(
@@ -35,6 +37,7 @@ server <- function(input, output, session) {
 The key rule: use `ns()` in the UI, use the **bare** id in the server.
 
 ``` r
+
 # UI function
 my_ui <- function(id) {
   ns <- NS(id)
@@ -68,6 +71,7 @@ shinyApp(ui, server)
 ## Tabs: dynamic values and selected
 
 ``` r
+
 # Build panels from data
 tab_defs <- list(
   list(value = "revenue", label = "Revenue"),
@@ -97,6 +101,7 @@ server <- function(input, output, session) {
 ## Tabs: server actions
 
 ``` r
+
 # Switch active tab
 updateGlassTabsUI(session, "main", "details")
 
@@ -116,6 +121,7 @@ removeGlassTab(session, "main", "compare")
 ## Tabs: common options
 
 ``` r
+
 glassTabsUI(
   "main",
   glassTabPanel("a", "A", selected = TRUE, p("A")),
@@ -137,6 +143,7 @@ It reduces margins, padding, and font size so the widget does not
 overflow the card.
 
 ``` r
+
 bs4Card(
   title = "Explorer", width = 12,
   glassTabsUI(
@@ -151,6 +158,7 @@ bs4Card(
 ## Multi-select: basic pattern
 
 ``` r
+
 choices <- c(Revenue = "revenue", Orders = "orders", Returns = "returns")
 
 ui <- fluidPage(
@@ -167,6 +175,7 @@ server <- function(input, output, session) {
 ## Multi-select: update from server
 
 ``` r
+
 updateGlassMultiSelect(
   session,
   "metric",
@@ -181,6 +190,7 @@ updateGlassMultiSelect(session, "metric", selected = character(0))
 ## Multi-select: useful arguments
 
 ``` r
+
 glassMultiSelect(
   "metric",
   choices,
@@ -199,6 +209,7 @@ glassMultiSelect(
 ## Single-select: basic pattern
 
 ``` r
+
 regions <- c("All Regions" = "all", North = "north", South = "south")
 
 ui <- fluidPage(
@@ -214,6 +225,7 @@ server <- function(input, output, session) {
 ## Single-select: update from server
 
 ``` r
+
 updateGlassSelect(session, "region", selected = "south")
 
 # Clear value
@@ -223,6 +235,7 @@ updateGlassSelect(session, "region", selected = character(0))
 ## Single-select: useful arguments
 
 ``` r
+
 glassSelect(
   "region",
   regions,
@@ -249,6 +262,7 @@ in the
 (or anywhere before the first widget — once is enough).
 
 ``` r
+
 library(shiny)
 library(bs4Dash)
 
@@ -299,6 +313,7 @@ shinyApp(ui, server)
 ## Theme helpers
 
 ``` r
+
 # Tabs
 glassTabsUI(
   "main",
@@ -321,12 +336,12 @@ glassMultiSelect(
 
 ## Input values at a glance
 
-| Widget                            | Server value                                                             |
-|-----------------------------------|--------------------------------------------------------------------------|
-| `glassTabsUI("main", ...)`        | `input[["main-active_tab"]]` or `glassTabsServer("main")()`              |
-| `glassMultiSelect("metric", ...)` | `input$metric` or `glassMultiSelectValue(input, "metric")$selected()`    |
-| multi-select style                | `input$metric_style` or `glassMultiSelectValue(input, "metric")$style()` |
-| `glassSelect("region", ...)`      | `input$region` or `glassSelectValue(input, "region")()`                  |
+| Widget | Server value |
+|----|----|
+| `glassTabsUI("main", ...)` | `input[["main-active_tab"]]` or `glassTabsServer("main")()` |
+| `glassMultiSelect("metric", ...)` | `input$metric` or `glassMultiSelectValue(input, "metric")$selected()` |
+| multi-select style | `input$metric_style` or `glassMultiSelectValue(input, "metric")$style()` |
+| `glassSelect("region", ...)` | `input$region` or `glassSelectValue(input, "region")()` |
 
 ## conditionalPanel integration
 
@@ -335,6 +350,7 @@ Use
 to avoid constructing the input key manually:
 
 ``` r
+
 # Instead of: condition = "input['main-active_tab'] === 'details'"
 conditionalPanel(
   condition = glassTabCondition("main", "details"),
@@ -352,6 +368,7 @@ conditionalPanel(
 ## View the changelog
 
 ``` r
+
 glasstabs_news()      # prints changelog to the console
 ```
 

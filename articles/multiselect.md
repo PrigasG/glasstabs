@@ -17,6 +17,7 @@ It also supports server-side updates with
 ## Basic usage
 
 ``` r
+
 library(shiny)
 library(glasstabs)
 
@@ -49,6 +50,7 @@ shinyApp(ui, server)
 ## Initial selection
 
 ``` r
+
 # All selected (default)
 glassMultiSelect("f", fruits)
 
@@ -64,6 +66,7 @@ glassMultiSelect("f", fruits, selected = character(0))
 Three indicator styles are available via `check_style`:
 
 ``` r
+
 # Bordered box + animated tick (default)
 glassMultiSelect("f", fruits, check_style = "checkbox")
 
@@ -79,6 +82,7 @@ user can change the style at runtime. Hide it with
 `show_style_switcher = FALSE`:
 
 ``` r
+
 glassMultiSelect("f", fruits,
   check_style         = "check-only",
   show_style_switcher = FALSE          # lock the style silently
@@ -92,6 +96,7 @@ colour wheel. Override them with a named integer vector of HSL hue
 angles (0–360):
 
 ``` r
+
 glassMultiSelect("f", fruits,
   check_style = "filled",
   hues = c(apple = 0, banana = 50, cherry = 340, mango = 30, peach = 20)
@@ -104,6 +109,7 @@ All three interactive chrome elements can be toggled independently.
 Defaults are all `TRUE`:
 
 ``` r
+
 glassMultiSelect("f", fruits,
   show_style_switcher = FALSE,   # hide the Check / Box / Fill row
   show_select_all     = FALSE,   # hide the "Select all" row
@@ -120,6 +126,7 @@ removable tag pills. The JS engine keeps them in sync automatically —
 clicking × on a tag deselects that option.
 
 ``` r
+
 ui <- fluidPage(
   useGlassTabs(),
   glassMultiSelect("cat", fruits, show_style_switcher = FALSE),
@@ -136,6 +143,7 @@ Read the selection directly from `input$<inputId>` and the style from
 `input$<inputId>_style`:
 
 ``` r
+
 server <- function(input, output, session) {
 
   # Direct access
@@ -152,6 +160,7 @@ If you want a small convenience wrapper, use
 [`glassMultiSelectValue()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelectValue.md):
 
 ``` r
+
 server <- function(input, output, session) {
   ms <- glassMultiSelectValue(input, "pick")
 
@@ -174,6 +183,7 @@ It follows Shiny-style update semantics:
 - `selected = character(0)` clears the selection
 
 ``` r
+
 ui <- fluidPage(
   useGlassTabs(),
   actionButton("subset", "Keep first 3 fruits"),
@@ -231,6 +241,7 @@ intersection of the current selection and the new choice set.
 ### Built-in presets
 
 ``` r
+
 glassMultiSelect("f", fruits, theme = "dark")   # default
 glassMultiSelect("f", fruits, theme = "light")  # white panel, dark text
 ```
@@ -240,6 +251,7 @@ glassMultiSelect("f", fruits, theme = "light")  # white panel, dark text
 Supply only the colors you want to change:
 
 ``` r
+
 # One field — accent colour only
 glassMultiSelect("f", fruits,
   theme = glass_select_theme(accent_color = "#f59e0b")
@@ -279,6 +291,7 @@ is fully independent of the tab widget. You only need
 for the CSS and JS:
 
 ``` r
+
 library(shiny)
 library(glasstabs)
 
@@ -320,6 +333,7 @@ is scoped to its own `inputId` and works independently. When one
 dropdown is open it automatically floats above all others:
 
 ``` r
+
 ui <- fluidPage(
   useGlassTabs(),
   glassMultiSelect("a", c(X = "x", Y = "y", Z = "z")),
