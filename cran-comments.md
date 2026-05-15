@@ -4,28 +4,48 @@
 
 Tested on:
 - local Windows 11: R 4.5.1
-- GitHub Actions CI: macOS, Windows, Ubuntu on R release and devel
-- win-builder: R release and devel
 
-## Changes in this version (0.3.1)
+Command used locally:
+- `R CMD check --no-manual --ignore-vignettes glasstabs_0.3.2.tar.gz`
 
-New exported functions:
+## Changes in this version (0.3.2)
 
-- `glassTabCondition(id, value)` — generates the correct JavaScript condition
-  string for `conditionalPanel()`, removing the need to recall the
-  `input[["id-active_tab"]]` key pattern manually.
-- `glasstabs_news()` — prints the package changelog to the R console.
+This release focuses on public-dashboard readiness for `glassTabsUI()`,
+`glassSelect()`, and `glassMultiSelect()`.
 
-Improvements:
+Browser compatibility:
 
-- Error messages across all functions are now actionable: they identify the
-  bad argument class, show what was received, and suggest the corrective fix.
-- `glass_tab_theme()` and `glass_select_theme()` now have full `@examples`
-  with interactive Shiny app snippets.
-- `.gt-container` no longer forces `max-width:960px` or `margin:48px auto`;
-  the widget now flows naturally inside Shiny columns and dashboard cards.
-- Light-mode halo shadow improved via `--gt-halo-shadow` CSS variable
-  (soft blue-tinted shadow instead of a harsh black drop shadow).
-- `ROADMAP.md` added to the repository (excluded from the built package).
-- 27 new tests covering `glassTabCondition()`, `glasstabs_news()`, and all
-  improved error message paths.
+- Removed all `color-mix()` usage from the shipped stylesheet. Select widget
+  alpha colors are now precomputed as CSS custom properties at render time.
+- Bumped the html dependency version so browsers request fresh CSS/JS assets.
+
+Accessibility and keyboard behavior:
+
+- Added ARIA combobox/listbox/option semantics to `glassSelect()` and
+  `glassMultiSelect()`.
+- JavaScript now keeps `aria-expanded` and `aria-selected` in sync.
+- Escape and Tab close open select dropdowns and return focus to the trigger.
+- Single-select option clicks return focus to the trigger.
+
+Dashboard and layout fixes:
+
+- Fixed tab initialization for `glassTabsUI()` inserted by `renderUI()` or
+  dashboard layouts after the initial page boot.
+- Added a Shiny input binding and delegated activation fallback for tabs so
+  click and keyboard activation remain reliable in public dashboards.
+- Added Windows High Contrast (`forced-colors`) CSS support.
+- Added RTL layout support.
+- Improved narrow-screen select trigger behavior to avoid overflow in dashboard
+  cards.
+
+Security:
+
+- Added CSP nonce support for inline style tags via the `glasstabs.csp_nonce`
+  option.
+
+Internal/release preparation:
+
+- Added public-readiness tests covering browser compatibility, ARIA output,
+  focus management hooks, CSP nonce support, and release-facing CSS/JS checks.
+- Moved non-shipping stress-test apps out of `inst/examples/`; they are excluded
+  from the CRAN source package.
