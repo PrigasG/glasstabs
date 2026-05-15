@@ -6,6 +6,7 @@
 ^docs$
 ^pkgdown$
 ^\.github$
+^tools$
 ^CRAN-SUBMISSION$
 ^CLAUDE\.md$
 ^ROADMAP\.md$
