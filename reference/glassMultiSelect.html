@@ -9,7 +9,7 @@ select-all behavior, and programmatic updates via updateGlassMultiSelect()."><me
 
     <a class="navbar-brand me-2" href="../index.html">glasstabs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -154,10 +154,10 @@ This preserves the existing package behavior.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Minimal</span></span></span>
 <span class="r-in"><span><span class="fu">glassMultiSelect</span><span class="op">(</span><span class="st">"f"</span>, <span class="va">fruits</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;style&gt;#f-field{--ms-bg:rgba(9,20,42,0.97);--ms-border:rgba(255,255,255,0.10);--ms-text:#cfe6ff;--ms-accent:#7ec3f7;--ms-label:#cfe6ff;}&lt;/style&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;style&gt;#f-field{--ms-bg:rgba(9,20,42,0.97);--ms-border:rgba(255,255,255,0.10);--ms-text:#cfe6ff;--ms-accent:#7ec3f7;--ms-label:#cfe6ff;--ms-ac-12:rgba(126,195,247,0.120);--ms-ac-16:rgba(126,195,247,0.160);--ms-ac-18:rgba(126,195,247,0.180);--ms-ac-22:rgba(126,195,247,0.220);--ms-ac-28:rgba(126,195,247,0.280);--ms-ac-32:rgba(126,195,247,0.320);--ms-ac-40:rgba(126,195,247,0.400);--ms-ac-55:rgba(126,195,247,0.550);--ms-ac-60:rgba(126,195,247,0.600);--ms-ac-75:rgba(126,195,247,0.750);--ms-tx-03:rgba(207,230,255,0.030);--ms-tx-04:rgba(207,230,255,0.040);--ms-tx-05:rgba(207,230,255,0.050);--ms-tx-06:rgba(207,230,255,0.060);--ms-tx-08:rgba(207,230,255,0.080);--ms-tx-35:rgba(207,230,255,0.350);--ms-tx-45:rgba(207,230,255,0.450);--ms-tx-50:rgba(207,230,255,0.500);--ms-tx-80:rgba(207,230,255,0.800);--ms-ac-tx-75:rgba(146,204,249,1.000);}&lt;/style&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;div class="gt-ms-field" id="f-field"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;div class="gt-ms-wrap style-checkbox " id="f-wrap" data-input-id="f" data-placeholder="Filter by Category" data-all-label="All categories"&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;div class="gt-ms-trigger" id="f-trigger"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;div class="gt-ms-trigger" id="f-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="f-dropdown"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;span id="f-label"&gt;All categories&lt;/span&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;div style="display:flex;align-items:center;gap:6px;"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;span class="gt-ms-badge hidden" id="f-badge"&gt;3&lt;/span&gt;</span>
@@ -166,7 +166,7 @@ This preserves the existing package behavior.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;/svg&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;/div&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;/div&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;div class="gt-ms-dropdown" id="f-dropdown"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;div class="gt-ms-dropdown" id="f-dropdown" role="listbox"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;div class="gt-ms-search"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7ec3f7" stroke-width="2.2"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;circle cx="11" cy="11" r="8"&gt;&lt;/circle&gt;</span>
@@ -195,7 +195,7 @@ This preserves the existing package behavior.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;span&gt;Fill&lt;/span&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;/div&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;/div&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;div class="gt-ms-all checked" id="f-all"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;div class="gt-ms-all checked" id="f-all" role="option" aria-selected="true"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-ms-check"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;svg width="10" height="8" viewBox="0 0 10 8" fill="none"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;path d="M1 4l2.8 3L9 1" stroke="#7ec3f7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;/path&gt;</span>
@@ -204,7 +204,7 @@ This preserves the existing package behavior.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;span&gt;Select all&lt;/span&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;/div&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;div id="f-options"&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-ms-option checked" data-value="apple" style="--opt-hue:200;"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-ms-option checked" data-value="apple" style="--opt-hue:200;" role="option" aria-selected="true"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;div class="gt-ms-check"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;svg width="10" height="8" viewBox="0 0 10 8" fill="none"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               &lt;path d="M1 4l2.8 3L9 1" stroke="#7ec3f7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;/path&gt;</span>
@@ -212,7 +212,7 @@ This preserves the existing package behavior.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;/div&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;span&gt;Apple&lt;/span&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;/div&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-ms-option checked" data-value="banana" style="--opt-hue:320;"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-ms-option checked" data-value="banana" style="--opt-hue:320;" role="option" aria-selected="true"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;div class="gt-ms-check"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;svg width="10" height="8" viewBox="0 0 10 8" fill="none"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               &lt;path d="M1 4l2.8 3L9 1" stroke="#7ec3f7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;/path&gt;</span>
@@ -220,7 +220,7 @@ This preserves the existing package behavior.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;/div&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;span&gt;Banana&lt;/span&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;/div&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-ms-option checked" data-value="cherry" style="--opt-hue:80;"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-ms-option checked" data-value="cherry" style="--opt-hue:80;" role="option" aria-selected="true"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;div class="gt-ms-check"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;svg width="10" height="8" viewBox="0 0 10 8" fill="none"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               &lt;path d="M1 4l2.8 3L9 1" stroke="#7ec3f7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;/path&gt;</span>
@@ -246,10 +246,10 @@ This preserves the existing package behavior.</p>
 <span class="r-in"><span>  show_select_all <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
 <span class="r-in"><span>  show_clear_all <span class="op">=</span> <span class="cn">FALSE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;style&gt;#f-field{--ms-bg:rgba(9,20,42,0.97);--ms-border:rgba(255,255,255,0.10);--ms-text:#cfe6ff;--ms-accent:#7ec3f7;--ms-label:#cfe6ff;}&lt;/style&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;style&gt;#f-field{--ms-bg:rgba(9,20,42,0.97);--ms-border:rgba(255,255,255,0.10);--ms-text:#cfe6ff;--ms-accent:#7ec3f7;--ms-label:#cfe6ff;--ms-ac-12:rgba(126,195,247,0.120);--ms-ac-16:rgba(126,195,247,0.160);--ms-ac-18:rgba(126,195,247,0.180);--ms-ac-22:rgba(126,195,247,0.220);--ms-ac-28:rgba(126,195,247,0.280);--ms-ac-32:rgba(126,195,247,0.320);--ms-ac-40:rgba(126,195,247,0.400);--ms-ac-55:rgba(126,195,247,0.550);--ms-ac-60:rgba(126,195,247,0.600);--ms-ac-75:rgba(126,195,247,0.750);--ms-tx-03:rgba(207,230,255,0.030);--ms-tx-04:rgba(207,230,255,0.040);--ms-tx-05:rgba(207,230,255,0.050);--ms-tx-06:rgba(207,230,255,0.060);--ms-tx-08:rgba(207,230,255,0.080);--ms-tx-35:rgba(207,230,255,0.350);--ms-tx-45:rgba(207,230,255,0.450);--ms-tx-50:rgba(207,230,255,0.500);--ms-tx-80:rgba(207,230,255,0.800);--ms-ac-tx-75:rgba(146,204,249,1.000);}&lt;/style&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;div class="gt-ms-field" id="f-field"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;div class="gt-ms-wrap style-check-only " id="f-wrap" data-input-id="f" data-placeholder="Filter by Category" data-all-label="All categories"&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;div class="gt-ms-trigger" id="f-trigger"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;div class="gt-ms-trigger" id="f-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="f-dropdown"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;span id="f-label"&gt;All categories&lt;/span&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;div style="display:flex;align-items:center;gap:6px;"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;span class="gt-ms-badge hidden" id="f-badge"&gt;3&lt;/span&gt;</span>
@@ -258,7 +258,7 @@ This preserves the existing package behavior.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;/svg&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;/div&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;/div&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;div class="gt-ms-dropdown" id="f-dropdown"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;div class="gt-ms-dropdown" id="f-dropdown" role="listbox"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;div class="gt-ms-search"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7ec3f7" stroke-width="2.2"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;circle cx="11" cy="11" r="8"&gt;&lt;/circle&gt;</span>
@@ -266,7 +266,7 @@ This preserves the existing package behavior.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;/svg&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;input type="text" id="f-search" placeholder="Search options..." autocomplete="off"/&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;/div&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;div class="gt-ms-all checked" id="f-all" style="display:none;"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;div class="gt-ms-all checked" id="f-all" style="display:none;" role="option" aria-selected="true"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-ms-check"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;svg width="10" height="8" viewBox="0 0 10 8" fill="none"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;path d="M1 4l2.8 3L9 1" stroke="#7ec3f7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;/path&gt;</span>
@@ -275,7 +275,7 @@ This preserves the existing package behavior.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;span&gt;Select all&lt;/span&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;/div&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;div id="f-options"&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-ms-option checked" data-value="apple" style="--opt-hue:200;"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-ms-option checked" data-value="apple" style="--opt-hue:200;" role="option" aria-selected="true"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;div class="gt-ms-check"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;svg width="10" height="8" viewBox="0 0 10 8" fill="none"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               &lt;path d="M1 4l2.8 3L9 1" stroke="#7ec3f7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;/path&gt;</span>
@@ -283,7 +283,7 @@ This preserves the existing package behavior.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;/div&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;span&gt;Apple&lt;/span&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;/div&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-ms-option checked" data-value="banana" style="--opt-hue:320;"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-ms-option checked" data-value="banana" style="--opt-hue:320;" role="option" aria-selected="true"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;div class="gt-ms-check"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;svg width="10" height="8" viewBox="0 0 10 8" fill="none"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               &lt;path d="M1 4l2.8 3L9 1" stroke="#7ec3f7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;/path&gt;</span>
@@ -291,7 +291,7 @@ This preserves the existing package behavior.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;/div&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;span&gt;Banana&lt;/span&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;/div&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-ms-option checked" data-value="cherry" style="--opt-hue:80;"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-ms-option checked" data-value="cherry" style="--opt-hue:80;" role="option" aria-selected="true"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;div class="gt-ms-check"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;svg width="10" height="8" viewBox="0 0 10 8" fill="none"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               &lt;path d="M1 4l2.8 3L9 1" stroke="#7ec3f7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;/path&gt;</span>
@@ -310,10 +310,10 @@ This preserves the existing package behavior.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Light theme</span></span></span>
 <span class="r-in"><span><span class="fu">glassMultiSelect</span><span class="op">(</span><span class="st">"f"</span>, <span class="va">fruits</span>, theme <span class="op">=</span> <span class="st">"light"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;style&gt;#f-field{--ms-bg:rgba(255,255,255,0.98);--ms-border:rgba(0,0,0,0.12);--ms-text:#111111;--ms-accent:#2563eb;--ms-label:#111111;}&lt;/style&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;style&gt;#f-field{--ms-bg:rgba(255,255,255,0.98);--ms-border:rgba(0,0,0,0.12);--ms-text:#111111;--ms-accent:#2563eb;--ms-label:#111111;--ms-ac-12:rgba(37,99,235,0.120);--ms-ac-16:rgba(37,99,235,0.160);--ms-ac-18:rgba(37,99,235,0.180);--ms-ac-22:rgba(37,99,235,0.220);--ms-ac-28:rgba(37,99,235,0.280);--ms-ac-32:rgba(37,99,235,0.320);--ms-ac-40:rgba(37,99,235,0.400);--ms-ac-55:rgba(37,99,235,0.550);--ms-ac-60:rgba(37,99,235,0.600);--ms-ac-75:rgba(37,99,235,0.750);--ms-tx-03:rgba(17,17,17,0.030);--ms-tx-04:rgba(17,17,17,0.040);--ms-tx-05:rgba(17,17,17,0.050);--ms-tx-06:rgba(17,17,17,0.060);--ms-tx-08:rgba(17,17,17,0.080);--ms-tx-35:rgba(17,17,17,0.350);--ms-tx-45:rgba(17,17,17,0.450);--ms-tx-50:rgba(17,17,17,0.500);--ms-tx-80:rgba(17,17,17,0.800);--ms-ac-tx-75:rgba(32,78,180,1.000);}&lt;/style&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;div class="gt-ms-field" id="f-field"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;div class="gt-ms-wrap style-checkbox theme-light" id="f-wrap" data-input-id="f" data-placeholder="Filter by Category" data-all-label="All categories"&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;div class="gt-ms-trigger" id="f-trigger"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;div class="gt-ms-trigger" id="f-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="f-dropdown"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;span id="f-label"&gt;All categories&lt;/span&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;div style="display:flex;align-items:center;gap:6px;"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;span class="gt-ms-badge hidden" id="f-badge"&gt;3&lt;/span&gt;</span>
@@ -322,7 +322,7 @@ This preserves the existing package behavior.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;/svg&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;/div&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;/div&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;div class="gt-ms-dropdown" id="f-dropdown"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;div class="gt-ms-dropdown" id="f-dropdown" role="listbox"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;div class="gt-ms-search"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.2"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;circle cx="11" cy="11" r="8"&gt;&lt;/circle&gt;</span>
@@ -351,7 +351,7 @@ This preserves the existing package behavior.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;span&gt;Fill&lt;/span&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;/div&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;/div&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;div class="gt-ms-all checked" id="f-all"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;div class="gt-ms-all checked" id="f-all" role="option" aria-selected="true"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-ms-check"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;svg width="10" height="8" viewBox="0 0 10 8" fill="none"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;path d="M1 4l2.8 3L9 1" stroke="#2563eb" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;/path&gt;</span>
@@ -360,7 +360,7 @@ This preserves the existing package behavior.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;span&gt;Select all&lt;/span&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;/div&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;div id="f-options"&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-ms-option checked" data-value="apple" style="--opt-hue:200;"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-ms-option checked" data-value="apple" style="--opt-hue:200;" role="option" aria-selected="true"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;div class="gt-ms-check"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;svg width="10" height="8" viewBox="0 0 10 8" fill="none"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               &lt;path d="M1 4l2.8 3L9 1" stroke="#2563eb" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;/path&gt;</span>
@@ -368,7 +368,7 @@ This preserves the existing package behavior.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;/div&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;span&gt;Apple&lt;/span&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;/div&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-ms-option checked" data-value="banana" style="--opt-hue:320;"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-ms-option checked" data-value="banana" style="--opt-hue:320;" role="option" aria-selected="true"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;div class="gt-ms-check"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;svg width="10" height="8" viewBox="0 0 10 8" fill="none"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               &lt;path d="M1 4l2.8 3L9 1" stroke="#2563eb" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;/path&gt;</span>
@@ -376,7 +376,7 @@ This preserves the existing package behavior.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;/div&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;span&gt;Banana&lt;/span&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;/div&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-ms-option checked" data-value="cherry" style="--opt-hue:80;"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-ms-option checked" data-value="cherry" style="--opt-hue:80;" role="option" aria-selected="true"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;div class="gt-ms-check"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;svg width="10" height="8" viewBox="0 0 10 8" fill="none"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               &lt;path d="M1 4l2.8 3L9 1" stroke="#2563eb" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;/path&gt;</span>

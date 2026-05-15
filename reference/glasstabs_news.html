@@ -9,7 +9,7 @@ changed between versions without leaving your R session."><meta property="og:ima
 
     <a class="navbar-brand me-2" href="../index.html">glasstabs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -63,6 +63,18 @@ changed between versions without leaving your R session.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">glasstabs_news</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         Changes in version 0.3.2                        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Bug fixes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - Fixed tab initialization for glassTabsUI() inserted by renderUI() or</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     dashboard layouts after the initial page boot.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - Added a Shiny input binding and delegated activation fallback for</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     tabs so click and keyboard activation remain reliable in public</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     dashboards.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - Bumped the html dependency version so browsers request fresh CSS/JS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     assets.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                         Changes in version 0.3.1                        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> New features</span>

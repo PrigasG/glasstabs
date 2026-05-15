@@ -9,7 +9,7 @@ selection-marker styling, and programmatic updates via updateGlassSelect()."><me
 
     <a class="navbar-brand me-2" href="../index.html">glasstabs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -142,10 +142,10 @@ or <code>NULL</code> when nothing is selected</p></li>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">fruits</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Apple <span class="op">=</span> <span class="st">"apple"</span>, Banana <span class="op">=</span> <span class="st">"banana"</span>, Cherry <span class="op">=</span> <span class="st">"cherry"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">glassSelect</span><span class="op">(</span><span class="st">"fruit"</span>, <span class="va">fruits</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;style&gt;#fruit-field{--ms-bg:rgba(9,20,42,0.97);--ms-border:rgba(255,255,255,0.10);--ms-text:#cfe6ff;--ms-accent:#7ec3f7;--ms-label:#cfe6ff;}&lt;/style&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;style&gt;#fruit-field{--ms-bg:rgba(9,20,42,0.97);--ms-border:rgba(255,255,255,0.10);--ms-text:#cfe6ff;--ms-accent:#7ec3f7;--ms-label:#cfe6ff;--ms-ac-12:rgba(126,195,247,0.120);--ms-ac-16:rgba(126,195,247,0.160);--ms-ac-18:rgba(126,195,247,0.180);--ms-ac-22:rgba(126,195,247,0.220);--ms-ac-28:rgba(126,195,247,0.280);--ms-ac-32:rgba(126,195,247,0.320);--ms-ac-40:rgba(126,195,247,0.400);--ms-ac-55:rgba(126,195,247,0.550);--ms-ac-60:rgba(126,195,247,0.600);--ms-ac-75:rgba(126,195,247,0.750);--ms-tx-03:rgba(207,230,255,0.030);--ms-tx-04:rgba(207,230,255,0.040);--ms-tx-05:rgba(207,230,255,0.050);--ms-tx-06:rgba(207,230,255,0.060);--ms-tx-08:rgba(207,230,255,0.080);--ms-tx-35:rgba(207,230,255,0.350);--ms-tx-45:rgba(207,230,255,0.450);--ms-tx-50:rgba(207,230,255,0.500);--ms-tx-80:rgba(207,230,255,0.800);--ms-ac-tx-75:rgba(146,204,249,1.000);}&lt;/style&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;div class="gt-gs-field" id="fruit-field"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;div class="gt-gs-wrap style-checkbox " id="fruit-wrap" data-input-id="fruit" data-placeholder="Select an option" data-searchable="true" data-clearable="false" data-all-choice-label="All categories" data-all-choice-value="__all__"&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;div class="gt-gs-trigger" id="fruit-trigger"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;div class="gt-gs-trigger" id="fruit-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="fruit-dropdown"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;span id="fruit-label"&gt;Select an option&lt;/span&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;div style="display:flex;align-items:center;gap:6px;"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;span class="gt-gs-clear" id="fruit-clear" style="display:none;"&gt;Clear&lt;/span&gt;</span>
@@ -154,7 +154,7 @@ or <code>NULL</code> when nothing is selected</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;/svg&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;/div&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;/div&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;div class="gt-gs-dropdown" id="fruit-dropdown"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;div class="gt-gs-dropdown" id="fruit-dropdown" role="listbox"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;div class="gt-gs-search"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7ec3f7" stroke-width="2.2"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;circle cx="11" cy="11" r="8"&gt;&lt;/circle&gt;</span>
@@ -163,7 +163,7 @@ or <code>NULL</code> when nothing is selected</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;input type="text" id="fruit-search" placeholder="Search options..." autocomplete="off"/&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;/div&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;div id="fruit-options"&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-gs-option" data-value="apple"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-gs-option" data-value="apple" role="option" aria-selected="false"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;div class="gt-gs-check"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;svg width="10" height="8" viewBox="0 0 10 8" fill="none"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               &lt;path d="M1 4l2.8 3L9 1" stroke="#7ec3f7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;/path&gt;</span>
@@ -171,7 +171,7 @@ or <code>NULL</code> when nothing is selected</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;/div&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;span&gt;Apple&lt;/span&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;/div&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-gs-option" data-value="banana"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-gs-option" data-value="banana" role="option" aria-selected="false"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;div class="gt-gs-check"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;svg width="10" height="8" viewBox="0 0 10 8" fill="none"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               &lt;path d="M1 4l2.8 3L9 1" stroke="#7ec3f7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;/path&gt;</span>
@@ -179,7 +179,7 @@ or <code>NULL</code> when nothing is selected</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;/div&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;span&gt;Banana&lt;/span&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;/div&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-gs-option" data-value="cherry"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-gs-option" data-value="cherry" role="option" aria-selected="false"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;div class="gt-gs-check"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;svg width="10" height="8" viewBox="0 0 10 8" fill="none"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               &lt;path d="M1 4l2.8 3L9 1" stroke="#7ec3f7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;/path&gt;</span>
@@ -198,10 +198,10 @@ or <code>NULL</code> when nothing is selected</p></li>
 <span class="r-in"><span>  selected <span class="op">=</span> <span class="st">"banana"</span>,</span></span>
 <span class="r-in"><span>  clearable <span class="op">=</span> <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;style&gt;#fruit-field{--ms-bg:rgba(9,20,42,0.97);--ms-border:rgba(255,255,255,0.10);--ms-text:#cfe6ff;--ms-accent:#7ec3f7;--ms-label:#cfe6ff;}&lt;/style&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;style&gt;#fruit-field{--ms-bg:rgba(9,20,42,0.97);--ms-border:rgba(255,255,255,0.10);--ms-text:#cfe6ff;--ms-accent:#7ec3f7;--ms-label:#cfe6ff;--ms-ac-12:rgba(126,195,247,0.120);--ms-ac-16:rgba(126,195,247,0.160);--ms-ac-18:rgba(126,195,247,0.180);--ms-ac-22:rgba(126,195,247,0.220);--ms-ac-28:rgba(126,195,247,0.280);--ms-ac-32:rgba(126,195,247,0.320);--ms-ac-40:rgba(126,195,247,0.400);--ms-ac-55:rgba(126,195,247,0.550);--ms-ac-60:rgba(126,195,247,0.600);--ms-ac-75:rgba(126,195,247,0.750);--ms-tx-03:rgba(207,230,255,0.030);--ms-tx-04:rgba(207,230,255,0.040);--ms-tx-05:rgba(207,230,255,0.050);--ms-tx-06:rgba(207,230,255,0.060);--ms-tx-08:rgba(207,230,255,0.080);--ms-tx-35:rgba(207,230,255,0.350);--ms-tx-45:rgba(207,230,255,0.450);--ms-tx-50:rgba(207,230,255,0.500);--ms-tx-80:rgba(207,230,255,0.800);--ms-ac-tx-75:rgba(146,204,249,1.000);}&lt;/style&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;div class="gt-gs-field" id="fruit-field"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;div class="gt-gs-wrap style-checkbox " id="fruit-wrap" data-input-id="fruit" data-placeholder="Select an option" data-searchable="true" data-clearable="true" data-all-choice-label="All categories" data-all-choice-value="__all__"&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;div class="gt-gs-trigger" id="fruit-trigger"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;div class="gt-gs-trigger" id="fruit-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="fruit-dropdown"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;span id="fruit-label"&gt;Banana&lt;/span&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;div style="display:flex;align-items:center;gap:6px;"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;span class="gt-gs-clear" id="fruit-clear"&gt;Clear&lt;/span&gt;</span>
@@ -210,7 +210,7 @@ or <code>NULL</code> when nothing is selected</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;/svg&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;/div&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;/div&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;div class="gt-gs-dropdown" id="fruit-dropdown"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;div class="gt-gs-dropdown" id="fruit-dropdown" role="listbox"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;div class="gt-gs-search"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7ec3f7" stroke-width="2.2"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;circle cx="11" cy="11" r="8"&gt;&lt;/circle&gt;</span>
@@ -219,7 +219,7 @@ or <code>NULL</code> when nothing is selected</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;input type="text" id="fruit-search" placeholder="Search options..." autocomplete="off"/&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;/div&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;div id="fruit-options"&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-gs-option" data-value="apple"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-gs-option" data-value="apple" role="option" aria-selected="false"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;div class="gt-gs-check"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;svg width="10" height="8" viewBox="0 0 10 8" fill="none"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               &lt;path d="M1 4l2.8 3L9 1" stroke="#7ec3f7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;/path&gt;</span>
@@ -227,7 +227,7 @@ or <code>NULL</code> when nothing is selected</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;/div&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;span&gt;Apple&lt;/span&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;/div&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-gs-option selected" data-value="banana"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-gs-option selected" data-value="banana" role="option" aria-selected="true"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;div class="gt-gs-check"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;svg width="10" height="8" viewBox="0 0 10 8" fill="none"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               &lt;path d="M1 4l2.8 3L9 1" stroke="#7ec3f7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;/path&gt;</span>
@@ -235,7 +235,7 @@ or <code>NULL</code> when nothing is selected</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;/div&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;span&gt;Banana&lt;/span&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;/div&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-gs-option" data-value="cherry"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-gs-option" data-value="cherry" role="option" aria-selected="false"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;div class="gt-gs-check"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;svg width="10" height="8" viewBox="0 0 10 8" fill="none"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               &lt;path d="M1 4l2.8 3L9 1" stroke="#7ec3f7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;/path&gt;</span>
@@ -255,10 +255,10 @@ or <code>NULL</code> when nothing is selected</p></li>
 <span class="r-in"><span>  all_choice_label <span class="op">=</span> <span class="st">"All fruits"</span>,</span></span>
 <span class="r-in"><span>  all_choice_value <span class="op">=</span> <span class="st">"__all__"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;style&gt;#fruit-field{--ms-bg:rgba(9,20,42,0.97);--ms-border:rgba(255,255,255,0.10);--ms-text:#cfe6ff;--ms-accent:#7ec3f7;--ms-label:#cfe6ff;}&lt;/style&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;style&gt;#fruit-field{--ms-bg:rgba(9,20,42,0.97);--ms-border:rgba(255,255,255,0.10);--ms-text:#cfe6ff;--ms-accent:#7ec3f7;--ms-label:#cfe6ff;--ms-ac-12:rgba(126,195,247,0.120);--ms-ac-16:rgba(126,195,247,0.160);--ms-ac-18:rgba(126,195,247,0.180);--ms-ac-22:rgba(126,195,247,0.220);--ms-ac-28:rgba(126,195,247,0.280);--ms-ac-32:rgba(126,195,247,0.320);--ms-ac-40:rgba(126,195,247,0.400);--ms-ac-55:rgba(126,195,247,0.550);--ms-ac-60:rgba(126,195,247,0.600);--ms-ac-75:rgba(126,195,247,0.750);--ms-tx-03:rgba(207,230,255,0.030);--ms-tx-04:rgba(207,230,255,0.040);--ms-tx-05:rgba(207,230,255,0.050);--ms-tx-06:rgba(207,230,255,0.060);--ms-tx-08:rgba(207,230,255,0.080);--ms-tx-35:rgba(207,230,255,0.350);--ms-tx-45:rgba(207,230,255,0.450);--ms-tx-50:rgba(207,230,255,0.500);--ms-tx-80:rgba(207,230,255,0.800);--ms-ac-tx-75:rgba(146,204,249,1.000);}&lt;/style&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;div class="gt-gs-field" id="fruit-field"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;div class="gt-gs-wrap style-checkbox " id="fruit-wrap" data-input-id="fruit" data-placeholder="Select an option" data-searchable="true" data-clearable="false" data-all-choice-label="All fruits" data-all-choice-value="__all__"&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;div class="gt-gs-trigger" id="fruit-trigger"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;div class="gt-gs-trigger" id="fruit-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="fruit-dropdown"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;span id="fruit-label"&gt;Select an option&lt;/span&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;div style="display:flex;align-items:center;gap:6px;"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;span class="gt-gs-clear" id="fruit-clear" style="display:none;"&gt;Clear&lt;/span&gt;</span>
@@ -267,7 +267,7 @@ or <code>NULL</code> when nothing is selected</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;/svg&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;/div&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;/div&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;div class="gt-gs-dropdown" id="fruit-dropdown"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;div class="gt-gs-dropdown" id="fruit-dropdown" role="listbox"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;div class="gt-gs-search"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7ec3f7" stroke-width="2.2"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;circle cx="11" cy="11" r="8"&gt;&lt;/circle&gt;</span>
@@ -276,7 +276,7 @@ or <code>NULL</code> when nothing is selected</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;input type="text" id="fruit-search" placeholder="Search options..." autocomplete="off"/&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;/div&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;div id="fruit-options"&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-gs-option" data-value="__all__"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-gs-option" data-value="__all__" role="option" aria-selected="false"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;div class="gt-gs-check"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;svg width="10" height="8" viewBox="0 0 10 8" fill="none"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               &lt;path d="M1 4l2.8 3L9 1" stroke="#7ec3f7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;/path&gt;</span>
@@ -284,7 +284,7 @@ or <code>NULL</code> when nothing is selected</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;/div&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;span&gt;All fruits&lt;/span&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;/div&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-gs-option" data-value="apple"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-gs-option" data-value="apple" role="option" aria-selected="false"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;div class="gt-gs-check"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;svg width="10" height="8" viewBox="0 0 10 8" fill="none"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               &lt;path d="M1 4l2.8 3L9 1" stroke="#7ec3f7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;/path&gt;</span>
@@ -292,7 +292,7 @@ or <code>NULL</code> when nothing is selected</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;/div&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;span&gt;Apple&lt;/span&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;/div&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-gs-option" data-value="banana"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-gs-option" data-value="banana" role="option" aria-selected="false"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;div class="gt-gs-check"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;svg width="10" height="8" viewBox="0 0 10 8" fill="none"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               &lt;path d="M1 4l2.8 3L9 1" stroke="#7ec3f7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;/path&gt;</span>
@@ -300,7 +300,7 @@ or <code>NULL</code> when nothing is selected</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;/div&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;span&gt;Banana&lt;/span&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;/div&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-gs-option" data-value="cherry"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-gs-option" data-value="cherry" role="option" aria-selected="false"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;div class="gt-gs-check"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;svg width="10" height="8" viewBox="0 0 10 8" fill="none"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               &lt;path d="M1 4l2.8 3L9 1" stroke="#7ec3f7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;/path&gt;</span>
@@ -318,10 +318,10 @@ or <code>NULL</code> when nothing is selected</p></li>
 <span class="r-in"><span>  <span class="va">fruits</span>,</span></span>
 <span class="r-in"><span>  check_style <span class="op">=</span> <span class="st">"filled"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;style&gt;#fruit-field{--ms-bg:rgba(9,20,42,0.97);--ms-border:rgba(255,255,255,0.10);--ms-text:#cfe6ff;--ms-accent:#7ec3f7;--ms-label:#cfe6ff;}&lt;/style&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;style&gt;#fruit-field{--ms-bg:rgba(9,20,42,0.97);--ms-border:rgba(255,255,255,0.10);--ms-text:#cfe6ff;--ms-accent:#7ec3f7;--ms-label:#cfe6ff;--ms-ac-12:rgba(126,195,247,0.120);--ms-ac-16:rgba(126,195,247,0.160);--ms-ac-18:rgba(126,195,247,0.180);--ms-ac-22:rgba(126,195,247,0.220);--ms-ac-28:rgba(126,195,247,0.280);--ms-ac-32:rgba(126,195,247,0.320);--ms-ac-40:rgba(126,195,247,0.400);--ms-ac-55:rgba(126,195,247,0.550);--ms-ac-60:rgba(126,195,247,0.600);--ms-ac-75:rgba(126,195,247,0.750);--ms-tx-03:rgba(207,230,255,0.030);--ms-tx-04:rgba(207,230,255,0.040);--ms-tx-05:rgba(207,230,255,0.050);--ms-tx-06:rgba(207,230,255,0.060);--ms-tx-08:rgba(207,230,255,0.080);--ms-tx-35:rgba(207,230,255,0.350);--ms-tx-45:rgba(207,230,255,0.450);--ms-tx-50:rgba(207,230,255,0.500);--ms-tx-80:rgba(207,230,255,0.800);--ms-ac-tx-75:rgba(146,204,249,1.000);}&lt;/style&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;div class="gt-gs-field" id="fruit-field"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;div class="gt-gs-wrap style-filled " id="fruit-wrap" data-input-id="fruit" data-placeholder="Select an option" data-searchable="true" data-clearable="false" data-all-choice-label="All categories" data-all-choice-value="__all__"&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;div class="gt-gs-trigger" id="fruit-trigger"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;div class="gt-gs-trigger" id="fruit-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="fruit-dropdown"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;span id="fruit-label"&gt;Select an option&lt;/span&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;div style="display:flex;align-items:center;gap:6px;"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;span class="gt-gs-clear" id="fruit-clear" style="display:none;"&gt;Clear&lt;/span&gt;</span>
@@ -330,7 +330,7 @@ or <code>NULL</code> when nothing is selected</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;/svg&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;/div&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;/div&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;div class="gt-gs-dropdown" id="fruit-dropdown"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;div class="gt-gs-dropdown" id="fruit-dropdown" role="listbox"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;div class="gt-gs-search"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7ec3f7" stroke-width="2.2"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;circle cx="11" cy="11" r="8"&gt;&lt;/circle&gt;</span>
@@ -339,7 +339,7 @@ or <code>NULL</code> when nothing is selected</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;input type="text" id="fruit-search" placeholder="Search options..." autocomplete="off"/&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;/div&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;div id="fruit-options"&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-gs-option" data-value="apple"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-gs-option" data-value="apple" role="option" aria-selected="false"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;div class="gt-gs-check"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;svg width="10" height="8" viewBox="0 0 10 8" fill="none"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               &lt;path d="M1 4l2.8 3L9 1" stroke="#7ec3f7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;/path&gt;</span>
@@ -347,7 +347,7 @@ or <code>NULL</code> when nothing is selected</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;/div&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;span&gt;Apple&lt;/span&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;/div&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-gs-option" data-value="banana"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-gs-option" data-value="banana" role="option" aria-selected="false"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;div class="gt-gs-check"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;svg width="10" height="8" viewBox="0 0 10 8" fill="none"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               &lt;path d="M1 4l2.8 3L9 1" stroke="#7ec3f7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;/path&gt;</span>
@@ -355,7 +355,7 @@ or <code>NULL</code> when nothing is selected</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;/div&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;span&gt;Banana&lt;/span&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;/div&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-gs-option" data-value="cherry"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;div class="gt-gs-option" data-value="cherry" role="option" aria-selected="false"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;div class="gt-gs-check"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;svg width="10" height="8" viewBox="0 0 10 8" fill="none"&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               &lt;path d="M1 4l2.8 3L9 1" stroke="#7ec3f7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;/path&gt;</span>
