@@ -45,6 +45,15 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.3.2" id="glasstabs-032">glasstabs 0.3.2<a class="anchor" aria-label="anchor" href="#glasstabs-032"></a></h2>
 <div class="section level3">
+<h3 id="public-dashboard-readiness-0-3-2">Public dashboard readiness<a class="anchor" aria-label="anchor" href="#public-dashboard-readiness-0-3-2"></a></h3>
+<ul><li>Removed all <code>color-mix()</code> usage from the shipped stylesheet. Select widget alpha colors are now precomputed as CSS custom properties at render time for better compatibility with older embedded browsers.</li>
+<li>Added ARIA combobox/listbox/option semantics to <code><a href="../reference/glassSelect.html">glassSelect()</a></code> and <code><a href="../reference/glassMultiSelect.html">glassMultiSelect()</a></code>, with JavaScript keeping <code>aria-expanded</code> and <code>aria-selected</code> in sync during interaction.</li>
+<li>Improved keyboard behavior for select widgets: Escape and Tab close open dropdowns and return focus to the trigger; single-select option clicks also return focus.</li>
+<li>Added CSP nonce support for inline style tags via the <code>glasstabs.csp_nonce</code> option.</li>
+<li>Added Windows High Contrast (<code>forced-colors</code>) CSS support and RTL layout support for tabs and select widgets.</li>
+<li>Improved narrow-screen select trigger behavior so labels truncate cleanly inside dashboard cards instead of overflowing.</li>
+</ul></div>
+<div class="section level3">
 <h3 id="bug-fixes-0-3-2">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-3-2"></a></h3>
 <ul><li>Fixed tab initialization for <code><a href="../reference/glassTabsUI.html">glassTabsUI()</a></code> inserted by <code><a href="https://rdrr.io/pkg/shiny/man/renderUI.html" class="external-link">renderUI()</a></code> or dashboard layouts after the initial page boot.</li>
 <li>Added a Shiny input binding and delegated activation fallback for tabs so click and keyboard activation remain reliable in public dashboards.</li>

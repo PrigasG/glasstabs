@@ -2,6 +2,27 @@
 
 ## glasstabs 0.3.2
 
+### Public dashboard readiness
+
+- Removed all `color-mix()` usage from the shipped stylesheet. Select
+  widget alpha colors are now precomputed as CSS custom properties at
+  render time for better compatibility with older embedded browsers.
+- Added ARIA combobox/listbox/option semantics to
+  [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md)
+  and
+  [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md),
+  with JavaScript keeping `aria-expanded` and `aria-selected` in sync
+  during interaction.
+- Improved keyboard behavior for select widgets: Escape and Tab close
+  open dropdowns and return focus to the trigger; single-select option
+  clicks also return focus.
+- Added CSP nonce support for inline style tags via the
+  `glasstabs.csp_nonce` option.
+- Added Windows High Contrast (`forced-colors`) CSS support and RTL
+  layout support for tabs and select widgets.
+- Improved narrow-screen select trigger behavior so labels truncate
+  cleanly inside dashboard cards instead of overflowing.
+
 ### Bug fixes
 
 - Fixed tab initialization for

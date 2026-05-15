@@ -65,6 +65,24 @@ changed between versions without leaving your R session.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">glasstabs_news</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                         Changes in version 0.3.2                        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Public dashboard readiness</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - Removed all color-mix() usage from the shipped stylesheet. Select</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     widget alpha colors are now precomputed as CSS custom properties at</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     render time for better compatibility with older embedded browsers.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - Added ARIA combobox/listbox/option semantics to glassSelect() and</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     glassMultiSelect(), with JavaScript keeping aria-expanded and</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     aria-selected in sync during interaction.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - Improved keyboard behavior for select widgets: Escape and Tab close</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     open dropdowns and return focus to the trigger; single-select option</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     clicks also return focus.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - Added CSP nonce support for inline style tags via the</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     glasstabs.csp_nonce option.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - Added Windows High Contrast (forced-colors) CSS support and RTL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     layout support for tabs and select widgets.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - Improved narrow-screen select trigger behavior so labels truncate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     cleanly inside dashboard cards instead of overflowing.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Bug fixes</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   - Fixed tab initialization for glassTabsUI() inserted by renderUI() or</span>
