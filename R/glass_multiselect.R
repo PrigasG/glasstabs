@@ -130,17 +130,19 @@ glassMultiSelect <- function(
   scope_id <- paste0(inputId, "-wrap")
 
   theme_css <- sprintf(
-    "#%s{--ms-bg:%s;--ms-border:%s;--ms-text:%s;--ms-accent:%s;--ms-label:%s;}",
-    field_id, colors$bg, colors$border, colors$text, colors$accent, colors$label
+    "#%s{--ms-bg:%s;--ms-border:%s;--ms-text:%s;--ms-accent:%s;--ms-label:%s;%s}",
+    field_id, colors$bg, colors$border, colors$text, colors$accent, colors$label,
+    .to_rgba_vars(colors)
   )
 
   dark_override_style <- if (!is.null(dark_selector) && nzchar(dark_selector)) {
     dark_colors <- .ms_resolve_theme("dark")
-    shiny::tags$style(sprintf(
-      "%s #%s{--ms-bg:%s;--ms-border:%s;--ms-text:%s;--ms-accent:%s;--ms-label:%s;}",
+    .make_style_tag(sprintf(
+      "%s #%s{--ms-bg:%s;--ms-border:%s;--ms-text:%s;--ms-accent:%s;--ms-label:%s;%s}",
       dark_selector, field_id,
       dark_colors$bg, dark_colors$border, dark_colors$text,
-      dark_colors$accent, dark_colors$label
+      dark_colors$accent, dark_colors$label,
+      .to_rgba_vars(dark_colors)
     ))
   } else {
     NULL
@@ -252,6 +254,8 @@ glassMultiSelect <- function(
     shiny::div(
       class = all_cls,
       id = paste0(inputId, "-all"),
+      role = "option",
+      `aria-selected` = if (n_total > 0 && n_sel == n_total) "true" else "false",
       shiny::div(class = "gt-ms-check", check_svg),
       shiny::tags$span("Select all")
     )
@@ -260,6 +264,8 @@ glassMultiSelect <- function(
       class = all_cls,
       id = paste0(inputId, "-all"),
       style = "display:none;",
+      role = "option",
+      `aria-selected` = if (n_total > 0 && n_sel == n_total) "true" else "false",
       shiny::div(class = "gt-ms-check", check_svg),
       shiny::tags$span("Select all")
     )
@@ -274,6 +280,8 @@ glassMultiSelect <- function(
       class = cls,
       `data-value` = v,
       style = paste0("--opt-hue:", unname(hues[v]), ";"),
+      role = "option",
+      `aria-selected` = if (v %in% selected) "true" else "false",
       shiny::div(class = "gt-ms-check", check_svg),
       shiny::tags$span(lbl)
     )
@@ -309,7 +317,7 @@ glassMultiSelect <- function(
   )
 
   htmltools::tagList(
-    shiny::tags$style(theme_css),
+    .make_style_tag(theme_css),
     dark_override_style,
     shiny::div(
       class = "gt-ms-field",
@@ -325,6 +333,11 @@ glassMultiSelect <- function(
         shiny::div(
           class = "gt-ms-trigger",
           id = paste0(inputId, "-trigger"),
+          role = "combobox",
+          tabindex = "0",
+          `aria-haspopup` = "listbox",
+          `aria-expanded` = "false",
+          `aria-controls` = paste0(inputId, "-dropdown"),
           shiny::tags$span(id = paste0(inputId, "-label"), init_label),
           shiny::div(
             style = "display:flex;align-items:center;gap:6px;",
@@ -351,6 +364,7 @@ glassMultiSelect <- function(
         shiny::div(
           class = "gt-ms-dropdown",
           id = paste0(inputId, "-dropdown"),
+          role = "listbox",
 
           shiny::div(
             class = "gt-ms-search",

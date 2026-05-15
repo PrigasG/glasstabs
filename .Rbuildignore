@@ -9,6 +9,7 @@
 ^CRAN-SUBMISSION$
 ^CLAUDE\.md$
 ^ROADMAP\.md$
+^dev$
 ^\.claude$
 ^doc$
 ^Meta$

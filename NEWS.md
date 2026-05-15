@@ -1,3 +1,13 @@
+# glasstabs 0.3.2
+
+## Bug fixes
+
+* Fixed tab initialization for `glassTabsUI()` inserted by `renderUI()` or
+  dashboard layouts after the initial page boot.
+* Added a Shiny input binding and delegated activation fallback for tabs so
+  click and keyboard activation remain reliable in public dashboards.
+* Bumped the html dependency version so browsers request fresh CSS/JS assets.
+
 # glasstabs 0.3.1
 
 ## New features

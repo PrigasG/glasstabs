@@ -1,16 +1,16 @@
-*,*::before,*::after{box-sizing:border-box;}
+﻿*,*::before,*::after{box-sizing:border-box;}
 
-/* ── Container ── */
-/* No max-width or centering — behaves like a regular block inside Shiny layouts */
+/* â”€â”€ Container â”€â”€ */
+/* No max-width or centering â€” behaves like a regular block inside Shiny layouts */
 .gt-container{width:100%;position:relative;}
 /* wrap=FALSE: no content box, but still needs position:relative for halo animation */
 .gt-wrap-shell{width:100%;position:relative;}
 
-/* ── Top bar ── */
+/* â”€â”€ Top bar â”€â”€ */
 .gt-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:12px;flex-wrap:wrap;}
 .gt-navbar{display:flex;gap:12px;position:relative;z-index:6;align-items:center;}
 
-/* ── Tab links ── */
+/* â”€â”€ Tab links â”€â”€ */
 .gt-tab-link{
   position:relative;padding:10px 18px;border-radius:12px;
   background:rgba(255,255,255,0.02);
@@ -23,7 +23,7 @@
 .gt-tab-link.active{color:var(--gt-tab-active-text,#ffffff);}
 .gt-tab-link.gt-tab-hidden{display:none;}
 
-/* ── Glass halo ── */
+/* â”€â”€ Glass halo â”€â”€ */
 .gt-halo{
   position:absolute;pointer-events:none;border-radius:14px;
   background:var(--gt-halo-bg,rgba(255,255,255,0.07));
@@ -50,7 +50,7 @@
   opacity:0.65;pointer-events:none;
 }
 
-/* ── Transfer halo ── */
+/* â”€â”€ Transfer halo â”€â”€ */
 .gt-transfer{
   position:absolute;pointer-events:none;border-radius:999px;
   width:54px;height:18px;
@@ -60,7 +60,7 @@
   z-index:3;will-change:left,top,width,height,opacity,filter;
 }
 
-/* ── Content area ── */
+/* â”€â”€ Content area â”€â”€ */
 .gt-tab-wrap{
   position:relative;overflow:hidden;border-radius:14px;padding:22px;
   background:var(--gt-content-bg,transparent);
@@ -75,7 +75,7 @@
 }
 .gt-tab-pane.active{opacity:1;transform:translateY(0) scale(1);position:relative;pointer-events:auto;}
 
-/* ── Card ── */
+/* â”€â”€ Card â”€â”€ */
 .gt-card{
   border-radius:10px;padding:18px;
   color:var(--gt-card-text,#eaf6ff);
@@ -85,7 +85,7 @@
 .gt-card h2,.gt-card h3{margin-top:0;color:var(--gt-tab-active-text,#d4eeff);}
 .gt-card p{margin:0 0 12px;color:var(--gt-card-text,#a9c8e4);font-size:14px;line-height:1.65;}
 
-/* ── Tag pills ── */
+/* â”€â”€ Tag pills â”€â”€ */
 .gt-filter-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;min-height:26px;}
 .gt-filter-tag{
   display:inline-flex;align-items:center;gap:5px;padding:3px 10px;
@@ -96,13 +96,14 @@
 .gt-filter-tag .gt-remove-tag:hover{opacity:1;}
 .gt-no-filters{color:rgba(180,210,240,0.28);font-size:13px;font-style:italic;}
 
-/* ══════════════════════════════════════════════
-   MULTI-SELECT  — CSS-variable driven theming
-══════════════════════════════════════════════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   MULTI-SELECT  â€” CSS-variable driven theming
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .gt-ms-wrap,
 .gt-gs-wrap{
   position:relative;
   z-index:100;
+  max-width:100%;
 }
 
 .gt-ms-wrap.gt-layer-active,
@@ -110,7 +111,7 @@
   z-index:1000;
 }
 
-/* ── Trigger button ── */
+/* â”€â”€ Trigger button â”€â”€ */
 .gt-ms-trigger{
   display:flex;align-items:center;justify-content:space-between;gap:10px;
   padding:8px 14px;border-radius:12px;
@@ -121,6 +122,7 @@
   white-space:nowrap;user-select:none;min-width:160px;
   transition:background 140ms,border-color 140ms,box-shadow 140ms;
   backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  max-width:100%;
 }
 .gt-ms-trigger:hover{
   background:rgba(255,255,255,0.08);
@@ -130,7 +132,7 @@
 .gt-ms-trigger.open{
   background:rgba(255,255,255,0.08);
   border-color:var(--ms-accent);
-  box-shadow:0 0 0 3px color-mix(in srgb,var(--ms-accent) 18%,transparent),0 4px 14px rgba(0,0,0,0.2);
+  box-shadow:0 0 0 3px var(--ms-ac-18),0 4px 14px rgba(0,0,0,0.2);
 }
 
 /* Light theme trigger needs darker base */
@@ -143,14 +145,14 @@
 .gt-ms-badge{
   display:inline-flex;align-items:center;justify-content:center;
   min-width:18px;height:18px;padding:0 5px;border-radius:999px;
-  background:color-mix(in srgb,var(--ms-accent) 28%,transparent);
+  background:var(--ms-ac-28);
   color:var(--ms-accent);font-size:11px;font-weight:700;
 }
 .gt-ms-badge.hidden{display:none;}
 .gt-ms-chevron{width:14px;height:14px;transition:transform 180ms cubic-bezier(.2,.9,.25,1);opacity:.6;flex-shrink:0;}
 .gt-ms-trigger.open .gt-ms-chevron{transform:rotate(180deg);}
 
-/* ── Dropdown panel ── */
+/* â”€â”€ Dropdown panel â”€â”€ */
 .gt-ms-dropdown{
   position:fixed;min-width:232px;
   border-radius:14px;
@@ -169,10 +171,10 @@
 }
 .gt-ms-dropdown.open{opacity:1;transform:translateY(0) scale(1);pointer-events:auto;}
 
-/* ── Search ── */
+/* â”€â”€ Search â”€â”€ */
 .gt-ms-search{
   display:flex;align-items:center;gap:7px;padding:7px 10px;border-radius:8px;
-  background:color-mix(in srgb,var(--ms-text) 6%,transparent);
+  background:var(--ms-tx-06);
   border:1px solid var(--ms-border);margin-bottom:6px;
 }
 .gt-ms-search input{
@@ -180,58 +182,58 @@
   color:var(--ms-text);font-size:12px;width:100%;font-family:inherit;
 }
 .gt-ms-search input::placeholder{
-  color:color-mix(in srgb,var(--ms-text) 35%,transparent);
+  color:var(--ms-tx-35);
 }
 
-/* ── Style switcher ── */
+/* â”€â”€ Style switcher â”€â”€ */
 .gt-style-switcher{
   display:flex;gap:3px;padding:5px 6px;margin-bottom:6px;
   border-radius:10px;
-  background:color-mix(in srgb,var(--ms-text) 4%,transparent);
+  background:var(--ms-tx-04);
   border:1px solid var(--ms-border);
 }
 .gt-style-btn{
   flex:1;display:flex;align-items:center;justify-content:center;gap:5px;
   padding:5px 8px;border-radius:7px;cursor:pointer;user-select:none;
-  color:color-mix(in srgb,var(--ms-text) 50%,transparent);
+  color:var(--ms-tx-50);
   font-size:11px;font-weight:600;letter-spacing:.02em;
   transition:background 130ms,color 130ms;white-space:nowrap;
 }
 .gt-style-btn:hover{
-  background:color-mix(in srgb,var(--ms-text) 8%,transparent);
-  color:color-mix(in srgb,var(--ms-text) 80%,transparent);
+  background:var(--ms-tx-08);
+  color:var(--ms-tx-80);
 }
 .gt-style-btn.active{
-  background:color-mix(in srgb,var(--ms-accent) 18%,transparent);
+  background:var(--ms-ac-18);
   color:var(--ms-accent);
   box-shadow:inset 0 1px 0 rgba(255,255,255,0.08);
 }
 .gt-sb-icon{width:13px;height:13px;flex-shrink:0;}
 
-/* ── Select all row ── */
+/* â”€â”€ Select all row â”€â”€ */
 .gt-ms-all{
   display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:8px;
   cursor:pointer;user-select:none;
-  color:color-mix(in srgb,var(--ms-accent) 75%,var(--ms-text));
+  color:var(--ms-ac-tx-75);
   font-size:12px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;
   border-bottom:1px solid var(--ms-border);margin-bottom:4px;transition:background 120ms;
 }
-.gt-ms-all:hover{background:color-mix(in srgb,var(--ms-text) 5%,transparent);}
+.gt-ms-all:hover{background:var(--ms-tx-05);}
 
-/* ── Option rows ── */
+/* â”€â”€ Option rows â”€â”€ */
 .gt-ms-option{
   display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;
   cursor:pointer;user-select:none;color:var(--ms-text);
   font-size:13px;font-weight:500;transition:background 120ms;
 }
-.gt-ms-option:hover{background:color-mix(in srgb,var(--ms-text) 6%,transparent);}
+.gt-ms-option:hover{background:var(--ms-tx-06);}
 .gt-ms-option.hidden{display:none;}
 
-/* ── Checkbox container (shared) ── */
+/* â”€â”€ Checkbox container (shared) â”€â”€ */
 .gt-ms-check{
   flex-shrink:0;width:16px;height:16px;border-radius:5px;
-  border:1.5px solid color-mix(in srgb,var(--ms-accent) 40%,transparent);
-  background:color-mix(in srgb,var(--ms-text) 3%,transparent);
+  border:1.5px solid var(--ms-ac-40);
+  background:var(--ms-tx-03);
   display:flex;align-items:center;justify-content:center;
   transition:background 150ms,border-color 150ms,box-shadow 150ms;
   position:relative;overflow:hidden;
@@ -243,9 +245,9 @@
 /* Style: checkbox */
 .gt-ms-wrap.style-checkbox .gt-ms-option.checked .gt-ms-check,
 .gt-ms-wrap.style-checkbox .gt-ms-all.checked    .gt-ms-check{
-  background:color-mix(in srgb,var(--ms-accent) 22%,transparent);
-  border-color:color-mix(in srgb,var(--ms-accent) 75%,transparent);
-  box-shadow:0 0 0 3px color-mix(in srgb,var(--ms-accent) 12%,transparent);
+  background:var(--ms-ac-22);
+  border-color:var(--ms-ac-75);
+  box-shadow:0 0 0 3px var(--ms-ac-12);
 }
 
 /* Style: check-only */
@@ -256,14 +258,14 @@
 .gt-ms-wrap.style-check-only .gt-ms-all.checked    .gt-ms-check svg{opacity:1;transform:scale(1.15);}
 .gt-ms-wrap.style-check-only .gt-ms-check::before{
   content:'';position:absolute;width:4px;height:4px;border-radius:50%;
-  background:color-mix(in srgb,var(--ms-accent) 22%,transparent);transition:opacity 120ms;
+  background:var(--ms-ac-22);transition:opacity 120ms;
 }
 .gt-ms-wrap.style-check-only .gt-ms-option.checked .gt-ms-check::before,
 .gt-ms-wrap.style-check-only .gt-ms-all.checked    .gt-ms-check::before{opacity:0;}
 
 /* Style: filled */
 .gt-ms-wrap.style-filled .gt-ms-check{
-  border-color:color-mix(in srgb,var(--ms-accent) 28%,transparent)!important;
+  border-color:var(--ms-ac-28)!important;
 }
 
 .gt-ms-wrap.style-filled .gt-ms-option.checked .gt-ms-check{
@@ -278,8 +280,8 @@
 }
 
 .gt-ms-wrap.style-filled .gt-ms-all.checked .gt-ms-check{
-  background:color-mix(in srgb,var(--ms-accent) 32%,transparent)!important;
-  border-color:color-mix(in srgb,var(--ms-accent) 60%,transparent)!important;
+  background:var(--ms-ac-32)!important;
+  border-color:var(--ms-ac-60)!important;
 }
 
 .gt-ms-wrap.style-filled .gt-ms-all.checked .gt-ms-check svg{
@@ -288,33 +290,33 @@
 }
 
 .gt-ms-wrap.style-filled .gt-ms-option.checked{
-  background:color-mix(in srgb,hsl(var(--opt-hue,210),72%,52%) 12%,transparent);
+  background:hsla(var(--opt-hue,210),72%,52%,0.12);
 }
 
 /* Indeterminate dash */
 .gt-ms-all.indeterminate .gt-ms-check{
-  background:color-mix(in srgb,var(--ms-accent) 16%,transparent);
-  border-color:color-mix(in srgb,var(--ms-accent) 55%,transparent);
+  background:var(--ms-ac-16);
+  border-color:var(--ms-ac-55);
 }
 .gt-ms-all.indeterminate .gt-ms-check::after{
   content:'';width:8px;height:2px;border-radius:2px;
   background:var(--ms-accent);
 }
 
-/* ── Footer ── */
+/* â”€â”€ Footer â”€â”€ */
 .gt-ms-footer{
   margin-top:6px;padding:8px 10px 2px;
   border-top:1px solid var(--ms-border);
   display:flex;align-items:center;justify-content:space-between;
 }
-.gt-ms-count{font-size:11px;color:color-mix(in srgb,var(--ms-text) 45%,transparent);}
+.gt-ms-count{font-size:11px;color:var(--ms-tx-45);}
 .gt-ms-clear{
   font-size:12px;color:var(--ms-accent);cursor:pointer;font-weight:600;
   opacity:.7;transition:opacity 120ms;
 }
 .gt-ms-clear:hover{opacity:1;}
 
-/* ── Arrival pulse ── */
+/* â”€â”€ Arrival pulse â”€â”€ */
 .gt-arrival-pulse{animation:gtHaloPulse 320ms cubic-bezier(.2,.9,.25,1) forwards;}
 @keyframes gtHaloPulse{
   0%  {transform:translate(-50%,-50%) scale(0.95);opacity:.82;}
@@ -328,15 +330,16 @@
 }
 
 
-/* ══════════════════════════════════════════════
-   SINGLE-SELECT — visually aligned with MULTI-SELECT
-══════════════════════════════════════════════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   SINGLE-SELECT â€” visually aligned with MULTI-SELECT
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 .gt-gs-field,
 .gt-ms-field{
   display:flex;
   flex-direction:column;
   gap:6px;
+  min-width:0;
 }
 
 .gt-input-label{
@@ -353,7 +356,7 @@
 }
 
 
-/* ── Trigger button ── */
+/* â”€â”€ Trigger button â”€â”€ */
 .gt-gs-trigger{
   display:flex;
   align-items:center;
@@ -373,6 +376,14 @@
   transition:background 140ms,border-color 140ms,box-shadow 140ms;
   backdrop-filter:blur(6px);
   -webkit-backdrop-filter:blur(6px);
+  max-width:100%;
+}
+
+.gt-gs-trigger [id$="-label"],
+.gt-ms-trigger [id$="-label"]{
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 
 .gt-gs-trigger:hover{
@@ -385,7 +396,7 @@
   background:rgba(255,255,255,0.08);
   border-color:var(--ms-accent);
   box-shadow:
-    0 0 0 3px color-mix(in srgb,var(--ms-accent) 18%,transparent),
+    0 0 0 3px var(--ms-ac-18),
     0 4px 14px rgba(0,0,0,0.2);
 }
 
@@ -423,7 +434,7 @@
   opacity:1;
 }
 
-/* ── Dropdown panel ── */
+/* â”€â”€ Dropdown panel â”€â”€ */
 .gt-gs-dropdown{
   position:fixed;
   min-width:232px;
@@ -458,14 +469,14 @@
   pointer-events:auto;
 }
 
-/* ── Search ── */
+/* â”€â”€ Search â”€â”€ */
 .gt-gs-search{
   display:flex;
   align-items:center;
   gap:7px;
   padding:7px 10px;
   border-radius:8px;
-  background:color-mix(in srgb,var(--ms-text) 6%,transparent);
+  background:var(--ms-tx-06);
   border:1px solid var(--ms-border);
   margin-bottom:6px;
 }
@@ -481,10 +492,10 @@
 }
 
 .gt-gs-search input::placeholder{
-  color:color-mix(in srgb,var(--ms-text) 35%,transparent);
+  color:var(--ms-tx-35);
 }
 
-/* ── Option rows ── */
+/* â”€â”€ Option rows â”€â”€ */
 .gt-gs-option{
   display:flex;
   align-items:center;
@@ -500,21 +511,21 @@
 }
 
 .gt-gs-option:hover{
-  background:color-mix(in srgb,var(--ms-text) 6%,transparent);
+  background:var(--ms-tx-06);
 }
 
 .gt-gs-option.hidden{
   display:none;
 }
 
-/* ── Check container ── */
+/* â”€â”€ Check container â”€â”€ */
 .gt-gs-check{
   flex-shrink:0;
   width:16px;
   height:16px;
   border-radius:5px;
-  border:1.5px solid color-mix(in srgb,var(--ms-accent) 40%,transparent);
-  background:color-mix(in srgb,var(--ms-text) 3%,transparent);
+  border:1.5px solid var(--ms-ac-40);
+  background:var(--ms-tx-03);
   display:flex;
   align-items:center;
   justify-content:center;
@@ -530,9 +541,9 @@
 }
 
 .gt-gs-option.selected .gt-gs-check{
-  background:color-mix(in srgb,var(--ms-accent) 22%,transparent);
-  border-color:color-mix(in srgb,var(--ms-accent) 75%,transparent);
-  box-shadow:0 0 0 3px color-mix(in srgb,var(--ms-accent) 12%,transparent);
+  background:var(--ms-ac-22);
+  border-color:var(--ms-ac-75);
+  box-shadow:0 0 0 3px var(--ms-ac-12);
 }
 
 .gt-gs-option.selected .gt-gs-check svg{
@@ -541,7 +552,7 @@
 }
 
 .gt-gs-option.selected{
-  background:color-mix(in srgb,var(--ms-text) 6%,transparent);
+  background:var(--ms-tx-06);
 }
 
 /* Check only */
@@ -558,7 +569,7 @@
 
 /* filled only */
 .gt-gs-wrap.style-filled .gt-gs-check{
-  border-color:color-mix(in srgb,var(--ms-accent) 28%,transparent) !important;
+  border-color:var(--ms-ac-28) !important;
 }
 
 .gt-gs-wrap.style-filled .gt-gs-option.selected .gt-gs-check{
@@ -581,10 +592,10 @@
 
 
 
-/* ══════════════════════════════════════════════
-   SCROLL CONTAINERS —
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   SCROLL CONTAINERS â€”
    Applied by JS during init via class injection
-══════════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .gt-gs-options-scroll,
 .gt-ms-options-scroll{
   max-height:260px;
@@ -628,11 +639,11 @@
 }
 
 
-/* ══════════════════════════════════════════════
-   LOADING / DISABLED STATE —
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   LOADING / DISABLED STATE â€”
    Apply .gt-loading to .gt-gs-wrap or .gt-ms-wrap
    during choice swaps or async updates
-══════════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .gt-gs-wrap.gt-loading,
 .gt-ms-wrap.gt-loading{
   pointer-events:none;
@@ -657,14 +668,14 @@
   cursor:not-allowed;
 }
 
-/* ── Tab disabled state ───────────────────────────────────────────────── */
+/* â”€â”€ Tab disabled state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .gt-tab-link.gt-tab-disabled{
   opacity:0.38;
   pointer-events:none;
   cursor:not-allowed;
 }
 
-/* ── Tab icon ─────────────────────────────────────────────────────────── */
+/* â”€â”€ Tab icon â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .gt-tab-icon{
   display:inline-flex;
   align-items:center;
@@ -677,7 +688,7 @@
   vertical-align:middle;
 }
 
-/* ── Tab badge ────────────────────────────────────────────────────────── */
+/* â”€â”€ Tab badge â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .gt-tab-badge{
   display:inline-flex;
   align-items:center;
@@ -696,12 +707,12 @@
   letter-spacing:0.01em;
 }
 
-/* ══════════════════════════════════════════════
-   LIGHT MODE — tab widget overrides
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   LIGHT MODE â€” tab widget overrides
    Activated by .theme-light class on the outer wrapper.
    Replaces every hardcoded rgba(255,255,255,...) value that
    reads as invisible on a white/light background.
-══════════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 /* Tab link idle / hover backgrounds */
 .theme-light .gt-tab-link{
@@ -715,7 +726,7 @@
   color:var(--gt-tab-active-text,#1e40af);
 }
 
-/* Halo shimmer — replace white gradient with blue-tinted glass */
+/* Halo shimmer â€” replace white gradient with blue-tinted glass */
 .theme-light .gt-halo::before{
   background:linear-gradient(
     120deg,
@@ -727,7 +738,7 @@
   opacity:0.85;
 }
 
-/* Transfer trace particle — replace white glow with blue */
+/* Transfer trace particle â€” replace white glow with blue */
 .theme-light .gt-transfer{
   background:radial-gradient(
     closest-side,
@@ -738,7 +749,7 @@
   box-shadow:0 0 18px rgba(37,99,235,0.28);
 }
 
-/* Content area — transparent by default in light mode so glasstabs
+/* Content area â€” transparent by default in light mode so glasstabs
    acts as "just tabs" inside whatever container the user provides.
    Users who want a card feel can override via glass_tab_theme(). */
 .theme-light .gt-tab-wrap{
@@ -748,7 +759,7 @@
   min-height:0;
 }
 
-/* Card inner — also transparent; content flows on the page */
+/* Card inner â€” also transparent; content flows on the page */
 .theme-light .gt-card{
   background:var(--gt-card-bg,transparent);
   box-shadow:none;
@@ -762,7 +773,7 @@
   color:var(--gt-card-text,#374151);
 }
 
-/* Filter tag pills — replace the blue-on-dark pill style */
+/* Filter tag pills â€” replace the blue-on-dark pill style */
 .theme-light .gt-filter-tag{
   background:rgba(37,99,235,0.08);
   border-color:rgba(37,99,235,0.25);
@@ -771,9 +782,9 @@
 .theme-light .gt-filter-tag .gt-remove-tag{color:#2563eb;}
 .theme-light .gt-no-filters{color:rgba(71,85,105,0.45);}
 
-/* ── Compact / dense mode ─────────────────────────────────────────────── */
+/* â”€â”€ Compact / dense mode â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 /* Applied when glassTabsUI(compact = TRUE) */
-/* compact has no extra container margin to override — spacing handled below */
+/* compact has no extra container margin to override â€” spacing handled below */
 .gt-compact .gt-topbar{margin-bottom:6px;}
 .gt-compact .gt-navbar{gap:4px;}
 .gt-compact .gt-tab-link{padding:5px 10px;font-size:13px;border-radius:8px;}
@@ -786,12 +797,12 @@
    (e.g. bs4Dash card bodies). z-index is set directly on the dropdown
    element in its base rule above. */
 
-/* ══════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    TELEPORTED DROPDOWN STYLES
    When a dropdown is moved to <body> via teleportOpen(), it loses its
    .gt-ms-wrap / .gt-gs-wrap ancestor. JS copies the style/theme classes
    directly onto the dropdown element so these rules apply instead.
-══════════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 /* Light theme box-shadow override for teleported dropdowns */
 .gt-ms-dropdown.theme-light{box-shadow:0 12px 40px rgba(0,0,0,0.15),0 0 0 1px rgba(0,0,0,0.06);}
@@ -800,9 +811,9 @@
 /* Multi-select: checkbox style */
 .gt-ms-dropdown.style-checkbox .gt-ms-option.checked .gt-ms-check,
 .gt-ms-dropdown.style-checkbox .gt-ms-all.checked    .gt-ms-check{
-  background:color-mix(in srgb,var(--ms-accent) 22%,transparent);
-  border-color:color-mix(in srgb,var(--ms-accent) 75%,transparent);
-  box-shadow:0 0 0 3px color-mix(in srgb,var(--ms-accent) 12%,transparent);
+  background:var(--ms-ac-22);
+  border-color:var(--ms-ac-75);
+  box-shadow:0 0 0 3px var(--ms-ac-12);
 }
 
 /* Multi-select: check-only style */
@@ -813,14 +824,14 @@
 .gt-ms-dropdown.style-check-only .gt-ms-all.checked    .gt-ms-check svg{opacity:1;transform:scale(1.15);}
 .gt-ms-dropdown.style-check-only .gt-ms-check::before{
   content:'';position:absolute;width:4px;height:4px;border-radius:50%;
-  background:color-mix(in srgb,var(--ms-accent) 22%,transparent);transition:opacity 120ms;
+  background:var(--ms-ac-22);transition:opacity 120ms;
 }
 .gt-ms-dropdown.style-check-only .gt-ms-option.checked .gt-ms-check::before,
 .gt-ms-dropdown.style-check-only .gt-ms-all.checked    .gt-ms-check::before{opacity:0;}
 
 /* Multi-select: filled style */
 .gt-ms-dropdown.style-filled .gt-ms-check{
-  border-color:color-mix(in srgb,var(--ms-accent) 28%,transparent)!important;
+  border-color:var(--ms-ac-28)!important;
 }
 .gt-ms-dropdown.style-filled .gt-ms-option.checked .gt-ms-check{
   border-color:transparent!important;
@@ -831,14 +842,14 @@
   opacity:0!important;transform:scale(0.5)!important;
 }
 .gt-ms-dropdown.style-filled .gt-ms-all.checked .gt-ms-check{
-  background:color-mix(in srgb,var(--ms-accent) 32%,transparent)!important;
-  border-color:color-mix(in srgb,var(--ms-accent) 60%,transparent)!important;
+  background:var(--ms-ac-32)!important;
+  border-color:var(--ms-ac-60)!important;
 }
 .gt-ms-dropdown.style-filled .gt-ms-all.checked .gt-ms-check svg{
   opacity:0!important;transform:scale(0.5)!important;
 }
 .gt-ms-dropdown.style-filled .gt-ms-option.checked{
-  background:color-mix(in srgb,hsl(var(--opt-hue,210),72%,52%) 12%,transparent);
+  background:hsla(var(--opt-hue,210),72%,52%,0.12);
 }
 
 /* Single-select: check-only style */
@@ -849,7 +860,7 @@
 
 /* Single-select: filled style */
 .gt-gs-dropdown.style-filled .gt-gs-check{
-  border-color:color-mix(in srgb,var(--ms-accent) 28%,transparent)!important;
+  border-color:var(--ms-ac-28)!important;
 }
 .gt-gs-dropdown.style-filled .gt-gs-option.selected .gt-gs-check{
   border-color:transparent!important;
@@ -858,4 +869,78 @@
 }
 .gt-gs-dropdown.style-filled .gt-gs-option.selected .gt-gs-check svg{
   opacity:0!important;transform:scale(0.5)!important;
+}
+
+/* RTL layout support */
+[dir="rtl"] .gt-topbar,
+[dir="rtl"] .gt-navbar,
+[dir="rtl"] .gt-gs-field,
+[dir="rtl"] .gt-ms-field,
+[dir="rtl"] .gt-gs-trigger,
+[dir="rtl"] .gt-ms-trigger,
+[dir="rtl"] .gt-gs-option,
+[dir="rtl"] .gt-ms-option,
+[dir="rtl"] .gt-ms-all,
+[dir="rtl"] .gt-ms-footer,
+[dir="rtl"] .gt-style-switcher{
+  direction:rtl;
+}
+
+[dir="rtl"] .gt-tab-icon{
+  margin-right:0;
+  margin-left:0.35em;
+}
+
+[dir="rtl"] .gt-tab-badge{
+  margin-left:0;
+  margin-right:0.38em;
+}
+
+/* Windows High Contrast / forced colors */
+@media (forced-colors: active){
+  .gt-tab-link,
+  .gt-gs-trigger,
+  .gt-ms-trigger,
+  .gt-gs-dropdown,
+  .gt-ms-dropdown,
+  .gt-gs-option,
+  .gt-ms-option,
+  .gt-ms-all,
+  .gt-style-btn,
+  .gt-filter-tag{
+    background:Canvas;
+    border-color:ButtonText;
+    color:ButtonText;
+    box-shadow:none;
+    forced-color-adjust:auto;
+  }
+
+  .gt-tab-link.active,
+  .gt-gs-option.selected,
+  .gt-ms-option.checked,
+  .gt-ms-all.checked,
+  .gt-style-btn.active{
+    background:Highlight;
+    border-color:Highlight;
+    color:HighlightText;
+  }
+
+  .gt-halo,
+  .gt-transfer{
+    display:none;
+  }
+
+  .gt-gs-check,
+  .gt-ms-check{
+    background:Canvas;
+    border-color:ButtonText;
+    color:ButtonText;
+  }
+
+  .gt-gs-trigger:focus,
+  .gt-ms-trigger:focus,
+  .gt-tab-link:focus{
+    outline:2px solid Highlight;
+    outline-offset:2px;
+  }
 }

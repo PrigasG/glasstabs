@@ -53,7 +53,13 @@
     return el._gt || null;
   }
 
-  var MS_VARS = ['--ms-bg','--ms-border','--ms-text','--ms-accent','--ms-label'];
+  var MS_VARS = [
+    '--ms-bg','--ms-border','--ms-text','--ms-accent','--ms-label',
+    '--ms-ac-12','--ms-ac-16','--ms-ac-18','--ms-ac-22','--ms-ac-28',
+    '--ms-ac-32','--ms-ac-40','--ms-ac-55','--ms-ac-60','--ms-ac-75',
+    '--ms-tx-03','--ms-tx-04','--ms-tx-05','--ms-tx-06','--ms-tx-08',
+    '--ms-tx-35','--ms-tx-45','--ms-tx-50','--ms-tx-80','--ms-ac-tx-75'
+  ];
 
   var TELEPORT_CLASSES = ['style-checkbox','style-check-only','style-filled','theme-light'];
 
@@ -72,7 +78,8 @@
           '--ms-text': '#cfe6ff', '--ms-accent': '#7ec3f7', '--ms-label': '#cfe6ff' };
     MS_VARS.forEach(function (v) {
       var val = cs.getPropertyValue(v).trim();
-      dropdown.style.setProperty(v, val || fallbacks[v]);
+      if (val) dropdown.style.setProperty(v, val);
+      else if (hasOwn(fallbacks, v)) dropdown.style.setProperty(v, fallbacks[v]);
     });
     /* Copy style/theme classes onto the dropdown so CSS ancestor selectors still match */
     TELEPORT_CLASSES.forEach(function (cls) {
@@ -108,7 +115,10 @@
         teleportClose(w, dd);
       }
       var trig = w.querySelector('.gt-gs-trigger, .gt-ms-trigger');
-      if (trig) trig.classList.remove('open');
+      if (trig) {
+        trig.classList.remove('open');
+        trig.setAttribute('aria-expanded', 'false');
+      }
     });
   }
 
@@ -152,6 +162,9 @@
     if (!halo || !trf || links.length === 0 || !activeEl) return;
 
     var active = activeEl.getAttribute('data-value');
+    if (window.Shiny && window.Shiny.setInputValue) {
+      Shiny.setInputValue(ns + '-active_tab', active, { priority: 'deferred' });
+    }
 
     /* Repair pane visibility to match link state.  When bootAll() re-runs
        initTabs mid-animation (e.g. triggered by shiny:value on dyn_out),
@@ -328,6 +341,7 @@
         if (next) next.classList.add('active');
         active = target;
         if (window.Shiny) Shiny.setInputValue(ns + '-active_tab', target, { priority: 'event' });
+        triggerShinyChange(navbar);
       }, dur > 0 ? Math.max(100, dur * 0.50) : 0));
 
       if (dur > 0) {
@@ -381,8 +395,20 @@
     navbar.addEventListener('click', navbar._gtClickHandler);
 
     navbar._gtKeyHandler = function (e) {
-      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
       if (!navbar.contains(document.activeElement)) return;
+
+      if (e.key === 'Enter' || e.key === ' ') {
+        var focused = document.activeElement && document.activeElement.closest
+          ? document.activeElement.closest('.gt-tab-link')
+          : null;
+        if (focused && !focused.classList.contains('gt-tab-hidden')) {
+          e.preventDefault();
+          activateTab(focused.getAttribute('data-value'));
+        }
+        return;
+      }
+
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
 
       var visibleOrder = currentVisibleOrder();
       var idx = visibleOrder.indexOf(active);
@@ -481,7 +507,9 @@
     function patchOptionClasses() {
       Array.from(dropdown.querySelectorAll('.gt-gs-option')).forEach(function (el) {
         var v = el.getAttribute('data-value');
-        el.classList.toggle('selected', state.selected !== null && v === state.selected);
+        var isSelected = state.selected !== null && v === state.selected;
+        el.classList.toggle('selected', isSelected);
+        el.setAttribute('aria-selected', isSelected ? 'true' : 'false');
       });
     }
 
@@ -531,6 +559,7 @@
       opt.addEventListener('click', function () {
         setValue(opt.getAttribute('data-value'), { notify: true });
         close();
+        trigger.focus();
       });
     }
 
@@ -539,6 +568,8 @@
       var row = document.createElement('div');
       row.className = 'gt-gs-option';
       row.setAttribute('data-value', ch.value);
+      row.setAttribute('role', 'option');
+      row.setAttribute('aria-selected', state.selected !== null && ch.value === state.selected ? 'true' : 'false');
 
       row.innerHTML =
         '<div class="gt-gs-check">' + checkHtml + '</div>' +
@@ -621,12 +652,19 @@
       if (rect.bottom + ddHeight + 8 > vh - 8 && rect.top - ddHeight - 8 > 0) {
         top = rect.top + scrollY - ddHeight - 8;
       }
-      /* Right-align with trigger; clamp to viewport edge */
-      var right = vw - rect.right;
-      if (right < 4) right = 4;
       dropdown.style.top = top + 'px';
-      dropdown.style.right = right + 'px';
-      dropdown.style.left = 'auto';
+      if ((wrap.closest('[dir]') || document.documentElement).getAttribute('dir') === 'rtl') {
+        var left = rect.left;
+        if (left < 4) left = 4;
+        dropdown.style.left = left + 'px';
+        dropdown.style.right = 'auto';
+      } else {
+        /* Right-align with trigger; clamp to viewport edge */
+        var right = vw - rect.right;
+        if (right < 4) right = 4;
+        dropdown.style.right = right + 'px';
+        dropdown.style.left = 'auto';
+      }
     }
 
     var openedAt = 0;
@@ -642,6 +680,7 @@
         positionDropdown();
         dropdown.classList.add('open');
         trigger.classList.add('open');
+        trigger.setAttribute('aria-expanded', 'true');
       });
       openedAt = Date.now();
       /* Delay focus so synthetic-click re-fires from AdminLTE don't close us */
@@ -652,7 +691,15 @@
       wrap.classList.remove('gt-layer-active');
       dropdown.classList.remove('open');
       trigger.classList.remove('open');
+      trigger.setAttribute('aria-expanded', 'false');
       teleportClose(wrap, dropdown);
+    }
+
+    function closeAndReturnFocus() {
+      if (dropdown.classList.contains('open')) {
+        close();
+        trigger.focus();
+      }
     }
 
     /* ── Event listeners ── */
@@ -666,6 +713,20 @@
       } else {
         open();
       }
+    });
+
+    trigger.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        if (dropdown.classList.contains('open')) closeAndReturnFocus();
+        else open();
+      } else if (e.key === 'Escape' || e.key === 'Tab') {
+        closeAndReturnFocus();
+      }
+    });
+
+    dropdown.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' || e.key === 'Tab') closeAndReturnFocus();
     });
 
     wrap._gtDocClickHandler = function (e) {
@@ -838,7 +899,9 @@
     function patchOptionClasses() {
       Array.from(dropdown.querySelectorAll('.gt-ms-option')).forEach(function (el) {
         var v = el.getAttribute('data-value');
-        el.classList.toggle('checked', state.selected.has(v));
+        var isSelected = state.selected.has(v);
+        el.classList.toggle('checked', isSelected);
+        el.setAttribute('aria-selected', isSelected ? 'true' : 'false');
       });
     }
 
@@ -869,6 +932,7 @@
         } else if (visSel > 0) {
           allRow.classList.add('indeterminate');
         }
+        allRow.setAttribute('aria-selected', vis > 0 && visSel === vis ? 'true' : 'false');
       }
 
       /* Badge */
@@ -997,6 +1061,8 @@
       var row = document.createElement('div');
       row.className = 'gt-ms-option';
       row.setAttribute('data-value', ch.value);
+      row.setAttribute('role', 'option');
+      row.setAttribute('aria-selected', state.selected.has(ch.value) ? 'true' : 'false');
       row.style.setProperty('--opt-hue', String(ch.hue));
 
       if (state.selected.has(ch.value)) {
@@ -1077,6 +1143,7 @@
         } else if (visSel > 0) {
           allRow.classList.add('indeterminate');
         }
+        allRow.setAttribute('aria-selected', vis > 0 && visSel === vis ? 'true' : 'false');
       }
     }
 
@@ -1098,12 +1165,19 @@
       if (rect.bottom + ddHeight + 8 > vh - 8 && rect.top - ddHeight - 8 > 0) {
         top = rect.top + scrollY - ddHeight - 8;
       }
-      /* Right-align with trigger; clamp to viewport edge */
-      var right = vw - rect.right;
-      if (right < 4) right = 4;
       dropdown.style.top = top + 'px';
-      dropdown.style.right = right + 'px';
-      dropdown.style.left = 'auto';
+      if ((wrap.closest('[dir]') || document.documentElement).getAttribute('dir') === 'rtl') {
+        var left = rect.left;
+        if (left < 4) left = 4;
+        dropdown.style.left = left + 'px';
+        dropdown.style.right = 'auto';
+      } else {
+        /* Right-align with trigger; clamp to viewport edge */
+        var right = vw - rect.right;
+        if (right < 4) right = 4;
+        dropdown.style.right = right + 'px';
+        dropdown.style.left = 'auto';
+      }
     }
 
     var openedAt = 0;
@@ -1117,6 +1191,7 @@
         positionDropdown();
         dropdown.classList.add('open');
         trigger.classList.add('open');
+        trigger.setAttribute('aria-expanded', 'true');
       });
       openedAt = Date.now();
       /* Delay focus so synthetic-click re-fires from AdminLTE don't close us */
@@ -1127,7 +1202,15 @@
       wrap.classList.remove('gt-layer-active');
       dropdown.classList.remove('open');
       trigger.classList.remove('open');
+      trigger.setAttribute('aria-expanded', 'false');
       teleportClose(wrap, dropdown);
+    }
+
+    function closeAndReturnFocus() {
+      if (dropdown.classList.contains('open')) {
+        close();
+        trigger.focus();
+      }
     }
 
     /* ── Event listeners ── */
@@ -1141,6 +1224,20 @@
       } else {
         open();
       }
+    });
+
+    trigger.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        if (dropdown.classList.contains('open')) closeAndReturnFocus();
+        else open();
+      } else if (e.key === 'Escape' || e.key === 'Tab') {
+        closeAndReturnFocus();
+      }
+    });
+
+    dropdown.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' || e.key === 'Tab') closeAndReturnFocus();
     });
 
     wrap._gtDocClickHandler = function (e) {
@@ -1278,6 +1375,32 @@
 
     var $ = window.jQuery;
 
+    var glassTabsBinding = new Shiny.InputBinding();
+    $.extend(glassTabsBinding, {
+      find: function (scope) {
+        return $(scope).find('.gt-navbar');
+      },
+      getId: function (el) {
+        var ns = el.getAttribute('data-ns');
+        return ns ? ns + '-active_tab' : null;
+      },
+      getValue: function (el) {
+        initTabs(el);
+        var activeLink = el.querySelector('.gt-tab-link.active');
+        return activeLink ? activeLink.getAttribute('data-value') : null;
+      },
+      subscribe: function (el, callback) {
+        initTabs(el);
+        $(el).on('change.glasstabs', function () {
+          callback();
+        });
+      },
+      unsubscribe: function (el) {
+        $(el).off('.glasstabs');
+      }
+    });
+    Shiny.inputBindings.register(glassTabsBinding, 'glasstabs.glassTabs');
+
     /* ── Single-select binding ── */
     var glassSelectBinding = new Shiny.InputBinding();
     $.extend(glassSelectBinding, {
@@ -1380,6 +1503,16 @@
   /* ══════════════════════════════════════════════════════
      BOOT
   ══════════════════════════════════════════════════════ */
+  var bootTimer = null;
+
+  function scheduleBoot() {
+    if (bootTimer !== null) return;
+    bootTimer = setTimeout(function () {
+      bootTimer = null;
+      bootAll();
+    }, 0);
+  }
+
   function bootAll() {
     document.querySelectorAll('.gt-navbar').forEach(function (nb) {
       initTabs(nb);
@@ -1396,6 +1529,28 @@
     registerBindings();
   }
 
+  document.addEventListener('click', function (e) {
+    var link = e.target && e.target.closest ? e.target.closest('.gt-tab-link') : null;
+    if (!link || link.classList.contains('gt-tab-hidden') || link.classList.contains('gt-tab-disabled')) return;
+    var navbar = link.closest ? link.closest('.gt-navbar') : null;
+    if (!navbar) return;
+    initTabs(navbar);
+    if (navbar._gtActivate) navbar._gtActivate(link.getAttribute('data-value'));
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    var link = document.activeElement && document.activeElement.closest
+      ? document.activeElement.closest('.gt-tab-link')
+      : null;
+    if (!link || link.classList.contains('gt-tab-hidden') || link.classList.contains('gt-tab-disabled')) return;
+    var navbar = link.closest ? link.closest('.gt-navbar') : null;
+    if (!navbar) return;
+    e.preventDefault();
+    initTabs(navbar);
+    if (navbar._gtActivate) navbar._gtActivate(link.getAttribute('data-value'));
+  });
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', bootAll);
   } else {
@@ -1403,6 +1558,26 @@
   }
 
   window.addEventListener('load', bootAll);
+
+  if (window.MutationObserver) {
+    var bootObserver = new MutationObserver(function (mutations) {
+      for (var i = 0; i < mutations.length; i++) {
+        var nodes = mutations[i].addedNodes || [];
+        for (var j = 0; j < nodes.length; j++) {
+          var n = nodes[j];
+          if (!n || n.nodeType !== 1) continue;
+          if (
+            (n.matches && n.matches('.gt-navbar, .gt-gs-wrap, .gt-ms-wrap')) ||
+            (n.querySelector && n.querySelector('.gt-navbar, .gt-gs-wrap, .gt-ms-wrap'))
+          ) {
+            scheduleBoot();
+            return;
+          }
+        }
+      }
+    });
+    bootObserver.observe(document.documentElement, { childList: true, subtree: true });
+  }
 
   /* Report the initial active tab for every navbar once the Shiny session
      is ready — so glassTabsServer() is never NULL on first render. */
@@ -1632,7 +1807,7 @@
     var el = e.target || (e.binding && e.binding.el);
     if (!el) return;
     if (el.querySelector('.gt-navbar, .gt-gs-wrap, .gt-ms-wrap')) {
-      setTimeout(bootAll, 0);
+      scheduleBoot();
     }
   });
 

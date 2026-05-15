@@ -216,13 +216,13 @@ glassTabsUI <- function(
       theme_vals$card_bg,
       dark_vals$card_text
     )
-    shiny::tags$style(dark_css)
+    .make_style_tag(dark_css)
   } else {
     NULL
   }
 
   inner <- htmltools::tagList(
-    shiny::tags$style(theme_css),
+    .make_style_tag(theme_css),
     dark_override_style,
     navbar,
     shiny::tags$div(class = "gt-halo", id = ns("halo")),
