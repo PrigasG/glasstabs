@@ -36,6 +36,13 @@ test_that("runGlassExample() error message lists available examples", {
   expect_true(grepl("Available", err))
 })
 
+test_that("runGlassExample() does not launch apps during non-interactive checks", {
+  expect_error(
+    runGlassExample("smoke-test"),
+    "must be called interactively"
+  )
+})
+
 # ── Feature 2: icon argument in glassTabPanel() ───────────────────────────────
 
 test_that("glassTabPanel() icon defaults to NULL", {

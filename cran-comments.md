@@ -9,13 +9,13 @@ Command used locally:
 - `R CMD check --no-manual glasstabs_0.3.2.tar.gz`
 - local CRAN incoming check: `checking CRAN incoming feasibility ... OK`
 
-CRAN pretest note:
+CRAN pretest follow-up:
 
-- One CRAN pretest reported `checking for detritus in the temp directory ...
-  NOTE` with a `calibre-*` directory. This appears to be temporary-directory
-  residue from the CRAN pretest machine, not from this package. The package
-  source contains no `calibre` files or references, and the source tarball
-  excludes development, GitHub workflow, and release-only files.
+- The previous Debian pretest reported `checking for detritus in the temp
+  directory ... NOTE` with a `calibre-*` directory. CRAN indicated this can be
+  caused by opening a browser in non-interactive mode. The example-app launcher
+  now explicitly refuses to launch Shiny apps in non-interactive sessions unless
+  `launch.browser = FALSE` is passed, and a regression test covers this guard.
 
 ## Changes in this version (0.3.2)
 
