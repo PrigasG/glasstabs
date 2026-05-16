@@ -6,7 +6,16 @@ Tested on:
 - local Windows 11: R 4.5.1
 
 Command used locally:
-- `R CMD check --no-manual --ignore-vignettes glasstabs_0.3.2.tar.gz`
+- `R CMD check --no-manual glasstabs_0.3.2.tar.gz`
+- local CRAN incoming check: `checking CRAN incoming feasibility ... OK`
+
+CRAN pretest note:
+
+- One CRAN pretest reported `checking for detritus in the temp directory ...
+  NOTE` with a `calibre-*` directory. This appears to be temporary-directory
+  residue from the CRAN pretest machine, not from this package. The package
+  source contains no `calibre` files or references, and the source tarball
+  excludes development, GitHub workflow, and release-only files.
 
 ## Changes in this version (0.3.2)
 
