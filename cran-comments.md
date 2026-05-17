@@ -14,8 +14,8 @@ CRAN pretest follow-up:
 - The previous Debian pretest reported `checking for detritus in the temp
   directory ... NOTE` with a `calibre-*` directory. CRAN indicated this can be
   caused by opening a browser in non-interactive mode. The example-app launcher
-  now explicitly refuses to launch Shiny apps in non-interactive sessions unless
-  `launch.browser = FALSE` is passed, and a regression test covers this guard.
+  now explicitly refuses to launch Shiny apps in non-interactive sessions, and
+  a regression test covers this guard.
 
 ## Changes in this version (0.3.2)
 

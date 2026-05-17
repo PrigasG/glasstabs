@@ -2,6 +2,7 @@
 #'
 #' Launches one of the example Shiny apps that ship with the package.
 #' A list of available examples is printed when called with no arguments.
+#' Example apps are launched only in interactive sessions.
 #'
 #' @param example Name of the example to run. One of `"smoke-test"`,
 #'   `"basic"`, `"bs4dash"`, `"dashboard"`. When `NULL` (default), lists
@@ -24,7 +25,6 @@ runGlassExample <- function(example = NULL, ...) {
   examples_dir <- system.file("examples", package = "glasstabs")
   available    <- list.dirs(examples_dir, full.names = FALSE, recursive = FALSE)
   available    <- available[nzchar(available)]
-  dots         <- list(...)
 
   if (is.null(example)) {
     message("Available glasstabs examples:\n",
@@ -45,12 +45,11 @@ runGlassExample <- function(example = NULL, ...) {
   }
 
   app_dir <- file.path(examples_dir, example)
-  if (!interactive() && is.null(dots$launch.browser)) {
+  if (!interactive()) {
     stop(
       "runGlassExample() launches a Shiny app and must be called interactively.\n",
       "Use if (interactive()) runGlassExample(\"", example, "\") in examples, ",
-      "tests, and vignettes. For non-interactive checks, pass ",
-      "launch.browser = FALSE explicitly.",
+      "tests, and vignettes.",
       call. = FALSE
     )
   }

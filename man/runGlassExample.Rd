@@ -19,6 +19,7 @@ Called for its side-effect (launches a Shiny app).
 \description{
 Launches one of the example Shiny apps that ship with the package.
 A list of available examples is printed when called with no arguments.
+Example apps are launched only in interactive sessions.
 }
 \examples{
 # List available examples

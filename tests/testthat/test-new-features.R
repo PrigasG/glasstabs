@@ -41,6 +41,10 @@ test_that("runGlassExample() does not launch apps during non-interactive checks"
     runGlassExample("smoke-test"),
     "must be called interactively"
   )
+  expect_error(
+    runGlassExample("smoke-test", launch.browser = FALSE),
+    "must be called interactively"
+  )
 })
 
 # ── Feature 2: icon argument in glassTabPanel() ───────────────────────────────
