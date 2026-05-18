@@ -44,7 +44,7 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {}
 
-shinyApp(ui, server)
+if (interactive()) shinyApp(ui, server)
 ```
 
 ## Reading the active tab in the server

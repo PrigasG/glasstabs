@@ -65,7 +65,7 @@ my_server <- function(id) {
 # App
 ui     <- fluidPage(my_ui("explorer"))
 server <- function(input, output, session) my_server("explorer")
-shinyApp(ui, server)
+if (interactive()) shinyApp(ui, server)
 ```
 
 ## Tabs: dynamic values and selected
@@ -303,7 +303,7 @@ server <- function(input, output, session) {
   active <- glassTabsServer("s3_tabs")
 }
 
-shinyApp(ui, server)
+if (interactive()) shinyApp(ui, server)
 ```
 
 > [`useGlassTabs()`](https://prigasg.github.io/glasstabs/reference/useGlassTabs.md)

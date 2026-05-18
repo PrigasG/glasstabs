@@ -44,7 +44,7 @@ server <- function(input, output, session) {
   output$out <- renderPrint(input$pick)
 }
 
-shinyApp(ui, server)
+if (interactive()) shinyApp(ui, server)
 ```
 
 ## Initial selection
@@ -216,7 +216,7 @@ server <- function(input, output, session) {
   })
 }
 
-shinyApp(ui, server)
+if (interactive()) shinyApp(ui, server)
 ```
 
 When `choices` is updated without `selected`, the widget keeps the
@@ -301,5 +301,5 @@ server <- function(input, output, session) {
   output$out <- renderPrint(input$region)
 }
 
-shinyApp(ui, server)
+if (interactive()) shinyApp(ui, server)
 ```

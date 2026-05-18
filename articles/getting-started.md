@@ -108,7 +108,7 @@ server <- function(input, output, session) {
   })
 }
 
-shinyApp(ui, server)
+if (interactive()) shinyApp(ui, server)
 ```
 
 ------------------------------------------------------------------------
@@ -136,7 +136,7 @@ server <- function(input, output, session) {
   output$selected <- renderPrint(input$category)
 }
 
-shinyApp(ui, server)
+if (interactive()) shinyApp(ui, server)
 ```
 
 `input$category` is always a plain character vector of the checked
@@ -209,7 +209,7 @@ server <- function(input, output, session) {
   output$selected <- renderPrint(input$region)
 }
 
-shinyApp(ui, server)
+if (interactive()) shinyApp(ui, server)
 ```
 
 `input$region` is a single character value, or `NULL` when nothing is
@@ -280,7 +280,7 @@ server <- function(input, output, session) {
   })
 }
 
-shinyApp(ui, server)
+if (interactive()) shinyApp(ui, server)
 ```
 
 ------------------------------------------------------------------------
@@ -350,7 +350,7 @@ ui <- bs4DashPage(
 )
 
 server <- function(input, output, session) {}
-shinyApp(ui, server)
+if (interactive()) shinyApp(ui, server)
 ```
 
 ------------------------------------------------------------------------

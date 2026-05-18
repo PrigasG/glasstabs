@@ -88,7 +88,7 @@ server <- function(input, output, session) {
   })
 }
 
-shinyApp(ui, server)
+if (interactive()) shinyApp(ui, server)
 ```
 
 > **Note:**
@@ -201,7 +201,7 @@ server <- function(input, output, session) {
   output$out <- renderPrint(input$fruit)
 }
 
-shinyApp(ui, server)
+if (interactive()) shinyApp(ui, server)
 ```
 
 > **Note:** By default,
@@ -247,7 +247,7 @@ verbatimTextOutput(“out”) )
 server \<- function(input, output, session) {
 output$`out <- renderPrint(input`$region) }
 
-shinyApp(ui, server)
+if (interactive()) shinyApp(ui, server)
 
 
     ## Server-side updates
