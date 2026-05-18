@@ -81,7 +81,7 @@ server <- function(input, output, session) {
   })
 }
 
-shinyApp(ui, server)
+if (interactive()) shinyApp(ui, server)
 ```
 
 > **Note:** `useGlassTabs()` must be called once somewhere in the UI before any `glassTabsUI()` or `glassMultiSelect()` call. It injects the shared CSS and JavaScript as a properly deduplicated `htmltools` dependency.
@@ -184,7 +184,7 @@ server <- function(input, output, session) {
   output$out <- renderPrint(input$fruit)
 }
 
-shinyApp(ui, server)
+if (interactive()) shinyApp(ui, server)
 ```
 
 > **Note:** By default, `glassMultiSelect()` starts with all choices selected.
@@ -244,7 +244,7 @@ server <- function(input, output, session) {
   output$out <- renderPrint(input$region)
 }
 
-shinyApp(ui, server)
+if (interactive()) shinyApp(ui, server)
 ```
 
 ## Server-side updates

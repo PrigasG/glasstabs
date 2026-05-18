@@ -55,7 +55,7 @@ server <- function(input, output, session) {
   output$out <- renderPrint(input$pick)
 }
 
-shinyApp(ui, server)
+if (interactive()) shinyApp(ui, server)
 ```
 
 
@@ -224,7 +224,7 @@ server <- function(input, output, session) {
   })
 }
 
-shinyApp(ui, server)
+if (interactive()) shinyApp(ui, server)
 ```
 
 
@@ -307,7 +307,7 @@ server <- function(input, output, session) {
   output$out <- renderPrint(input$region)
 }
 
-shinyApp(ui, server)
+if (interactive()) shinyApp(ui, server)
 ```
 
 

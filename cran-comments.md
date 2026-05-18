@@ -15,7 +15,9 @@ CRAN pretest follow-up:
   directory ... NOTE` with a `calibre-*` directory. CRAN indicated this can be
   caused by opening a browser in non-interactive mode. The example-app launcher
   now explicitly refuses to launch Shiny apps in non-interactive sessions, and
-  a regression test covers this guard.
+  a regression test covers this guard. Visible `shinyApp(ui, server)` calls in
+  README/vignette examples and shipped example apps are also protected by
+  `if (interactive())`.
 
 ## Changes in this version (0.3.2)
 
