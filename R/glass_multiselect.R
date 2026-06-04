@@ -43,10 +43,10 @@
 #' fruits <- c(Apple = "apple", Banana = "banana", Cherry = "cherry")
 #'
 #' # Minimal
-#' glassMultiSelect("f", fruits)
+#' fruit_filter <- glassMultiSelect("f", fruits)
 #'
 #' # Lock style, hide extra controls
-#' glassMultiSelect(
+#' locked_filter <- glassMultiSelect(
 #'   "f",
 #'   fruits,
 #'   check_style = "check-only",
@@ -56,7 +56,7 @@
 #' )
 #'
 #' # Light theme
-#' glassMultiSelect("f", fruits, theme = "light")
+#' light_filter <- glassMultiSelect("f", fruits, theme = "light")
 #'
 #' @export
 glassMultiSelect <- function(
@@ -493,7 +493,14 @@ updateGlassMultiSelect <- function(
     message$style <- check_style
   }
 
-  session$sendInputMessage(inputId, message)
+  if (is.function(session$sendCustomMessage) && is.function(session$ns)) {
+    session$sendCustomMessage(
+      "glasstabs_update_multiselect",
+      list(inputId = session$ns(inputId), data = message)
+    )
+  } else {
+    session$sendInputMessage(inputId, message)
+  }
 }
 
 #' Reactive helpers for glassMultiSelect values

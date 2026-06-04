@@ -16,6 +16,10 @@ or any other Shiny page wrapper. It injects the required CSS and JS as
 proper \code{htmltools} dependencies so they are deduplicated automatically.
 }
 \examples{
+# Returns an htmlDependency object — no Shiny session needed:
+deps <- useGlassTabs()
+
+# Typical usage inside a Shiny UI:
 if (interactive()) {
   library(shiny)
   ui <- fluidPage(

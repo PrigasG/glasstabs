@@ -65,11 +65,6 @@ body {
   font-size: 13px;
   line-height: 1.6;
 }
-.smoke-debug {
-  margin-top: 12px;
-  font-size: 12px;
-  color: rgba(190, 220, 255, 0.76);
-}
 @media (max-width: 820px) {
   .smoke-grid {
     grid-template-columns: 1fr;
@@ -130,8 +125,7 @@ ui <- fluidPage(
       tags$div(
         class = "smoke-panel",
         tags$h4("Live state"),
-        verbatimTextOutput("state"),
-        tags$div(class = "smoke-debug", verbatimTextOutput("debug_state"))
+        verbatimTextOutput("state")
       ),
       tags$div(
         class = "smoke-panel",
@@ -153,13 +147,6 @@ server <- function(input, output, session) {
   active_tab <- glassTabsServer("main")
   metrics <- glassMultiSelectValue(input, "metric_filter")
   compare_present <- reactiveVal(FALSE)
-
-  observeEvent(TRUE, {
-    session$sendCustomMessage(
-      "glasstabs_debug_ping",
-      list(source = "smoke-test", ts = as.character(Sys.time()))
-    )
-  }, once = TRUE, ignoreInit = FALSE)
 
   visible_tabs <- reactive({
     tabs <- c("overview", "details")
@@ -254,13 +241,6 @@ server <- function(input, output, session) {
       active_tab = active_tab(),
       admin_visible = isTRUE(input$show_admin),
       compare_present = compare_present()
-    )
-  })
-
-  output$debug_state <- renderPrint({
-    list(
-      handlers_registered = input$glasstabs_debug_handlers_registered %||% FALSE,
-      debug_ping_payload = input$glasstabs_debug_ping_payload %||% NULL
     )
   })
 }

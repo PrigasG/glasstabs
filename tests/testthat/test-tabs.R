@@ -113,8 +113,22 @@ test_that("glassTabsUI() injects all eight CSS variables", {
 test_that("glassTabsUI() custom halo_bg appears in scoped CSS", {
   t    <- glass_tab_theme(halo_bg = "rgba(1,2,3,0.5)")
   html <- as.character(glassTabsUI("nav",
-                                   glassTabPanel("a", "A", selected = TRUE), theme = t))
+                                    glassTabPanel("a", "A", selected = TRUE), theme = t))
   expect_true(grepl("rgba(1,2,3,0.5)", html, fixed = TRUE))
+})
+
+test_that("glassTabsUI() dark_selector uses dark content colors", {
+  html <- as.character(glassTabsUI(
+    "nav",
+    glassTabPanel("a", "A", selected = TRUE),
+    theme = "light",
+    dark_selector = "body.dark-mode"
+  ))
+
+  expect_true(grepl("body.dark-mode #nav-wrap", html, fixed = TRUE))
+  expect_true(grepl("--gt-content-bg:transparent", html, fixed = TRUE))
+  expect_true(grepl("--gt-card-bg:transparent", html, fixed = TRUE))
+  expect_true(grepl("--gt-card-text:#cfe6ff", html, fixed = TRUE))
 })
 
 test_that("glassTabsUI() wrap = TRUE adds gt-container class", {
@@ -281,6 +295,22 @@ test_that("appendGlassTab() link_html contains correct data-value", {
   )
   appendGlassTab(fake_session, "tabs", glassTabPanel("mytab", "My Tab"))
   expect_true(grepl('data-value="mytab"', msgs[[1]]$message$link_html, fixed = TRUE))
+})
+
+test_that("appendGlassTab() preserves icon markup", {
+  msgs <- list()
+  fake_session <- list(
+    sendCustomMessage = function(type, message) msgs[[length(msgs) + 1]] <<- list(type = type, message = message),
+    ns = shiny::NS(NULL)
+  )
+  appendGlassTab(
+    fake_session,
+    "tabs",
+    glassTabPanel("mytab", "My Tab", icon = shiny::icon("table"))
+  )
+
+  expect_true(grepl("gt-tab-icon", msgs[[1]]$message$link_html, fixed = TRUE))
+  expect_true(grepl("gt-tab-label", msgs[[1]]$message$link_html, fixed = TRUE))
 })
 
 test_that("appendGlassTab() pane_html contains namespaced id", {

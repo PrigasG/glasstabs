@@ -68,16 +68,16 @@ or \code{NULL} when nothing is selected
 \examples{
 fruits <- c(Apple = "apple", Banana = "banana", Cherry = "cherry")
 
-glassSelect("fruit", fruits)
+fruit_select <- glassSelect("fruit", fruits)
 
-glassSelect(
+selected_fruit <- glassSelect(
   "fruit",
   fruits,
   selected = "banana",
   clearable = TRUE
 )
 
-glassSelect(
+all_fruits <- glassSelect(
   "fruit",
   fruits,
   include_all = TRUE,
@@ -85,7 +85,7 @@ glassSelect(
   all_choice_value = "__all__"
 )
 
-glassSelect(
+filled_fruit <- glassSelect(
   "fruit",
   fruits,
   check_style = "filled"

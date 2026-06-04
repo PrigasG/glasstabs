@@ -21,6 +21,12 @@
     return Object.prototype.hasOwnProperty.call(obj, key);
   }
 
+  function asValueArray(value) {
+    if (Array.isArray(value)) return value;
+    if (value === null || typeof value === 'undefined') return [];
+    return [value];
+  }
+
   function escapeHtml(x) {
     return String(x)
       .replace(/&/g, '&amp;')
@@ -28,6 +34,14 @@
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#39;');
+  }
+
+  function attrEquals(name, value) {
+    var escaped = String(value)
+      .replace(/\\/g, '\\\\')
+      .replace(/"/g, '\\"')
+      .replace(/\r?\n/g, '\\a ');
+    return '[' + name + '="' + escaped + '"]';
   }
 
   function debounce(fn, ms) {
@@ -1485,7 +1499,7 @@
         }
 
         if (hasOwn(data, 'selected')) {
-          ctrl.setValue(Array.isArray(data.selected) ? data.selected : [], { notify: false });
+          ctrl.setValue(asValueArray(data.selected), { notify: false });
         }
 
         if (hasOwn(data, 'style')) {
@@ -1527,6 +1541,7 @@
     });
 
     registerBindings();
+    registerCustomMessageHandlers();
   }
 
   document.addEventListener('click', function (e) {
@@ -1593,27 +1608,52 @@
 
   function registerCustomMessageHandlers() {
     if (typeof Shiny === 'undefined' || registerCustomMessageHandlers._done) return;
+
+    function applyMultiSelectUpdate(msg, attempt) {
+      attempt = attempt || 0;
+      var wrap = msg && msg.inputId
+        ? document.querySelector('.gt-ms-wrap' + attrEquals('data-input-id', msg.inputId))
+        : null;
+      var ctrl = wrap ? ensureInit(wrap) : null;
+
+      if (!ctrl) {
+        if (attempt < 20) {
+          setTimeout(function () { applyMultiSelectUpdate(msg, attempt + 1); }, 25);
+        }
+        return;
+      }
+
+      var data = msg.data || {};
+      if (hasOwn(data, 'choices')) {
+        ctrl.setChoices(data.choices || [], { notify: false });
+      }
+      if (hasOwn(data, 'selected')) {
+        ctrl.setValue(asValueArray(data.selected), { notify: false });
+      }
+      if (hasOwn(data, 'style')) {
+        ctrl.setStyle(data.style, { notify: false });
+      }
+      if (ctrl.commitSelection) ctrl.commitSelection();
+    }
     
     Shiny.addCustomMessageHandler('glasstabs_reinit', function (msg) {
       bootAll();
     });
 
-    Shiny.addCustomMessageHandler('glasstabs_debug_ping', function (msg) {
-      if (window.Shiny && window.Shiny.setInputValue) {
-        Shiny.setInputValue('glasstabs_debug_ping_payload', msg || null, { priority: 'event' });
-      }
+    Shiny.addCustomMessageHandler('glasstabs_update_multiselect', function (msg) {
+      setTimeout(function () { applyMultiSelectUpdate(msg, 0); }, 50);
     });
 
     Shiny.addCustomMessageHandler('glasstabs_update_tabs', function (msg) {
       if (!msg.ns || !msg.selected) return;
-      var navbar = document.querySelector('.gt-navbar[data-ns="' + msg.ns + '"]');
+      var navbar = document.querySelector('.gt-navbar' + attrEquals('data-ns', msg.ns));
       if (navbar && navbar._gtActivate) navbar._gtActivate(msg.selected);
     });
 
     Shiny.addCustomMessageHandler('glasstabs_show_tab', function (msg) {
-      var navbar = document.querySelector('.gt-navbar[data-ns="' + msg.ns + '"]');
+      var navbar = document.querySelector('.gt-navbar' + attrEquals('data-ns', msg.ns));
       if (!navbar) return;
-      var link = navbar.querySelector('.gt-tab-link[data-value="' + msg.value + '"]');
+      var link = navbar.querySelector('.gt-tab-link' + attrEquals('data-value', msg.value));
       if (!link) return;
       link.classList.remove('gt-tab-hidden');
       link.style.display = '';
@@ -1624,9 +1664,9 @@
     });
 
     Shiny.addCustomMessageHandler('glasstabs_hide_tab', function (msg) {
-      var navbar = document.querySelector('.gt-navbar[data-ns="' + msg.ns + '"]');
+      var navbar = document.querySelector('.gt-navbar' + attrEquals('data-ns', msg.ns));
       if (!navbar) return;
-      var link = navbar.querySelector('.gt-tab-link[data-value="' + msg.value + '"]');
+      var link = navbar.querySelector('.gt-tab-link' + attrEquals('data-value', msg.value));
       if (!link) return;
       var container = navbar.closest('.gt-container, .gt-wrap-shell')
         || navbar.closest('.card-body')
@@ -1659,9 +1699,9 @@
     });
 
     Shiny.addCustomMessageHandler('glasstabs_append_tab', function (msg) {
-      var navbar = document.querySelector('.gt-navbar[data-ns="' + msg.ns + '"]');
+      var navbar = document.querySelector('.gt-navbar' + attrEquals('data-ns', msg.ns));
       if (!navbar) return;
-      if (navbar.querySelector('.gt-tab-link[data-value="' + msg.value + '"]')) return;
+      if (navbar.querySelector('.gt-tab-link' + attrEquals('data-value', msg.value))) return;
 
       var container = navbar.closest('.gt-container, .gt-wrap-shell')
         || navbar.closest('.card-body')
@@ -1709,9 +1749,9 @@
     });
 
     Shiny.addCustomMessageHandler('glasstabs_remove_tab', function (msg) {
-      var navbar = document.querySelector('.gt-navbar[data-ns="' + msg.ns + '"]');
+      var navbar = document.querySelector('.gt-navbar' + attrEquals('data-ns', msg.ns));
       if (!navbar) return;
-      var link = navbar.querySelector('.gt-tab-link[data-value="' + msg.value + '"]');
+      var link = navbar.querySelector('.gt-tab-link' + attrEquals('data-value', msg.value));
       if (!link) return;
 
       var container = navbar.closest('.gt-container, .gt-wrap-shell')
@@ -1754,9 +1794,9 @@
     });
 
     Shiny.addCustomMessageHandler('glasstabs_disable_tab', function (msg) {
-      var navbar = document.querySelector('.gt-navbar[data-ns="' + msg.ns + '"]');
+      var navbar = document.querySelector('.gt-navbar' + attrEquals('data-ns', msg.ns));
       if (!navbar) return;
-      var link = navbar.querySelector('.gt-tab-link[data-value="' + msg.value + '"]');
+      var link = navbar.querySelector('.gt-tab-link' + attrEquals('data-value', msg.value));
       if (!link) return;
       link.classList.add('gt-tab-disabled');
       link.setAttribute('aria-disabled', 'true');
@@ -1764,9 +1804,9 @@
     });
 
     Shiny.addCustomMessageHandler('glasstabs_enable_tab', function (msg) {
-      var navbar = document.querySelector('.gt-navbar[data-ns="' + msg.ns + '"]');
+      var navbar = document.querySelector('.gt-navbar' + attrEquals('data-ns', msg.ns));
       if (!navbar) return;
-      var link = navbar.querySelector('.gt-tab-link[data-value="' + msg.value + '"]');
+      var link = navbar.querySelector('.gt-tab-link' + attrEquals('data-value', msg.value));
       if (!link) return;
       link.classList.remove('gt-tab-disabled');
       link.removeAttribute('aria-disabled');
@@ -1774,9 +1814,9 @@
     });
 
     Shiny.addCustomMessageHandler('glasstabs_tab_badge', function (msg) {
-      var navbar = document.querySelector('.gt-navbar[data-ns="' + msg.ns + '"]');
+      var navbar = document.querySelector('.gt-navbar' + attrEquals('data-ns', msg.ns));
       if (!navbar) return;
-      var link = navbar.querySelector('.gt-tab-link[data-value="' + msg.value + '"]');
+      var link = navbar.querySelector('.gt-tab-link' + attrEquals('data-value', msg.value));
       if (!link) return;
       var badge = link.querySelector('.gt-tab-badge');
       if (!badge) {
@@ -1795,9 +1835,6 @@
     });
 
     registerCustomMessageHandlers._done = true;
-    if (window.Shiny && window.Shiny.setInputValue) {
-      Shiny.setInputValue('glasstabs_debug_handlers_registered', true, { priority: 'event' });
-    }
   }
 
   /* Re-init glasstabs elements injected by renderGlassTabs / renderUI.
@@ -1813,5 +1850,12 @@
 
   registerCustomMessageHandlers();
   document.addEventListener('shiny:sessioninitialized', registerCustomMessageHandlers);
+  if (window.jQuery) {
+    window.jQuery(document).on('shiny:sessioninitialized.glasstabs', function () {
+      registerBindings();
+      registerCustomMessageHandlers();
+      bootAll();
+    });
+  }
 
 })();

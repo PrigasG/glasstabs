@@ -29,13 +29,13 @@ button and its associated content pane.
 }
 \examples{
 # Plain text label
-glassTabPanel("overview", "Overview",
+overview_tab <- glassTabPanel("overview", "Overview",
   shiny::h3("Welcome"),
   shiny::p("This is the overview tab.")
 )
 
 # With a Shiny icon
-glassTabPanel("data", "Data",
+data_tab <- glassTabPanel("data", "Data",
   icon = shiny::icon("table"),
   shiny::p("Data content here.")
 )

@@ -8,13 +8,18 @@
 
 test_that("glassTabCondition() returns correct JS condition string", {
   cond <- glassTabCondition("main", "details")
-  expect_equal(cond, "input['main-active_tab'] === 'details'")
+  expect_equal(cond, 'input["main-active_tab"] === "details"')
 })
 
 test_that("glassTabCondition() works with namespaced id (module context)", {
   ns   <- shiny::NS("mymod")
   cond <- glassTabCondition(ns("tabs"), "summary")
-  expect_equal(cond, "input['mymod-tabs-active_tab'] === 'summary'")
+  expect_equal(cond, 'input["mymod-tabs-active_tab"] === "summary"')
+})
+
+test_that("glassTabCondition() escapes JavaScript string contents", {
+  cond <- glassTabCondition('main"nav', 'Bob\'s "details"')
+  expect_equal(cond, 'input["main\\"nav-active_tab"] === "Bob\'s \\"details\\""')
 })
 
 test_that("glassTabCondition() returns a single character string", {

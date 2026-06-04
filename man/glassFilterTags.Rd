@@ -13,7 +13,10 @@ should reflect.}
 \item{class}{Additional CSS classes for the container.}
 }
 \value{
-An \code{htmltools} tag.
+An \code{htmltools} tag (\code{shiny.tag}). A \code{<div>} container
+that renders the current selection of the paired \code{glassMultiSelect()}
+as dismissible pill tags, kept in sync with the widget automatically via
+JavaScript.
 }
 \description{
 Renders a \code{<div>} that the JS engine will populate with colored tag pills

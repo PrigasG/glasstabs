@@ -98,8 +98,7 @@ server <- function(input, output, session) {
 }
 ```
 
-> Note: tab `value` strings must be unique — `glassTabsUI()` will error on
-> duplicates. Values are plain strings; they do not need to match labels.
+> Note: tab `value` strings must be unique — `glassTabsUI()` will error on duplicates. Values are plain strings; they do not need to match labels.
 
 ## Tabs: server actions
 
@@ -137,9 +136,7 @@ glassTabsUI(
 
 ## Tabs: compact mode (dashboard cards)
 
-Use `compact = TRUE` when embedding glasstabs inside a tight layout such as a
-`bs4Dash::bs4Card()`. It reduces margins, padding, and font size so the widget
-does not overflow the card.
+Use `compact = TRUE` when embedding glasstabs inside a tight layout such as a `bs4Dash::bs4Card()`. It reduces margins, padding, and font size so the widget does not overflow the card.
 
 ```{r}
 bs4Card(
@@ -244,8 +241,7 @@ glassSelect(
 
 ## Tabs: inside bs4Dash
 
-`glassTabsUI()` works inside `bs4Dash::tabItem()`. Place `useGlassTabs()` in
-the `dashboardBody()` (or anywhere before the first widget — once is enough).
+`glassTabsUI()` works inside `bs4Dash::tabItem()`. Place `useGlassTabs()` in the `dashboardBody()` (or anywhere before the first widget — once is enough).
 
 ```{r}
 library(shiny)
@@ -291,8 +287,7 @@ server <- function(input, output, session) {
 if (interactive()) shinyApp(ui, server)
 ```
 
-> `useGlassTabs()` only needs to appear once. Inside a module that renders
-> into a bs4Dash layout, call it in your module's UI function.
+> `useGlassTabs()` only needs to appear once. Inside a module that renders into a bs4Dash layout, call it in your module's UI function.
 
 ## Theme helpers
 
@@ -347,7 +342,7 @@ conditionalPanel(
 
 ## View the changelog
 
-```{r}
+```{r, eval=FALSE}
 glasstabs_news()      # prints changelog to the console
 ```
 

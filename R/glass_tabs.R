@@ -16,13 +16,13 @@
 #'
 #' @examples
 #' # Plain text label
-#' glassTabPanel("overview", "Overview",
+#' overview_tab <- glassTabPanel("overview", "Overview",
 #'   shiny::h3("Welcome"),
 #'   shiny::p("This is the overview tab.")
 #' )
 #'
 #' # With a Shiny icon
-#' glassTabPanel("data", "Data",
+#' data_tab <- glassTabPanel("data", "Data",
 #'   icon = shiny::icon("table"),
 #'   shiny::p("Data content here.")
 #' )
@@ -211,9 +211,9 @@ glassTabsUI <- function(
       dark_vals$halo_bg,
       dark_vals$halo_border,
       dark_vals$halo_shadow,
-      theme_vals$content_bg,
-      theme_vals$content_border,
-      theme_vals$card_bg,
+      dark_vals$content_bg,
+      dark_vals$content_border,
+      dark_vals$card_bg,
       dark_vals$card_text
     )
     .make_style_tag(dark_css)
@@ -485,14 +485,28 @@ appendGlassTab <- function(session, id, tab, select = FALSE) {
 
   full_ns <- session$ns(id)
 
-  link_html <- as.character(shiny::tags$div(
-    class           = "gt-tab-link",
-    `data-value`    = tab$value,
-    `data-ns`       = full_ns,
-    role            = "tab",
-    tabindex        = "0",
-    `aria-selected` = "false",
-    tab$label
+  label_content <- if (!is.null(tab$icon)) {
+    list(
+      shiny::tags$span(class = "gt-tab-icon", tab$icon),
+      shiny::tags$span(class = "gt-tab-label", tab$label)
+    )
+  } else {
+    list(tab$label)
+  }
+
+  link_html <- as.character(do.call(
+    shiny::tags$div,
+    c(
+      list(
+        class           = "gt-tab-link",
+        `data-value`    = tab$value,
+        `data-ns`       = full_ns,
+        role            = "tab",
+        tabindex        = "0",
+        `aria-selected` = "false"
+      ),
+      label_content
+    )
   ))
 
   pane_html <- as.character(
@@ -665,6 +679,10 @@ glassTabsServer <- function(id, bookmark = TRUE) {
 #' @return A `shiny.tag` suitable for use in a Shiny UI.
 #'
 #' @examples
+#' # Creates a UI placeholder tag — no Shiny session needed:
+#' tabs_placeholder <- glassTabsOutput("my_tabs")
+#'
+#' # Full dynamic-tab app example:
 #' if (interactive()) {
 #'   library(shiny)
 #'
@@ -764,7 +782,14 @@ renderGlassTabs <- function(expr, env = parent.frame(), quoted = FALSE) {
 #' @return A single character string for use in [shiny::conditionalPanel()].
 #'
 #' @examples
-#' # Basic usage in a plain Shiny app:
+#' # Returns a plain JS condition string — no Shiny session needed:
+#' glassTabCondition("main", "details")
+#'
+#' # Inside a module — use ns() for the id:
+#' # UI:   glassTabCondition(ns("tabs"), "details")
+#' # This produces: "input['mymod-tabs-active_tab'] === 'details'"
+#'
+#' # Full app example showing conditionalPanel usage:
 #' if (interactive()) {
 #'   library(shiny)
 #'   ui <- fluidPage(
@@ -785,10 +810,6 @@ renderGlassTabs <- function(expr, env = parent.frame(), quoted = FALSE) {
 #'   shinyApp(ui, server)
 #' }
 #'
-#' # Inside a module — use ns() for the id:
-#' # UI:   glassTabCondition(ns("tabs"), "details")
-#' # This produces: "input['mymod-tabs-active_tab'] === 'details'"
-#'
 #' @export
 glassTabCondition <- function(id, value) {
   if (!is.character(id) || length(id) != 1 || !nzchar(id)) {
@@ -805,5 +826,18 @@ glassTabCondition <- function(id, value) {
       call. = FALSE
     )
   }
-  sprintf("input['%s-active_tab'] === '%s'", id, value)
+  input_key <- .gt_js_string(paste0(id, "-active_tab"))
+  tab_value <- .gt_js_string(value)
+  sprintf("input[%s] === %s", input_key, tab_value)
+}
+
+#' @noRd
+.gt_js_string <- function(x) {
+  x <- enc2utf8(as.character(x))
+  x <- gsub("\\\\", "\\\\\\\\", x)
+  x <- gsub("\"", "\\\\\"", x)
+  x <- gsub("\r", "\\\\r", x, fixed = TRUE)
+  x <- gsub("\n", "\\\\n", x, fixed = TRUE)
+  x <- gsub("\t", "\\\\t", x, fixed = TRUE)
+  paste0("\"", x, "\"")
 }

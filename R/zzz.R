@@ -147,7 +147,10 @@
 #'   should reflect.
 #' @param class Additional CSS classes for the container.
 #'
-#' @return An \code{htmltools} tag.
+#' @return An \code{htmltools} tag (\code{shiny.tag}). A \code{<div>} container
+#'   that renders the current selection of the paired \code{glassMultiSelect()}
+#'   as dismissible pill tags, kept in sync with the widget automatically via
+#'   JavaScript.
 #' @export
 glassFilterTags <- function(inputId, class = NULL) {
   if (!is.character(inputId) || length(inputId) != 1L || !nzchar(inputId)) {

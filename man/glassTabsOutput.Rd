@@ -22,6 +22,10 @@ runs. The JavaScript engine is automatically (re-)initialised after each
 render.
 }
 \examples{
+# Creates a UI placeholder tag — no Shiny session needed:
+tabs_placeholder <- glassTabsOutput("my_tabs")
+
+# Full dynamic-tab app example:
 if (interactive()) {
   library(shiny)
 

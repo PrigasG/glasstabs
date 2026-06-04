@@ -295,6 +295,23 @@ test_that("updateGlassMultiSelect() sends selected values unchanged", {
   expect_equal(args[[2]]$selected, c("apple", "cherry"))
 })
 
+test_that("updateGlassMultiSelect() uses retryable custom messages for Shiny sessions", {
+  sent <- list()
+  fake_session <- list(
+    sendCustomMessage = function(type, message) {
+      sent[[length(sent) + 1L]] <<- list(type = type, message = message)
+    },
+    ns = shiny::NS("module")
+  )
+
+  updateGlassMultiSelect(fake_session, "pick", selected = "apple")
+
+  expect_length(sent, 1L)
+  expect_equal(sent[[1]]$type, "glasstabs_update_multiselect")
+  expect_equal(sent[[1]]$message$inputId, "module-pick")
+  expect_equal(sent[[1]]$message$data$selected, "apple")
+})
+
 test_that("updateGlassMultiSelect() allows clearing with character(0)", {
   send_mock <- mockery::mock()
   fake_session <- list(sendInputMessage = send_mock)

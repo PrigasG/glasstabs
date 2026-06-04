@@ -1,4 +1,7 @@
 ^.*\.Rproj$
+^.*\.Rcheck$
+^.*\.tar\.gz$
+^\.Rhistory$
 ^\.Rproj\.user$
 ^LICENSE\.md$
 ^cran-comments\.md$

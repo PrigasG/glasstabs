@@ -79,10 +79,10 @@ This preserves the existing package behavior.
 fruits <- c(Apple = "apple", Banana = "banana", Cherry = "cherry")
 
 # Minimal
-glassMultiSelect("f", fruits)
+fruit_filter <- glassMultiSelect("f", fruits)
 
 # Lock style, hide extra controls
-glassMultiSelect(
+locked_filter <- glassMultiSelect(
   "f",
   fruits,
   check_style = "check-only",
@@ -92,6 +92,6 @@ glassMultiSelect(
 )
 
 # Light theme
-glassMultiSelect("f", fruits, theme = "light")
+light_filter <- glassMultiSelect("f", fruits, theme = "light")
 
 }

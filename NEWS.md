@@ -22,6 +22,11 @@
 
 * Fixed tab initialization for `glassTabsUI()` inserted by `renderUI()` or
   dashboard layouts after the initial page boot.
+* Fixed `updateGlassMultiSelect()` updates being lost when a multi-select is
+  created or replaced by `renderUI()` in the same reactive flush. Dynamic
+  updates now target the replacement widget and retry briefly while it binds.
+* Fixed scalar `selected` values being interpreted as an empty selection by the
+  multi-select JavaScript binding.
 * Added a Shiny input binding and delegated activation fallback for tabs so
   click and keyboard activation remain reliable in public dashboards.
 * Bumped the html dependency version so browsers request fresh CSS/JS assets.

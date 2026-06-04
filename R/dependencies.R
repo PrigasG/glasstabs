@@ -64,17 +64,17 @@ runGlassExample <- function(example = NULL, ...) {
 #' @return Called for its side effect; returns `NULL` invisibly.
 #'
 #' @examples
-#' glasstabs_news()
+#' if (interactive()) {
+#'   glasstabs_news()
+#' }
 #'
 #' @export
 glasstabs_news <- function() {
-  pkg  <- "glasstabs"
-  news <- tryCatch(
-    utils::news(package = pkg),
-    error = function(e) NULL
-  )
-  if (!is.null(news)) {
-    print(news)
+  if (!interactive()) return(invisible(NULL))
+  news_file <- system.file("NEWS.md", package = "glasstabs")
+  if (nzchar(news_file) && file.exists(news_file)) {
+    cat(readLines(news_file, warn = FALSE), sep = "\n")
+    cat("\n")
   } else {
     url <- "https://github.com/prigasG/glasstabs/blob/main/NEWS.md"
     message(
@@ -95,6 +95,10 @@ glasstabs_news <- function() {
 #'   consumed by Shiny's renderer).
 #'
 #' @examples
+#' # Returns an htmlDependency object — no Shiny session needed:
+#' deps <- useGlassTabs()
+#'
+#' # Typical usage inside a Shiny UI:
 #' if (interactive()) {
 #'   library(shiny)
 #'   ui <- fluidPage(

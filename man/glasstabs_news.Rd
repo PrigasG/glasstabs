@@ -14,6 +14,8 @@ Prints the package NEWS to the R console. Useful for quickly checking what
 changed between versions without leaving your R session.
 }
 \examples{
-glasstabs_news()
+if (interactive()) {
+  glasstabs_news()
+}
 
 }

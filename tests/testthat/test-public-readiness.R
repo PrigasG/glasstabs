@@ -61,6 +61,22 @@ test_that("glass.js keeps ARIA and focus state in sync", {
   expect_true(grepl("glassTabsBinding", js, fixed = TRUE))
   expect_true(grepl("MutationObserver", js, fixed = TRUE))
   expect_true(grepl("closeAndReturnFocus", js, fixed = TRUE))
+  expect_true(grepl("asValueArray(data.selected)", js, fixed = TRUE))
+  expect_true(grepl("glasstabs_update_multiselect", js, fixed = TRUE))
+  expect_true(grepl("applyMultiSelectUpdate(msg, attempt + 1)", js, fixed = TRUE))
+  expect_true(grepl("applyMultiSelectUpdate(msg, 0); }, 50)", js, fixed = TRUE))
+  expect_true(grepl("shiny:sessioninitialized.glasstabs", js, fixed = TRUE))
   expect_true(grepl("e.key === 'Escape' || e.key === 'Tab'", js, fixed = TRUE))
   expect_true(grepl("trigger.focus()", js, fixed = TRUE))
+})
+
+test_that("glass.js does not ship debug-only message handlers", {
+  js_path <- file.path("inst", "www", "glass.js")
+  if (!file.exists(js_path)) {
+    js_path <- system.file("www", "glass.js", package = "glasstabs")
+  }
+
+  js <- paste(readLines(js_path, warn = FALSE), collapse = "\n")
+  expect_false(grepl("glasstabs_debug_ping", js, fixed = TRUE))
+  expect_false(grepl("glasstabs_debug_handlers_registered", js, fixed = TRUE))
 })

@@ -21,6 +21,7 @@ combobox
 conditionalPanel
 debounced
 deduplicated
+dismissible
 dropdown
 dropdowns
 glassMultiSelect
