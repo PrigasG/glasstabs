@@ -1,6 +1,6 @@
 # Changelog
 
-## glasstabs 0.3.2
+## glasstabs (development version)
 
 ### Public dashboard readiness
 
@@ -30,6 +30,14 @@
   inserted by
   [`renderUI()`](https://rdrr.io/pkg/shiny/man/renderUI.html) or
   dashboard layouts after the initial page boot.
+- Fixed
+  [`updateGlassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassMultiSelect.md)
+  updates being lost when a multi-select is created or replaced by
+  [`renderUI()`](https://rdrr.io/pkg/shiny/man/renderUI.html) in the
+  same reactive flush. Dynamic updates now target the replacement widget
+  and retry briefly while it binds.
+- Fixed scalar `selected` values being interpreted as an empty selection
+  by the multi-select JavaScript binding.
 - Added a Shiny input binding and delegated activation fallback for tabs
   so click and keyboard activation remain reliable in public dashboards.
 - Bumped the html dependency version so browsers request fresh CSS/JS

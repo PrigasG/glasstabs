@@ -21,6 +21,10 @@ object (invisible to the user, consumed by Shiny's renderer).
 ## Examples
 
 ``` r
+# Returns an htmlDependency object — no Shiny session needed:
+deps <- useGlassTabs()
+
+# Typical usage inside a Shiny UI:
 if (interactive()) {
   library(shiny)
   ui <- fluidPage(

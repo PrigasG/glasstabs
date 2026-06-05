@@ -36,7 +36,15 @@ A single character string for use in
 ## Examples
 
 ``` r
-# Basic usage in a plain Shiny app:
+# Returns a plain JS condition string — no Shiny session needed:
+glassTabCondition("main", "details")
+#> [1] "input[\"main-active_tab\"] === \"details\""
+
+# Inside a module — use ns() for the id:
+# UI:   glassTabCondition(ns("tabs"), "details")
+# This produces: "input['mymod-tabs-active_tab'] === 'details'"
+
+# Full app example showing conditionalPanel usage:
 if (interactive()) {
   library(shiny)
   ui <- fluidPage(
@@ -56,8 +64,4 @@ if (interactive()) {
   server <- function(input, output, session) {}
   shinyApp(ui, server)
 }
-
-# Inside a module — use ns() for the id:
-# UI:   glassTabCondition(ns("tabs"), "details")
-# This produces: "input['mymod-tabs-active_tab'] === 'details'"
 ```

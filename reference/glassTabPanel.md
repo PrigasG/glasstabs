@@ -44,54 +44,14 @@ A list of class `"glassTabPanel"` consumed by
 
 ``` r
 # Plain text label
-glassTabPanel("overview", "Overview",
+overview_tab <- glassTabPanel("overview", "Overview",
   shiny::h3("Welcome"),
   shiny::p("This is the overview tab.")
 )
-#> $value
-#> [1] "overview"
-#> 
-#> $label
-#> [1] "Overview"
-#> 
-#> $icon
-#> NULL
-#> 
-#> $content
-#> $content[[1]]
-#> <h3>Welcome</h3>
-#> 
-#> $content[[2]]
-#> <p>This is the overview tab.</p>
-#> 
-#> 
-#> $selected
-#> [1] FALSE
-#> 
-#> attr(,"class")
-#> [1] "glassTabPanel"
 
 # With a Shiny icon
-glassTabPanel("data", "Data",
+data_tab <- glassTabPanel("data", "Data",
   icon = shiny::icon("table"),
   shiny::p("Data content here.")
 )
-#> $value
-#> [1] "data"
-#> 
-#> $label
-#> [1] "Data"
-#> 
-#> $icon
-#> 
-#> $content
-#> $content[[1]]
-#> <p>Data content here.</p>
-#> 
-#> 
-#> $selected
-#> [1] FALSE
-#> 
-#> attr(,"class")
-#> [1] "glassTabPanel"
 ```

@@ -25,4 +25,8 @@ glassFilterTags(inputId, class = NULL)
 
 ## Value
 
-An `htmltools` tag.
+An `htmltools` tag (`shiny.tag`). A `<div>` container that renders the
+current selection of the paired
+[`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md)
+as dismissible pill tags, kept in sync with the widget automatically via
+JavaScript.
