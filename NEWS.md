@@ -1,4 +1,4 @@
-# glasstabs 0.3.2
+# glasstabs (development version)
 
 ## Public dashboard readiness
 

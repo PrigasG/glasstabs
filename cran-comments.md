@@ -1,4 +1,10 @@
-## R CMD check results
+## Development snapshot
+
+This is a GitHub development snapshot (`0.3.2.9000`), not a CRAN submission.
+The next CRAN release should use a new release version, likely `0.3.3`, and
+refresh these comments immediately before submission.
+
+## Last CRAN-oriented check results
 
 0 errors | 0 warnings | 0 notes
 
