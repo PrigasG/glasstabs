@@ -1,9 +1,9 @@
 # glasstabs CRAN Downloads
 
-Updated: 2026-06-01 17:26:22 UTC
+Updated: 2026-06-08 15:38:16 UTC
 
-- Latest day: 2026-05-30 (5 downloads)
-- Last 7 days: 119 downloads
-- Last 30 days: 494 downloads
-- Total in tracked period: 1518 downloads
+- Latest day: 2026-06-06 (52 downloads)
+- Last 7 days: 125 downloads
+- Last 30 days: 534 downloads
+- Total in tracked period: 1643 downloads
 - Peak day: 2026-03-31 (78 downloads)
