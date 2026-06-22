@@ -14,8 +14,9 @@ runGlassExample(example = NULL, ...)
 
 - example:
 
-  Name of the example to run. One of `"smoke-test"`, `"basic"`,
-  `"bs4dash"`, `"dashboard"`. When `NULL` (default), lists all available
+  Name of the example to run, such as `"basic"`, `"bslib"`,
+  `"dashboard"`, `"server-select"`, `"smoke-test"`, or
+  `"square-corners"`. When `NULL` (default), lists all available
   examples.
 
 - ...:
@@ -35,13 +36,18 @@ runGlassExample()
 #> Available glasstabs examples:
 #>   - basic
 #>   - bs4dash
+#>   - bslib
 #>   - dashboard
+#>   - server-select
 #>   - smoke-test
+#>   - square-corners
 #> 
 #> Run one with: runGlassExample("basic")
 
 # Run an example interactively
 if (interactive()) {
+  runGlassExample("bslib")
   runGlassExample("smoke-test")
+  runGlassExample("server-select")
 }
 ```

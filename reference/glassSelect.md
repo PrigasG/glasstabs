@@ -19,7 +19,11 @@ glassSelect(
   all_choice_label = "All categories",
   all_choice_value = "__all__",
   check_style = c("checkbox", "check-only", "filled"),
-  theme = "dark"
+  theme = "dark",
+  shape = c("rounded", "square"),
+  server = FALSE,
+  server_limit = 50L,
+  server_min_chars = 0L
 )
 ```
 
@@ -75,6 +79,31 @@ glassSelect(
   Color theme. One of `"dark"` (default) or `"light"`, or a
   [`glass_select_theme()`](https://prigasg.github.io/glasstabs/reference/glass_select_theme.md)
   object.
+
+- shape:
+
+  Corner style for the trigger and dropdown. One of `"rounded"`
+  (default) for the signature glass look, or `"square"` for crisp,
+  selectize-style corners so the widget sits neatly alongside native
+  'Shiny'
+  [`selectizeInput()`](https://rdrr.io/pkg/shiny/man/selectInput.html)
+  controls.
+
+- server:
+
+  Logical. If `TRUE`, render only an initial slice of choices and use
+  [`glassSelectServer()`](https://prigasg.github.io/glasstabs/reference/glassSelectServer.md)
+  to search the full choice set from the Shiny server. Default `FALSE`.
+
+- server_limit:
+
+  Maximum number of choices rendered initially and returned for each
+  server-side search. Default `50`.
+
+- server_min_chars:
+
+  Minimum search characters required before server-side matching filters
+  choices. Default `0`.
 
 ## Value
 

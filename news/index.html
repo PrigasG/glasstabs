@@ -30,7 +30,7 @@
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/prigasG/glasstabs"><span class="fa fab fa-github"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/prigasG/glasstabs" aria-label="GitHub"><span class="fa fab fa-github"></span></a></li>
       </ul></div>
 
 
@@ -44,6 +44,20 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="glasstabs-development-version">glasstabs (development version)<a class="anchor" aria-label="anchor" href="#glasstabs-development-version"></a></h2>
+<div class="section level3">
+<h3 id="square-corners-development-version">Square corners<a class="anchor" aria-label="anchor" href="#square-corners-development-version"></a></h3>
+<ul><li>Added a <code>shape</code> argument to <code><a href="../reference/glassSelect.html">glassSelect()</a></code> and <code><a href="../reference/glassMultiSelect.html">glassMultiSelect()</a></code>. The default <code>shape = "rounded"</code> keeps the signature glass look, while <code>shape = "square"</code> applies crisp, selectize-style corners so the widgets sit flush next to native <code><a href="https://rdrr.io/pkg/shiny/man/selectInput.html" class="external-link">selectizeInput()</a></code> controls without looking out of place.</li>
+<li>
+<code><a href="../reference/updateGlassSelect.html">updateGlassSelect()</a></code> and <code><a href="../reference/updateGlassMultiSelect.html">updateGlassMultiSelect()</a></code> gained a <code>shape</code> argument so the corner style can be switched at runtime from the server without re-rendering the widget (open dropdowns and selection state are preserved).</li>
+<li>Added a <code>runGlassExample("square-corners")</code> example app that demonstrates the square shape live alongside native <code><a href="https://rdrr.io/pkg/shiny/man/selectInput.html" class="external-link">selectizeInput()</a></code>, including a runtime rounded-vs-square toggle via <code>update*()</code> and a light-theme variant.</li>
+<li>Added a <code>runGlassExample("bslib")</code> example app that shows square <code><a href="../reference/glassSelect.html">glassSelect()</a></code> and <code><a href="../reference/glassMultiSelect.html">glassMultiSelect()</a></code> controls inside a Bootstrap 5 <code>bslib</code> layout.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="large-choice-sets-development-version">Large choice sets<a class="anchor" aria-label="anchor" href="#large-choice-sets-development-version"></a></h3>
+<ul><li>Added opt-in server-side search support for large <code><a href="../reference/glassSelect.html">glassSelect()</a></code> and <code><a href="../reference/glassMultiSelect.html">glassMultiSelect()</a></code> choice sets via <code>server = TRUE</code>, <code><a href="../reference/glassSelectServer.html">glassSelectServer()</a></code>, and <code><a href="../reference/glassMultiSelectServer.html">glassMultiSelectServer()</a></code>.</li>
+<li>Added loading and no-results states for select search results, including server-backed search responses.</li>
+<li>Added a runnable <code>runGlassExample("server-select")</code> example and vignette sections for server-backed single- and multi-select controls.</li>
+</ul></div>
 <div class="section level3">
 <h3 id="public-dashboard-readiness-development-version">Public dashboard readiness<a class="anchor" aria-label="anchor" href="#public-dashboard-readiness-development-version"></a></h3>
 <ul><li>Removed all <code>color-mix()</code> usage from the shipped stylesheet. Select widget alpha colors are now precomputed as CSS custom properties at render time for better compatibility with older embedded browsers.</li>

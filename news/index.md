@@ -2,6 +2,49 @@
 
 ## glasstabs (development version)
 
+### Square corners
+
+- Added a `shape` argument to
+  [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md)
+  and
+  [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md).
+  The default `shape = "rounded"` keeps the signature glass look, while
+  `shape = "square"` applies crisp, selectize-style corners so the
+  widgets sit flush next to native
+  [`selectizeInput()`](https://rdrr.io/pkg/shiny/man/selectInput.html)
+  controls without looking out of place.
+- [`updateGlassSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassSelect.md)
+  and
+  [`updateGlassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassMultiSelect.md)
+  gained a `shape` argument so the corner style can be switched at
+  runtime from the server without re-rendering the widget (open
+  dropdowns and selection state are preserved).
+- Added a `runGlassExample("square-corners")` example app that
+  demonstrates the square shape live alongside native
+  [`selectizeInput()`](https://rdrr.io/pkg/shiny/man/selectInput.html),
+  including a runtime rounded-vs-square toggle via `update*()` and a
+  light-theme variant.
+- Added a `runGlassExample("bslib")` example app that shows square
+  [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md)
+  and
+  [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md)
+  controls inside a Bootstrap 5 `bslib` layout.
+
+### Large choice sets
+
+- Added opt-in server-side search support for large
+  [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md)
+  and
+  [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md)
+  choice sets via `server = TRUE`,
+  [`glassSelectServer()`](https://prigasg.github.io/glasstabs/reference/glassSelectServer.md),
+  and
+  [`glassMultiSelectServer()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelectServer.md).
+- Added loading and no-results states for select search results,
+  including server-backed search responses.
+- Added a runnable `runGlassExample("server-select")` example and
+  vignette sections for server-backed single- and multi-select controls.
+
 ### Public dashboard readiness
 
 - Removed all `color-mix()` usage from the shipped stylesheet. Select

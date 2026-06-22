@@ -19,8 +19,12 @@ glassMultiSelect(
   show_select_all = TRUE,
   show_clear_all = TRUE,
   theme = "dark",
+  shape = c("rounded", "square"),
   hues = NULL,
-  dark_selector = NULL
+  dark_selector = NULL,
+  server = FALSE,
+  server_limit = 50L,
+  server_min_chars = 0L
 )
 ```
 
@@ -73,6 +77,15 @@ glassMultiSelect(
   [`glass_select_theme()`](https://prigasg.github.io/glasstabs/reference/glass_select_theme.md)
   object.
 
+- shape:
+
+  Corner style for the trigger and dropdown. One of `"rounded"`
+  (default) for the signature glass look, or `"square"` for crisp,
+  selectize-style corners so the widget sits neatly alongside native
+  'Shiny'
+  [`selectizeInput()`](https://rdrr.io/pkg/shiny/man/selectInput.html)
+  controls.
+
 - hues:
 
   Optional named integer vector of HSL hue angles (0 to 360) for the
@@ -84,6 +97,22 @@ glassMultiSelect(
   for bs4Dash). When provided and `theme = "light"`, emits an extra
   scoped `<style>` block that reverts colors to the dark-mode defaults
   whenever that selector is active.
+
+- server:
+
+  Logical. If `TRUE`, render only an initial slice of choices and use
+  [`glassMultiSelectServer()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelectServer.md)
+  to search the full choice set from the Shiny server. Default `FALSE`.
+
+- server_limit:
+
+  Maximum number of choices rendered initially and returned for each
+  server-side search. Default `50`.
+
+- server_min_chars:
+
+  Minimum search characters required before server-side matching filters
+  choices. Default `0`.
 
 ## Value
 

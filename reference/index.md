@@ -11,7 +11,7 @@ Load CSS/JavaScript, launch built-in examples, and view the changelog.
 - [`glasstabs_news()`](https://prigasg.github.io/glasstabs/reference/glasstabs_news.md)
   : Display the glasstabs changelog
 
-## Tab widget — UI
+## Tab widget - UI
 
 Animated glass-morphism tab navigation with a sliding halo, spring
 easing, and transfer trace.
@@ -27,7 +27,7 @@ easing, and transfer trace.
 - [`glassTabCondition()`](https://prigasg.github.io/glasstabs/reference/glassTabCondition.md)
   : Build a conditionalPanel condition for a glasstabs widget
 
-## Tab widget — server
+## Tab widget - server
 
 Server-side helpers for reading, switching, showing/hiding, disabling,
 badging, and dynamically rendering tabs.
@@ -61,12 +61,16 @@ theming, search, update helpers, and reactive value helpers.
   : Update a glassSelect widget
 - [`glassSelectValue()`](https://prigasg.github.io/glasstabs/reference/glassSelectValue.md)
   : Reactive helper for glassSelect values
+- [`glassSelectServer()`](https://prigasg.github.io/glasstabs/reference/glassSelectServer.md)
+  : Register server-side search for a glassSelect widget
 - [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md)
   : Animated glass multi-select dropdown filter
 - [`updateGlassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassMultiSelect.md)
   : Update a glassMultiSelect widget
 - [`glassMultiSelectValue()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelectValue.md)
   : Reactive helpers for glassMultiSelect values
+- [`glassMultiSelectServer()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelectServer.md)
+  : Register server-side search for a glassMultiSelect widget
 - [`glassFilterTags()`](https://prigasg.github.io/glasstabs/reference/glassFilterTags.md)
   : Shiny tag helper for a filter-tags display area tied to a
   glassMultiSelect

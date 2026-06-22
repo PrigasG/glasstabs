@@ -12,7 +12,8 @@ updateGlassMultiSelect(
   inputId,
   choices = NULL,
   selected = NULL,
-  check_style = NULL
+  check_style = NULL,
+  shape = NULL
 )
 ```
 
@@ -40,6 +41,11 @@ updateGlassMultiSelect(
   Optional new style string. One of `"checkbox"`, `"check-only"`, or
   `"filled"`. Defaults to `NULL`, which keeps the current style
   unchanged.
+
+- shape:
+
+  Optional new corner style. One of `"rounded"` or `"square"`. Defaults
+  to `NULL`, which keeps the current shape unchanged.
 
 ## Value
 

@@ -34,7 +34,7 @@ Example apps are launched only in interactive sessions."><meta property="og:imag
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/prigasG/glasstabs"><span class="fa fab fa-github"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/prigasG/glasstabs" aria-label="GitHub"><span class="fa fab fa-github"></span></a></li>
       </ul></div>
 
 
@@ -63,9 +63,10 @@ Example apps are launched only in interactive sessions.</p>
 
 
 <dl><dt id="arg-example">example<a class="anchor" aria-label="anchor" href="#arg-example"></a></dt>
-<dd><p>Name of the example to run. One of <code>"smoke-test"</code>,
-<code>"basic"</code>, <code>"bs4dash"</code>, <code>"dashboard"</code>. When <code>NULL</code> (default), lists
-all available examples.</p></dd>
+<dd><p>Name of the example to run, such as <code>"basic"</code>,
+<code>"bslib"</code>, <code>"dashboard"</code>, <code>"server-select"</code>, <code>"smoke-test"</code>, or
+<code>"square-corners"</code>. When <code>NULL</code> (default), lists all available
+examples.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -84,14 +85,19 @@ all available examples.</p></dd>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Available glasstabs examples:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   - basic</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   - bs4dash</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   - bslib</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   - dashboard</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   - server-select</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   - smoke-test</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   - square-corners</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Run one with: runGlassExample("basic")</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Run an example interactively</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="fu">runGlassExample</span><span class="op">(</span><span class="st">"bslib"</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu">runGlassExample</span><span class="op">(</span><span class="st">"smoke-test"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu">runGlassExample</span><span class="op">(</span><span class="st">"server-select"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

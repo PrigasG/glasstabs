@@ -1,13 +1,13 @@
-# Register server-side search for a glassMultiSelect widget
+# Register server-side search for a glassSelect widget
 
-Use this with `glassMultiSelect(..., server = TRUE)` when the choice set
-is large. The browser sends search queries to Shiny and the server
-returns a bounded list of matching choices.
+Use this with `glassSelect(..., server = TRUE)` when the choice set is
+large. The browser sends search queries to Shiny and the server returns
+a bounded list of matching choices.
 
 ## Usage
 
 ``` r
-glassMultiSelectServer(
+glassSelectServer(
   inputId,
   choices,
   session = shiny::getDefaultReactiveDomain(),
@@ -21,7 +21,7 @@ glassMultiSelectServer(
 - inputId:
 
   Input id used in
-  [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md).
+  [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md).
 
 - choices:
 
@@ -57,11 +57,11 @@ if (interactive()) {
 
   ui <- fluidPage(
     useGlassTabs(),
-    glassMultiSelect("pick", choices, server = TRUE)
+    glassSelect("pick", choices, server = TRUE)
   )
 
   server <- function(input, output, session) {
-    glassMultiSelectServer("pick", choices, session = session)
+    glassSelectServer("pick", choices, session = session)
   }
 
   shinyApp(ui, server)

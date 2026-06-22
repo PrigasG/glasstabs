@@ -81,6 +81,28 @@ glassSelect("f2", fruits, check_style = "check-only")
 glassSelect("f3", fruits, check_style = "filled")
 ```
 
+## Corner shape
+
+By default the trigger and dropdown use the signature rounded glass
+corners. Pass `shape = "square"` for crisp, selectize-style corners so
+the widget sits flush next to native
+[`selectizeInput()`](https://rdrr.io/pkg/shiny/man/selectInput.html)
+controls without looking out of place:
+
+``` r
+
+# Rounded (default)
+glassSelect("region_rounded", fruits, shape = "rounded")
+
+# Square - matches selectizeInput()
+glassSelect("region_square", fruits, shape = "square")
+```
+
+The shape can also be switched at runtime from the server with
+`updateGlassSelect(session, "region_square", shape = "square")`. See the
+corner shape side by side with native selectize in
+`runGlassExample("square-corners")`.
+
 ## Searchable and clearable
 
 Search is enabled by default. You can also enable a clear control.
@@ -105,6 +127,47 @@ glassSelect(
   searchable = FALSE
 )
 ```
+
+## Server-side search for large choice sets
+
+For hundreds or thousands of choices, set `server = TRUE` in the UI and
+register
+[`glassSelectServer()`](https://prigasg.github.io/glasstabs/reference/glassSelectServer.md)
+in the server function. The browser renders only an initial slice of
+choices and asks Shiny for matching choices as the user types.
+
+``` r
+
+many_choices <- stats::setNames(
+  sprintf("value-%04d", 1:2000),
+  sprintf("Choice %04d", 1:2000)
+)
+
+ui <- fluidPage(
+  useGlassTabs(),
+  glassSelect(
+    "pick",
+    many_choices,
+    selected = "value-1500",
+    clearable = TRUE,
+    server = TRUE,
+    server_limit = 30
+  ),
+  verbatimTextOutput("out")
+)
+
+server <- function(input, output, session) {
+  glassSelectServer("pick", many_choices, session = session, limit = 30)
+  output$out <- renderPrint(input$pick)
+}
+
+if (interactive()) shinyApp(ui, server)
+```
+
+This pattern also works when the control is created dynamically with
+[`renderUI()`](https://rdrr.io/pkg/shiny/man/renderUI.html). Keep the
+[`glassSelectServer()`](https://prigasg.github.io/glasstabs/reference/glassSelectServer.md)
+call in the server function for the same `inputId`.
 
 ## Explicit “All” option
 
