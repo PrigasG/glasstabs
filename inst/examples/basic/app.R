@@ -1,5 +1,3 @@
-# glasstabs — basic Shiny example
-# Run with: shiny::runApp("inst/examples/basic")
 library(shiny)
 library(glasstabs)
 

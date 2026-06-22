@@ -71,8 +71,6 @@ glass_tab_theme <- function(
   )
 }
 
-# Internal helper: resolve final tab theme values
-# @noRd
 .tab_resolve_theme <- function(theme = NULL) {
   dark_defaults <- list(
     tab_text        = "rgba(207,230,255,0.78)",

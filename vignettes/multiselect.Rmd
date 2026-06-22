@@ -102,7 +102,7 @@ glassMultiSelect("f", fruits,
 
 When `check_style = "filled"`, hues are auto-assigned evenly around the
 colour wheel. Override them with a named integer vector of HSL hue
-angles (0–360):
+angles (0-360):
 
 ```{r hues}
 glassMultiSelect("f", fruits,
@@ -110,6 +110,25 @@ glassMultiSelect("f", fruits,
   hues = c(apple = 0, banana = 50, cherry = 340, mango = 30, peach = 20)
 )
 ```
+
+## Corner shape
+
+By default the trigger and dropdown use the signature rounded glass corners.
+Pass `shape = "square"` for crisp, selectize-style corners so the widget
+blends into layouts built around native `selectizeInput()` controls:
+
+```{r shape}
+# Rounded (default)
+glassMultiSelect("filters_rounded", fruits, shape = "rounded")
+
+# Square - matches selectizeInput()
+glassMultiSelect("filters_square", fruits, shape = "square")
+```
+
+The shape can also be switched at runtime from the server with
+`updateGlassMultiSelect(session, "filters_square", shape = "square")`. The
+`runGlassExample("square-corners")` app shows the square shape next to native
+selectize.
 
 ## Show / hide UI chrome
 
@@ -128,7 +147,7 @@ glassMultiSelect("f", fruits,
 
 Place a `glassFilterTags()` container anywhere on the page to show the
 active selections as removable tag pills. The JS engine keeps them in
-sync automatically — clicking × on a tag deselects that option.
+sync automatically - clicking x on a tag deselects that option.
 
 ```{r filter-tags}
 ui <- fluidPage(
@@ -175,6 +194,42 @@ server <- function(input, output, session) {
 }
 ```
 
+## Server-side search for large choice sets
+
+For large filters, set `server = TRUE` in the UI and register
+`glassMultiSelectServer()` in the server function. The control keeps the
+selected values on the client while rendering only the current page of
+matching choices.
+
+```{r server-search}
+many_choices <- stats::setNames(
+  sprintf("value-%04d", 1:2000),
+  sprintf("Choice %04d", 1:2000)
+)
+
+ui <- fluidPage(
+  useGlassTabs(),
+  glassMultiSelect(
+    "pick",
+    many_choices,
+    server = TRUE,
+    server_limit = 30,
+    show_style_switcher = FALSE
+  ),
+  verbatimTextOutput("out")
+)
+
+server <- function(input, output, session) {
+  glassMultiSelectServer("pick", many_choices, session = session, limit = 30)
+  output$out <- renderPrint(length(input$pick))
+}
+
+if (interactive()) shinyApp(ui, server)
+```
+
+This pattern is also suitable for controls inserted by `renderUI()`.
+Register `glassMultiSelectServer()` once for the same `inputId`, and the
+newly rendered control will receive search results through Shiny.
 
 ## Updating choices and selection from the server
 

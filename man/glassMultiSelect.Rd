@@ -16,8 +16,12 @@ glassMultiSelect(
   show_select_all = TRUE,
   show_clear_all = TRUE,
   theme = "dark",
+  shape = c("rounded", "square"),
   hues = NULL,
-  dark_selector = NULL
+  dark_selector = NULL,
+  server = FALSE,
+  server_limit = 50L,
+  server_min_chars = 0L
 )
 }
 \arguments{
@@ -47,6 +51,11 @@ the dropdown? Default \code{TRUE}.}
 \item{theme}{Color theme. One of \code{"dark"} (default) or \code{"light"},
 or a \code{\link[=glass_select_theme]{glass_select_theme()}} object.}
 
+\item{shape}{Corner style for the trigger and dropdown. One of
+\code{"rounded"} (default) for the signature glass look, or
+\code{"square"} for crisp, selectize-style corners so the widget sits
+neatly alongside native 'Shiny' \code{selectizeInput()} controls.}
+
 \item{hues}{Optional named integer vector of HSL hue angles (0 to 360) for
 the \code{"filled"} style. Auto-assigned if \code{NULL}.}
 
@@ -54,6 +63,16 @@ the \code{"filled"} style. Auto-assigned if \code{NULL}.}
 \code{"body.dark-mode"} for bs4Dash). When provided and
 \code{theme = "light"}, emits an extra scoped \code{<style>} block that
 reverts colors to the dark-mode defaults whenever that selector is active.}
+
+\item{server}{Logical. If \code{TRUE}, render only an initial slice of
+choices and use \code{\link[=glassMultiSelectServer]{glassMultiSelectServer()}} to search the full choice set
+from the Shiny server. Default \code{FALSE}.}
+
+\item{server_limit}{Maximum number of choices rendered initially and returned
+for each server-side search. Default \code{50}.}
+
+\item{server_min_chars}{Minimum search characters required before server-side
+matching filters choices. Default \code{0}.}
 }
 \value{
 An \code{htmltools::tagList} containing the trigger button, dropdown

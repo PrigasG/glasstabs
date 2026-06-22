@@ -1,8 +1,6 @@
-# tests/testthat/test-multiselect.R
 
 choices <- c(Apple = "apple", Banana = "banana", Cherry = "cherry")
 
-# ── return type ───────────────────────────────────────────────────────────────
 
 test_that("glassMultiSelect() returns an htmltools object", {
   ui <- glassMultiSelect("f", choices)
@@ -13,7 +11,6 @@ test_that("glassFilterTags() returns an htmltools tag", {
   expect_true(inherits(glassFilterTags("f"), "shiny.tag"))
 })
 
-# ── choices ───────────────────────────────────────────────────────────────────
 
 test_that("glassMultiSelect() accepts unnamed choices", {
   expect_no_error(glassMultiSelect("f", c("x", "y", "z")))
@@ -30,7 +27,6 @@ test_that("glassMultiSelect() errors when choices is NULL", {
   expect_error(glassMultiSelect("f", NULL))
 })
 
-# ── selected ──────────────────────────────────────────────────────────────────
 
 test_that("glassMultiSelect() defaults to all options checked", {
   html <- as.character(glassMultiSelect("f", choices))
@@ -56,7 +52,6 @@ test_that("glassMultiSelect() drops invalid selected values", {
   expect_match(html, "apple")
 })
 
-# ── label and placeholder ─────────────────────────────────────────────────────
 
 test_that("glassMultiSelect() renders label when supplied", {
   html <- as.character(glassMultiSelect("f", choices, label = "Pick fruits"))
@@ -87,7 +82,6 @@ test_that("glassMultiSelect() respects custom all_label", {
   expect_match(html, 'data-all-label="Everything"', fixed = TRUE)
 })
 
-# ── check_style ───────────────────────────────────────────────────────────────
 
 test_that("glassMultiSelect() check_style = 'checkbox' adds correct class", {
   html <- as.character(glassMultiSelect("f", choices, check_style = "checkbox"))
@@ -108,7 +102,6 @@ test_that("glassMultiSelect() rejects invalid check_style", {
   expect_error(glassMultiSelect("f", choices, check_style = "dotted"))
 })
 
-# ── show_* flags ──────────────────────────────────────────────────────────────
 
 test_that("glassMultiSelect() show_style_switcher = TRUE renders switcher", {
   html <- as.character(glassMultiSelect("f", choices, show_style_switcher = TRUE))
@@ -137,7 +130,6 @@ test_that("glassMultiSelect() show_clear_all = TRUE renders clear link", {
   expect_match(html, "gt-ms-clear")
 })
 
-# ── theming ───────────────────────────────────────────────────────────────────
 
 test_that("glassMultiSelect() dark theme injects CSS accent variable", {
   html <- as.character(glassMultiSelect("f", choices, theme = "dark"))
@@ -159,7 +151,6 @@ test_that("glassMultiSelect() errors on invalid theme string", {
   expect_error(glassMultiSelect("f", choices, theme = "monokai"))
 })
 
-# ── hues ──────────────────────────────────────────────────────────────────────
 
 test_that("glassMultiSelect() auto-assigns --opt-hue to all options", {
   html <- as.character(glassMultiSelect("f", choices, check_style = "filled"))
@@ -202,7 +193,6 @@ test_that("glassMultiSelect() errors on unnamed hues with wrong length", {
   )
 })
 
-# ── inputId scoping ───────────────────────────────────────────────────────────
 
 test_that("glassMultiSelect() scopes element ids to inputId", {
   html <- as.character(glassMultiSelect("my_filter", choices))
@@ -219,7 +209,6 @@ test_that("glassMultiSelect() sets data-input-id attribute", {
   expect_true(grepl('data-input-id="my_filter"', html, fixed = TRUE))
 })
 
-# ── glassFilterTags ───────────────────────────────────────────────────────────
 
 test_that("glassFilterTags() sets data-tags-for to inputId", {
   html <- as.character(glassFilterTags("my_filter"))
@@ -237,7 +226,6 @@ test_that("glassFilterTags() appends extra CSS class", {
   expect_match(html, "gt-filter-tags")
 })
 
-# ── reactive helper ───────────────────────────────────────────────────────────
 
 test_that("glassMultiSelectValue() returns selected and style reactives", {
   input <- shiny::reactiveValues(
@@ -263,7 +251,6 @@ test_that("glassMultiSelectValue() falls back to empty selection and checkbox st
   expect_equal(shiny::isolate(helper$selected()), character(0))
   expect_equal(shiny::isolate(helper$style()), "checkbox")
 })
-# ── updater ───────────────────────────────────────────────────────────────────
 
 test_that("updateGlassMultiSelect() sends normalized choices", {
   send_mock <- mockery::mock()
@@ -340,6 +327,37 @@ test_that("updateGlassMultiSelect() sends style when provided", {
   expect_equal(args[[2]]$style, "filled")
 })
 
+test_that("updateGlassMultiSelect() sends shape when provided", {
+  send_mock <- mockery::mock()
+  fake_session <- list(sendInputMessage = send_mock)
+
+  updateGlassMultiSelect(fake_session, "pick", shape = "square")
+
+  args <- mockery::mock_args(send_mock)[[1]]
+  expect_equal(args[[2]]$shape, "square")
+})
+
+test_that("updateGlassMultiSelect() routes shape through retryable custom messages", {
+  sent <- list()
+  fake_session <- list(
+    sendCustomMessage = function(type, message) {
+      sent[[length(sent) + 1L]] <<- list(type = type, message = message)
+    },
+    ns = function(id) paste0("module-", id)
+  )
+
+  updateGlassMultiSelect(fake_session, "pick", shape = "square")
+
+  expect_equal(sent[[1]]$type, "glasstabs_update_multiselect")
+  expect_equal(sent[[1]]$message$inputId, "module-pick")
+  expect_equal(sent[[1]]$message$data$shape, "square")
+})
+
+test_that("updateGlassMultiSelect() rejects an invalid shape", {
+  fake_session <- list(sendInputMessage = function(...) NULL)
+  expect_error(updateGlassMultiSelect(fake_session, "pick", shape = "oval"))
+})
+
 test_that("updateGlassMultiSelect() rejects invalid style", {
   fake_session <- list(sendInputMessage = function(...) NULL)
 
@@ -364,7 +382,6 @@ test_that("updateGlassMultiSelect() sends empty message when no updates supplied
 })
 
 
-#testing empty choices-------------
 test_that("glassMultiSelect() with empty choices does not mark select-all as checked", {
   html <- as.character(glassMultiSelect("f", character(0)))
   expect_false(grepl("gt-ms-all checked", html, fixed = TRUE))
@@ -384,3 +401,60 @@ test_that("glassMultiSelect() with empty choices renders no option rows", {
   expect_false(grepl("gt-ms-option", html, fixed = TRUE))
 })
 
+test_that("glassMultiSelect(server = TRUE) renders a bounded initial option set", {
+  many <- stats::setNames(sprintf("value-%03d", 1:100), sprintf("Choice %03d", 1:100))
+  html <- as.character(glassMultiSelect("remote", many, server = TRUE, server_limit = 10))
+
+  n <- lengths(regmatches(html, gregexpr("gt-ms-option", html, fixed = TRUE)))
+  checked <- lengths(regmatches(html, gregexpr("gt-ms-option checked", html, fixed = TRUE)))
+
+  expect_equal(n, 10L)
+  expect_equal(checked, 10L)
+  expect_true(grepl('data-server="true"', html, fixed = TRUE))
+  expect_true(grepl('data-server-total="100"', html, fixed = TRUE))
+  expect_true(grepl("100 / 100 selected", html, fixed = TRUE))
+  expect_true(grepl("value-010", html, fixed = TRUE))
+  expect_false(grepl('data-value="value-011"', html, fixed = TRUE))
+})
+
+test_that("glassMultiSelect(server = TRUE) preserves full selected state outside DOM", {
+  many <- stats::setNames(sprintf("value-%03d", 1:100), sprintf("Choice %03d", 1:100))
+  html <- as.character(glassMultiSelect("remote", many, server = TRUE, server_limit = 10))
+
+  expect_true(grepl('data-selected-values="[&quot;value-001&quot;', html, fixed = TRUE))
+  expect_true(grepl('&quot;value-100&quot;]"', html, fixed = TRUE))
+})
+
+test_that("glassMultiSelect(server = TRUE) does not render all explicit selected values", {
+  many <- stats::setNames(sprintf("value-%03d", 1:100), sprintf("Choice %03d", 1:100))
+  html <- as.character(
+    glassMultiSelect(
+      "remote",
+      many,
+      selected = sprintf("value-%03d", c(1:5, 95:100)),
+      server = TRUE,
+      server_limit = 10
+    )
+  )
+
+  n <- lengths(regmatches(html, gregexpr("gt-ms-option", html, fixed = TRUE)))
+  expect_equal(n, 10L)
+  expect_false(grepl('data-value="value-095"', html, fixed = TRUE))
+  expect_true(grepl('&quot;value-095&quot;', html, fixed = TRUE))
+})
+
+
+
+test_that("glassMultiSelect() defaults to rounded corners (no shape-square class)", {
+  html <- as.character(glassMultiSelect("f", choices))
+  expect_false(grepl("shape-square", html, fixed = TRUE))
+})
+
+test_that("glassMultiSelect(shape = 'square') adds the shape-square wrap class", {
+  html <- as.character(glassMultiSelect("f", choices, shape = "square"))
+  expect_match(html, "gt-ms-wrap[^\"]*shape-square")
+})
+
+test_that("glassMultiSelect() rejects an invalid shape", {
+  expect_error(glassMultiSelect("f", choices, shape = "circle"))
+})

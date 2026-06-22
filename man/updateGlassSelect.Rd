@@ -9,7 +9,8 @@ updateGlassSelect(
   inputId,
   choices = NULL,
   selected = NULL,
-  check_style = NULL
+  check_style = NULL,
+  shape = NULL
 )
 }
 \arguments{
@@ -25,6 +26,10 @@ selection. Use \code{character(0)} to clear.}
 \item{check_style}{Optional new style string. One of \code{"checkbox"},
 \code{"check-only"}, or \code{"filled"}. Defaults to \code{NULL}, which
 keeps the current style unchanged.}
+
+\item{shape}{Optional new corner style. One of \code{"rounded"} or
+\code{"square"}. Defaults to \code{NULL}, which keeps the current shape
+unchanged.}
 }
 \value{
 No return value. Called for its side effect of updating the client-side

@@ -592,6 +592,61 @@
 
 
 
+/* ═══════════════════════════════════════════════════════
+   SQUARE CORNERS  —  shape = "square"
+   Selectize-style crisp corners (3px) so glassSelect and
+   glassMultiSelect sit flush next to native selectizeInput().
+   The `shape-square` class lives on the .gt-*-wrap and is
+   also copied onto the teleported dropdown by glass.js, so
+   both the wrap-descendant and teleported selectors match.
+═══════════════════════════════════════════════════════ */
+
+/* Trigger button */
+.gt-gs-wrap.shape-square .gt-gs-trigger,
+.gt-ms-wrap.shape-square .gt-ms-trigger{
+  border-radius:3px;
+}
+
+/* Dropdown panel (matches before and after teleport) */
+.gt-gs-wrap.shape-square .gt-gs-dropdown,
+.gt-ms-wrap.shape-square .gt-ms-dropdown,
+.gt-gs-dropdown.shape-square,
+.gt-ms-dropdown.shape-square{
+  border-radius:4px;
+}
+
+/* Search box */
+.gt-gs-wrap.shape-square .gt-gs-search,
+.gt-ms-wrap.shape-square .gt-ms-search,
+.gt-gs-dropdown.shape-square .gt-gs-search,
+.gt-ms-dropdown.shape-square .gt-ms-search{
+  border-radius:3px;
+}
+
+/* Option rows, select-all row, style switcher */
+.gt-gs-wrap.shape-square .gt-gs-option,
+.gt-ms-wrap.shape-square .gt-ms-option,
+.gt-ms-wrap.shape-square .gt-ms-all,
+.gt-ms-wrap.shape-square .gt-style-switcher,
+.gt-ms-wrap.shape-square .gt-style-btn,
+.gt-gs-dropdown.shape-square .gt-gs-option,
+.gt-ms-dropdown.shape-square .gt-ms-option,
+.gt-ms-dropdown.shape-square .gt-ms-all,
+.gt-ms-dropdown.shape-square .gt-style-switcher,
+.gt-ms-dropdown.shape-square .gt-style-btn{
+  border-radius:3px;
+}
+
+/* Check / box marker — keep a subtle 2px so it reads as square */
+.gt-gs-wrap.shape-square .gt-gs-check,
+.gt-ms-wrap.shape-square .gt-ms-check,
+.gt-gs-dropdown.shape-square .gt-gs-check,
+.gt-ms-dropdown.shape-square .gt-ms-check{
+  border-radius:2px;
+}
+
+
+
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    SCROLL CONTAINERS â€”
    Applied by JS during init via class injection
@@ -626,6 +681,32 @@
 .gt-gs-options-scroll::-webkit-scrollbar-thumb:hover,
 .gt-ms-options-scroll::-webkit-scrollbar-thumb:hover{
   background:rgba(255,255,255,0.22);
+}
+
+.gt-select-status{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  min-height:38px;
+  padding:10px 12px;
+  color:var(--ms-tx-80);
+  font-size:0.88rem;
+  font-weight:600;
+  letter-spacing:0;
+}
+.gt-select-status.hidden{display:none;}
+.gt-select-status.loading::before{
+  content:"";
+  width:13px;
+  height:13px;
+  border-radius:999px;
+  border:2px solid var(--ms-ac-22);
+  border-top-color:var(--ms-accent);
+  animation:gt-select-spin 760ms linear infinite;
+  flex:0 0 auto;
+}
+@keyframes gt-select-spin{
+  to{transform:rotate(360deg);}
 }
 
 /* Light theme scrollbar */

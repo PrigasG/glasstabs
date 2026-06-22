@@ -1,10 +1,4 @@
-# tests/testthat/test-roadmap-phase1.R
-# Tests for Phase 1 roadmap items:
-#   - glassTabCondition()
-#   - glasstabs_news()
-#   - Improved error messages
 
-# ── glassTabCondition() ───────────────────────────────────────────────────────
 
 test_that("glassTabCondition() returns correct JS condition string", {
   cond <- glassTabCondition("main", "details")
@@ -44,7 +38,6 @@ test_that("glassTabCondition() errors on vector id", {
   expect_error(glassTabCondition(c("a", "b"), "val"), "non-empty string")
 })
 
-# ── glasstabs_news() ─────────────────────────────────────────────────────────
 
 test_that("glasstabs_news() runs without error", {
   expect_no_error(glasstabs_news())
@@ -55,7 +48,6 @@ test_that("glasstabs_news() returns NULL invisibly", {
   expect_null(result)
 })
 
-# ── Improved error messages: glassTabsUI() ────────────────────────────────────
 
 test_that("glassTabsUI() error on empty panels mentions how to fix", {
   err <- tryCatch(glassTabsUI("x"), error = conditionMessage)
@@ -93,7 +85,6 @@ test_that("glassTabsUI() selected mismatch error shows valid values", {
   expect_match(err, "a")
 })
 
-# ── Improved error messages: appendGlassTab() ────────────────────────────────
 
 test_that("appendGlassTab() error names the bad class", {
   sess <- list(
@@ -108,7 +99,6 @@ test_that("appendGlassTab() error names the bad class", {
   expect_match(err, "glassTabPanel")
 })
 
-# ── Improved error messages: glassTabsServer() ───────────────────────────────
 
 test_that("glassTabsServer() warning on namespaced id explains the fix", {
   expect_warning(
@@ -117,7 +107,6 @@ test_that("glassTabsServer() warning on namespaced id explains the fix", {
   )
 })
 
-# ── Improved error messages: theme validation ─────────────────────────────────
 
 test_that("tab theme error on bad string mentions valid options", {
   err <- tryCatch(
@@ -139,7 +128,6 @@ test_that("select theme error on bad string mentions valid options", {
   expect_match(err, "light")
 })
 
-# ── Improved error messages: choices validation ───────────────────────────────
 
 test_that("glassMultiSelect() NULL choices error is actionable", {
   err <- tryCatch(

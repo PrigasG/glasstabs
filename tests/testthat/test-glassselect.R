@@ -1,15 +1,12 @@
-# tests/testthat/test-glassselect.R
 
 choices <- c(Apple = "apple", Banana = "banana", Cherry = "cherry")
 
-# ── return type ───────────────────────────────────────────────────────────────
 
 test_that("glassSelect() returns an htmltools object", {
   ui <- glassSelect("f", choices)
   expect_true(inherits(ui, c("shiny.tag", "shiny.tag.list")))
 })
 
-# ── choices ───────────────────────────────────────────────────────────────────
 
 test_that("glassSelect() accepts unnamed choices", {
   expect_no_error(glassSelect("f", c("x", "y", "z")))
@@ -33,7 +30,6 @@ test_that("glassSelect() errors when choices is NULL", {
   expect_error(glassSelect("f", NULL))
 })
 
-# ── selected ──────────────────────────────────────────────────────────────────
 
 test_that("glassSelect() defaults to no selected option", {
   html <- as.character(glassSelect("f", choices))
@@ -58,7 +54,6 @@ test_that("glassSelect() rejects multiple selected values", {
   )
 })
 
-# ── label and placeholder ─────────────────────────────────────────────────────
 
 test_that("glassSelect() renders label when supplied", {
   html <- as.character(glassSelect("f", choices, label = "Pick a fruit"))
@@ -76,7 +71,6 @@ test_that("glassSelect() shows selected label in trigger", {
   expect_match(html, "Banana")
 })
 
-# ── searchable and clearable ──────────────────────────────────────────────────
 
 test_that("glassSelect() searchable = TRUE renders search input", {
   html <- as.character(glassSelect("f", choices, searchable = TRUE))
@@ -103,7 +97,6 @@ test_that("glassSelect() clearable = FALSE keeps clear control hidden in DOM", {
   expect_true(grepl('display:none;', html, fixed = TRUE))
 })
 
-# ── include_all ───────────────────────────────────────────────────────────────
 
 test_that("glassSelect() include_all = TRUE prepends explicit all choice", {
   html <- as.character(
@@ -137,7 +130,6 @@ test_that("glassSelect() does not duplicate explicit all choice if value already
   expect_equal(n, 1L)
 })
 
-# ── theming ───────────────────────────────────────────────────────────────────
 
 test_that("glassSelect() dark theme injects CSS accent variable", {
   html <- as.character(glassSelect("f", choices, theme = "dark"))
@@ -159,7 +151,6 @@ test_that("glassSelect() errors on invalid theme string", {
   expect_error(glassSelect("f", choices, theme = "monokai"))
 })
 
-# ── inputId scoping ───────────────────────────────────────────────────────────
 
 test_that("glassSelect() scopes element ids to inputId", {
   html <- as.character(glassSelect("my_select", choices))
@@ -180,7 +171,6 @@ test_that("glassSelect() sets data-searchable and data-clearable attributes", {
   expect_true(grepl('data-clearable="true"', html, fixed = TRUE))
 })
 
-# ── reactive helper ───────────────────────────────────────────────────────────
 
 test_that("glassSelectValue() returns a reactive", {
   input <- shiny::reactiveValues(pick = "banana")
@@ -197,7 +187,6 @@ test_that("glassSelectValue() falls back to NULL when input missing", {
   expect_null(shiny::isolate(helper()))
 })
 
-# ── updater ───────────────────────────────────────────────────────────────────
 
 test_that("updateGlassSelect() sends normalized choices", {
   send_mock <- mockery::mock()
@@ -223,6 +212,31 @@ test_that("updateGlassSelect() sends selected value unchanged", {
   args <- mockery::mock_args(send_mock)[[1]]
   expect_equal(args[[1]], "pick")
   expect_equal(args[[2]]$selected, "banana")
+})
+
+test_that("updateGlassSelect() sends shape when provided", {
+  send_mock <- mockery::mock()
+  fake_session <- list(sendInputMessage = send_mock)
+
+  updateGlassSelect(fake_session, "pick", shape = "square")
+
+  args <- mockery::mock_args(send_mock)[[1]]
+  expect_equal(args[[2]]$shape, "square")
+})
+
+test_that("updateGlassSelect() omits shape when not supplied", {
+  send_mock <- mockery::mock()
+  fake_session <- list(sendInputMessage = send_mock)
+
+  updateGlassSelect(fake_session, "pick", selected = "banana")
+
+  args <- mockery::mock_args(send_mock)[[1]]
+  expect_false("shape" %in% names(args[[2]]))
+})
+
+test_that("updateGlassSelect() rejects an invalid shape", {
+  fake_session <- list(sendInputMessage = function(...) NULL)
+  expect_error(updateGlassSelect(fake_session, "pick", shape = "oval"))
 })
 
 test_that("updateGlassSelect() allows clearing with character(0)", {
@@ -255,7 +269,6 @@ test_that("updateGlassSelect() sends empty message when no updates supplied", {
 })
 
 
-#testing empty choices-----------------------
 test_that("glassSelect() accepts empty choices", {
   expect_no_error(glassSelect("f", character(0)))
 })
@@ -268,4 +281,66 @@ test_that("glassSelect() with empty choices shows placeholder", {
 test_that("glassSelect() with empty choices renders no option rows", {
   html <- as.character(glassSelect("f", character(0)))
   expect_false(grepl("gt-gs-option", html, fixed = TRUE))
+})
+
+test_that("glassSelect(server = TRUE) renders a bounded initial option set", {
+  many <- stats::setNames(sprintf("value-%03d", 1:100), sprintf("Choice %03d", 1:100))
+  html <- as.character(glassSelect("remote", many, server = TRUE, server_limit = 10))
+
+  n <- lengths(regmatches(html, gregexpr("gt-gs-option", html, fixed = TRUE)))
+  expect_equal(n, 10L)
+  expect_true(grepl('data-server="true"', html, fixed = TRUE))
+  expect_true(grepl('data-server-total="100"', html, fixed = TRUE))
+  expect_true(grepl("value-010", html, fixed = TRUE))
+  expect_false(grepl("value-011", html, fixed = TRUE))
+})
+
+test_that("glassSelect(server = TRUE) includes selected value outside initial slice", {
+  many <- stats::setNames(sprintf("value-%03d", 1:100), sprintf("Choice %03d", 1:100))
+  html <- as.character(glassSelect("remote", many, selected = "value-099", server = TRUE, server_limit = 10))
+
+  n <- lengths(regmatches(html, gregexpr("gt-gs-option", html, fixed = TRUE)))
+  expect_equal(n, 11L)
+  expect_true(grepl("value-099", html, fixed = TRUE))
+  expect_true(grepl("Choice 099", html, fixed = TRUE))
+})
+
+test_that(".gt_filter_choices() returns bounded server matches", {
+  many <- c(Apple = "apple", Apricot = "apricot", Banana = "banana", Pineapple = "pineapple")
+  filtered <- .gt_filter_choices(many, query = "app", limit = 1)
+
+  expect_equal(filtered$total, 2L)
+  expect_equal(filtered$labels, "Apple")
+  expect_equal(filtered$values, "apple")
+})
+
+test_that(".gt_choice_payload() returns unnamed array-like lists", {
+  payload <- .gt_choice_payload(
+    labels = stats::setNames("Choice", "name"),
+    values = stats::setNames("value", "name")
+  )
+
+  expect_null(names(payload))
+  expect_equal(payload[[1]]$label, "Choice")
+  expect_equal(payload[[1]]$value, "value")
+})
+
+
+test_that("glassSelect() defaults to rounded corners (no shape-square class)", {
+  html <- as.character(glassSelect("f", choices))
+  expect_false(grepl("shape-square", html, fixed = TRUE))
+})
+
+test_that("glassSelect(shape = 'square') adds the shape-square wrap class", {
+  html <- as.character(glassSelect("f", choices, shape = "square"))
+  expect_match(html, "gt-gs-wrap[^\"]*shape-square")
+})
+
+test_that("glassSelect(shape = 'rounded') is the explicit default", {
+  html <- as.character(glassSelect("f", choices, shape = "rounded"))
+  expect_false(grepl("shape-square", html, fixed = TRUE))
+})
+
+test_that("glassSelect() rejects an invalid shape", {
+  expect_error(glassSelect("f", choices, shape = "circle"))
 })

@@ -1,6 +1,4 @@
-# tests/testthat/test-tabs.R
 
-# ── glassTabPanel ─────────────────────────────────────────────────────────────
 
 test_that("glassTabPanel() returns correct class", {
   expect_s3_class(glassTabPanel("a", "Tab A"), "glassTabPanel")
@@ -29,7 +27,6 @@ test_that("glassTabPanel() accepts empty content", {
   expect_length(glassTabPanel("a", "A")$content, 0)
 })
 
-# ── glassTabsUI ───────────────────────────────────────────────────────────────
 
 test_that("glassTabsUI() returns an htmltools object", {
   ui <- glassTabsUI("nav",
@@ -122,6 +119,5 @@ test_that("glassTabsUI() respects explicit selected argument", {
                                    glassTabPanel("first",  "First"),
                                    glassTabPanel("second", "Second"),
                                    selected = "second"))
-  # second pane should be active, not first
   expect_true(grepl('data-value="second"', html, fixed = TRUE))
 })

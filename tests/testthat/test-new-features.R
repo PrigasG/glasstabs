@@ -1,7 +1,4 @@
-# tests/testthat/test-new-features.R
-# Tests for the 7 new features added in v0.3.0
 
-# ── Helpers ───────────────────────────────────────────────────────────────────
 
 make_session <- function(ns_prefix = NULL) {
   msgs <- list()
@@ -14,7 +11,6 @@ make_session <- function(ns_prefix = NULL) {
   )
 }
 
-# ── Feature 1: runGlassExample() ─────────────────────────────────────────────
 
 test_that("runGlassExample() returns available example names invisibly when called with no args", {
   result <- runGlassExample()
@@ -47,7 +43,6 @@ test_that("runGlassExample() does not launch apps during non-interactive checks"
   )
 })
 
-# ── Feature 2: icon argument in glassTabPanel() ───────────────────────────────
 
 test_that("glassTabPanel() icon defaults to NULL", {
   p <- glassTabPanel("a", "A")
@@ -93,7 +88,6 @@ test_that("glassTabPanel() icon is independent of selected and content", {
   expect_length(p$content, 1)
 })
 
-# ── Feature 3: disableGlassTab() / enableGlassTab() ──────────────────────────
 
 test_that("disableGlassTab() sends glasstabs_disable_tab message", {
   sess <- make_session()
@@ -145,7 +139,6 @@ test_that("disableGlassTab() and enableGlassTab() are independent calls", {
   expect_equal(sess$msgs()[[2]]$type, "glasstabs_enable_tab")
 })
 
-# ── Feature 4: updateGlassTabBadge() ─────────────────────────────────────────
 
 test_that("updateGlassTabBadge() sends glasstabs_tab_badge message", {
   sess <- make_session()
@@ -187,11 +180,8 @@ test_that("updateGlassTabBadge() sends 0 to clear badge", {
   expect_equal(sess$msgs()[[1]]$message$count, 0L)
 })
 
-# ── Feature 5: Bookmark integration ──────────────────────────────────────────
 
 test_that("glassTabsServer() accepts bookmark = TRUE without error", {
-  # Can't run full moduleServer in unit tests, but we can confirm the
-  # function signature and that bookmark argument is accepted.
   expect_true(is.function(glassTabsServer))
   fmls <- formals(glassTabsServer)
   expect_true("bookmark" %in% names(fmls))
@@ -199,19 +189,16 @@ test_that("glassTabsServer() accepts bookmark = TRUE without error", {
 })
 
 test_that("glassTabsServer() accepts bookmark = FALSE without error", {
-  # Verify the argument exists and defaults to TRUE
   expect_equal(formals(glassTabsServer)$bookmark, TRUE)
 })
 
 test_that("glassTabsServer() warns when id contains '-'", {
   expect_warning(
-    # moduleServer will error without a reactive context, so catch that too
     tryCatch(glassTabsServer("parent-tabs"), error = function(e) NULL),
     "ns\\("
   )
 })
 
-# ── Feature 6: glassTabsOutput() / renderGlassTabs() ─────────────────────────
 
 test_that("glassTabsOutput() returns a shiny tag", {
   out <- glassTabsOutput("my_tabs")
@@ -240,7 +227,6 @@ test_that("glassTabsOutput() and uiOutput() produce same tag structure", {
   expect_equal(gt_html, ui_html)
 })
 
-# ── Feature 7: cheatsheet.tex ────────────────────────────────────────────────
 
 test_that("glasstabs-cheatsheet.tex exists in inst/cheatsheet", {
   tex_path <- system.file("cheatsheet", "glasstabs-cheatsheet.tex",
@@ -268,7 +254,6 @@ test_that("cheatsheet.tex contains key function names", {
   }
 })
 
-# ── Duplicate value validation (from previous release, kept here) ─────────────
 
 test_that("glassTabsUI() errors on duplicate panel values", {
   expect_error(
@@ -289,7 +274,6 @@ test_that("glassTabsUI() error message names the duplicate value", {
   expect_true(grepl("dup", err))
 })
 
-# ── Compact mode ──────────────────────────────────────────────────────────────
 
 test_that("glassTabsUI() without compact does not add gt-compact class", {
   html <- as.character(glassTabsUI(

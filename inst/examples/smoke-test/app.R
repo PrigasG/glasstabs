@@ -1,14 +1,3 @@
-# glasstabs - smoke test example
-#
-# Run with:
-# shiny::runApp("inst/examples/smoke-test")
-#
-# What this covers:
-# - initial active tab reported by glassTabsServer()
-# - programmatic tab switching via updateGlassTabsUI()
-# - hiding the currently active admin tab
-# - appending and removing a dynamic compare tab
-# - removing the last dynamic tab after selecting it
 
 library(shiny)
 library(glasstabs)

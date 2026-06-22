@@ -1,5 +1,3 @@
-# tests/testthat/test-dependencies.R
-# Verifies the htmlDependency object and that bundled assets exist on disk.
 
 test_that("useGlassTabs() returns an html_dependency", {
   expect_s3_class(useGlassTabs(), "html_dependency")

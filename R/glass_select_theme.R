@@ -68,8 +68,6 @@ glass_select_theme <- function(
 }
 
 
-# Internal: resolve final colors from theme arg
-# theme can be "dark", "light", or a glass_select_theme() object
 .ms_resolve_theme <- function(theme = NULL) {
   dark_defaults <- list(
     bg     = "rgba(9,20,42,0.97)",

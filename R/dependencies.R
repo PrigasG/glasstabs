@@ -4,9 +4,10 @@
 #' A list of available examples is printed when called with no arguments.
 #' Example apps are launched only in interactive sessions.
 #'
-#' @param example Name of the example to run. One of `"smoke-test"`,
-#'   `"basic"`, `"bs4dash"`, `"dashboard"`. When `NULL` (default), lists
-#'   all available examples.
+#' @param example Name of the example to run, such as `"basic"`,
+#'   `"dashboard"`, `"server-select"`, `"smoke-test"`, or
+#'   `"square-corners"`. When `NULL` (default), lists all available
+#'   examples.
 #' @param ... Additional arguments passed to [shiny::runApp()].
 #'
 #' @return Called for its side-effect (launches a Shiny app).
@@ -18,6 +19,7 @@
 #' # Run an example interactively
 #' if (interactive()) {
 #'   runGlassExample("smoke-test")
+#'   runGlassExample("server-select")
 #' }
 #'
 #' @export

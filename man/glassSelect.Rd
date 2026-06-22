@@ -16,7 +16,11 @@ glassSelect(
   all_choice_label = "All categories",
   all_choice_value = "__all__",
   check_style = c("checkbox", "check-only", "filled"),
-  theme = "dark"
+  theme = "dark",
+  shape = c("rounded", "square"),
+  server = FALSE,
+  server_limit = 50L,
+  server_min_chars = 0L
 )
 }
 \arguments{
@@ -48,6 +52,21 @@ selection? Default \code{FALSE}.}
 
 \item{theme}{Color theme. One of \code{"dark"} (default) or \code{"light"},
 or a \code{\link[=glass_select_theme]{glass_select_theme()}} object.}
+
+\item{shape}{Corner style for the trigger and dropdown. One of
+\code{"rounded"} (default) for the signature glass look, or
+\code{"square"} for crisp, selectize-style corners so the widget sits
+neatly alongside native 'Shiny' \code{selectizeInput()} controls.}
+
+\item{server}{Logical. If \code{TRUE}, render only an initial slice of
+choices and use \code{\link[=glassSelectServer]{glassSelectServer()}} to search the full choice set from
+the Shiny server. Default \code{FALSE}.}
+
+\item{server_limit}{Maximum number of choices rendered initially and returned
+for each server-side search. Default \code{50}.}
+
+\item{server_min_chars}{Minimum search characters required before server-side
+matching filters choices. Default \code{0}.}
 }
 \value{
 An \code{htmltools::tagList} containing the single-select trigger,

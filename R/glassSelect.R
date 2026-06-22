@@ -27,6 +27,17 @@
 #'   \code{"check-only"}, or \code{"filled"}.
 #' @param theme Color theme. One of \code{"dark"} (default) or \code{"light"},
 #'   or a [glass_select_theme()] object.
+#' @param shape Corner style for the trigger and dropdown. One of
+#'   \code{"rounded"} (default) for the signature glass look, or
+#'   \code{"square"} for crisp, selectize-style corners so the widget sits
+#'   neatly alongside native 'Shiny' \code{selectizeInput()} controls.
+#' @param server Logical. If \code{TRUE}, render only an initial slice of
+#'   choices and use [glassSelectServer()] to search the full choice set from
+#'   the Shiny server. Default \code{FALSE}.
+#' @param server_limit Maximum number of choices rendered initially and returned
+#'   for each server-side search. Default \code{50}.
+#' @param server_min_chars Minimum search characters required before server-side
+#'   matching filters choices. Default \code{0}.
 #'
 #' @return An \code{htmltools::tagList} containing the single-select trigger,
 #'   dropdown panel, and scoped \code{<style>} block.
@@ -70,7 +81,11 @@ glassSelect <- function(
     all_choice_label = "All categories",
     all_choice_value = "__all__",
     check_style = c("checkbox", "check-only", "filled"),
-    theme = "dark"
+    theme = "dark",
+    shape = c("rounded", "square"),
+    server = FALSE,
+    server_limit = 50L,
+    server_min_chars = 0L
 ) {
   if (!is.character(inputId) || length(inputId) != 1L || !nzchar(inputId)) {
     stop(
@@ -79,6 +94,10 @@ glassSelect <- function(
     )
   }
   check_style <- match.arg(check_style)
+  shape <- match.arg(shape)
+  server <- isTRUE(server)
+  server_limit <- .gt_positive_int(server_limit, "server_limit")
+  server_min_chars <- .gt_nonnegative_int(server_min_chars, "server_min_chars")
   colors <- .ms_resolve_theme(theme)
 
   normalized <- .gt_normalize_choices(choices)
@@ -124,6 +143,19 @@ glassSelect <- function(
     placeholder = placeholder
   )
 
+  render_idx <- seq_along(vals)
+  if (server) {
+    render_idx <- seq_len(min(length(vals), server_limit))
+    if (!is.null(selected)) {
+      selected_idx <- match(selected, vals)
+      if (!is.na(selected_idx) && !selected_idx %in% render_idx) {
+        render_idx <- c(render_idx, selected_idx)
+      }
+    }
+  }
+  render_vals <- vals[render_idx]
+  render_labels <- labels[render_idx]
+
   field_id <- paste0(inputId, "-field")
   scope_id <- paste0(inputId, "-wrap")
 
@@ -136,6 +168,7 @@ glassSelect <- function(
   wrap_cls <- paste(
     "gt-gs-wrap",
     paste0("style-", check_style),
+    if (identical(shape, "square")) "shape-square" else NULL,
     if (.is_light_theme(theme)) "theme-light" else NULL
   )
 
@@ -163,9 +196,9 @@ glassSelect <- function(
     NULL
   }
 
-  option_rows <- lapply(seq_along(vals), function(i) {
-    v <- vals[[i]]
-    lbl <- labels[[i]]
+  option_rows <- lapply(seq_along(render_vals), function(i) {
+    v <- render_vals[[i]]
+    lbl <- render_labels[[i]]
     cls <- paste(
       c(
         "gt-gs-option",
@@ -214,6 +247,9 @@ glassSelect <- function(
         `data-clearable` = tolower(as.character(clearable)),
         `data-all-choice-label` = all_choice_label,
         `data-all-choice-value` = all_choice_value,
+        `data-server` = tolower(as.character(server)),
+        `data-server-total` = as.character(length(vals)),
+        `data-server-min-chars` = as.character(server_min_chars),
 
         shiny::div(
           class = "gt-gs-trigger",
@@ -304,6 +340,9 @@ glassSelect <- function(
 #' @param check_style Optional new style string. One of \code{"checkbox"},
 #'   \code{"check-only"}, or \code{"filled"}. Defaults to \code{NULL}, which
 #'   keeps the current style unchanged.
+#' @param shape Optional new corner style. One of \code{"rounded"} or
+#'   \code{"square"}. Defaults to \code{NULL}, which keeps the current shape
+#'   unchanged.
 #'
 #' @return No return value. Called for its side effect of updating the client-side
 #'   widget.
@@ -314,10 +353,14 @@ updateGlassSelect <- function(
     inputId,
     choices = NULL,
     selected = NULL,
-    check_style = NULL
+    check_style = NULL,
+    shape = NULL
 ) {
   if (!is.null(check_style)) {
     check_style <- match.arg(check_style, c("checkbox", "check-only", "filled"))
+  }
+  if (!is.null(shape)) {
+    shape <- match.arg(shape, c("rounded", "square"))
   }
 
   message <- list()
@@ -357,6 +400,10 @@ updateGlassSelect <- function(
     message$style <- check_style
   }
 
+  if (!is.null(shape)) {
+    message$shape <- shape
+  }
+
   session$sendInputMessage(inputId, message)
 }
 
@@ -393,4 +440,59 @@ updateGlassSelect <- function(
 #' @export
 glassSelectValue <- function(input, inputId) {
   shiny::reactive(input[[inputId]] %||% NULL)
+}
+
+#' Register server-side search for a glassSelect widget
+#'
+#' Use this with \code{glassSelect(..., server = TRUE)} when the choice set is
+#' large. The browser sends search queries to Shiny and the server returns a
+#' bounded list of matching choices.
+#'
+#' @param inputId Input id used in [glassSelect()].
+#' @param choices Named or unnamed character vector of choices.
+#' @param session Shiny session. Defaults to the current reactive domain.
+#' @param limit Maximum number of matching choices returned per search.
+#'   Default \code{50}.
+#' @param ignore_case Logical. Match labels and values case-insensitively.
+#'   Default \code{TRUE}.
+#'
+#' @return An observer created by [shiny::observeEvent()].
+#'
+#' @examples
+#' if (interactive()) {
+#'   library(shiny)
+#'
+#'   choices <- stats::setNames(
+#'     sprintf("value-%04d", 1:1000),
+#'     sprintf("Choice %04d", 1:1000)
+#'   )
+#'
+#'   ui <- fluidPage(
+#'     useGlassTabs(),
+#'     glassSelect("pick", choices, server = TRUE)
+#'   )
+#'
+#'   server <- function(input, output, session) {
+#'     glassSelectServer("pick", choices, session = session)
+#'   }
+#'
+#'   shinyApp(ui, server)
+#' }
+#'
+#' @export
+glassSelectServer <- function(
+    inputId,
+    choices,
+    session = shiny::getDefaultReactiveDomain(),
+    limit = 50L,
+    ignore_case = TRUE
+) {
+  .gt_register_server_choices(
+    inputId = inputId,
+    choices = choices,
+    session = session,
+    limit = limit,
+    ignore_case = ignore_case,
+    type = "single"
+  )
 }

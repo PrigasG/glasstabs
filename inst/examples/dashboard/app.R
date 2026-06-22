@@ -1,19 +1,7 @@
-# glasstabs — Store Analytics dashboard example
-#
-# Demonstrates:
-#   glassTabsUI / glassTabPanel / glassTabsServer
-#   updateGlassTabsUI  — Next button advances tabs programmatically
-#   showGlassTab / hideGlassTab  — Admin tab revealed by checkbox
-#   appendGlassTab / removeGlassTab  — Compare tab added/removed at runtime
-#   glassSelect / glassSelectValue  — Region picker
-#   glassMultiSelect / glassMultiSelectValue / glassFilterTags  — Metric filter
-#
-# Run with: shiny::runApp("inst/examples/dashboard")
 
 library(shiny)
 library(glasstabs)
 
-# ── Static data ───────────────────────────────────────────────────────────────
 
 regions <- c("All Regions" = "all", North = "north", South = "south",
              East = "east", West = "west")
@@ -31,15 +19,14 @@ store_stats <- list(
 
 trend_notes <- c(
   all   = "All regions trending +4.2% vs last quarter.",
-  north = "North up +6.1% — strongest performer this quarter.",
-  south = "South down -1.3% — review Q3 promo strategy.",
+  north = "North up +6.1% â€” strongest performer this quarter.",
+  south = "South down -1.3% â€” review Q3 promo strategy.",
   east  = "East steady at +3.8%, new location opening next month.",
   west  = "West recovering after supply disruption, up +2.1%."
 )
 
 inventory_levels <- c(all = 94, north = 97, south = 88, east = 96, west = 91)
 
-# ── UI ────────────────────────────────────────────────────────────────────────
 
 page_css <- "
 body {
@@ -93,7 +80,6 @@ ui <- fluidPage(
   tags$div(
     class = "dash-wrap",
 
-    # ── Header ──────────────────────────────────────────────────────────────
     tags$div(
       class = "dash-head",
       tags$div(class = "dash-title", "Store Analytics"),
@@ -112,10 +98,8 @@ ui <- fluidPage(
       )
     ),
 
-    # ── Filter tag pills ─────────────────────────────────────────────────────
     tags$div(class = "dash-tags", glassFilterTags("metrics")),
 
-    # ── Action bar ───────────────────────────────────────────────────────────
     tags$div(
       class = "dash-actions",
       checkboxInput("show_admin", "Admin view", value = FALSE),
@@ -124,7 +108,6 @@ ui <- fluidPage(
       actionButton("next_tab",       "Next \u2192",    class = "btn btn-sm btn-primary")
     ),
 
-    # ── Tabs ─────────────────────────────────────────────────────────────────
     glassTabsUI(
       "main",
       selected = "overview",
@@ -153,12 +136,10 @@ ui <- fluidPage(
       )
     ),
 
-    # ── Footer ───────────────────────────────────────────────────────────────
     tags$div(class = "dash-footer", textOutput("footer_txt", inline = TRUE))
   )
 )
 
-# ── Server ────────────────────────────────────────────────────────────────────
 
 server <- function(input, output, session) {
 
@@ -166,17 +147,14 @@ server <- function(input, output, session) {
   region_sel  <- glassSelectValue(input, "region")
   metrics_sel <- glassMultiSelectValue(input, "metrics")
 
-  # Convenience shorthands
   region  <- reactive(region_sel()  %||% "all")
   sel_met <- reactive(metrics_sel$selected() %||% character(0))
 
-  # ── Admin tab: show / hide ─────────────────────────────────────────────────
   observeEvent(input$show_admin, {
     if (isTRUE(input$show_admin)) showGlassTab(session, "main", "admin")
     else                          hideGlassTab(session, "main", "admin")
   }, ignoreInit = FALSE)
 
-  # ── Compare tab: append / remove ──────────────────────────────────────────
   compare_present <- reactiveVal(FALSE)
 
   observeEvent(input$add_compare, {
@@ -198,7 +176,6 @@ server <- function(input, output, session) {
     compare_present(FALSE)
   })
 
-  # ── Next button: advance through visible tabs ──────────────────────────────
   observeEvent(input$next_tab, {
     base  <- c("overview", "trends", "inventory")
     extra <- c(
@@ -213,7 +190,6 @@ server <- function(input, output, session) {
     }
   })
 
-  # ── Overview ──────────────────────────────────────────────────────────────
   output$overview_cards <- renderUI({
     met <- sel_met()
     if (length(met) == 0L) return(tags$p("No metrics selected."))
@@ -232,7 +208,6 @@ server <- function(input, output, session) {
     tags$div(class = "note-box", trend_notes[[region()]])
   })
 
-  # ── Trends ────────────────────────────────────────────────────────────────
   output$trends_chart <- renderUI({
     met  <- sel_met()
     r    <- region()
@@ -256,7 +231,6 @@ server <- function(input, output, session) {
                            trend_notes[[r]]))
   })
 
-  # ── Inventory ─────────────────────────────────────────────────────────────
   output$inventory_ui <- renderUI({
     r   <- region()
     lvl <- inventory_levels[[r]]
@@ -277,7 +251,6 @@ server <- function(input, output, session) {
     )
   })
 
-  # ── Admin ─────────────────────────────────────────────────────────────────
   output$admin_debug <- renderPrint({
     list(
       active_tab   = active_tab(),
@@ -288,7 +261,6 @@ server <- function(input, output, session) {
     )
   })
 
-  # ── Compare (appended dynamically) ────────────────────────────────────────
   output$compare_ui <- renderUI({
     r <- region()
     s <- store_stats[[r]]
@@ -315,7 +287,6 @@ server <- function(input, output, session) {
     )
   })
 
-  # ── Footer ────────────────────────────────────────────────────────────────
   output$footer_txt <- renderText({
     met <- sel_met()
     sprintf(

@@ -27,6 +27,32 @@
     return [value];
   }
 
+  function parseBoolAttr(el, name) {
+    return String(el.getAttribute(name) || '').toLowerCase() === 'true';
+  }
+
+  function parseIntAttr(el, name, fallback) {
+    var parsed = parseInt(el.getAttribute(name), 10);
+    return isNaN(parsed) ? fallback : parsed;
+  }
+
+  function parseJsonArrayAttr(el, name) {
+    var raw = el.getAttribute(name);
+    if (!raw) return [];
+    try {
+      var parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed.map(String) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function asChoiceArray(choices) {
+    if (Array.isArray(choices)) return choices;
+    if (choices && typeof choices === 'object') return Object.values(choices);
+    return [];
+  }
+
   function escapeHtml(x) {
     return String(x)
       .replace(/&/g, '&amp;')
@@ -75,7 +101,7 @@
     '--ms-tx-35','--ms-tx-45','--ms-tx-50','--ms-tx-80','--ms-ac-tx-75'
   ];
 
-  var TELEPORT_CLASSES = ['style-checkbox','style-check-only','style-filled','theme-light'];
+  var TELEPORT_CLASSES = ['style-checkbox','style-check-only','style-filled','theme-light','shape-square'];
 
   /** Teleport a dropdown to <body> so no parent overflow/transform can clip it */
   function teleportOpen(wrap, dropdown) {
@@ -454,6 +480,8 @@
 
     var inputId = wrap.getAttribute('data-input-id');
     var placeholder = wrap.getAttribute('data-placeholder') || 'Select an option';
+    var serverMode = parseBoolAttr(wrap, 'data-server');
+    var serverMinChars = parseIntAttr(wrap, 'data-server-min-chars', 0);
 
     /* ── DOM refs ── */
     var trigger = wrap.querySelector('.gt-gs-trigger');
@@ -480,10 +508,17 @@
     /* ── Add scroll class to options container ── */
     if (optionsBox) optionsBox.classList.add('gt-gs-options-scroll');
 
+    var statusRow = document.createElement('div');
+    statusRow.className = 'gt-select-status hidden';
+    statusRow.setAttribute('role', 'status');
+    statusRow.setAttribute('aria-live', 'polite');
+
     /* ── Internal state ── */
     var state = {
       choices: [],     // [{label, value, hidden, _labelLower}]
       selected: null,  // string | null
+      selectedLabel: null,
+      loading: false,
       query: ''
     };
 
@@ -500,6 +535,7 @@
       });
       if (el.classList.contains('selected')) {
         state.selected = value;
+        state.selectedLabel = label;
       }
       bindOption(el);
     });
@@ -515,6 +551,33 @@
         if (state.choices[i].value === value) return state.choices[i];
       }
       return null;
+    }
+
+    function visibleChoiceCount() {
+      var n = 0;
+      state.choices.forEach(function (ch) {
+        if (!ch.hidden) n++;
+      });
+      return n;
+    }
+
+    function setStatus(text, active, loading) {
+      statusRow.textContent = text || '';
+      statusRow.classList.toggle('hidden', !active);
+      statusRow.classList.toggle('loading', !!loading);
+      if (active && optionsBox && statusRow.parentNode !== optionsBox) {
+        optionsBox.appendChild(statusRow);
+      }
+    }
+
+    function updateStatus() {
+      if (state.loading) {
+        setStatus('Searching...', true, true);
+      } else if (visibleChoiceCount() === 0) {
+        setStatus('No matches', true, false);
+      } else {
+        setStatus('', false, false);
+      }
     }
 
     /* ── DOM patching ── */
@@ -538,8 +601,9 @@
     /* ── UI sync (visual only, no Shiny notification) ── */
     function syncUI() {
       var ch = findChoice(state.selected);
-      labelEl.textContent = ch ? ch.label : placeholder;
+      labelEl.textContent = ch ? ch.label : (state.selectedLabel || placeholder);
       patchOptionClasses();
+      updateStatus();
     }
 
     /* ── Shiny notification ── */
@@ -557,10 +621,20 @@
       var valueStr = (value === null || typeof value === 'undefined' || value === '') ? null : String(value);
 
       if (valueStr !== null && !findChoice(valueStr)) {
-        valueStr = null;
+        if (opts.preserveMissingSelection) {
+          state.selectedLabel = opts.label || state.selectedLabel;
+        } else {
+          valueStr = null;
+        }
       }
 
       state.selected = valueStr;
+      if (valueStr === null) {
+        state.selectedLabel = null;
+      } else {
+        var selectedChoice = findChoice(valueStr);
+        if (selectedChoice) state.selectedLabel = selectedChoice.label;
+      }
       syncUI();
       if (doNotify) commitSelection();
     }
@@ -597,12 +671,16 @@
     function setChoices(choices, opts) {
       opts = opts || {};
       var preserveSel = opts.preserveSelection !== false;
+      var preserveMissingSel = opts.preserveMissingSelection === true;
       var doNotify = opts.notify !== false;
 
       var oldSelected = preserveSel ? state.selected : null;
+      var oldSelectedLabel = preserveSel ? state.selectedLabel : null;
+      choices = asChoiceArray(choices);
+      state.loading = false;
 
       /* Update state */
-      state.choices = (choices || []).map(function (ch) {
+      state.choices = choices.map(function (ch) {
         return {
           label: String(ch.label),
           value: String(ch.value),
@@ -614,8 +692,13 @@
       /* Intersect selection */
       if (oldSelected !== null && findChoice(oldSelected)) {
         state.selected = oldSelected;
+        state.selectedLabel = findChoice(oldSelected).label;
+      } else if (oldSelected !== null && preserveMissingSel) {
+        state.selected = oldSelected;
+        state.selectedLabel = oldSelectedLabel;
       } else {
         state.selected = null;
+        state.selectedLabel = null;
       }
 
       /* Rebuild DOM */
@@ -625,9 +708,10 @@
       });
       optionsBox.innerHTML = '';
       optionsBox.appendChild(frag);
+      optionsBox.appendChild(statusRow);
 
       /* Re-apply search if active */
-      if (state.query) {
+      if (!serverMode && state.query) {
         applySearchNow(state.query);
       }
 
@@ -645,10 +729,25 @@
       });
 
       patchVisibility();
+      updateStatus();
+    }
+
+    function sendServerSearch(q) {
+      var query = (q || '').trim();
+      state.query = query.toLowerCase();
+      if (!window.Shiny || !window.Shiny.setInputValue) return;
+      if (query.length < serverMinChars) query = '';
+      state.loading = true;
+      updateStatus();
+      Shiny.setInputValue(inputId + '_search', {
+        query: query,
+        nonce: Date.now()
+      }, { priority: 'event' });
     }
 
     var debouncedSearch = debounce(function () {
-      applySearchNow(searchIn ? searchIn.value : '');
+      if (serverMode) sendServerSearch(searchIn ? searchIn.value : '');
+      else applySearchNow(searchIn ? searchIn.value : '');
     }, 75);
 
     /* ── Position the dropdown below the trigger ──
@@ -813,10 +912,16 @@
         dropdown.classList.add('style-' + s);
         currentStyle = s;
       },
+      setShape: function (sh) {
+        var square = (sh === 'square');
+        wrap.classList.toggle('shape-square', square);
+        if (dropdown) dropdown.classList.toggle('shape-square', square);
+      },
       clear: function (opts) {
         setValue(null, opts);
       },
-      destroy: destroy
+      destroy: destroy,
+      commitSelection: commitSelection
     };
   }
 
@@ -830,6 +935,8 @@
     var inputId = wrap.getAttribute('data-input-id');
     var placeholder = wrap.getAttribute('data-placeholder') || 'Filter by Category';
     var allLabel = wrap.getAttribute('data-all-label') || 'All categories';
+    var serverMode = parseBoolAttr(wrap, 'data-server');
+    var serverMinChars = parseIntAttr(wrap, 'data-server-min-chars', 0);
 
     /* ── DOM refs ── */
     var trigger = wrap.querySelector('.gt-ms-trigger');
@@ -858,10 +965,17 @@
     /* ── Add scroll class ── */
     if (optionsBox) optionsBox.classList.add('gt-ms-options-scroll');
 
+    var statusRow = document.createElement('div');
+    statusRow.className = 'gt-select-status hidden';
+    statusRow.setAttribute('role', 'status');
+    statusRow.setAttribute('aria-live', 'polite');
+
     /* ── Internal state ── */
     var state = {
       choices: [],          // [{label, value, hidden, hue, _labelLower}]
       selected: new Set(),  // Set of value strings
+      total: parseIntAttr(wrap, 'data-server-total', null),
+      loading: false,
       query: ''
     };
 
@@ -887,12 +1001,23 @@
       bindOption(el);
     });
 
+    parseJsonArrayAttr(wrap, 'data-selected-values').forEach(function (v) {
+      state.selected.add(v);
+    });
+
     /* ── State readers ── */
     function getValue() {
       /* Return in choice order, not Set insertion order */
       var out = [];
+      var seen = new Set();
       state.choices.forEach(function (ch) {
-        if (state.selected.has(ch.value)) out.push(ch.value);
+        if (state.selected.has(ch.value)) {
+          out.push(ch.value);
+          seen.add(ch.value);
+        }
+      });
+      state.selected.forEach(function (v) {
+        if (!seen.has(v)) out.push(v);
       });
       return out;
     }
@@ -907,6 +1032,25 @@
         if (!ch.hidden && state.selected.has(ch.value)) n++;
       });
       return n;
+    }
+
+    function setStatus(text, active, loading) {
+      statusRow.textContent = text || '';
+      statusRow.classList.toggle('hidden', !active);
+      statusRow.classList.toggle('loading', !!loading);
+      if (active && optionsBox && statusRow.parentNode !== optionsBox) {
+        optionsBox.appendChild(statusRow);
+      }
+    }
+
+    function updateStatus() {
+      if (state.loading) {
+        setStatus('Searching...', true, true);
+      } else if (visibleChoices().length === 0) {
+        setStatus('No matches', true, false);
+      } else {
+        setStatus('', false, false);
+      }
     }
 
     /* ── DOM patching ── */
@@ -933,7 +1077,7 @@
 
     /* ── syncUI: visual-only update ── */
     function syncUI() {
-      var total = state.choices.length;
+      var total = state.total === null ? state.choices.length : state.total;
       var selCount = state.selected.size;
       var vis = visibleChoices().length;
       var visSel = visibleSelectedCount();
@@ -974,13 +1118,14 @@
               break;
             }
           }
-          labelEl.textContent = first ? first.label : placeholder;
+          labelEl.textContent = first ? first.label : '1 selected';
         } else {
           labelEl.textContent = 'Multiple selection';
         }
       }
 
       patchOptionClasses();
+      updateStatus();
       renderTags();
     }
 
@@ -1040,13 +1185,14 @@
     function setValue(vals, opts) {
       opts = opts || {};
       var doNotify = opts.notify !== false;
+      var preserveMissingSel = opts.preserveMissingSelection === true;
       var arr = Array.isArray(vals) ? vals.map(String) : [];
 
       state.selected = new Set();
       var validValues = new Set(state.choices.map(function (ch) { return ch.value; }));
 
       arr.forEach(function (v) {
-        if (validValues.has(v)) state.selected.add(v);
+        if (validValues.has(v) || preserveMissingSel) state.selected.add(v);
       });
 
       syncUI();
@@ -1095,13 +1241,17 @@
     function setChoices(choices, opts) {
       opts = opts || {};
       var preserveSel = opts.preserveSelection !== false;
+      var preserveMissingSel = opts.preserveMissingSelection === true;
       var doNotify = opts.notify !== false;
+      var total = typeof opts.total === 'number' ? opts.total : null;
 
       var oldSelected = preserveSel ? new Set(state.selected) : new Set();
+      choices = asChoiceArray(choices);
+      state.loading = false;
 
       /* Update state */
-      var n = (choices || []).length;
-      state.choices = (choices || []).map(function (ch, i) {
+      var n = choices.length;
+      state.choices = choices.map(function (ch, i) {
         return {
           label: String(ch.label),
           value: String(ch.value),
@@ -1110,12 +1260,13 @@
           _labelLower: String(ch.label).toLowerCase()
         };
       });
+      state.total = total === null ? state.choices.length : total;
 
       /* Intersect selection */
       var newValues = new Set(state.choices.map(function (ch) { return ch.value; }));
       state.selected = new Set();
       oldSelected.forEach(function (v) {
-        if (newValues.has(v)) state.selected.add(v);
+        if (newValues.has(v) || preserveMissingSel) state.selected.add(v);
       });
 
       /* Rebuild DOM using fragment */
@@ -1125,9 +1276,10 @@
       });
       optionsBox.innerHTML = '';
       optionsBox.appendChild(frag);
+      optionsBox.appendChild(statusRow);
 
       /* Re-apply search if active */
-      if (state.query) {
+      if (!serverMode && state.query) {
         applySearchNow(state.query);
       }
 
@@ -1146,7 +1298,6 @@
 
       patchVisibility();
       /* Update allRow and counts without notifying Shiny */
-      var total = state.choices.length;
       var vis = visibleChoices().length;
       var visSel = visibleSelectedCount();
 
@@ -1159,10 +1310,25 @@
         }
         allRow.setAttribute('aria-selected', vis > 0 && visSel === vis ? 'true' : 'false');
       }
+      updateStatus();
+    }
+
+    function sendServerSearch(q) {
+      var query = (q || '').trim();
+      state.query = query.toLowerCase();
+      if (!window.Shiny || !window.Shiny.setInputValue) return;
+      if (query.length < serverMinChars) query = '';
+      state.loading = true;
+      updateStatus();
+      Shiny.setInputValue(inputId + '_search', {
+        query: query,
+        nonce: Date.now()
+      }, { priority: 'event' });
     }
 
     var debouncedSearch = debounce(function () {
-      applySearchNow(searchIn ? searchIn.value : '');
+      if (serverMode) sendServerSearch(searchIn ? searchIn.value : '');
+      else applySearchNow(searchIn ? searchIn.value : '');
     }, 75);
 
     /* ── Position the dropdown below the trigger ──
@@ -1371,6 +1537,11 @@
         syncUI();
         if (opts.notify !== false) commitSelection();
       },
+      setShape: function (sh) {
+        var square = (sh === 'square');
+        wrap.classList.toggle('shape-square', square);
+        if (dropdown) dropdown.classList.toggle('shape-square', square);
+      },
       clear: function (opts) {
         setValue([], opts);
       },
@@ -1443,9 +1614,11 @@
       receiveMessage: function (el, data) {
         var ctrl = ensureInit(el);
         if (!ctrl) return;
+        var shouldCommit = false;
 
         if (hasOwn(data, 'choices')) {
           ctrl.setChoices(data.choices || [], { notify: false });
+          shouldCommit = true;
         }
 
         if (hasOwn(data, 'selected')) {
@@ -1453,14 +1626,21 @@
           if (Array.isArray(sel)) sel = sel.length ? sel[0] : null;
           if (sel === '') sel = null;
           ctrl.setValue(sel, { notify: false });
+          shouldCommit = true;
         }
 
         if (hasOwn(data, 'style')) {
           ctrl.setStyle(data.style, { notify: false });
+          shouldCommit = true;
+        }
+
+        if (hasOwn(data, 'shape') && typeof ctrl.setShape === 'function') {
+          ctrl.setShape(data.shape);
         }
 
         /* Single commit after all fields are set */
-        triggerShinyChange(el);
+        if (shouldCommit && ctrl.commitSelection) ctrl.commitSelection();
+        if (shouldCommit) triggerShinyChange(el);
       }
     });
     Shiny.inputBindings.register(glassSelectBinding, 'glasstabs.glassSelect');
@@ -1493,22 +1673,30 @@
       receiveMessage: function (el, data) {
         var ctrl = ensureInit(el);
         if (!ctrl) return;
+        var shouldCommit = false;
 
         if (hasOwn(data, 'choices')) {
           ctrl.setChoices(data.choices || [], { notify: false });
+          shouldCommit = true;
         }
 
         if (hasOwn(data, 'selected')) {
           ctrl.setValue(asValueArray(data.selected), { notify: false });
+          shouldCommit = true;
         }
 
         if (hasOwn(data, 'style')) {
           ctrl.setStyle(data.style, { notify: false });
+          shouldCommit = true;
+        }
+
+        if (hasOwn(data, 'shape') && typeof ctrl.setShape === 'function') {
+          ctrl.setShape(data.shape);
         }
 
         /* Single commit after all fields are set */
-        if (ctrl.commitSelection) ctrl.commitSelection();
-        triggerShinyChange(el);
+        if (shouldCommit && ctrl.commitSelection) ctrl.commitSelection();
+        if (shouldCommit) triggerShinyChange(el);
       }
     });
     Shiny.inputBindings.register(glassMultiSelectBinding, 'glasstabs.glassMultiSelect');
@@ -1624,24 +1812,45 @@
       }
 
       var data = msg.data || {};
+      var shouldCommit = false;
       if (hasOwn(data, 'choices')) {
         ctrl.setChoices(data.choices || [], { notify: false });
+        shouldCommit = true;
       }
       if (hasOwn(data, 'selected')) {
         ctrl.setValue(asValueArray(data.selected), { notify: false });
+        shouldCommit = true;
       }
       if (hasOwn(data, 'style')) {
         ctrl.setStyle(data.style, { notify: false });
+        shouldCommit = true;
       }
-      if (ctrl.commitSelection) ctrl.commitSelection();
+      if (hasOwn(data, 'shape') && typeof ctrl.setShape === 'function') {
+        ctrl.setShape(data.shape);
+      }
+      if (shouldCommit && ctrl.commitSelection) ctrl.commitSelection();
     }
-    
+
     Shiny.addCustomMessageHandler('glasstabs_reinit', function (msg) {
       bootAll();
     });
 
     Shiny.addCustomMessageHandler('glasstabs_update_multiselect', function (msg) {
       setTimeout(function () { applyMultiSelectUpdate(msg, 0); }, 50);
+    });
+
+    Shiny.addCustomMessageHandler('glasstabs_server_choices', function (msg) {
+      if (!msg || !msg.inputId) return;
+      var selector = msg.type === 'multi' ? '.gt-ms-wrap' : '.gt-gs-wrap';
+      var wrap = document.querySelector(selector + attrEquals('data-input-id', msg.inputId));
+      var ctrl = wrap ? ensureInit(wrap) : null;
+      if (!ctrl || !ctrl.setChoices) return;
+
+      ctrl.setChoices(msg.choices || [], {
+        notify: false,
+        preserveMissingSelection: true,
+        total: typeof msg.total === 'number' ? msg.total : undefined
+      });
     });
 
     Shiny.addCustomMessageHandler('glasstabs_update_tabs', function (msg) {

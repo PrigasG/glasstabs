@@ -13,9 +13,9 @@
 
 **glasstabs** provides animated Shiny widgets built around a glass-morphism aesthetic:
 
-- **`glassTabsUI()`** — an animated tab bar with a sliding glass halo that follows the active tab
-- **`glassMultiSelect()`** — a multi-select dropdown with three selection styles, live search, tag-pill syncing, and server-side update support
-- **`glassSelect()`** — an animated single-select dropdown with optional search, clear support, theming, selection styles, and server-side update support
+- **`glassTabsUI()`** - an animated tab bar with a sliding glass halo that follows the active tab
+- **`glassMultiSelect()`** - a multi-select dropdown with three selection styles, live search, tag-pill syncing, and server-side update support
+- **`glassSelect()`** - an animated single-select dropdown with optional search, clear support, theming, selection styles, and server-side update support
 
 All widgets are self-contained, fully themeable, and work in plain `fluidPage()`, `bs4DashPage()`, or any other Shiny page wrapper.
 
@@ -94,9 +94,14 @@ if (interactive()) shinyApp(ui, server)
 
 | Function | Description |
 |---|---|
-| `useGlassTabs()` | Inject package CSS and JavaScript — call once in the UI |
+| `useGlassTabs()` | Inject package CSS and JavaScript - call once in the UI |
 | `runGlassExample(example)` | Launch a built-in example app (`runGlassExample()` to list all) |
 | `glasstabs_news()` | Print the package changelog to the R console |
+
+Built-in examples currently include `basic`, `bs4dash`, `dashboard`,
+`server-select`, `smoke-test`, and `square-corners`. The `square-corners`
+example demonstrates `shape = "square"` on `glassSelect()` and
+`glassMultiSelect()` side by side with native `selectizeInput()`.
 
 ### Tab widget
 
@@ -123,9 +128,11 @@ if (interactive()) shinyApp(ui, server)
 | Function | Description |
 |---|---|
 | `glassMultiSelect(inputId, choices, ...)` | Multi-select dropdown widget |
+| `glassMultiSelectServer(inputId, choices, ...)` | Server-side search for large multi-select choice sets |
 | `updateGlassMultiSelect(session, inputId, ...)` | Update multi-select choices, selection, or style |
 | `glassMultiSelectValue(input, inputId)` | Reactive helper for multi-select value and style |
 | `glassSelect(inputId, choices, ...)` | Single-select dropdown widget |
+| `glassSelectServer(inputId, choices, ...)` | Server-side search for large single-select choice sets |
 | `updateGlassSelect(session, inputId, ...)` | Update single-select choices, selection, or style |
 | `glassSelectValue(input, inputId)` | Reactive helper for selected value |
 | `glassFilterTags(inputId)` | Tag-pill display area synced to a multi-select |
@@ -153,7 +160,7 @@ conditionalPanel(
   p("Only visible on the Details tab.")
 )
 
-# Inside a module — pass the same id as glassTabsUI():
+# Inside a module - pass the same id as glassTabsUI():
 # glassTabsUI(ns("tabs"), ...)
 # conditionalPanel(condition = glassTabCondition(ns("tabs"), "details"), ...)
 ```
@@ -188,6 +195,32 @@ if (interactive()) shinyApp(ui, server)
 ```
 
 > **Note:** By default, `glassMultiSelect()` starts with all choices selected.
+
+## Server-side search for large choice sets
+
+For large vectors, set `server = TRUE` in the UI and register the matching
+server helper. The widget renders only a bounded page of choices and asks
+Shiny for matches as the user types.
+
+```r
+many_choices <- stats::setNames(
+  sprintf("value-%04d", 1:2000),
+  sprintf("Choice %04d", 1:2000)
+)
+
+ui <- fluidPage(
+  useGlassTabs(),
+  glassSelect("region", many_choices, server = TRUE, server_limit = 30),
+  glassMultiSelect("filters", many_choices, server = TRUE, server_limit = 30)
+)
+
+server <- function(input, output, session) {
+  glassSelectServer("region", many_choices, session = session, limit = 30)
+  glassMultiSelectServer("filters", many_choices, session = session, limit = 30)
+}
+```
+
+Try the shipped example with `runGlassExample("server-select")`.
 
 ## Server-side updates
 
@@ -246,6 +279,20 @@ server <- function(input, output, session) {
 
 if (interactive()) shinyApp(ui, server)
 ```
+
+## Square corners
+
+By default `glassSelect()` and `glassMultiSelect()` use the signature rounded
+glass corners. Pass `shape = "square"` for crisp, selectize-style corners so
+the widgets sit flush next to native `selectizeInput()` controls without
+looking out of place:
+
+```r
+glassSelect("region", choices, shape = "square")
+glassMultiSelect("filters", choices, shape = "square")
+```
+
+See it next to native selectize with `runGlassExample("square-corners")`.
 
 ## Server-side updates
 
@@ -398,7 +445,7 @@ bs4Card(
 
 ## Multiple instances
 
-Multiple `glassTabsUI()` and `glassMultiSelect()` widgets on the same page work independently — each is scoped by its `id`, so CSS variables and JS event handlers never bleed across instances.
+Multiple `glassTabsUI()` and `glassMultiSelect()` widgets on the same page work independently - each is scoped by its `id`, so CSS variables and JS event handlers never bleed across instances.
 
 ---
 
@@ -413,6 +460,7 @@ Full vignettes are available on the documentation site:
 | [Animated tabs](https://prigasg.github.io/glasstabs/articles/tabs.html) | Full `glassTabsUI()` reference with theming and bs4Dash |
 | [Multi-select filter](https://prigasg.github.io/glasstabs/articles/multiselect.html) | Full `glassMultiSelect()` reference with styles, tags and updates |
 | [Single-select filter](https://prigasg.github.io/glasstabs/articles/glassSelect.html) | Full `glassSelect()` reference with search, clear, and updates |
+| Server-side select search | Covered in the multi-select and single-select articles, plus `runGlassExample("server-select")` |
 
 ---
 
@@ -449,13 +497,13 @@ server <- function(input, output, session) {
 
 ## What's new in 0.3.0
 
-- `runGlassExample()` — launch any built-in example from the console
-- `icon` argument in `glassTabPanel()` — add `shiny::icon()` or any tag to a tab button
-- `disableGlassTab()` / `enableGlassTab()` — gray out tabs without hiding them
-- `updateGlassTabBadge()` — set live numeric count badges on tab buttons
-- `glassTabsServer(bookmark = TRUE)` — active tab preserved in Shiny URL bookmarks
-- `glassTabsOutput()` / `renderGlassTabs()` — fully server-driven reactive tab sets
-- `inst/cheatsheet/glasstabs-cheatsheet.tex` — printable two-column LaTeX reference card
+- `runGlassExample()` - launch any built-in example from the console
+- `icon` argument in `glassTabPanel()` - add `shiny::icon()` or any tag to a tab button
+- `disableGlassTab()` / `enableGlassTab()` - gray out tabs without hiding them
+- `updateGlassTabBadge()` - set live numeric count badges on tab buttons
+- `glassTabsServer(bookmark = TRUE)` - active tab preserved in Shiny URL bookmarks
+- `glassTabsOutput()` / `renderGlassTabs()` - fully server-driven reactive tab sets
+- `inst/cheatsheet/glasstabs-cheatsheet.tex` - printable two-column LaTeX reference card
 
 ---
 

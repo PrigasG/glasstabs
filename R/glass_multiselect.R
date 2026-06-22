@@ -29,12 +29,23 @@
 #' @param show_clear_all Show the "Clear all" footer link? Default \code{TRUE}.
 #' @param theme Color theme. One of \code{"dark"} (default) or \code{"light"},
 #'   or a [glass_select_theme()] object.
+#' @param shape Corner style for the trigger and dropdown. One of
+#'   \code{"rounded"} (default) for the signature glass look, or
+#'   \code{"square"} for crisp, selectize-style corners so the widget sits
+#'   neatly alongside native 'Shiny' \code{selectizeInput()} controls.
 #' @param hues Optional named integer vector of HSL hue angles (0 to 360) for
 #'   the \code{"filled"} style. Auto-assigned if \code{NULL}.
 #' @param dark_selector Optional CSS selector that signals dark mode (e.g.
 #'   \code{"body.dark-mode"} for bs4Dash). When provided and
 #'   \code{theme = "light"}, emits an extra scoped \code{<style>} block that
 #'   reverts colors to the dark-mode defaults whenever that selector is active.
+#' @param server Logical. If \code{TRUE}, render only an initial slice of
+#'   choices and use [glassMultiSelectServer()] to search the full choice set
+#'   from the Shiny server. Default \code{FALSE}.
+#' @param server_limit Maximum number of choices rendered initially and returned
+#'   for each server-side search. Default \code{50}.
+#' @param server_min_chars Minimum search characters required before server-side
+#'   matching filters choices. Default \code{0}.
 #'
 #' @return An \code{htmltools::tagList} containing the trigger button, dropdown
 #'   panel, and scoped \code{<style>} block.
@@ -71,8 +82,12 @@ glassMultiSelect <- function(
     show_select_all     = TRUE,
     show_clear_all      = TRUE,
     theme               = "dark",
+    shape               = c("rounded", "square"),
     hues                = NULL,
-    dark_selector       = NULL
+    dark_selector       = NULL,
+    server              = FALSE,
+    server_limit        = 50L,
+    server_min_chars    = 0L
 ) {
   if (!is.character(inputId) || length(inputId) != 1L || !nzchar(inputId)) {
     stop(
@@ -81,26 +96,26 @@ glassMultiSelect <- function(
     )
   }
   check_style <- match.arg(check_style)
+  shape <- match.arg(shape)
+  server <- isTRUE(server)
+  server_limit <- .gt_positive_int(server_limit, "server_limit")
+  server_min_chars <- .gt_nonnegative_int(server_min_chars, "server_min_chars")
   colors <- .ms_resolve_theme(theme)
 
-  # Normalize choices
   normalized <- .gt_normalize_choices(choices)
   vals <- normalized$values
   labels <- normalized$labels
 
 
-  # Preserve existing CRAN behavior:
-  # selected = NULL means all choices selected initially
+  selected_is_default <- is.null(selected)
   if (is.null(selected)) {
     selected <- vals
   } else {
     selected <- as.character(selected)
   }
 
-  # Keep only valid selected values, preserve choice order
   selected <- vals[vals %in% selected]
 
-  # Auto hues
   if (is.null(hues)) {
     n <- length(vals)
     hues <- stats::setNames(
@@ -125,6 +140,18 @@ glassMultiSelect <- function(
   } else {
     "gt-ms-badge"
   }
+
+  render_idx <- seq_along(vals)
+  if (server) {
+    render_idx <- seq_len(min(length(vals), server_limit))
+    if (!selected_is_default && length(selected) == 1L) {
+      selected_idx <- match(selected, vals)
+      selected_idx <- selected_idx[!is.na(selected_idx)]
+      render_idx <- unique(c(render_idx, selected_idx))
+    }
+  }
+  render_vals <- vals[render_idx]
+  render_labels <- labels[render_idx]
 
   field_id <- paste0(inputId, "-field")
   scope_id <- paste0(inputId, "-wrap")
@@ -271,9 +298,9 @@ glassMultiSelect <- function(
     )
   }
 
-  option_rows <- lapply(seq_along(vals), function(i) {
-    v <- vals[[i]]
-    lbl <- labels[[i]]
+  option_rows <- lapply(seq_along(render_vals), function(i) {
+    v <- render_vals[[i]]
+    lbl <- render_labels[[i]]
     cls <- paste("gt-ms-option", if (v %in% selected) "checked" else "")
 
     shiny::div(
@@ -313,6 +340,7 @@ glassMultiSelect <- function(
   wrap_cls <- paste(
     "gt-ms-wrap",
     paste0("style-", check_style),
+    if (identical(shape, "square")) "shape-square" else NULL,
     if (.is_light_theme(theme)) "theme-light" else NULL
   )
 
@@ -329,6 +357,10 @@ glassMultiSelect <- function(
         `data-input-id` = inputId,
         `data-placeholder` = placeholder,
         `data-all-label` = all_label,
+        `data-server` = tolower(as.character(server)),
+        `data-server-total` = as.character(n_total),
+        `data-server-min-chars` = as.character(server_min_chars),
+        `data-selected-values` = .gt_json_array(selected),
 
         shiny::div(
           class = "gt-ms-trigger",
@@ -455,6 +487,9 @@ glassMultiSelect <- function(
 #' @param check_style Optional new style string. One of \code{"checkbox"},
 #'   \code{"check-only"}, or \code{"filled"}. Defaults to \code{NULL}, which
 #'   keeps the current style unchanged.
+#' @param shape Optional new corner style. One of \code{"rounded"} or
+#'   \code{"square"}. Defaults to \code{NULL}, which keeps the current shape
+#'   unchanged.
 #'
 #' @return No return value. Called for its side effect of updating the
 #'   client-side widget.
@@ -465,10 +500,14 @@ updateGlassMultiSelect <- function(
     inputId,
     choices = NULL,
     selected = NULL,
-    check_style = NULL
+    check_style = NULL,
+    shape = NULL
 ) {
   if (!is.null(check_style)) {
     check_style <- match.arg(check_style, c("checkbox", "check-only", "filled"))
+  }
+  if (!is.null(shape)) {
+    shape <- match.arg(shape, c("rounded", "square"))
   }
 
   message <- list()
@@ -491,6 +530,10 @@ updateGlassMultiSelect <- function(
 
   if (!is.null(check_style)) {
     message$style <- check_style
+  }
+
+  if (!is.null(shape)) {
+    message$shape <- shape
   }
 
   if (is.function(session$sendCustomMessage) && is.function(session$ns)) {
@@ -542,6 +585,61 @@ glassMultiSelectValue <- function(input, inputId) {
   list(
     selected = shiny::reactive(input[[inputId]] %||% character(0)),
     style = shiny::reactive(input[[paste0(inputId, "_style")]] %||% "checkbox")
+  )
+}
+
+#' Register server-side search for a glassMultiSelect widget
+#'
+#' Use this with \code{glassMultiSelect(..., server = TRUE)} when the choice set
+#' is large. The browser sends search queries to Shiny and the server returns a
+#' bounded list of matching choices.
+#'
+#' @param inputId Input id used in [glassMultiSelect()].
+#' @param choices Named or unnamed character vector of choices.
+#' @param session Shiny session. Defaults to the current reactive domain.
+#' @param limit Maximum number of matching choices returned per search.
+#'   Default \code{50}.
+#' @param ignore_case Logical. Match labels and values case-insensitively.
+#'   Default \code{TRUE}.
+#'
+#' @return An observer created by [shiny::observeEvent()].
+#'
+#' @examples
+#' if (interactive()) {
+#'   library(shiny)
+#'
+#'   choices <- stats::setNames(
+#'     sprintf("value-%04d", 1:1000),
+#'     sprintf("Choice %04d", 1:1000)
+#'   )
+#'
+#'   ui <- fluidPage(
+#'     useGlassTabs(),
+#'     glassMultiSelect("pick", choices, server = TRUE)
+#'   )
+#'
+#'   server <- function(input, output, session) {
+#'     glassMultiSelectServer("pick", choices, session = session)
+#'   }
+#'
+#'   shinyApp(ui, server)
+#' }
+#'
+#' @export
+glassMultiSelectServer <- function(
+    inputId,
+    choices,
+    session = shiny::getDefaultReactiveDomain(),
+    limit = 50L,
+    ignore_case = TRUE
+) {
+  .gt_register_server_choices(
+    inputId = inputId,
+    choices = choices,
+    session = session,
+    limit = limit,
+    ignore_case = ignore_case,
+    type = "multi"
   )
 }
 
@@ -622,4 +720,134 @@ glassMultiSelectValue <- function(input, inputId) {
   names(out) <- vals
 
   out
+}
+
+#' @noRd
+.gt_positive_int <- function(x, name) {
+  if (!is.numeric(x) || length(x) != 1L || is.na(x) || x < 1) {
+    stop(sprintf("`%s` must be a single positive integer.", name), call. = FALSE)
+  }
+  as.integer(x)
+}
+
+#' @noRd
+.gt_nonnegative_int <- function(x, name) {
+  if (!is.numeric(x) || length(x) != 1L || is.na(x) || x < 0) {
+    stop(sprintf("`%s` must be a single non-negative integer.", name), call. = FALSE)
+  }
+  as.integer(x)
+}
+
+#' @noRd
+.gt_json_array <- function(x) {
+  x <- unname(as.character(x %||% character(0)))
+  paste0("[", paste(vapply(x, .gt_js_string, character(1)), collapse = ","), "]")
+}
+
+#' @noRd
+.gt_choice_payload <- function(labels, values, hues = NULL) {
+  if (is.null(hues)) {
+    unname(Map(
+      f = function(label, value) {
+        list(label = label, value = value)
+      },
+      label = labels,
+      value = values
+    ))
+  } else {
+    unname(Map(
+      f = function(label, value, hue) {
+        list(label = label, value = value, hue = unname(as.integer(hue)))
+      },
+      label = labels,
+      value = values,
+      hue = hues
+    ))
+  }
+}
+
+#' @noRd
+.gt_filter_choices <- function(choices, query = "", limit = 50L, ignore_case = TRUE) {
+  normalized <- .gt_normalize_choices(choices)
+  limit <- .gt_positive_int(limit, "limit")
+  query <- paste(as.character(query %||% ""), collapse = " ")
+  query <- trimws(query)
+
+  labels <- normalized$labels
+  values <- normalized$values
+  keep <- seq_along(values)
+
+  if (nzchar(query)) {
+    haystack <- paste(labels, values)
+    if (isTRUE(ignore_case)) {
+      haystack <- tolower(haystack)
+      query <- tolower(query)
+    }
+    keep <- which(grepl(query, haystack, fixed = TRUE))
+  }
+
+  total <- length(keep)
+  keep <- utils::head(keep, limit)
+
+  list(
+    labels = labels[keep],
+    values = values[keep],
+    indices = keep,
+    total = total
+  )
+}
+
+#' @noRd
+.gt_register_server_choices <- function(
+    inputId,
+    choices,
+    session,
+    limit,
+    ignore_case,
+    type
+) {
+  if (is.null(session)) {
+    stop("A Shiny session is required for server-side glass choice search.", call. = FALSE)
+  }
+  if (!is.character(inputId) || length(inputId) != 1L || !nzchar(inputId)) {
+    stop("`inputId` must be a single non-empty string.", call. = FALSE)
+  }
+  limit <- .gt_positive_int(limit, "limit")
+  normalized <- .gt_normalize_choices(choices)
+  choices <- stats::setNames(normalized$values, normalized$labels)
+  hues <- NULL
+  if (identical(type, "multi")) {
+    hues <- stats::setNames(
+      as.integer(seq(200, 200 + 360 * (length(normalized$values) - 1) / max(1, length(normalized$values)),
+        length.out = length(normalized$values)
+      ) %% 360),
+      normalized$values
+    )
+  }
+
+  shiny::observeEvent(
+    session$input[[paste0(inputId, "_search")]],
+    {
+      search <- session$input[[paste0(inputId, "_search")]]
+      query <- if (is.list(search) && !is.null(search$query)) search$query else search
+      filtered <- .gt_filter_choices(
+        choices = choices,
+        query = query,
+        limit = limit,
+        ignore_case = ignore_case
+      )
+      payload_hues <- if (is.null(hues)) NULL else hues[filtered$values]
+      session$sendCustomMessage(
+        "glasstabs_server_choices",
+        list(
+          inputId = session$ns(inputId),
+          type = type,
+          choices = .gt_choice_payload(filtered$labels, filtered$values, payload_hues),
+          total = length(normalized$values),
+          matched = filtered$total
+        )
+      )
+    },
+    ignoreInit = FALSE
+  )
 }

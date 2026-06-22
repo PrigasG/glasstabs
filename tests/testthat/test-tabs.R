@@ -1,6 +1,4 @@
-# tests/testthat/test-tabs.R
 
-# ── glassTabPanel ─────────────────────────────────────────────────────────────
 
 test_that("glassTabPanel() returns correct class", {
   expect_s3_class(glassTabPanel("a", "Tab A"), "glassTabPanel")
@@ -29,7 +27,6 @@ test_that("glassTabPanel() accepts empty content", {
   expect_length(glassTabPanel("a", "A")$content, 0)
 })
 
-# ── glassTabsUI ───────────────────────────────────────────────────────────────
 
 test_that("glassTabsUI() returns an htmltools object", {
   ui <- glassTabsUI("nav",
@@ -174,11 +171,9 @@ test_that("glassTabsUI() respects explicit selected argument", {
                                    glassTabPanel("first",  "First"),
                                    glassTabPanel("second", "Second"),
                                    selected = "second"))
-  # second pane should be active, not first
   expect_true(grepl('data-value="second"', html, fixed = TRUE))
 })
 
-# ── updateGlassTabsUI ─────────────────────────────────────────────────────────
 
 test_that("updateGlassTabsUI() sends correct custom message", {
   msgs <- list()
@@ -212,7 +207,6 @@ test_that("updateGlassTabsUI() namespaces id via session$ns", {
   expect_equal(msgs[[1]]$message$selected, "overview")
 })
 
-# ── showGlassTab / hideGlassTab ───────────────────────────────────────────────
 
 test_that("showGlassTab() sends correct message", {
   msgs <- list()
@@ -250,7 +244,6 @@ test_that("showGlassTab() and hideGlassTab() namespace via session$ns", {
   expect_equal(msgs[[2]]$message$ns, "mod-tabs")
 })
 
-# ── appendGlassTab / removeGlassTab ──────────────────────────────────────────
 
 test_that("appendGlassTab() errors on non-glassTabPanel input", {
   fake_session <- list(

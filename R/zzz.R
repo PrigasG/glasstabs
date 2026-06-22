@@ -1,5 +1,3 @@
-# Internal utilities
-
 #' @noRd
 `%||%` <- function(a, b) {
   if (is.null(a) || length(a) == 0) b else a
