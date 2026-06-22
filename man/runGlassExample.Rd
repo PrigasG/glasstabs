@@ -8,7 +8,7 @@ runGlassExample(example = NULL, ...)
 }
 \arguments{
 \item{example}{Name of the example to run, such as \code{"basic"},
-\code{"dashboard"}, \code{"server-select"}, \code{"smoke-test"}, or
+\code{"bslib"}, \code{"dashboard"}, \code{"server-select"}, \code{"smoke-test"}, or
 \code{"square-corners"}. When \code{NULL} (default), lists all available
 examples.}
 
@@ -28,6 +28,7 @@ runGlassExample()
 
 # Run an example interactively
 if (interactive()) {
+  runGlassExample("bslib")
   runGlassExample("smoke-test")
   runGlassExample("server-select")
 }

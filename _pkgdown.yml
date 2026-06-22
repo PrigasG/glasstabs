@@ -5,7 +5,7 @@ template:
   bootswatch: flatly
 
 home:
-  title: glasstabs — Animated Shiny Widgets
+  title: glasstabs - Animated Shiny Widgets
   description: |
     Animated glass-morphism tabs, single-select, and multi-select widgets for R Shiny.
 
@@ -22,6 +22,7 @@ navbar:
   components:
     github:
       icon: fab fa-github
+      aria-label: GitHub
       href: https://github.com/prigasG/glasstabs
 
 articles:
@@ -48,7 +49,7 @@ reference:
       - runGlassExample
       - glasstabs_news
 
-  - title: Tab widget — UI
+  - title: Tab widget - UI
     desc: |
       Animated glass-morphism tab navigation with a sliding halo, spring easing, and transfer trace.
     contents:
@@ -58,7 +59,7 @@ reference:
       - glass_tab_theme
       - glassTabCondition
 
-  - title: Tab widget — server
+  - title: Tab widget - server
     desc: |
       Server-side helpers for reading, switching, showing/hiding, disabling, badging, and dynamically rendering tabs.
     contents:
@@ -79,9 +80,11 @@ reference:
       - glassSelect
       - updateGlassSelect
       - glassSelectValue
+      - glassSelectServer
       - glassMultiSelect
       - updateGlassMultiSelect
       - glassMultiSelectValue
+      - glassMultiSelectServer
       - glassFilterTags
       - glass_select_theme
 

@@ -98,10 +98,11 @@ if (interactive()) shinyApp(ui, server)
 | `runGlassExample(example)` | Launch a built-in example app (`runGlassExample()` to list all) |
 | `glasstabs_news()` | Print the package changelog to the R console |
 
-Built-in examples currently include `basic`, `bs4dash`, `dashboard`,
+Built-in examples currently include `basic`, `bs4dash`, `bslib`, `dashboard`,
 `server-select`, `smoke-test`, and `square-corners`. The `square-corners`
 example demonstrates `shape = "square"` on `glassSelect()` and
-`glassMultiSelect()` side by side with native `selectizeInput()`.
+`glassMultiSelect()` side by side with native `selectizeInput()`, while
+`bslib` shows square glass selects inside a Bootstrap 5 themed app.
 
 ### Tab widget
 
@@ -292,7 +293,8 @@ glassSelect("region", choices, shape = "square")
 glassMultiSelect("filters", choices, shape = "square")
 ```
 
-See it next to native selectize with `runGlassExample("square-corners")`.
+See it next to native selectize with `runGlassExample("square-corners")`, or
+inside a Bootstrap 5 theme with `runGlassExample("bslib")`.
 
 ## Server-side updates
 

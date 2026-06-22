@@ -14,6 +14,9 @@
 * Added a `runGlassExample("square-corners")` example app that demonstrates the
   square shape live alongside native `selectizeInput()`, including a
   runtime rounded-vs-square toggle via `update*()` and a light-theme variant.
+* Added a `runGlassExample("bslib")` example app that shows square
+  `glassSelect()` and `glassMultiSelect()` controls inside a Bootstrap 5
+  `bslib` layout.
 
 ## Large choice sets
 
