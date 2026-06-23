@@ -17,6 +17,9 @@ glassMultiSelect(
   show_clear_all = TRUE,
   theme = "dark",
   shape = c("rounded", "square"),
+  width = NULL,
+  disabled = FALSE,
+  disabled_choices = NULL,
   hues = NULL,
   dark_selector = NULL,
   server = FALSE,
@@ -54,7 +57,17 @@ or a \code{\link[=glass_select_theme]{glass_select_theme()}} object.}
 \item{shape}{Corner style for the trigger and dropdown. One of
 \code{"rounded"} (default) for the signature glass look, or
 \code{"square"} for crisp, selectize-style corners so the widget sits
-neatly alongside native 'Shiny' \code{selectizeInput()} controls.}
+neatly alongside native Shiny \code{selectizeInput()} controls.}
+
+\item{width}{Optional widget width passed to
+\code{shiny::validateCssUnit()}, e.g. \code{100\%} or \code{240px}. When
+\code{NULL} (default) the trigger keeps its intrinsic width.}
+
+\item{disabled}{Logical. When \code{TRUE} the whole widget is greyed out and
+non-interactive. Default \code{FALSE}.}
+
+\item{disabled_choices}{Optional character vector of choice values to render
+as disabled (non-selectable) rows. Default \code{NULL}.}
 
 \item{hues}{Optional named integer vector of HSL hue angles (0 to 360) for
 the \code{"filled"} style. Auto-assigned if \code{NULL}.}

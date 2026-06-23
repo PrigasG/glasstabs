@@ -8,6 +8,7 @@ JS
 README
 RTL
 Shiny's
+shinytest2
 Theming
 UI
 bootAll
@@ -51,8 +52,11 @@ reinitialises
 renderGlassTabs
 renderer
 roxygen
+optgroup
+pkgload
 runGlassExample
 selectable
+selectInput
 selectize
 selectizeInput
 stylesheet
@@ -60,3 +64,4 @@ themeable
 theming
 walkthrough
 widget's
+withr

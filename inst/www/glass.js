@@ -85,6 +85,41 @@
     }
   }
 
+  /** Hide group headers whose options are all hidden (e.g. by search).
+      Walks the options container once; a header is shown only when at least
+      one option between it and the next header is visible. */
+  function syncOptgroupHeaders(container) {
+    if (!container) return;
+    var kids = container.children;
+    var header = null;
+    var anyVisible = false;
+    for (var i = 0; i < kids.length; i++) {
+      var el = kids[i];
+      var isHeader = el.classList.contains('gt-gs-optgroup') ||
+                     el.classList.contains('gt-ms-optgroup');
+      var isOption = el.classList.contains('gt-gs-option') ||
+                     el.classList.contains('gt-ms-option');
+      if (isHeader) {
+        if (header) header.classList.toggle('hidden', !anyVisible);
+        header = el;
+        anyVisible = false;
+      } else if (isOption) {
+        if (!el.classList.contains('hidden')) anyVisible = true;
+      }
+    }
+    if (header) header.classList.toggle('hidden', !anyVisible);
+  }
+
+  /** Build a group-header node for the rebuilt-from-payload path. */
+  function buildOptgroupNode(label, cssClass) {
+    var h = document.createElement('div');
+    h.className = cssClass;
+    h.setAttribute('data-group', label);
+    h.setAttribute('role', 'presentation');
+    h.textContent = label;
+    return h;
+  }
+
   /** Lazy-init helper used by Shiny input bindings */
   function ensureInit(el) {
     if (el._gt) return el._gt;
@@ -531,6 +566,8 @@
         label: label,
         value: value,
         hidden: false,
+        disabled: el.classList.contains('disabled'),
+        group: el.getAttribute('data-group') || '',
         _labelLower: label.toLowerCase()
       });
       if (el.classList.contains('selected')) {
@@ -596,6 +633,7 @@
         var ch = findChoice(v);
         el.classList.toggle('hidden', ch ? ch.hidden : false);
       });
+      syncOptgroupHeaders(optionsBox);
     }
 
     /* ── UI sync (visual only, no Shiny notification) ── */
@@ -658,6 +696,11 @@
       row.setAttribute('data-value', ch.value);
       row.setAttribute('role', 'option');
       row.setAttribute('aria-selected', state.selected !== null && ch.value === state.selected ? 'true' : 'false');
+      if (ch.disabled) {
+        row.classList.add('disabled');
+        row.setAttribute('aria-disabled', 'true');
+      }
+      if (ch.group) row.setAttribute('data-group', ch.group);
 
       row.innerHTML =
         '<div class="gt-gs-check">' + checkHtml + '</div>' +
@@ -685,6 +728,8 @@
           label: String(ch.label),
           value: String(ch.value),
           hidden: false,
+          disabled: !!ch.disabled,
+          group: ch.group ? String(ch.group) : '',
           _labelLower: String(ch.label).toLowerCase()
         };
       });
@@ -703,7 +748,12 @@
 
       /* Rebuild DOM */
       var frag = document.createDocumentFragment();
+      var prevGroup = '';
       state.choices.forEach(function (ch) {
+        if (ch.group && ch.group !== prevGroup) {
+          frag.appendChild(buildOptgroupNode(ch.group, 'gt-gs-optgroup'));
+        }
+        prevGroup = ch.group || '';
         frag.appendChild(buildOptionNode(ch));
       });
       optionsBox.innerHTML = '';
@@ -713,6 +763,8 @@
       /* Re-apply search if active */
       if (!serverMode && state.query) {
         applySearchNow(state.query);
+      } else {
+        syncOptgroupHeaders(optionsBox);
       }
 
       syncUI();
@@ -917,6 +969,28 @@
         wrap.classList.toggle('shape-square', square);
         if (dropdown) dropdown.classList.toggle('shape-square', square);
       },
+      setDisabledChoices: function (vals) {
+        var disabled = new Set(asValueArray(vals));
+        state.choices.forEach(function (ch) {
+          ch.disabled = disabled.has(ch.value);
+        });
+        Array.from(dropdown.querySelectorAll('.gt-gs-option')).forEach(function (el) {
+          var off = disabled.has(el.getAttribute('data-value'));
+          el.classList.toggle('disabled', off);
+          if (off) el.setAttribute('aria-disabled', 'true');
+          else el.removeAttribute('aria-disabled');
+        });
+      },
+      setDisabled: function (d) {
+        var off = !!d;
+        wrap.classList.toggle('gt-disabled', off);
+        if (off) close();
+        if (trigger) {
+          trigger.setAttribute('tabindex', off ? '-1' : '0');
+          if (off) trigger.setAttribute('aria-disabled', 'true');
+          else trigger.removeAttribute('aria-disabled');
+        }
+      },
       clear: function (opts) {
         setValue(null, opts);
       },
@@ -990,6 +1064,8 @@
         label: label,
         value: value,
         hidden: false,
+        disabled: el.classList.contains('disabled'),
+        group: el.getAttribute('data-group') || '',
         hue: parseInt(hue, 10) || 210,
         _labelLower: label.toLowerCase()
       });
@@ -1073,6 +1149,7 @@
           }
         }
       });
+      syncOptgroupHeaders(optionsBox);
     }
 
     /* ── syncUI: visual-only update ── */
@@ -1228,6 +1305,11 @@
       if (state.selected.has(ch.value)) {
         row.className += ' checked';
       }
+      if (ch.disabled) {
+        row.classList.add('disabled');
+        row.setAttribute('aria-disabled', 'true');
+      }
+      if (ch.group) row.setAttribute('data-group', ch.group);
 
       row.innerHTML =
         '<div class="gt-ms-check">' + checkHtml + '</div>' +
@@ -1256,6 +1338,8 @@
           label: String(ch.label),
           value: String(ch.value),
           hidden: false,
+          disabled: !!ch.disabled,
+          group: ch.group ? String(ch.group) : '',
           hue: ch.hue || Math.round((200 + 360 * i / Math.max(1, n)) % 360),
           _labelLower: String(ch.label).toLowerCase()
         };
@@ -1271,7 +1355,12 @@
 
       /* Rebuild DOM using fragment */
       var frag = document.createDocumentFragment();
+      var prevGroup = '';
       state.choices.forEach(function (ch) {
+        if (ch.group && ch.group !== prevGroup) {
+          frag.appendChild(buildOptgroupNode(ch.group, 'gt-ms-optgroup'));
+        }
+        prevGroup = ch.group || '';
         frag.appendChild(buildOptionNode(ch));
       });
       optionsBox.innerHTML = '';
@@ -1281,6 +1370,8 @@
       /* Re-apply search if active */
       if (!serverMode && state.query) {
         applySearchNow(state.query);
+      } else {
+        syncOptgroupHeaders(optionsBox);
       }
 
       syncUI();
@@ -1453,7 +1544,8 @@
 
     if (allRow) {
       allRow.addEventListener('click', function () {
-        var vis = visibleChoices();
+        /* Select-all only ever acts on enabled, visible options */
+        var vis = visibleChoices().filter(function (ch) { return !ch.disabled; });
         var anyUnchecked = vis.some(function (ch) { return !state.selected.has(ch.value); });
 
         vis.forEach(function (ch) {
@@ -1541,6 +1633,29 @@
         var square = (sh === 'square');
         wrap.classList.toggle('shape-square', square);
         if (dropdown) dropdown.classList.toggle('shape-square', square);
+      },
+      setDisabledChoices: function (vals) {
+        var disabled = new Set(asValueArray(vals));
+        state.choices.forEach(function (ch) {
+          ch.disabled = disabled.has(ch.value);
+        });
+        Array.from(dropdown.querySelectorAll('.gt-ms-option')).forEach(function (el) {
+          var off = disabled.has(el.getAttribute('data-value'));
+          el.classList.toggle('disabled', off);
+          if (off) el.setAttribute('aria-disabled', 'true');
+          else el.removeAttribute('aria-disabled');
+        });
+        syncUI();
+      },
+      setDisabled: function (d) {
+        var off = !!d;
+        wrap.classList.toggle('gt-disabled', off);
+        if (off) close();
+        if (trigger) {
+          trigger.setAttribute('tabindex', off ? '-1' : '0');
+          if (off) trigger.setAttribute('aria-disabled', 'true');
+          else trigger.removeAttribute('aria-disabled');
+        }
       },
       clear: function (opts) {
         setValue([], opts);
@@ -1638,6 +1753,14 @@
           ctrl.setShape(data.shape);
         }
 
+        if (hasOwn(data, 'disabled') && typeof ctrl.setDisabled === 'function') {
+          ctrl.setDisabled(data.disabled);
+        }
+
+        if (hasOwn(data, 'disabled_choices') && typeof ctrl.setDisabledChoices === 'function') {
+          ctrl.setDisabledChoices(data.disabled_choices);
+        }
+
         /* Single commit after all fields are set */
         if (shouldCommit && ctrl.commitSelection) ctrl.commitSelection();
         if (shouldCommit) triggerShinyChange(el);
@@ -1692,6 +1815,14 @@
 
         if (hasOwn(data, 'shape') && typeof ctrl.setShape === 'function') {
           ctrl.setShape(data.shape);
+        }
+
+        if (hasOwn(data, 'disabled') && typeof ctrl.setDisabled === 'function') {
+          ctrl.setDisabled(data.disabled);
+        }
+
+        if (hasOwn(data, 'disabled_choices') && typeof ctrl.setDisabledChoices === 'function') {
+          ctrl.setDisabledChoices(data.disabled_choices);
         }
 
         /* Single commit after all fields are set */
@@ -1827,6 +1958,12 @@
       }
       if (hasOwn(data, 'shape') && typeof ctrl.setShape === 'function') {
         ctrl.setShape(data.shape);
+      }
+      if (hasOwn(data, 'disabled') && typeof ctrl.setDisabled === 'function') {
+        ctrl.setDisabled(data.disabled);
+      }
+      if (hasOwn(data, 'disabled_choices') && typeof ctrl.setDisabledChoices === 'function') {
+        ctrl.setDisabledChoices(data.disabled_choices);
       }
       if (shouldCommit && ctrl.commitSelection) ctrl.commitSelection();
     }

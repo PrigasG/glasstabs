@@ -645,6 +645,26 @@
   border-radius:2px;
 }
 
+/* ── Square corners for the tab bar (glassTabsUI(shape = "square")) ──
+   The halo radius is JS-driven from the tab link's computed border-radius,
+   so squaring .gt-tab-link makes the sliding halo follow automatically. */
+.gt-container.shape-square .gt-tab-link,
+.gt-wrap-shell.shape-square .gt-tab-link{
+  border-radius:3px;
+}
+.gt-container.shape-square .gt-tab-wrap,
+.gt-wrap-shell.shape-square .gt-tab-wrap{
+  border-radius:4px;
+}
+.gt-container.shape-square .gt-card,
+.gt-wrap-shell.shape-square .gt-card{
+  border-radius:3px;
+}
+.gt-container.shape-square.gt-compact .gt-tab-link,
+.gt-wrap-shell.shape-square.gt-compact .gt-tab-link{
+  border-radius:3px;
+}
+
 
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
@@ -747,6 +767,37 @@
 .gt-gs-wrap.gt-disabled .gt-gs-trigger,
 .gt-ms-wrap.gt-disabled .gt-ms-trigger{
   cursor:not-allowed;
+}
+
+/* â”€â”€ Per-option disabled state â”€â”€ */
+.gt-gs-option.disabled,
+.gt-ms-option.disabled{
+  opacity:0.4;
+  cursor:not-allowed;
+  pointer-events:none;
+}
+.gt-gs-option.disabled:hover,
+.gt-ms-option.disabled:hover{
+  background:transparent;
+}
+
+/* â”€â”€ Group headers (named-list / selectInput-style choices) â”€â”€ */
+.gt-gs-optgroup,
+.gt-ms-optgroup{
+  padding:8px 10px 4px;
+  margin-top:2px;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  color:var(--ms-tx-45);
+  cursor:default;
+  user-select:none;
+  pointer-events:none;
+}
+.gt-gs-optgroup.hidden,
+.gt-ms-optgroup.hidden{
+  display:none;
 }
 
 /* â”€â”€ Tab disabled state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */

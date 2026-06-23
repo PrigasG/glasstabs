@@ -30,9 +30,12 @@ Suggests:
     bslib,
     bs4Dash,
     knitr,
+    pkgload,
     rmarkdown,
     spelling,
+    shinytest2,
     testthat (>= 3.0.0),
+    withr,
     mockery
 VignetteBuilder: 
     knitr

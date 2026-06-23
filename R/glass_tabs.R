@@ -51,6 +51,10 @@ glassTabPanel <- function(value, label, ..., icon = NULL, selected = FALSE) {
 #' @param compact Logical. When `TRUE` applies reduced padding and spacing via
 #'   the `.gt-compact` CSS modifier — useful inside dashboard cards or tight
 #'   layouts (e.g. bs4Dash).
+#' @param shape Corner style for the tab bar and content. One of `"rounded"`
+#'   (default) for the signature glass look, or `"square"` for crisp,
+#'   selectize-style corners that match [glassSelect()] and
+#'   [glassMultiSelect()] when `shape = "square"`.
 #' @param extra_ui Optional additional UI placed to the right of the tab bar.
 #' @param theme One of `"dark"`, `"light"`, or a [glass_tab_theme()] object.
 #' @param dark_selector Optional CSS selector for a parent element that signals
@@ -67,12 +71,14 @@ glassTabsUI <- function(
     selected = NULL,
     wrap = TRUE,
     compact = FALSE,
+    shape = c("rounded", "square"),
     extra_ui = NULL,
     theme = NULL,
     dark_selector = NULL
 ) {
   ns     <- shiny::NS(id)
   panels <- list(...)
+  shape  <- match.arg(shape)
 
   if (length(panels) == 0) {
     stop(
@@ -237,6 +243,7 @@ glassTabsUI <- function(
     c(if (isTRUE(wrap))    "gt-container",
       if (!isTRUE(wrap))   "gt-wrap-shell",
       if (isTRUE(compact)) "gt-compact",
+      if (identical(shape, "square")) "shape-square",
       if (is_light)        "theme-light"),
     collapse = " "
   ))

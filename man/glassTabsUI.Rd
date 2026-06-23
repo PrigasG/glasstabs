@@ -10,6 +10,7 @@ glassTabsUI(
   selected = NULL,
   wrap = TRUE,
   compact = FALSE,
+  shape = c("rounded", "square"),
   extra_ui = NULL,
   theme = NULL,
   dark_selector = NULL
@@ -27,6 +28,11 @@ glassTabsUI(
 \item{compact}{Logical. When \code{TRUE} applies reduced padding and spacing via
 the \code{.gt-compact} CSS modifier — useful inside dashboard cards or tight
 layouts (e.g. bs4Dash).}
+
+\item{shape}{Corner style for the tab bar and content. One of \code{"rounded"}
+(default) for the signature glass look, or \code{"square"} for crisp,
+selectize-style corners that match \code{\link[=glassSelect]{glassSelect()}} and
+\code{\link[=glassMultiSelect]{glassMultiSelect()}} when \code{shape = "square"}.}
 
 \item{extra_ui}{Optional additional UI placed to the right of the tab bar.}
 

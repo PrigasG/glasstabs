@@ -10,7 +10,9 @@ updateGlassSelect(
   choices = NULL,
   selected = NULL,
   check_style = NULL,
-  shape = NULL
+  shape = NULL,
+  disabled = NULL,
+  disabled_choices = NULL
 )
 }
 \arguments{
@@ -29,6 +31,14 @@ keeps the current style unchanged.}
 
 \item{shape}{Optional new corner style. One of \code{"rounded"} or
 \code{"square"}. Defaults to \code{NULL}, which keeps the current shape
+unchanged.}
+
+\item{disabled}{Optional logical. \code{TRUE}/\code{FALSE} toggles the
+whole-widget disabled state. Defaults to \code{NULL}, which leaves it
+unchanged.}
+
+\item{disabled_choices}{Optional character vector of choice values to render
+as disabled. Defaults to \code{NULL}, which leaves disabled choices
 unchanged.}
 }
 \value{

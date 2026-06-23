@@ -1,5 +1,23 @@
 # glasstabs (development version)
 
+## Native-layout parity
+
+* `glassSelect()` and `glassMultiSelect()` gained a `width` argument
+  (passed to `shiny::validateCssUnit()`) so the widgets can fill a column or
+  match a fixed layout, like native `selectizeInput()`.
+* Both selects now accept grouped choices as a named list, selectInput()-style
+  (e.g. `list(Fruit = c(Apple = "apple"), Veg = c(...))`), rendering
+  non-interactive group headers. Search hides headers whose options are all
+  filtered out.
+* Added disabled support: `disabled = TRUE` greys out and blocks the whole
+  widget, and `disabled_choices` renders individual options as non-selectable.
+  Both are also reachable at runtime via `updateGlassSelect()` /
+  `updateGlassMultiSelect()` (`disabled`, `disabled_choices`). Disabled options
+  are skipped by "Select all".
+* `glassTabsUI()` gained a `shape` argument (`"rounded"` default or
+  `"square"`) so the tab bar and content corners can match
+  `shape = "square"` selects for a cohesive, selectize-style layout.
+
 ## Square corners
 
 * Added a `shape` argument to `glassSelect()` and `glassMultiSelect()`. The

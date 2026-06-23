@@ -138,12 +138,14 @@ test_that("glassMultiSelect() NULL choices error is actionable", {
   expect_match(err, "character vector|c\\(")
 })
 
-test_that("glassMultiSelect() list choices error suggests vector", {
-  err <- tryCatch(
-    glassMultiSelect("x", list(a = "A", b = "B")),
-    error = conditionMessage
-  )
-  expect_match(err, "atomic vector|vector")
+test_that("glassMultiSelect() accepts a flat named list like selectInput()", {
+  # Scalar list elements are flat choices (no group headers), matching
+  # selectInput() semantics. This previously errored; named lists are now
+  # supported for grouped choices.
+  html <- as.character(glassMultiSelect("x", list(a = "A", b = "B")))
+  expect_match(html, 'data-value="A"')
+  expect_match(html, 'data-value="B"')
+  expect_false(grepl("gt-ms-optgroup", html, fixed = TRUE))
 })
 
 test_that("glassSelect() multi-value selected error suggests glassMultiSelect", {

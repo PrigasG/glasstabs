@@ -294,7 +294,28 @@ glassMultiSelect("filters", choices, shape = "square")
 ```
 
 See it next to native selectize with `runGlassExample("square-corners")`, or
-inside a Bootstrap 5 theme with `runGlassExample("bslib")`.
+inside a Bootstrap 5 theme with `runGlassExample("bslib")`. `glassTabsUI()` also
+takes `shape = "square"`, so the tab bar can match the selects.
+
+## Native-layout parity
+
+For drop-in use alongside native `selectizeInput()`, both selects also accept a
+`width`, grouped choices as a named list (selectInput()-style), and disabled
+state:
+
+```r
+glassSelect("region", choices, width = "240px")
+
+glassSelect("food", list(
+  Fruit = c(Apple = "apple", Banana = "banana"),
+  Veg   = c(Carrot = "carrot", Pea = "pea")
+))
+
+glassMultiSelect("filters", choices, disabled_choices = c("apple", "pear"))
+```
+
+`disabled` (whole widget) and `disabled_choices` (individual options) are also
+reachable at runtime through `updateGlassSelect()` / `updateGlassMultiSelect()`.
 
 ## Server-side updates
 

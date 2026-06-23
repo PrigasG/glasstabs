@@ -30,7 +30,14 @@
 #' @param shape Corner style for the trigger and dropdown. One of
 #'   \code{"rounded"} (default) for the signature glass look, or
 #'   \code{"square"} for crisp, selectize-style corners so the widget sits
-#'   neatly alongside native 'Shiny' \code{selectizeInput()} controls.
+#'   neatly alongside native Shiny \code{selectizeInput()} controls.
+#' @param width Optional widget width passed to
+#'   \code{shiny::validateCssUnit()}, e.g. \code{100\%} or \code{240px}. When
+#'   \code{NULL} (default) the trigger keeps its intrinsic width.
+#' @param disabled Logical. When \code{TRUE} the whole widget is greyed out and
+#'   non-interactive. Default \code{FALSE}.
+#' @param disabled_choices Optional character vector of choice values to render
+#'   as disabled (non-selectable) rows. Default \code{NULL}.
 #' @param server Logical. If \code{TRUE}, render only an initial slice of
 #'   choices and use [glassSelectServer()] to search the full choice set from
 #'   the Shiny server. Default \code{FALSE}.
@@ -83,6 +90,9 @@ glassSelect <- function(
     check_style = c("checkbox", "check-only", "filled"),
     theme = "dark",
     shape = c("rounded", "square"),
+    width = NULL,
+    disabled = FALSE,
+    disabled_choices = NULL,
     server = FALSE,
     server_limit = 50L,
     server_min_chars = 0L
@@ -95,6 +105,10 @@ glassSelect <- function(
   }
   check_style <- match.arg(check_style)
   shape <- match.arg(shape)
+  field_width_style <- .gt_field_width_style(width)
+  inner_width_style <- if (is.null(width)) NULL else "width:100%;"
+  disabled <- isTRUE(disabled)
+  disabled_choices <- if (is.null(disabled_choices)) character(0) else as.character(disabled_choices)
   server <- isTRUE(server)
   server_limit <- .gt_positive_int(server_limit, "server_limit")
   server_min_chars <- .gt_nonnegative_int(server_min_chars, "server_min_chars")
@@ -103,10 +117,12 @@ glassSelect <- function(
   normalized <- .gt_normalize_choices(choices)
   vals <- normalized$values
   labels <- normalized$labels
+  groups <- normalized$groups %||% rep("", length(vals))
 
   if (isTRUE(include_all) && !all_choice_value %in% vals) {
     vals <- c(all_choice_value, vals)
     labels <- c(all_choice_label, labels)
+    groups <- c("", groups)
   }
 
   if (!is.null(selected)) {
@@ -155,6 +171,7 @@ glassSelect <- function(
   }
   render_vals <- vals[render_idx]
   render_labels <- labels[render_idx]
+  render_groups <- groups[render_idx]
 
   field_id <- paste0(inputId, "-field")
   scope_id <- paste0(inputId, "-wrap")
@@ -169,6 +186,7 @@ glassSelect <- function(
     "gt-gs-wrap",
     paste0("style-", check_style),
     if (identical(shape, "square")) "shape-square" else NULL,
+    if (disabled) "gt-disabled" else NULL,
     if (.is_light_theme(theme)) "theme-light" else NULL
   )
 
@@ -196,26 +214,44 @@ glassSelect <- function(
     NULL
   }
 
-  option_rows <- lapply(seq_along(render_vals), function(i) {
+  option_rows <- list()
+  prev_group <- ""
+  for (i in seq_along(render_vals)) {
     v <- render_vals[[i]]
     lbl <- render_labels[[i]]
+    grp <- render_groups[[i]]
+
+    if (nzchar(grp) && !identical(grp, prev_group)) {
+      option_rows[[length(option_rows) + 1L]] <- shiny::div(
+        class = "gt-gs-optgroup",
+        `data-group` = grp,
+        role = "presentation",
+        grp
+      )
+    }
+    prev_group <- grp
+
+    is_disabled <- v %in% disabled_choices
     cls <- paste(
       c(
         "gt-gs-option",
-        if (!is.null(selected) && identical(v, selected)) "selected" else NULL
+        if (!is.null(selected) && identical(v, selected)) "selected" else NULL,
+        if (is_disabled) "disabled" else NULL
       ),
       collapse = " "
     )
 
-    shiny::div(
+    option_rows[[length(option_rows) + 1L]] <- shiny::div(
       class = cls,
       `data-value` = v,
+      `data-group` = if (nzchar(grp)) grp else NULL,
       role = "option",
       `aria-selected` = if (!is.null(selected) && identical(v, selected)) "true" else "false",
+      `aria-disabled` = if (is_disabled) "true" else NULL,
       shiny::div(class = "gt-gs-check", check_svg),
       shiny::tags$span(lbl)
     )
-  })
+  }
 
   clear_btn <- if (isTRUE(clearable)) {
     shiny::tags$span(
@@ -237,10 +273,12 @@ glassSelect <- function(
     shiny::div(
       class = "gt-gs-field",
       id = field_id,
+      style = field_width_style,
       label_tag,
       shiny::div(
         class = wrap_cls,
         id = scope_id,
+        style = inner_width_style,
         `data-input-id` = inputId,
         `data-placeholder` = placeholder,
         `data-searchable` = tolower(as.character(searchable)),
@@ -254,10 +292,12 @@ glassSelect <- function(
         shiny::div(
           class = "gt-gs-trigger",
           id = paste0(inputId, "-trigger"),
+          style = inner_width_style,
           role = "combobox",
-          tabindex = "0",
+          tabindex = if (disabled) "-1" else "0",
           `aria-haspopup` = "listbox",
           `aria-expanded` = "false",
+          `aria-disabled` = if (disabled) "true" else NULL,
           `aria-controls` = paste0(inputId, "-dropdown"),
           shiny::tags$span(id = paste0(inputId, "-label"), init_label),
           shiny::div(
@@ -343,6 +383,12 @@ glassSelect <- function(
 #' @param shape Optional new corner style. One of \code{"rounded"} or
 #'   \code{"square"}. Defaults to \code{NULL}, which keeps the current shape
 #'   unchanged.
+#' @param disabled Optional logical. \code{TRUE}/\code{FALSE} toggles the
+#'   whole-widget disabled state. Defaults to \code{NULL}, which leaves it
+#'   unchanged.
+#' @param disabled_choices Optional character vector of choice values to render
+#'   as disabled. Defaults to \code{NULL}, which leaves disabled choices
+#'   unchanged.
 #'
 #' @return No return value. Called for its side effect of updating the client-side
 #'   widget.
@@ -354,7 +400,9 @@ updateGlassSelect <- function(
     choices = NULL,
     selected = NULL,
     check_style = NULL,
-    shape = NULL
+    shape = NULL,
+    disabled = NULL,
+    disabled_choices = NULL
 ) {
   if (!is.null(check_style)) {
     check_style <- match.arg(check_style, c("checkbox", "check-only", "filled"))
@@ -367,14 +415,17 @@ updateGlassSelect <- function(
 
   if (!is.null(choices)) {
     normalized <- .gt_normalize_choices(choices)
+    disabled_vals <- if (is.null(disabled_choices)) character(0) else as.character(disabled_choices)
+    grps <- normalized$groups %||% rep("", length(normalized$values))
 
-    message$choices <- Map(
-      f = function(label, value) {
-        list(label = label, value = value)
-      },
-      label = normalized$labels,
-      value = normalized$values
-    )
+    message$choices <- lapply(seq_along(normalized$values), function(i) {
+      list(
+        label = normalized$labels[[i]],
+        value = normalized$values[[i]],
+        group = grps[[i]],
+        disabled = normalized$values[[i]] %in% disabled_vals
+      )
+    })
   }
 
   if (!is.null(selected)) {
@@ -402,6 +453,14 @@ updateGlassSelect <- function(
 
   if (!is.null(shape)) {
     message$shape <- shape
+  }
+
+  if (!is.null(disabled)) {
+    message$disabled <- isTRUE(disabled)
+  }
+
+  if (!is.null(disabled_choices)) {
+    message$disabled_choices <- unname(as.character(disabled_choices))
   }
 
   session$sendInputMessage(inputId, message)

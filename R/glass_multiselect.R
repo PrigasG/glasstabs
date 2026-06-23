@@ -32,7 +32,14 @@
 #' @param shape Corner style for the trigger and dropdown. One of
 #'   \code{"rounded"} (default) for the signature glass look, or
 #'   \code{"square"} for crisp, selectize-style corners so the widget sits
-#'   neatly alongside native 'Shiny' \code{selectizeInput()} controls.
+#'   neatly alongside native Shiny \code{selectizeInput()} controls.
+#' @param width Optional widget width passed to
+#'   \code{shiny::validateCssUnit()}, e.g. \code{100\%} or \code{240px}. When
+#'   \code{NULL} (default) the trigger keeps its intrinsic width.
+#' @param disabled Logical. When \code{TRUE} the whole widget is greyed out and
+#'   non-interactive. Default \code{FALSE}.
+#' @param disabled_choices Optional character vector of choice values to render
+#'   as disabled (non-selectable) rows. Default \code{NULL}.
 #' @param hues Optional named integer vector of HSL hue angles (0 to 360) for
 #'   the \code{"filled"} style. Auto-assigned if \code{NULL}.
 #' @param dark_selector Optional CSS selector that signals dark mode (e.g.
@@ -83,6 +90,9 @@ glassMultiSelect <- function(
     show_clear_all      = TRUE,
     theme               = "dark",
     shape               = c("rounded", "square"),
+    width               = NULL,
+    disabled            = FALSE,
+    disabled_choices    = NULL,
     hues                = NULL,
     dark_selector       = NULL,
     server              = FALSE,
@@ -97,6 +107,10 @@ glassMultiSelect <- function(
   }
   check_style <- match.arg(check_style)
   shape <- match.arg(shape)
+  field_width_style <- .gt_field_width_style(width)
+  inner_width_style <- if (is.null(width)) NULL else "width:100%;"
+  disabled <- isTRUE(disabled)
+  disabled_choices <- if (is.null(disabled_choices)) character(0) else as.character(disabled_choices)
   server <- isTRUE(server)
   server_limit <- .gt_positive_int(server_limit, "server_limit")
   server_min_chars <- .gt_nonnegative_int(server_min_chars, "server_min_chars")
@@ -105,11 +119,12 @@ glassMultiSelect <- function(
   normalized <- .gt_normalize_choices(choices)
   vals <- normalized$values
   labels <- normalized$labels
+  groups <- normalized$groups %||% rep("", length(vals))
 
 
   selected_is_default <- is.null(selected)
   if (is.null(selected)) {
-    selected <- vals
+    selected <- setdiff(vals, disabled_choices)
   } else {
     selected <- as.character(selected)
   }
@@ -152,6 +167,7 @@ glassMultiSelect <- function(
   }
   render_vals <- vals[render_idx]
   render_labels <- labels[render_idx]
+  render_groups <- groups[render_idx]
 
   field_id <- paste0(inputId, "-field")
   scope_id <- paste0(inputId, "-wrap")
@@ -298,21 +314,42 @@ glassMultiSelect <- function(
     )
   }
 
-  option_rows <- lapply(seq_along(render_vals), function(i) {
+  option_rows <- list()
+  prev_group <- ""
+  for (i in seq_along(render_vals)) {
     v <- render_vals[[i]]
     lbl <- render_labels[[i]]
-    cls <- paste("gt-ms-option", if (v %in% selected) "checked" else "")
+    grp <- render_groups[[i]]
 
-    shiny::div(
+    if (nzchar(grp) && !identical(grp, prev_group)) {
+      option_rows[[length(option_rows) + 1L]] <- shiny::div(
+        class = "gt-ms-optgroup",
+        `data-group` = grp,
+        role = "presentation",
+        grp
+      )
+    }
+    prev_group <- grp
+
+    is_disabled <- v %in% disabled_choices
+    cls <- trimws(paste(
+      "gt-ms-option",
+      if (v %in% selected) "checked" else "",
+      if (is_disabled) "disabled" else ""
+    ))
+
+    option_rows[[length(option_rows) + 1L]] <- shiny::div(
       class = cls,
       `data-value` = v,
+      `data-group` = if (nzchar(grp)) grp else NULL,
       style = paste0("--opt-hue:", unname(hues[v]), ";"),
       role = "option",
       `aria-selected` = if (v %in% selected) "true" else "false",
+      `aria-disabled` = if (is_disabled) "true" else NULL,
       shiny::div(class = "gt-ms-check", check_svg),
       shiny::tags$span(lbl)
     )
-  })
+  }
 
   footer <- shiny::div(
     class = "gt-ms-footer",
@@ -341,6 +378,7 @@ glassMultiSelect <- function(
     "gt-ms-wrap",
     paste0("style-", check_style),
     if (identical(shape, "square")) "shape-square" else NULL,
+    if (disabled) "gt-disabled" else NULL,
     if (.is_light_theme(theme)) "theme-light" else NULL
   )
 
@@ -351,9 +389,11 @@ glassMultiSelect <- function(
       class = "gt-ms-field",
       label_tag,
       id = field_id,
+      style = field_width_style,
       shiny::div(
         class = wrap_cls,
         id = scope_id,
+        style = inner_width_style,
         `data-input-id` = inputId,
         `data-placeholder` = placeholder,
         `data-all-label` = all_label,
@@ -365,10 +405,12 @@ glassMultiSelect <- function(
         shiny::div(
           class = "gt-ms-trigger",
           id = paste0(inputId, "-trigger"),
+          style = inner_width_style,
           role = "combobox",
-          tabindex = "0",
+          tabindex = if (disabled) "-1" else "0",
           `aria-haspopup` = "listbox",
           `aria-expanded` = "false",
+          `aria-disabled` = if (disabled) "true" else NULL,
           `aria-controls` = paste0(inputId, "-dropdown"),
           shiny::tags$span(id = paste0(inputId, "-label"), init_label),
           shiny::div(
@@ -490,6 +532,12 @@ glassMultiSelect <- function(
 #' @param shape Optional new corner style. One of \code{"rounded"} or
 #'   \code{"square"}. Defaults to \code{NULL}, which keeps the current shape
 #'   unchanged.
+#' @param disabled Optional logical. \code{TRUE}/\code{FALSE} toggles the
+#'   whole-widget disabled state. Defaults to \code{NULL}, which leaves it
+#'   unchanged.
+#' @param disabled_choices Optional character vector of choice values to render
+#'   as disabled. Defaults to \code{NULL}, which leaves disabled choices
+#'   unchanged.
 #'
 #' @return No return value. Called for its side effect of updating the
 #'   client-side widget.
@@ -501,7 +549,9 @@ updateGlassMultiSelect <- function(
     choices = NULL,
     selected = NULL,
     check_style = NULL,
-    shape = NULL
+    shape = NULL,
+    disabled = NULL,
+    disabled_choices = NULL
 ) {
   if (!is.null(check_style)) {
     check_style <- match.arg(check_style, c("checkbox", "check-only", "filled"))
@@ -514,14 +564,17 @@ updateGlassMultiSelect <- function(
 
   if (!is.null(choices)) {
     normalized <- .gt_normalize_choices(choices)
+    disabled_vals <- if (is.null(disabled_choices)) character(0) else as.character(disabled_choices)
+    grps <- normalized$groups %||% rep("", length(normalized$values))
 
-    message$choices <- Map(
-      f = function(label, value) {
-        list(label = label, value = value)
-      },
-      label = normalized$labels,
-      value = normalized$values
-    )
+    message$choices <- lapply(seq_along(normalized$values), function(i) {
+      list(
+        label = normalized$labels[[i]],
+        value = normalized$values[[i]],
+        group = grps[[i]],
+        disabled = normalized$values[[i]] %in% disabled_vals
+      )
+    })
   }
 
   if (!is.null(selected)) {
@@ -534,6 +587,14 @@ updateGlassMultiSelect <- function(
 
   if (!is.null(shape)) {
     message$shape <- shape
+  }
+
+  if (!is.null(disabled)) {
+    message$disabled <- isTRUE(disabled)
+  }
+
+  if (!is.null(disabled_choices)) {
+    message$disabled_choices <- unname(as.character(disabled_choices))
   }
 
   if (is.function(session$sendCustomMessage) && is.function(session$ns)) {
@@ -660,19 +721,58 @@ glassMultiSelectServer <- function(
   if (!length(choices)) {
     return(list(
       values = character(0),
-      labels = character(0)
+      labels = character(0),
+      groups = character(0)
     ))
   }
 
+  # Grouped choices: a named list, selectInput()-style. A top-level element is
+  # treated as a group (its name becomes the group header) when it is itself a
+  # list or a vector of length > 1; a scalar element is a flat, ungrouped
+  # choice (its name is the label).
   if (is.list(choices) && !is.atomic(choices)) {
-    stop(
-      paste0(
-        "`choices` must be a named or unnamed atomic vector, not a list.\n",
-        "Use: choices = c(\"A\", \"B\") or choices = c(Label = \"a\", Other = \"b\")\n",
-        "For grouped choices, flatten to a single vector first."
-      ),
-      call. = FALSE
-    )
+    nms <- names(choices)
+    if (is.null(nms)) nms <- rep("", length(choices))
+    nms[is.na(nms)] <- ""
+
+    values <- character(0)
+    labels <- character(0)
+    groups <- character(0)
+
+    for (i in seq_along(choices)) {
+      nm <- nms[[i]]
+      el <- choices[[i]]
+
+      if (is.null(el) || length(el) == 0L) {
+        next
+      }
+
+      if (is.list(el) || length(el) > 1L) {
+        sub <- .gt_normalize_choices(el)
+        values <- c(values, sub$values)
+        labels <- c(labels, sub$labels)
+        groups <- c(groups, rep(nm, length(sub$values)))
+      } else {
+        v <- as.character(el)
+        inner <- names(el)
+        lbl <- if (!is.null(inner) && nzchar(inner)) {
+          inner
+        } else if (nzchar(nm)) {
+          nm
+        } else {
+          v
+        }
+        values <- c(values, v)
+        labels <- c(labels, lbl)
+        groups <- c(groups, "")
+      }
+    }
+
+    return(list(
+      values = values,
+      labels = labels,
+      groups = groups
+    ))
   }
 
   orig_names <- names(choices)
@@ -686,7 +786,8 @@ glassMultiSelectServer <- function(
 
   list(
     values = values,
-    labels = labels
+    labels = labels,
+    groups = rep("", length(values))
   )
 }
 
@@ -723,6 +824,15 @@ glassMultiSelectServer <- function(
 }
 
 #' @noRd
+.gt_field_width_style <- function(width) {
+  if (is.null(width)) {
+    return(NULL)
+  }
+  w <- shiny::validateCssUnit(width)
+  paste0("width:", w, ";max-width:100%;")
+}
+
+#' @noRd
 .gt_positive_int <- function(x, name) {
   if (!is.numeric(x) || length(x) != 1L || is.na(x) || x < 1) {
     stop(sprintf("`%s` must be a single positive integer.", name), call. = FALSE)
@@ -745,23 +855,26 @@ glassMultiSelectServer <- function(
 }
 
 #' @noRd
-.gt_choice_payload <- function(labels, values, hues = NULL) {
+.gt_choice_payload <- function(labels, values, hues = NULL, groups = NULL) {
+  groups <- groups %||% rep("", length(values))
   if (is.null(hues)) {
     unname(Map(
-      f = function(label, value) {
-        list(label = label, value = value)
-      },
-      label = labels,
-      value = values
-    ))
-  } else {
-    unname(Map(
-      f = function(label, value, hue) {
-        list(label = label, value = value, hue = unname(as.integer(hue)))
+      f = function(label, value, group) {
+        list(label = label, value = value, group = group)
       },
       label = labels,
       value = values,
-      hue = hues
+      group = groups
+    ))
+  } else {
+    unname(Map(
+      f = function(label, value, hue, group) {
+        list(label = label, value = value, hue = unname(as.integer(hue)), group = group)
+      },
+      label = labels,
+      value = values,
+      hue = hues,
+      group = groups
     ))
   }
 }
@@ -775,6 +888,7 @@ glassMultiSelectServer <- function(
 
   labels <- normalized$labels
   values <- normalized$values
+  groups <- normalized$groups %||% rep("", length(values))
   keep <- seq_along(values)
 
   if (nzchar(query)) {
@@ -792,6 +906,7 @@ glassMultiSelectServer <- function(
   list(
     labels = labels[keep],
     values = values[keep],
+    groups = groups[keep],
     indices = keep,
     total = total
   )
@@ -814,7 +929,6 @@ glassMultiSelectServer <- function(
   }
   limit <- .gt_positive_int(limit, "limit")
   normalized <- .gt_normalize_choices(choices)
-  choices <- stats::setNames(normalized$values, normalized$labels)
   hues <- NULL
   if (identical(type, "multi")) {
     hues <- stats::setNames(
@@ -842,7 +956,7 @@ glassMultiSelectServer <- function(
         list(
           inputId = session$ns(inputId),
           type = type,
-          choices = .gt_choice_payload(filtered$labels, filtered$values, payload_hues),
+          choices = .gt_choice_payload(filtered$labels, filtered$values, payload_hues, filtered$groups),
           total = length(normalized$values),
           matched = filtered$total
         )
