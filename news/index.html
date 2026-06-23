@@ -45,6 +45,15 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="glasstabs-development-version">glasstabs (development version)<a class="anchor" aria-label="anchor" href="#glasstabs-development-version"></a></h2>
 <div class="section level3">
+<h3 id="native-layout-parity-development-version">Native-layout parity<a class="anchor" aria-label="anchor" href="#native-layout-parity-development-version"></a></h3>
+<ul><li>
+<code><a href="../reference/glassSelect.html">glassSelect()</a></code> and <code><a href="../reference/glassMultiSelect.html">glassMultiSelect()</a></code> gained a <code>width</code> argument (passed to <code><a href="https://rstudio.github.io/htmltools/reference/validateCssUnit.html" class="external-link">shiny::validateCssUnit()</a></code>) so the widgets can fill a column or match a fixed layout, like native <code><a href="https://rdrr.io/pkg/shiny/man/selectInput.html" class="external-link">selectizeInput()</a></code>.</li>
+<li>Both selects now accept grouped choices as a named list, selectInput()-style (e.g. <code>list(Fruit = c(Apple = "apple"), Veg = c(...))</code>), rendering non-interactive group headers. Search hides headers whose options are all filtered out.</li>
+<li>Added disabled support: <code>disabled = TRUE</code> greys out and blocks the whole widget, and <code>disabled_choices</code> renders individual options as non-selectable. Both are also reachable at runtime via <code><a href="../reference/updateGlassSelect.html">updateGlassSelect()</a></code> / <code><a href="../reference/updateGlassMultiSelect.html">updateGlassMultiSelect()</a></code> (<code>disabled</code>, <code>disabled_choices</code>). Disabled options are skipped by “Select all”.</li>
+<li>
+<code><a href="../reference/glassTabsUI.html">glassTabsUI()</a></code> gained a <code>shape</code> argument (<code>"rounded"</code> default or <code>"square"</code>) so the tab bar and content corners can match <code>shape = "square"</code> selects for a cohesive, selectize-style layout.</li>
+</ul></div>
+<div class="section level3">
 <h3 id="square-corners-development-version">Square corners<a class="anchor" aria-label="anchor" href="#square-corners-development-version"></a></h3>
 <ul><li>Added a <code>shape</code> argument to <code><a href="../reference/glassSelect.html">glassSelect()</a></code> and <code><a href="../reference/glassMultiSelect.html">glassMultiSelect()</a></code>. The default <code>shape = "rounded"</code> keeps the signature glass look, while <code>shape = "square"</code> applies crisp, selectize-style corners so the widgets sit flush next to native <code><a href="https://rdrr.io/pkg/shiny/man/selectInput.html" class="external-link">selectizeInput()</a></code> controls without looking out of place.</li>
 <li>

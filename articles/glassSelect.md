@@ -103,6 +103,32 @@ The shape can also be switched at runtime from the server with
 corner shape side by side with native selectize in
 `runGlassExample("square-corners")`.
 
+## Width, grouped choices, and disabled options
+
+For parity with native
+[`selectizeInput()`](https://rdrr.io/pkg/shiny/man/selectInput.html),
+[`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md)
+accepts a `width`, grouped choices as a named list, and disabled state:
+
+``` r
+
+# Fixed / fluid width
+glassSelect("region_w", fruits, width = "240px")
+
+# Grouped choices (selectInput()-style named list)
+glassSelect("food", list(
+  Fruit = c(Apple = "apple", Banana = "banana"),
+  Veg   = c(Carrot = "carrot", Pea = "pea")
+))
+
+# Disable the whole widget, or specific options
+glassSelect("region_d", fruits, disabled = TRUE)
+glassSelect("region_dc", fruits, disabled_choices = "banana")
+```
+
+`disabled` and `disabled_choices` can also be toggled at runtime with
+[`updateGlassSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassSelect.md).
+
 ## Searchable and clearable
 
 Search is enabled by default. You can also enable a clear control.

@@ -14,7 +14,9 @@ updateGlassSelect(
   choices = NULL,
   selected = NULL,
   check_style = NULL,
-  shape = NULL
+  shape = NULL,
+  disabled = NULL,
+  disabled_choices = NULL
 )
 ```
 
@@ -47,6 +49,16 @@ updateGlassSelect(
 
   Optional new corner style. One of `"rounded"` or `"square"`. Defaults
   to `NULL`, which keeps the current shape unchanged.
+
+- disabled:
+
+  Optional logical. `TRUE`/`FALSE` toggles the whole-widget disabled
+  state. Defaults to `NULL`, which leaves it unchanged.
+
+- disabled_choices:
+
+  Optional character vector of choice values to render as disabled.
+  Defaults to `NULL`, which leaves disabled choices unchanged.
 
 ## Value
 

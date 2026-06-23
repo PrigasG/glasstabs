@@ -122,13 +122,42 @@
 </tr><tr><td>16</td>
 <td>
 <code>updateGlassMultiSelect(choices = ...)</code> — dynamic choice list update</td>
-<td>💡</td>
+<td>✅ shipped</td>
+</tr></tbody></table><hr></div>
+<div class="section level2">
+<h2 id="selectize-parity-dev">Selectize parity (dev)<a class="anchor" aria-label="anchor" href="#selectize-parity-dev"></a></h2>
+<table class="table"><colgroup><col width="15%"><col width="45%"><col width="40%"></colgroup><thead><tr><th>#</th>
+<th>Feature</th>
+<th>Status</th>
+</tr></thead><tbody><tr><td>17</td>
+<td>
+<code>width</code> argument on <code><a href="reference/glassSelect.html">glassSelect()</a></code> / <code><a href="reference/glassMultiSelect.html">glassMultiSelect()</a></code>
+</td>
+<td>✅</td>
+</tr><tr><td>18</td>
+<td>Grouped choices via named list (<code>selectInput()</code>-style)</td>
+<td>✅</td>
+</tr><tr><td>19</td>
+<td>Whole-widget + per-option <code>disabled</code> / <code>disabled_choices</code>
+</td>
+<td>✅</td>
+</tr><tr><td>20</td>
+<td>
+<code>shape = "square"</code> for selects and <code><a href="reference/glassTabsUI.html">glassTabsUI()</a></code>
+</td>
+<td>✅</td>
+</tr><tr><td>21</td>
+<td>Full in-dropdown keyboard navigation (arrow keys, type-ahead)</td>
+<td>📋</td>
 </tr></tbody></table><hr></div>
 <div class="section level2">
 <h2 id="completed">Completed<a class="anchor" aria-label="anchor" href="#completed"></a></h2>
 <table class="table"><colgroup><col width="45%"><col width="55%"></colgroup><thead><tr><th>Version</th>
 <th>Highlights</th>
-</tr></thead><tbody><tr><td>v0.3.1</td>
+</tr></thead><tbody><tr><td>dev</td>
+<td>
+<code>shape = "square"</code> for selects + tabs, <code>width</code>, grouped choices, <code>disabled</code> / <code>disabled_choices</code>, server-side select search</td>
+</tr><tr><td>v0.3.1</td>
 <td>
 <code><a href="reference/glassTabCondition.html">glassTabCondition()</a></code>, <code><a href="reference/glasstabs_news.html">glasstabs_news()</a></code>, actionable error messages, examples for theme helpers, container spacing fix, light-mode halo shadow</td>
 </tr><tr><td>v0.3.0</td>
@@ -155,12 +184,14 @@
 <code>ns("tabs")</code> in UI, bare in server — asymmetric</td>
 <td>Document clearly; consider future auto-detect</td>
 </tr><tr><td>Large choice sets</td>
-<td>Choices sent to browser upfront (~500 cap)</td>
-<td>Phase 3: server-side loading</td>
+<td><del>Choices sent to browser upfront</del></td>
+<td>✅ Resolved: opt-in server-side search (<code>server = TRUE</code>)</td>
+</tr><tr><td>Keyboard nav</td>
+<td>Select dropdowns lack arrow-key / type-ahead navigation</td>
+<td>Planned: in-dropdown keyboard support (item 21)</td>
 </tr><tr><td>Screen readers</td>
-<td>Custom divs, not native <code>&lt;select&gt;</code>
-</td>
-<td>Phase 3: ARIA audit</td>
+<td>Custom divs, not native <code>&lt;select&gt;</code>; ARIA roles present</td>
+<td>Ongoing ARIA audit</td>
 </tr></tbody></table></div>
 </div>
 

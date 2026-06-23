@@ -58,7 +58,9 @@ glassMultiSelect() input."><meta property="og:image" content="https://prigasg.gi
 <span>  choices <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  selected <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  check_style <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  shape <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  shape <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  disabled <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  disabled_choices <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -92,6 +94,18 @@ keeps the current style unchanged.</p></dd>
 <dt id="arg-shape">shape<a class="anchor" aria-label="anchor" href="#arg-shape"></a></dt>
 <dd><p>Optional new corner style. One of <code>"rounded"</code> or
 <code>"square"</code>. Defaults to <code>NULL</code>, which keeps the current shape
+unchanged.</p></dd>
+
+
+<dt id="arg-disabled">disabled<a class="anchor" aria-label="anchor" href="#arg-disabled"></a></dt>
+<dd><p>Optional logical. <code>TRUE</code>/<code>FALSE</code> toggles the
+whole-widget disabled state. Defaults to <code>NULL</code>, which leaves it
+unchanged.</p></dd>
+
+
+<dt id="arg-disabled-choices">disabled_choices<a class="anchor" aria-label="anchor" href="#arg-disabled-choices"></a></dt>
+<dd><p>Optional character vector of choice values to render
+as disabled. Defaults to <code>NULL</code>, which leaves disabled choices
 unchanged.</p></dd>
 
 </dl></div>

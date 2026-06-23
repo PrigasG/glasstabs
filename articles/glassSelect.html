@@ -174,11 +174,33 @@ See the corner shape side by side with native selectize in
 <code>runGlassExample("square-corners")</code>.</p>
 </div>
 <div class="section level2">
+<h2 id="width-grouped-choices-and-disabled-options">Width, grouped choices, and disabled options<a class="anchor" aria-label="anchor" href="#width-grouped-choices-and-disabled-options"></a>
+</h2>
+<p>For parity with native <code><a href="https://rdrr.io/pkg/shiny/man/selectInput.html" class="external-link">selectizeInput()</a></code>,
+<code><a href="../reference/glassSelect.html">glassSelect()</a></code> accepts a <code>width</code>, grouped choices
+as a named list, and disabled state:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Fixed / fluid width</span></span>
+<span><span class="fu"><a href="../reference/glassSelect.html">glassSelect</a></span><span class="op">(</span><span class="st">"region_w"</span>, <span class="va">fruits</span>, width <span class="op">=</span> <span class="st">"240px"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Grouped choices (selectInput()-style named list)</span></span>
+<span><span class="fu"><a href="../reference/glassSelect.html">glassSelect</a></span><span class="op">(</span><span class="st">"food"</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  Fruit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Apple <span class="op">=</span> <span class="st">"apple"</span>, Banana <span class="op">=</span> <span class="st">"banana"</span><span class="op">)</span>,</span>
+<span>  Veg   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Carrot <span class="op">=</span> <span class="st">"carrot"</span>, Pea <span class="op">=</span> <span class="st">"pea"</span><span class="op">)</span></span>
+<span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Disable the whole widget, or specific options</span></span>
+<span><span class="fu"><a href="../reference/glassSelect.html">glassSelect</a></span><span class="op">(</span><span class="st">"region_d"</span>, <span class="va">fruits</span>, disabled <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/glassSelect.html">glassSelect</a></span><span class="op">(</span><span class="st">"region_dc"</span>, <span class="va">fruits</span>, disabled_choices <span class="op">=</span> <span class="st">"banana"</span><span class="op">)</span></span></code></pre></div>
+<p><code>disabled</code> and <code>disabled_choices</code> can also be
+toggled at runtime with <code><a href="../reference/updateGlassSelect.html">updateGlassSelect()</a></code>.</p>
+</div>
+<div class="section level2">
 <h2 id="searchable-and-clearable">Searchable and clearable<a class="anchor" aria-label="anchor" href="#searchable-and-clearable"></a>
 </h2>
 <p>Search is enabled by default. You can also enable a clear
 control.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/glassSelect.html">glassSelect</a></span><span class="op">(</span></span>
 <span>  <span class="st">"f"</span>,</span>
 <span>  <span class="va">fruits</span>,</span>
@@ -186,7 +208,7 @@ control.</p>
 <span>  clearable <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>To hide the search box:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/glassSelect.html">glassSelect</a></span><span class="op">(</span></span>
 <span>  <span class="st">"f"</span>,</span>
 <span>  <span class="va">fruits</span>,</span>
@@ -200,7 +222,7 @@ control.</p>
 in the UI and register <code><a href="../reference/glassSelectServer.html">glassSelectServer()</a></code> in the server
 function. The browser renders only an initial slice of choices and asks
 Shiny for matching choices as the user types.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">many_choices</span> <span class="op">&lt;-</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"value-%04d"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">2000</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Choice %04d"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">2000</span><span class="op">)</span></span>
@@ -233,7 +255,7 @@ in the server function for the same <code>inputId</code>.</p>
 <h2 id="explicit-all-option">Explicit “All” option<a class="anchor" aria-label="anchor" href="#explicit-all-option"></a>
 </h2>
 <p>You can prepend an explicit “All” option:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/glassSelect.html">glassSelect</a></span><span class="op">(</span></span>
 <span>  <span class="st">"f"</span>,</span>
 <span>  <span class="va">fruits</span>,</span>
@@ -249,7 +271,7 @@ selection - a deliberate “All” selection</p>
 </h2>
 <p>Read the current value directly from
 <code>input$&lt;inputId&gt;</code>:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/observe.html" class="external-link">observe</a></span><span class="op">(</span><span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"Selected: "</span>, <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">pick</span><span class="op">)</span><span class="op">)</span> <span class="st">"NULL"</span> <span class="kw">else</span> <span class="va">input</span><span class="op">$</span><span class="va">pick</span><span class="op">)</span></span>
@@ -261,7 +283,7 @@ selection - a deliberate “All” selection</p>
 </h2>
 <p>If you want a small convenience wrapper, use
 <code><a href="../reference/glassSelectValue.html">glassSelectValue()</a></code>:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">pick</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/glassSelectValue.html">glassSelectValue</a></span><span class="op">(</span><span class="va">input</span>, <span class="st">"pick"</span><span class="op">)</span></span>
 <span></span>
@@ -275,7 +297,7 @@ selection - a deliberate “All” selection</p>
 </h2>
 <p><code><a href="../reference/updateGlassSelect.html">updateGlassSelect()</a></code> can update: - available choices -
 current selection - selection marker style</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/observeEvent.html" class="external-link">observeEvent</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">filled</span>, <span class="op">{</span></span>
 <span>  <span class="fu"><a href="../reference/updateGlassSelect.html">updateGlassSelect</a></span><span class="op">(</span></span>
 <span>    <span class="va">session</span>,</span>
@@ -292,7 +314,7 @@ current selection - selection marker style</p>
 <li>
 <code>selected = character(0)</code> clears the selection</li>
 </ul>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="../reference/useGlassTabs.html">useGlassTabs</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/actionButton.html" class="external-link">actionButton</a></span><span class="op">(</span><span class="st">"subset"</span>, <span class="st">"Keep first 2 fruits"</span><span class="op">)</span>,</span>
@@ -342,14 +364,14 @@ choices.</p>
 <div class="section level3">
 <h3 id="built-in-presets">Built-in presets<a class="anchor" aria-label="anchor" href="#built-in-presets"></a>
 </h3>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/glassSelect.html">glassSelect</a></span><span class="op">(</span><span class="st">"f"</span>, <span class="va">fruits</span>, theme <span class="op">=</span> <span class="st">"dark"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/glassSelect.html">glassSelect</a></span><span class="op">(</span><span class="st">"f"</span>, <span class="va">fruits</span>, theme <span class="op">=</span> <span class="st">"light"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="custom-theme-with-glass_select_theme">Custom theme with <code>glass_select_theme()</code><a class="anchor" aria-label="anchor" href="#custom-theme-with-glass_select_theme"></a>
 </h3>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/glassSelect.html">glassSelect</a></span><span class="op">(</span></span>
 <span>  <span class="st">"f"</span>,</span>
 <span>  <span class="va">fruits</span>,</span>
@@ -402,7 +424,7 @@ choices.</p>
 <p><code><a href="../reference/glassSelect.html">glassSelect()</a></code> can be used without the tab widget. You
 only need <code><a href="../reference/useGlassTabs.html">useGlassTabs()</a></code> to load the package CSS and
 JavaScript assets:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="../reference/useGlassTabs.html">useGlassTabs</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="../reference/glassSelect.html">glassSelect</a></span><span class="op">(</span><span class="st">"region"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>North <span class="op">=</span> <span class="st">"North"</span>, South <span class="op">=</span> <span class="st">"South"</span>, East <span class="op">=</span> <span class="st">"East"</span><span class="op">)</span><span class="op">)</span>,</span>

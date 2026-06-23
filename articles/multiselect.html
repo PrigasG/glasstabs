@@ -209,11 +209,34 @@ The <code>runGlassExample("square-corners")</code> app shows the square
 shape next to native selectize.</p>
 </div>
 <div class="section level2">
+<h2 id="width-grouped-choices-and-disabled-options">Width, grouped choices, and disabled options<a class="anchor" aria-label="anchor" href="#width-grouped-choices-and-disabled-options"></a>
+</h2>
+<p>Like native <code><a href="https://rdrr.io/pkg/shiny/man/selectInput.html" class="external-link">selectizeInput()</a></code>,
+<code><a href="../reference/glassMultiSelect.html">glassMultiSelect()</a></code> accepts a <code>width</code>, grouped
+choices as a named list, and disabled state:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Fixed / fluid width</span></span>
+<span><span class="fu"><a href="../reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span><span class="st">"filters_w"</span>, <span class="va">fruits</span>, width <span class="op">=</span> <span class="st">"100%"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Grouped choices (selectInput()-style named list)</span></span>
+<span><span class="fu"><a href="../reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span><span class="st">"food"</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  Fruit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Apple <span class="op">=</span> <span class="st">"apple"</span>, Banana <span class="op">=</span> <span class="st">"banana"</span><span class="op">)</span>,</span>
+<span>  Veg   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Carrot <span class="op">=</span> <span class="st">"carrot"</span>, Pea <span class="op">=</span> <span class="st">"pea"</span><span class="op">)</span></span>
+<span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Disable the whole widget, or specific options</span></span>
+<span><span class="fu"><a href="../reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span><span class="st">"filters_d"</span>, <span class="va">fruits</span>, disabled <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span><span class="st">"filters_dc"</span>, <span class="va">fruits</span>, disabled_choices <span class="op">=</span> <span class="st">"banana"</span><span class="op">)</span></span></code></pre></div>
+<p><code>disabled_choices</code> are skipped by “Select all”, and both
+can be toggled at runtime with
+<code><a href="../reference/updateGlassMultiSelect.html">updateGlassMultiSelect()</a></code>.</p>
+</div>
+<div class="section level2">
 <h2 id="show-hide-ui-chrome">Show / hide UI chrome<a class="anchor" aria-label="anchor" href="#show-hide-ui-chrome"></a>
 </h2>
 <p>All three interactive chrome elements can be toggled independently.
 Defaults are all <code>TRUE</code>:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span><span class="st">"f"</span>, <span class="va">fruits</span>,</span>
 <span>  show_style_switcher <span class="op">=</span> <span class="cn">FALSE</span>,   <span class="co"># hide the Check / Box / Fill row</span></span>
 <span>  show_select_all     <span class="op">=</span> <span class="cn">FALSE</span>,   <span class="co"># hide the "Select all" row</span></span>
@@ -227,7 +250,7 @@ Defaults are all <code>TRUE</code>:</p>
 to show the active selections as removable tag pills. The JS engine
 keeps them in sync automatically - clicking x on a tag deselects that
 option.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="../reference/useGlassTabs.html">useGlassTabs</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="../reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span><span class="st">"cat"</span>, <span class="va">fruits</span>, show_style_switcher <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>,</span>
@@ -241,7 +264,7 @@ for the same filter — all will stay in sync.</p>
 </h2>
 <p>Read the selection directly from <code>input$&lt;inputId&gt;</code>
 and the style from <code>input$&lt;inputId&gt;_style</code>:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span></span>
 <span></span>
 <span>  <span class="co"># Direct access</span></span>
@@ -256,7 +279,7 @@ and the style from <code>input$&lt;inputId&gt;_style</code>:</p>
 </h2>
 <p>If you want a small convenience wrapper, use
 <code><a href="../reference/glassMultiSelectValue.html">glassMultiSelectValue()</a></code>:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">ms</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/glassMultiSelectValue.html">glassMultiSelectValue</a></span><span class="op">(</span><span class="va">input</span>, <span class="st">"pick"</span><span class="op">)</span></span>
 <span></span>
@@ -273,7 +296,7 @@ and the style from <code>input$&lt;inputId&gt;_style</code>:</p>
 register <code><a href="../reference/glassMultiSelectServer.html">glassMultiSelectServer()</a></code> in the server function.
 The control keeps the selected values on the client while rendering only
 the current page of matching choices.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">many_choices</span> <span class="op">&lt;-</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"value-%04d"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">2000</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Choice %04d"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">2000</span><span class="op">)</span></span>
@@ -316,7 +339,7 @@ will receive search results through Shiny.</p>
 <li>
 <code>selected = character(0)</code> clears the selection</li>
 </ul>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="../reference/useGlassTabs.html">useGlassTabs</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/actionButton.html" class="external-link">actionButton</a></span><span class="op">(</span><span class="st">"subset"</span>, <span class="st">"Keep first 3 fruits"</span><span class="op">)</span>,</span>
@@ -374,7 +397,7 @@ choice set.</p>
 <div class="section level3">
 <h3 id="built-in-presets">Built-in presets<a class="anchor" aria-label="anchor" href="#built-in-presets"></a>
 </h3>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span><span class="st">"f"</span>, <span class="va">fruits</span>, theme <span class="op">=</span> <span class="st">"dark"</span><span class="op">)</span>   <span class="co"># default</span></span>
 <span><span class="fu"><a href="../reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span><span class="st">"f"</span>, <span class="va">fruits</span>, theme <span class="op">=</span> <span class="st">"light"</span><span class="op">)</span>  <span class="co"># white panel, dark text</span></span></code></pre></div>
 </div>
@@ -382,7 +405,7 @@ choice set.</p>
 <h3 id="custom-theme-with-glass_select_theme">Custom theme with <code>glass_select_theme()</code><a class="anchor" aria-label="anchor" href="#custom-theme-with-glass_select_theme"></a>
 </h3>
 <p>Supply only the colors you want to change:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># One field — accent colour only</span></span>
 <span><span class="fu"><a href="../reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span><span class="st">"f"</span>, <span class="va">fruits</span>,</span>
 <span>  theme <span class="op">=</span> <span class="fu"><a href="../reference/glass_select_theme.html">glass_select_theme</a></span><span class="op">(</span>accent_color <span class="op">=</span> <span class="st">"#f59e0b"</span><span class="op">)</span></span>
@@ -441,7 +464,7 @@ choice set.</p>
 <p><code><a href="../reference/glassMultiSelect.html">glassMultiSelect()</a></code> is fully independent of the tab
 widget. You only need <code><a href="../reference/useGlassTabs.html">useGlassTabs()</a></code> for the CSS and
 JS:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny.posit.co/" class="external-link">shiny</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/PrigasG/glasstabs" class="external-link">glasstabs</a></span><span class="op">)</span></span>
 <span></span>
@@ -480,7 +503,7 @@ JS:</p>
 <p>Each <code><a href="../reference/glassMultiSelect.html">glassMultiSelect()</a></code> is scoped to its own
 <code>inputId</code> and works independently. When one dropdown is open
 it automatically floats above all others:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="../reference/useGlassTabs.html">useGlassTabs</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="../reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>X <span class="op">=</span> <span class="st">"x"</span>, Y <span class="op">=</span> <span class="st">"y"</span>, Z <span class="op">=</span> <span class="st">"z"</span><span class="op">)</span><span class="op">)</span>,</span>

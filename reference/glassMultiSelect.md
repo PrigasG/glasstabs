@@ -20,6 +20,9 @@ glassMultiSelect(
   show_clear_all = TRUE,
   theme = "dark",
   shape = c("rounded", "square"),
+  width = NULL,
+  disabled = FALSE,
+  disabled_choices = NULL,
   hues = NULL,
   dark_selector = NULL,
   server = FALSE,
@@ -82,9 +85,26 @@ glassMultiSelect(
   Corner style for the trigger and dropdown. One of `"rounded"`
   (default) for the signature glass look, or `"square"` for crisp,
   selectize-style corners so the widget sits neatly alongside native
-  'Shiny'
+  Shiny
   [`selectizeInput()`](https://rdrr.io/pkg/shiny/man/selectInput.html)
   controls.
+
+- width:
+
+  Optional widget width passed to
+  [`shiny::validateCssUnit()`](https://rstudio.github.io/htmltools/reference/validateCssUnit.html),
+  e.g. `100%` or `240px`. When `NULL` (default) the trigger keeps its
+  intrinsic width.
+
+- disabled:
+
+  Logical. When `TRUE` the whole widget is greyed out and
+  non-interactive. Default `FALSE`.
+
+- disabled_choices:
+
+  Optional character vector of choice values to render as disabled
+  (non-selectable) rows. Default `NULL`.
 
 - hues:
 

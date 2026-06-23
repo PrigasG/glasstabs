@@ -304,6 +304,33 @@ if (interactive()) shinyApp(ui, server)
 See it next to native selectize with
 `runGlassExample("square-corners")`, or inside a Bootstrap 5 theme with
 `runGlassExample("bslib")`.
+[`glassTabsUI()`](https://prigasg.github.io/glasstabs/reference/glassTabsUI.md)
+also takes `shape = "square"`, so the tab bar can match the selects.
+
+## Native-layout parity
+
+For drop-in use alongside native
+[`selectizeInput()`](https://rdrr.io/pkg/shiny/man/selectInput.html),
+both selects also accept a `width`, grouped choices as a named list
+(selectInput()-style), and disabled state:
+
+``` r
+
+glassSelect("region", choices, width = "240px")
+
+glassSelect("food", list(
+  Fruit = c(Apple = "apple", Banana = "banana"),
+  Veg   = c(Carrot = "carrot", Pea = "pea")
+))
+
+glassMultiSelect("filters", choices, disabled_choices = c("apple", "pear"))
+```
+
+`disabled` (whole widget) and `disabled_choices` (individual options)
+are also reachable at runtime through
+[`updateGlassSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassSelect.md)
+/
+[`updateGlassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassMultiSelect.md).
 
 ## Server-side updates
 

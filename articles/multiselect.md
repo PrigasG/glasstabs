@@ -125,6 +125,33 @@ The shape can also be switched at runtime from the server with
 The `runGlassExample("square-corners")` app shows the square shape next
 to native selectize.
 
+## Width, grouped choices, and disabled options
+
+Like native
+[`selectizeInput()`](https://rdrr.io/pkg/shiny/man/selectInput.html),
+[`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md)
+accepts a `width`, grouped choices as a named list, and disabled state:
+
+``` r
+
+# Fixed / fluid width
+glassMultiSelect("filters_w", fruits, width = "100%")
+
+# Grouped choices (selectInput()-style named list)
+glassMultiSelect("food", list(
+  Fruit = c(Apple = "apple", Banana = "banana"),
+  Veg   = c(Carrot = "carrot", Pea = "pea")
+))
+
+# Disable the whole widget, or specific options
+glassMultiSelect("filters_d", fruits, disabled = TRUE)
+glassMultiSelect("filters_dc", fruits, disabled_choices = "banana")
+```
+
+`disabled_choices` are skipped by “Select all”, and both can be toggled
+at runtime with
+[`updateGlassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassMultiSelect.md).
+
 ## Show / hide UI chrome
 
 All three interactive chrome elements can be toggled independently.

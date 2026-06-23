@@ -66,6 +66,9 @@ selection-marker styling, and programmatic updates via <code><a href="updateGlas
 <span>  check_style <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"checkbox"</span>, <span class="st">"check-only"</span>, <span class="st">"filled"</span><span class="op">)</span>,</span>
 <span>  theme <span class="op">=</span> <span class="st">"dark"</span>,</span>
 <span>  shape <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"rounded"</span>, <span class="st">"square"</span><span class="op">)</span>,</span>
+<span>  width <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  disabled <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  disabled_choices <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  server <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  server_limit <span class="op">=</span> <span class="fl">50L</span>,</span>
 <span>  server_min_chars <span class="op">=</span> <span class="fl">0L</span></span>
@@ -133,7 +136,23 @@ or a <code><a href="glass_select_theme.html">glass_select_theme()</a></code> obj
 <dd><p>Corner style for the trigger and dropdown. One of
 <code>"rounded"</code> (default) for the signature glass look, or
 <code>"square"</code> for crisp, selectize-style corners so the widget sits
-neatly alongside native 'Shiny' <code><a href="https://rdrr.io/pkg/shiny/man/selectInput.html" class="external-link">selectizeInput()</a></code> controls.</p></dd>
+neatly alongside native Shiny <code><a href="https://rdrr.io/pkg/shiny/man/selectInput.html" class="external-link">selectizeInput()</a></code> controls.</p></dd>
+
+
+<dt id="arg-width">width<a class="anchor" aria-label="anchor" href="#arg-width"></a></dt>
+<dd><p>Optional widget width passed to
+<code><a href="https://rstudio.github.io/htmltools/reference/validateCssUnit.html" class="external-link">shiny::validateCssUnit()</a></code>, e.g. <code>100%</code> or <code>240px</code>. When
+<code>NULL</code> (default) the trigger keeps its intrinsic width.</p></dd>
+
+
+<dt id="arg-disabled">disabled<a class="anchor" aria-label="anchor" href="#arg-disabled"></a></dt>
+<dd><p>Logical. When <code>TRUE</code> the whole widget is greyed out and
+non-interactive. Default <code>FALSE</code>.</p></dd>
+
+
+<dt id="arg-disabled-choices">disabled_choices<a class="anchor" aria-label="anchor" href="#arg-disabled-choices"></a></dt>
+<dd><p>Optional character vector of choice values to render
+as disabled (non-selectable) rows. Default <code>NULL</code>.</p></dd>
 
 
 <dt id="arg-server">server<a class="anchor" aria-label="anchor" href="#arg-server"></a></dt>

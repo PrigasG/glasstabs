@@ -2,6 +2,33 @@
 
 ## glasstabs (development version)
 
+### Native-layout parity
+
+- [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md)
+  and
+  [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md)
+  gained a `width` argument (passed to
+  [`shiny::validateCssUnit()`](https://rstudio.github.io/htmltools/reference/validateCssUnit.html))
+  so the widgets can fill a column or match a fixed layout, like native
+  [`selectizeInput()`](https://rdrr.io/pkg/shiny/man/selectInput.html).
+- Both selects now accept grouped choices as a named list,
+  selectInput()-style
+  (e.g. `list(Fruit = c(Apple = "apple"), Veg = c(...))`), rendering
+  non-interactive group headers. Search hides headers whose options are
+  all filtered out.
+- Added disabled support: `disabled = TRUE` greys out and blocks the
+  whole widget, and `disabled_choices` renders individual options as
+  non-selectable. Both are also reachable at runtime via
+  [`updateGlassSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassSelect.md)
+  /
+  [`updateGlassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassMultiSelect.md)
+  (`disabled`, `disabled_choices`). Disabled options are skipped by
+  “Select all”.
+- [`glassTabsUI()`](https://prigasg.github.io/glasstabs/reference/glassTabsUI.md)
+  gained a `shape` argument (`"rounded"` default or `"square"`) so the
+  tab bar and content corners can match `shape = "square"` selects for a
+  cohesive, selectize-style layout.
+
 ### Square corners
 
 - Added a `shape` argument to

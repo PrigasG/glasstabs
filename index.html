@@ -481,12 +481,27 @@ looking out of place:
 ```r
 glassSelect("region", choices, shape = "square")
 glassMultiSelect("filters", choices, shape = "square")</code></pre>
-<p>See it next to native selectize with <code>runGlassExample("square-corners")</code>, or inside a Bootstrap 5 theme with <code>runGlassExample("bslib")</code>.</p>
+<p>See it next to native selectize with <code>runGlassExample("square-corners")</code>, or inside a Bootstrap 5 theme with <code>runGlassExample("bslib")</code>. <code><a href="reference/glassTabsUI.html">glassTabsUI()</a></code> also takes <code>shape = "square"</code>, so the tab bar can match the selects.</p>
+</div>
+<div class="section level2">
+<h2 id="native-layout-parity">Native-layout parity<a class="anchor" aria-label="anchor" href="#native-layout-parity"></a>
+</h2>
+<p>For drop-in use alongside native <code><a href="https://rdrr.io/pkg/shiny/man/selectInput.html" class="external-link">selectizeInput()</a></code>, both selects also accept a <code>width</code>, grouped choices as a named list (selectInput()-style), and disabled state:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/glassSelect.html">glassSelect</a></span><span class="op">(</span><span class="st">"region"</span>, <span class="va">choices</span>, width <span class="op">=</span> <span class="st">"240px"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="reference/glassSelect.html">glassSelect</a></span><span class="op">(</span><span class="st">"food"</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  Fruit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Apple <span class="op">=</span> <span class="st">"apple"</span>, Banana <span class="op">=</span> <span class="st">"banana"</span><span class="op">)</span>,</span>
+<span>  Veg   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Carrot <span class="op">=</span> <span class="st">"carrot"</span>, Pea <span class="op">=</span> <span class="st">"pea"</span><span class="op">)</span></span>
+<span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span><span class="st">"filters"</span>, <span class="va">choices</span>, disabled_choices <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"apple"</span>, <span class="st">"pear"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><code>disabled</code> (whole widget) and <code>disabled_choices</code> (individual options) are also reachable at runtime through <code><a href="reference/updateGlassSelect.html">updateGlassSelect()</a></code> / <code><a href="reference/updateGlassMultiSelect.html">updateGlassMultiSelect()</a></code>.</p>
 </div>
 <div class="section level2">
 <h2 id="server-side-updates-1">Server-side updates<a class="anchor" aria-label="anchor" href="#server-side-updates-1"></a>
 </h2>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/observeEvent.html" class="external-link">observeEvent</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">pick_south</span>, <span class="op">{</span></span>
 <span>    <span class="fu"><a href="reference/updateGlassSelect.html">updateGlassSelect</a></span><span class="op">(</span></span>
@@ -518,7 +533,7 @@ glassMultiSelect("filters", choices, shape = "square")</code></pre>
 <h2 id="theming">Theming<a class="anchor" aria-label="anchor" href="#theming"></a>
 </h2>
 <p>All widgets default to <code>"dark"</code>. You can switch to <code>"light"</code> or supply a custom theme object.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Tab widget</span></span>
 <span><span class="fu"><a href="reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
 <span>  <span class="st">"nav"</span>,</span>
@@ -660,7 +675,7 @@ glassMultiSelect("filters", choices, shape = "square")</code></pre>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span></span>
 <span>  <span class="st">"f"</span>, <span class="va">choices</span>,</span>
 <span>  check_style <span class="op">=</span> <span class="st">"filled"</span>,</span>
@@ -672,7 +687,7 @@ glassMultiSelect("filters", choices, shape = "square")</code></pre>
 <span>  check_style <span class="op">=</span> <span class="st">"check-only"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Hues distribute automatically around the color wheel or can be set manually under multi-select:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span><span class="st">"f"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Apple <span class="op">=</span> <span class="st">"apple"</span>, Banana <span class="op">=</span> <span class="st">"banana"</span>, Cherry <span class="op">=</span> <span class="st">"cherry"</span><span class="op">)</span>,</span>
 <span>  check_style <span class="op">=</span> <span class="st">"filled"</span>,</span>
 <span>  hues <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>apple <span class="op">=</span> <span class="fl">10L</span>, banana <span class="op">=</span> <span class="fl">50L</span>, cherry <span class="op">=</span> <span class="fl">340L</span><span class="op">)</span></span>
@@ -683,7 +698,7 @@ glassMultiSelect("filters", choices, shape = "square")</code></pre>
 <h2 id="bs4dash-compatibility">bs4Dash compatibility<a class="anchor" aria-label="anchor" href="#bs4dash-compatibility"></a>
 </h2>
 <p>Pass <code>wrap = FALSE</code> when embedding inside a bs4Dash card.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">bs4Card</span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span><span class="st">"dash"</span>,</span>
 <span>    wrap     <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -747,7 +762,7 @@ glassMultiSelect("filters", choices, shape = "square")</code></pre>
 <div class="section level2">
 <h2 id="server-side-tab-control">Server-side tab control<a class="anchor" aria-label="anchor" href="#server-side-tab-control"></a>
 </h2>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="co"># Switch to a tab programmatically</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/observeEvent.html" class="external-link">observeEvent</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">next_btn</span>, <span class="op">{</span></span>

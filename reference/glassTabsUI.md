@@ -11,6 +11,7 @@ glassTabsUI(
   selected = NULL,
   wrap = TRUE,
   compact = FALSE,
+  shape = c("rounded", "square"),
   extra_ui = NULL,
   theme = NULL,
   dark_selector = NULL
@@ -42,6 +43,16 @@ glassTabsUI(
   Logical. When `TRUE` applies reduced padding and spacing via the
   `.gt-compact` CSS modifier — useful inside dashboard cards or tight
   layouts (e.g. bs4Dash).
+
+- shape:
+
+  Corner style for the tab bar and content. One of `"rounded"` (default)
+  for the signature glass look, or `"square"` for crisp, selectize-style
+  corners that match
+  [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md)
+  and
+  [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md)
+  when `shape = "square"`.
 
 - extra_ui:
 
