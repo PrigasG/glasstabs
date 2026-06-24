@@ -518,18 +518,10 @@ server <- function(input, output, session) {
 
 ---
 
-## What's new in 0.3.0
+## What's new in 0.3.3
 
-- `runGlassExample()` - launch any built-in example from the console
-- `icon` argument in `glassTabPanel()` - add `shiny::icon()` or any tag to a tab button
-- `disableGlassTab()` / `enableGlassTab()` - gray out tabs without hiding them
-- `updateGlassTabBadge()` - set live numeric count badges on tab buttons
-- `glassTabsServer(bookmark = TRUE)` - active tab preserved in Shiny URL bookmarks
-- `glassTabsOutput()` / `renderGlassTabs()` - fully server-driven reactive tab sets
-- `inst/cheatsheet/glasstabs-cheatsheet.tex` - printable two-column LaTeX reference card
-
----
-
-## License
-
-MIT (c) glasstabs authors
+- `width` argument in `glassSelect()` / `glassMultiSelect()` - fill a column or match a fixed layout, like native `selectizeInput()`
+- Grouped choices - pass a named list (`selectInput()`-style) to render non-interactive group headers
+- `disabled` / `disabled_choices` - disable a whole select or individual options, also at runtime via `updateGlassSelect()` / `updateGlassMultiSelect()`
+- `shape = "square"` in `glassSelect()`, `glassMultiSelect()`, and `glassTabsUI()` - crisp, selectize-style corners
+- Server-side search for large choice sets - `server = TRUE`, `glassSelectServer()`, `glassMultiSelectServer()`
