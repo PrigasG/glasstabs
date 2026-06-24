@@ -36,11 +36,11 @@ A single character string for use in
 ## Examples
 
 ``` r
-# Returns a plain JS condition string — no Shiny session needed:
+# Returns a plain JS condition string - no Shiny session needed:
 glassTabCondition("main", "details")
 #> [1] "input[\"main-active_tab\"] === \"details\""
 
-# Inside a module — use ns() for the id:
+# Inside a module - use ns() for the id:
 # UI:   glassTabCondition(ns("tabs"), "details")
 # This produces: "input['mymod-tabs-active_tab'] === 'details'"
 

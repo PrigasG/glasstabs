@@ -35,7 +35,7 @@ A `shiny.tag` suitable for use in a Shiny UI.
 ## Examples
 
 ``` r
-# Creates a UI placeholder tag — no Shiny session needed:
+# Creates a UI placeholder tag - no Shiny session needed:
 tabs_placeholder <- glassTabsOutput("my_tabs")
 
 # Full dynamic-tab app example:

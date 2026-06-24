@@ -16,7 +16,7 @@ glassTabsServer(id, bookmark = TRUE)
 
   Module id matching the `id` passed to
   [`glassTabsUI()`](https://prigasg.github.io/glasstabs/reference/glassTabsUI.md).
-  Do **not** wrap this in `ns()` — `glassTabsServer()` handles
+  Do **not** wrap this in `ns()` - `glassTabsServer()` handles
   namespacing internally via
   [`shiny::moduleServer()`](https://rdrr.io/pkg/shiny/man/moduleServer.html).
 
@@ -96,7 +96,7 @@ my_module_ui <- function(id) {
   )
 }
 
-# Server side: pass the bare id — NOT ns("tabs")
+# Server side: pass the bare id - NOT ns("tabs")
 my_module_server <- function(id) {
   shiny::moduleServer(id, function(input, output, session) {
     active <- glassTabsServer("tabs")     # <-- bare id, no ns()

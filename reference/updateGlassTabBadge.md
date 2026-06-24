@@ -1,6 +1,6 @@
 # Update the badge count on a glass tab
 
-Adds or updates a small numeric badge on a tab button — useful for
+Adds or updates a small numeric badge on a tab button - useful for
 surfacing counts such as unread items, pending rows, or notification
 totals. Set `count` to `0` or `NA` to hide the badge.
 

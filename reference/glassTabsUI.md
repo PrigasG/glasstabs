@@ -41,7 +41,7 @@ glassTabsUI(
 - compact:
 
   Logical. When `TRUE` applies reduced padding and spacing via the
-  `.gt-compact` CSS modifier — useful inside dashboard cards or tight
+  `.gt-compact` CSS modifier - useful inside dashboard cards or tight
   layouts (e.g. bs4Dash).
 
 - shape:
@@ -70,7 +70,7 @@ glassTabsUI(
   (e.g. `"body.dark-mode"` for bs4Dash, `"[data-bs-theme=dark]"` for
   Bootstrap 5). When provided and `theme = "light"`, a second scoped
   `<style>` block overrides the CSS variables back to the dark-mode
-  defaults whenever that selector is active — so the tabs stay readable
+  defaults whenever that selector is active - so the tabs stay readable
   after a dark-mode toggle without any server-side intervention.
 
 ## Value

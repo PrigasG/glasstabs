@@ -2,7 +2,7 @@
 
 All arguments accept any valid CSS color string (hex,
 [`rgb()`](https://rdrr.io/r/grDevices/rgb.html), `rgba()`, named
-colors). Pass only the fields you want to override — unset fields fall
+colors). Pass only the fields you want to override - unset fields fall
 back to the dark-mode defaults.
 
 ## Usage

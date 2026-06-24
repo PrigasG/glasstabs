@@ -1,6 +1,6 @@
 # Attach glasstabs CSS and JS dependencies
 
-Call this once in your UI — either inside
+Call this once in your UI - either inside
 [`fluidPage()`](https://rdrr.io/pkg/shiny/man/fluidPage.html),
 `bs4DashPage()`, or any other Shiny page wrapper. It injects the
 required CSS and JS as proper `htmltools` dependencies so they are
@@ -21,7 +21,7 @@ object (invisible to the user, consumed by Shiny's renderer).
 ## Examples
 
 ``` r
-# Returns an htmlDependency object — no Shiny session needed:
+# Returns an htmlDependency object - no Shiny session needed:
 deps <- useGlassTabs()
 
 # Typical usage inside a Shiny UI:
