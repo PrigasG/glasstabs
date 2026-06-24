@@ -1,16 +1,16 @@
-﻿*,*::before,*::after{box-sizing:border-box;}
+*,*::before,*::after{box-sizing:border-box;}
 
-/* â”€â”€ Container â”€â”€ */
-/* No max-width or centering â€” behaves like a regular block inside Shiny layouts */
+/* Container */
+/* No max-width or centering - behaves like a regular block inside Shiny layouts */
 .gt-container{width:100%;position:relative;}
 /* wrap=FALSE: no content box, but still needs position:relative for halo animation */
 .gt-wrap-shell{width:100%;position:relative;}
 
-/* â”€â”€ Top bar â”€â”€ */
+/* Top bar */
 .gt-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:12px;flex-wrap:wrap;}
 .gt-navbar{display:flex;gap:12px;position:relative;z-index:6;align-items:center;}
 
-/* â”€â”€ Tab links â”€â”€ */
+/* Tab links */
 .gt-tab-link{
   position:relative;padding:10px 18px;border-radius:12px;
   background:rgba(255,255,255,0.02);
@@ -23,7 +23,7 @@
 .gt-tab-link.active{color:var(--gt-tab-active-text,#ffffff);}
 .gt-tab-link.gt-tab-hidden{display:none;}
 
-/* â”€â”€ Glass halo â”€â”€ */
+/* Glass halo */
 .gt-halo{
   position:absolute;pointer-events:none;border-radius:14px;
   background:var(--gt-halo-bg,rgba(255,255,255,0.07));
@@ -36,9 +36,9 @@
     0 0 0 1px rgba(255,255,255,0.03));
   transform:translate(-50%,-50%);
   transition:
-    left   130ms cubic-bezier(.15,.9,.2,1),
-    top    130ms cubic-bezier(.15,.9,.2,1),
-    width  130ms cubic-bezier(.15,.9,.2,1),
+    left 130ms cubic-bezier(.15,.9,.2,1),
+    top 130ms cubic-bezier(.15,.9,.2,1),
+    width 130ms cubic-bezier(.15,.9,.2,1),
     height 130ms cubic-bezier(.15,.9,.2,1),
     border-radius 130ms cubic-bezier(.15,.9,.2,1),
     opacity 120ms ease;
@@ -50,7 +50,7 @@
   opacity:0.65;pointer-events:none;
 }
 
-/* â”€â”€ Transfer halo â”€â”€ */
+/* Transfer halo */
 .gt-transfer{
   position:absolute;pointer-events:none;border-radius:999px;
   width:54px;height:18px;
@@ -60,7 +60,7 @@
   z-index:3;will-change:left,top,width,height,opacity,filter;
 }
 
-/* â”€â”€ Content area â”€â”€ */
+/* Content area */
 .gt-tab-wrap{
   position:relative;overflow:hidden;border-radius:14px;padding:22px;
   background:var(--gt-content-bg,transparent);
@@ -75,7 +75,7 @@
 }
 .gt-tab-pane.active{opacity:1;transform:translateY(0) scale(1);position:relative;pointer-events:auto;}
 
-/* â”€â”€ Card â”€â”€ */
+/* Card */
 .gt-card{
   border-radius:10px;padding:18px;
   color:var(--gt-card-text,#eaf6ff);
@@ -85,7 +85,7 @@
 .gt-card h2,.gt-card h3{margin-top:0;color:var(--gt-tab-active-text,#d4eeff);}
 .gt-card p{margin:0 0 12px;color:var(--gt-card-text,#a9c8e4);font-size:14px;line-height:1.65;}
 
-/* â”€â”€ Tag pills â”€â”€ */
+/* Tag pills */
 .gt-filter-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;min-height:26px;}
 .gt-filter-tag{
   display:inline-flex;align-items:center;gap:5px;padding:3px 10px;
@@ -96,9 +96,9 @@
 .gt-filter-tag .gt-remove-tag:hover{opacity:1;}
 .gt-no-filters{color:rgba(180,210,240,0.28);font-size:13px;font-style:italic;}
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   MULTI-SELECT  â€” CSS-variable driven theming
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/*
+   MULTI-SELECT - CSS-variable driven theming
+ */
 .gt-ms-wrap,
 .gt-gs-wrap{
   position:relative;
@@ -111,7 +111,7 @@
   z-index:1000;
 }
 
-/* â”€â”€ Trigger button â”€â”€ */
+/* Trigger button */
 .gt-ms-trigger{
   display:flex;align-items:center;justify-content:space-between;gap:10px;
   padding:8px 14px;border-radius:12px;
@@ -152,7 +152,7 @@
 .gt-ms-chevron{width:14px;height:14px;transition:transform 180ms cubic-bezier(.2,.9,.25,1);opacity:.6;flex-shrink:0;}
 .gt-ms-trigger.open .gt-ms-chevron{transform:rotate(180deg);}
 
-/* â”€â”€ Dropdown panel â”€â”€ */
+/* Dropdown panel */
 .gt-ms-dropdown{
   position:fixed;min-width:232px;
   border-radius:14px;
@@ -171,7 +171,7 @@
 }
 .gt-ms-dropdown.open{opacity:1;transform:translateY(0) scale(1);pointer-events:auto;}
 
-/* â”€â”€ Search â”€â”€ */
+/* Search */
 .gt-ms-search{
   display:flex;align-items:center;gap:7px;padding:7px 10px;border-radius:8px;
   background:var(--ms-tx-06);
@@ -185,7 +185,7 @@
   color:var(--ms-tx-35);
 }
 
-/* â”€â”€ Style switcher â”€â”€ */
+/* Style switcher */
 .gt-style-switcher{
   display:flex;gap:3px;padding:5px 6px;margin-bottom:6px;
   border-radius:10px;
@@ -210,7 +210,7 @@
 }
 .gt-sb-icon{width:13px;height:13px;flex-shrink:0;}
 
-/* â”€â”€ Select all row â”€â”€ */
+/* Select all row */
 .gt-ms-all{
   display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:8px;
   cursor:pointer;user-select:none;
@@ -220,7 +220,7 @@
 }
 .gt-ms-all:hover{background:var(--ms-tx-05);}
 
-/* â”€â”€ Option rows â”€â”€ */
+/* Option rows */
 .gt-ms-option{
   display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;
   cursor:pointer;user-select:none;color:var(--ms-text);
@@ -229,7 +229,7 @@
 .gt-ms-option:hover{background:var(--ms-tx-06);}
 .gt-ms-option.hidden{display:none;}
 
-/* â”€â”€ Checkbox container (shared) â”€â”€ */
+/* Checkbox container (shared) */
 .gt-ms-check{
   flex-shrink:0;width:16px;height:16px;border-radius:5px;
   border:1.5px solid var(--ms-ac-40);
@@ -303,7 +303,7 @@
   background:var(--ms-accent);
 }
 
-/* â”€â”€ Footer â”€â”€ */
+/* Footer */
 .gt-ms-footer{
   margin-top:6px;padding:8px 10px 2px;
   border-top:1px solid var(--ms-border);
@@ -316,7 +316,7 @@
 }
 .gt-ms-clear:hover{opacity:1;}
 
-/* â”€â”€ Arrival pulse â”€â”€ */
+/* Arrival pulse */
 .gt-arrival-pulse{animation:gtHaloPulse 320ms cubic-bezier(.2,.9,.25,1) forwards;}
 @keyframes gtHaloPulse{
   0%  {transform:translate(-50%,-50%) scale(0.95);opacity:.82;}
@@ -330,9 +330,9 @@
 }
 
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   SINGLE-SELECT â€” visually aligned with MULTI-SELECT
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/*
+   SINGLE-SELECT - visually aligned with MULTI-SELECT
+ */
 
 .gt-gs-field,
 .gt-ms-field{
@@ -356,7 +356,7 @@
 }
 
 
-/* â”€â”€ Trigger button â”€â”€ */
+/* Trigger button */
 .gt-gs-trigger{
   display:flex;
   align-items:center;
@@ -434,7 +434,7 @@
   opacity:1;
 }
 
-/* â”€â”€ Dropdown panel â”€â”€ */
+/* Dropdown panel */
 .gt-gs-dropdown{
   position:fixed;
   min-width:232px;
@@ -469,7 +469,7 @@
   pointer-events:auto;
 }
 
-/* â”€â”€ Search â”€â”€ */
+/* Search */
 .gt-gs-search{
   display:flex;
   align-items:center;
@@ -495,7 +495,7 @@
   color:var(--ms-tx-35);
 }
 
-/* â”€â”€ Option rows â”€â”€ */
+/* Option rows */
 .gt-gs-option{
   display:flex;
   align-items:center;
@@ -518,7 +518,7 @@
   display:none;
 }
 
-/* â”€â”€ Check container â”€â”€ */
+/* Check container */
 .gt-gs-check{
   flex-shrink:0;
   width:16px;
@@ -592,14 +592,14 @@
 
 
 
-/* ═══════════════════════════════════════════════════════
-   SQUARE CORNERS  —  shape = "square"
+/*
+   SQUARE CORNERS - shape = "square"
    Selectize-style crisp corners (3px) so glassSelect and
    glassMultiSelect sit flush next to native selectizeInput().
    The `shape-square` class lives on the .gt-*-wrap and is
    also copied onto the teleported dropdown by glass.js, so
    both the wrap-descendant and teleported selectors match.
-═══════════════════════════════════════════════════════ */
+ */
 
 /* Trigger button */
 .gt-gs-wrap.shape-square .gt-gs-trigger,
@@ -637,7 +637,7 @@
   border-radius:3px;
 }
 
-/* Check / box marker — keep a subtle 2px so it reads as square */
+/* Check / box marker - keep a subtle 2px so it reads as square */
 .gt-gs-wrap.shape-square .gt-gs-check,
 .gt-ms-wrap.shape-square .gt-ms-check,
 .gt-gs-dropdown.shape-square .gt-gs-check,
@@ -645,7 +645,7 @@
   border-radius:2px;
 }
 
-/* ── Square corners for the tab bar (glassTabsUI(shape = "square")) ──
+/* Square corners for the tab bar (glassTabsUI(shape = "square"))
    The halo radius is JS-driven from the tab link's computed border-radius,
    so squaring .gt-tab-link makes the sliding halo follow automatically. */
 .gt-container.shape-square .gt-tab-link,
@@ -667,10 +667,10 @@
 
 
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   SCROLL CONTAINERS â€”
+/*
+   SCROLL CONTAINERS -
    Applied by JS during init via class injection
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+ */
 .gt-gs-options-scroll,
 .gt-ms-options-scroll{
   max-height:260px;
@@ -740,11 +740,11 @@
 }
 
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   LOADING / DISABLED STATE â€”
+/*
+   LOADING / DISABLED STATE -
    Apply .gt-loading to .gt-gs-wrap or .gt-ms-wrap
    during choice swaps or async updates
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+ */
 .gt-gs-wrap.gt-loading,
 .gt-ms-wrap.gt-loading{
   pointer-events:none;
@@ -769,7 +769,7 @@
   cursor:not-allowed;
 }
 
-/* â”€â”€ Per-option disabled state â”€â”€ */
+/* Per-option disabled state */
 .gt-gs-option.disabled,
 .gt-ms-option.disabled{
   opacity:0.4;
@@ -781,7 +781,7 @@
   background:transparent;
 }
 
-/* â”€â”€ Group headers (named-list / selectInput-style choices) â”€â”€ */
+/* Group headers (named-list / selectInput-style choices) */
 .gt-gs-optgroup,
 .gt-ms-optgroup{
   padding:8px 10px 4px;
@@ -800,14 +800,14 @@
   display:none;
 }
 
-/* â”€â”€ Tab disabled state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* Tab disabled state */
 .gt-tab-link.gt-tab-disabled{
   opacity:0.38;
   pointer-events:none;
   cursor:not-allowed;
 }
 
-/* â”€â”€ Tab icon â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* Tab icon */
 .gt-tab-icon{
   display:inline-flex;
   align-items:center;
@@ -820,7 +820,7 @@
   vertical-align:middle;
 }
 
-/* â”€â”€ Tab badge â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* Tab badge */
 .gt-tab-badge{
   display:inline-flex;
   align-items:center;
@@ -839,12 +839,12 @@
   letter-spacing:0.01em;
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   LIGHT MODE â€” tab widget overrides
+/*
+   LIGHT MODE - tab widget overrides
    Activated by .theme-light class on the outer wrapper.
    Replaces every hardcoded rgba(255,255,255,...) value that
    reads as invisible on a white/light background.
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+ */
 
 /* Tab link idle / hover backgrounds */
 .theme-light .gt-tab-link{
@@ -858,7 +858,7 @@
   color:var(--gt-tab-active-text,#1e40af);
 }
 
-/* Halo shimmer â€” replace white gradient with blue-tinted glass */
+/* Halo shimmer - replace white gradient with blue-tinted glass */
 .theme-light .gt-halo::before{
   background:linear-gradient(
     120deg,
@@ -870,7 +870,7 @@
   opacity:0.85;
 }
 
-/* Transfer trace particle â€” replace white glow with blue */
+/* Transfer trace particle - replace white glow with blue */
 .theme-light .gt-transfer{
   background:radial-gradient(
     closest-side,
@@ -881,7 +881,7 @@
   box-shadow:0 0 18px rgba(37,99,235,0.28);
 }
 
-/* Content area â€” transparent by default in light mode so glasstabs
+/* Content area - transparent by default in light mode so glasstabs
    acts as "just tabs" inside whatever container the user provides.
    Users who want a card feel can override via glass_tab_theme(). */
 .theme-light .gt-tab-wrap{
@@ -891,7 +891,7 @@
   min-height:0;
 }
 
-/* Card inner â€” also transparent; content flows on the page */
+/* Card inner - also transparent; content flows on the page */
 .theme-light .gt-card{
   background:var(--gt-card-bg,transparent);
   box-shadow:none;
@@ -905,7 +905,7 @@
   color:var(--gt-card-text,#374151);
 }
 
-/* Filter tag pills â€” replace the blue-on-dark pill style */
+/* Filter tag pills - replace the blue-on-dark pill style */
 .theme-light .gt-filter-tag{
   background:rgba(37,99,235,0.08);
   border-color:rgba(37,99,235,0.25);
@@ -914,9 +914,9 @@
 .theme-light .gt-filter-tag .gt-remove-tag{color:#2563eb;}
 .theme-light .gt-no-filters{color:rgba(71,85,105,0.45);}
 
-/* â”€â”€ Compact / dense mode â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* Compact / dense mode */
 /* Applied when glassTabsUI(compact = TRUE) */
-/* compact has no extra container margin to override â€” spacing handled below */
+/* compact has no extra container margin to override - spacing handled below */
 .gt-compact .gt-topbar{margin-bottom:6px;}
 .gt-compact .gt-navbar{gap:4px;}
 .gt-compact .gt-tab-link{padding:5px 10px;font-size:13px;border-radius:8px;}
@@ -929,12 +929,12 @@
    (e.g. bs4Dash card bodies). z-index is set directly on the dropdown
    element in its base rule above. */
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/*
    TELEPORTED DROPDOWN STYLES
    When a dropdown is moved to <body> via teleportOpen(), it loses its
    .gt-ms-wrap / .gt-gs-wrap ancestor. JS copies the style/theme classes
    directly onto the dropdown element so these rules apply instead.
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+ */
 
 /* Light theme box-shadow override for teleported dropdowns */
 .gt-ms-dropdown.theme-light{box-shadow:0 12px 40px rgba(0,0,0,0.15),0 0 0 1px rgba(0,0,0,0.06);}

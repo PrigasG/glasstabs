@@ -1,9 +1,7 @@
 (function () {
   'use strict';
 
-  /* ══════════════════════════════════════════════════════
-     UTILITIES
-  ══════════════════════════════════════════════════════ */
+  /* UTILITIES */
   function px(n) { return Math.round(n) + 'px'; }
 
   function centerOf(el, container) {
@@ -197,9 +195,7 @@
     });
   }
 
-  /* ══════════════════════════════════════════════════════
-     TAB ENGINE
-  ══════════════════════════════════════════════════════ */
+  /* TAB ENGINE */
   function initTabs(navbar) {
     function clearTabTimers() {
       if (navbar._gtTabTimers) {
@@ -243,7 +239,7 @@
 
     /* Repair pane visibility to match link state.  When bootAll() re-runs
        initTabs mid-animation (e.g. triggered by shiny:value on dyn_out),
-       clearTabTimers() kills the deferred pane-swap — leaving the active link
+       clearTabTimers() kills the deferred pane-swap - leaving the active link
        and the visible pane out of sync.  Syncing here makes every re-init
        self-healing regardless of when it fires. */
     links.forEach(function (l) {
@@ -461,7 +457,7 @@
       document.fonts.ready.then(initHalo).catch(function () {});
     }
 
-    /* Single delegated click handler — covers dynamically appended tabs */
+    /* Single delegated click handler - covers dynamically appended tabs */
     navbar._gtClickHandler = function (e) {
       var link = e.target.closest ? e.target.closest('.gt-tab-link') : null;
       if (!link || link.classList.contains('gt-tab-hidden')) return;
@@ -506,9 +502,7 @@
     window.addEventListener('resize', navbar._gtResizeHandler);
   }
 
-  /* ══════════════════════════════════════════════════════
-     SINGLE-SELECT ENGINE
-  ══════════════════════════════════════════════════════ */
+  /* SINGLE-SELECT ENGINE */
   function initGlassSelect(wrap) {
     if (wrap._gtSelectInit) return;
     wrap._gtSelectInit = true;
@@ -518,7 +512,7 @@
     var serverMode = parseBoolAttr(wrap, 'data-server');
     var serverMinChars = parseIntAttr(wrap, 'data-server-min-chars', 0);
 
-    /* ── DOM refs ── */
+    /* DOM refs */
     var trigger = wrap.querySelector('.gt-gs-trigger');
     var dropdown = wrap.querySelector('.gt-gs-dropdown');
     var labelEl = wrap.querySelector('[id$="-label"]');
@@ -536,11 +530,11 @@
 
     wrap._gtDropdown = dropdown;
 
-    /* ── Capture check SVG template before any rebuilds ── */
+    /* Capture check SVG template before any rebuilds */
     var checkTemplate = wrap.querySelector('.gt-gs-check');
     var checkHtml = checkTemplate ? checkTemplate.innerHTML : '';
 
-    /* ── Add scroll class to options container ── */
+    /* Add scroll class to options container */
     if (optionsBox) optionsBox.classList.add('gt-gs-options-scroll');
 
     var statusRow = document.createElement('div');
@@ -548,7 +542,7 @@
     statusRow.setAttribute('role', 'status');
     statusRow.setAttribute('aria-live', 'polite');
 
-    /* ── Internal state ── */
+    /* Internal state */
     var state = {
       choices: [],     // [{label, value, hidden, _labelLower}]
       selected: null,  // string | null
@@ -557,7 +551,7 @@
       query: ''
     };
 
-    /* ── Read initial state from R-generated DOM ── */
+    /* Read initial state from R-generated DOM */
     Array.from(wrap.querySelectorAll('.gt-gs-option')).forEach(function (el) {
       var value = el.getAttribute('data-value');
       var span = el.querySelector('span');
@@ -577,7 +571,7 @@
       bindOption(el);
     });
 
-    /* ── State readers ── */
+    /* State readers */
     function getValue() {
       return state.selected;
     }
@@ -617,7 +611,7 @@
       }
     }
 
-    /* ── DOM patching ── */
+    /* DOM patching */
     function patchOptionClasses() {
       Array.from(dropdown.querySelectorAll('.gt-gs-option')).forEach(function (el) {
         var v = el.getAttribute('data-value');
@@ -636,7 +630,7 @@
       syncOptgroupHeaders(optionsBox);
     }
 
-    /* ── UI sync (visual only, no Shiny notification) ── */
+    /* UI sync (visual only, no Shiny notification) */
     function syncUI() {
       var ch = findChoice(state.selected);
       labelEl.textContent = ch ? ch.label : (state.selectedLabel || placeholder);
@@ -644,7 +638,7 @@
       updateStatus();
     }
 
-    /* ── Shiny notification ── */
+    /* Shiny notification */
     function commitSelection() {
       triggerShinyChange(wrap);
       if (window.Shiny) {
@@ -652,7 +646,7 @@
       }
     }
 
-    /* ── setValue with opts ── */
+    /* setValue with opts */
     function setValue(value, opts) {
       opts = opts || {};
       var doNotify = opts.notify !== false;
@@ -677,7 +671,7 @@
       if (doNotify) commitSelection();
     }
 
-    /* ── Option click binding ── */
+    /* Option click binding */
     function bindOption(opt) {
       if (!opt || opt._gtBound) return;
       opt._gtBound = true;
@@ -689,7 +683,7 @@
       });
     }
 
-    /* ── Build a single option DOM node ── */
+    /* Build a single option DOM node */
     function buildOptionNode(ch) {
       var row = document.createElement('div');
       row.className = 'gt-gs-option';
@@ -710,7 +704,7 @@
       return row;
     }
 
-    /* ── setChoices: rebuild from state ── */
+    /* setChoices: rebuild from state */
     function setChoices(choices, opts) {
       opts = opts || {};
       var preserveSel = opts.preserveSelection !== false;
@@ -771,7 +765,7 @@
       if (doNotify) commitSelection();
     }
 
-    /* ── Search (debounced) ── */
+    /* Search (debounced) */
     function applySearchNow(q) {
       var qq = (q || '').toLowerCase().trim();
       state.query = qq;
@@ -802,7 +796,7 @@
       else applySearchNow(searchIn ? searchIn.value : '');
     }, 75);
 
-    /* ── Position the dropdown below the trigger ──
+    /* Position the dropdown below the trigger 
        Uses document-space coordinates (viewport + scrollY) to match
        position:absolute on the body-appended teleported element.
        This avoids the position:fixed + overflow:hidden quirk in AdminLTE. */
@@ -834,7 +828,7 @@
 
     var openedAt = 0;
 
-    /* ── Open / Close ── */
+    /* Open / Close */
     function open() {
       closeAllDropdowns(wrap);
       wrap.classList.add('gt-layer-active');
@@ -867,11 +861,11 @@
       }
     }
 
-    /* ── Event listeners ── */
+    /* Event listeners */
     trigger.addEventListener('click', function (e) {
       e.stopPropagation();
       if (dropdown.classList.contains('open')) {
-        /* Ignore close triggers within 500 ms of opening — prevents synthetic
+        /* Ignore close triggers within 500 ms of opening - prevents synthetic
            re-fires from focus changes (e.g. bs4Dash / AdminLTE environments) */
         if (Date.now() - openedAt < 500) return;
         close();
@@ -918,7 +912,7 @@
       searchIn.addEventListener('input', debouncedSearch);
     }
 
-    /* ── Destroy (lifecycle teardown) ── */
+    /* Destroy (lifecycle teardown) */
     function destroy() {
       if (wrap._gtDocClickHandler) {
         document.removeEventListener('click', wrap._gtDocClickHandler);
@@ -935,16 +929,16 @@
       wrap._gtSelectInit = false;
     }
 
-    /* ── Initial UI sync ── */
+    /* Initial UI sync */
     syncUI();
 
-    /* ── Emit initial value to Shiny ── */
+    /* Emit initial value to Shiny */
     if (window.Shiny && window.Shiny.setInputValue) {
       Shiny.setInputValue(inputId, state.selected, { priority: 'deferred' });
       Shiny.setInputValue(inputId + '_ready', true, { priority: 'deferred' });
     }
 
-    /* ── Public controller ── */
+    /* Public controller */
     wrap._gt = {
       kind: 'single',
       getValue: getValue,
@@ -999,9 +993,7 @@
     };
   }
 
-  /* ══════════════════════════════════════════════════════
-     MULTI-SELECT ENGINE
-  ══════════════════════════════════════════════════════ */
+  /* MULTI-SELECT ENGINE */
   function initMultiSelect(wrap) {
     if (wrap._gtMultiInit) return;
     wrap._gtMultiInit = true;
@@ -1012,7 +1004,7 @@
     var serverMode = parseBoolAttr(wrap, 'data-server');
     var serverMinChars = parseIntAttr(wrap, 'data-server-min-chars', 0);
 
-    /* ── DOM refs ── */
+    /* DOM refs */
     var trigger = wrap.querySelector('.gt-ms-trigger');
     var dropdown = wrap.querySelector('.gt-ms-dropdown');
     var allRow = wrap.querySelector('.gt-ms-all');
@@ -1032,11 +1024,11 @@
       if (wrap.classList.contains('style-' + s)) currentStyle = s;
     });
 
-    /* ── Capture check SVG template ── */
+    /* Capture check SVG template */
     var checkTemplate = wrap.querySelector('.gt-ms-check');
     var checkHtml = checkTemplate ? checkTemplate.innerHTML : '';
 
-    /* ── Add scroll class ── */
+    /* Add scroll class */
     if (optionsBox) optionsBox.classList.add('gt-ms-options-scroll');
 
     var statusRow = document.createElement('div');
@@ -1044,7 +1036,7 @@
     statusRow.setAttribute('role', 'status');
     statusRow.setAttribute('aria-live', 'polite');
 
-    /* ── Internal state ── */
+    /* Internal state */
     var state = {
       choices: [],          // [{label, value, hidden, hue, _labelLower}]
       selected: new Set(),  // Set of value strings
@@ -1053,7 +1045,7 @@
       query: ''
     };
 
-    /* ── Read initial state from R-generated DOM ── */
+    /* Read initial state from R-generated DOM */
     Array.from(wrap.querySelectorAll('.gt-ms-option')).forEach(function (el) {
       var value = el.getAttribute('data-value');
       var span = el.querySelector('span');
@@ -1081,7 +1073,7 @@
       state.selected.add(v);
     });
 
-    /* ── State readers ── */
+    /* State readers */
     function getValue() {
       /* Return in choice order, not Set insertion order */
       var out = [];
@@ -1129,7 +1121,7 @@
       }
     }
 
-    /* ── DOM patching ── */
+    /* DOM patching */
     function patchOptionClasses() {
       Array.from(dropdown.querySelectorAll('.gt-ms-option')).forEach(function (el) {
         var v = el.getAttribute('data-value');
@@ -1152,7 +1144,7 @@
       syncOptgroupHeaders(optionsBox);
     }
 
-    /* ── syncUI: visual-only update ── */
+    /* syncUI: visual-only update */
     function syncUI() {
       var total = state.total === null ? state.choices.length : state.total;
       var selCount = state.selected.size;
@@ -1206,7 +1198,7 @@
       renderTags();
     }
 
-    /* ── commitSelection: notify Shiny ── */
+    /* commitSelection: notify Shiny */
     function commitSelection() {
       triggerShinyChange(wrap);
       if (window.Shiny) {
@@ -1215,7 +1207,7 @@
       }
     }
 
-    /* ── renderTags: reads from state, not DOM ── */
+    /* renderTags: reads from state, not DOM */
     function renderTags() {
       var tagPanes = document.querySelectorAll('[data-tags-for="' + inputId + '"]');
       if (tagPanes.length === 0) return;
@@ -1258,7 +1250,7 @@
       });
     }
 
-    /* ── setValue with opts ── */
+    /* setValue with opts */
     function setValue(vals, opts) {
       opts = opts || {};
       var doNotify = opts.notify !== false;
@@ -1276,7 +1268,7 @@
       if (doNotify) commitSelection();
     }
 
-    /* ── Option click binding ── */
+    /* Option click binding */
     function bindOption(opt) {
       if (!opt || opt._gtBound) return;
       opt._gtBound = true;
@@ -1293,7 +1285,7 @@
       });
     }
 
-    /* ── Build a single option DOM node ── */
+    /* Build a single option DOM node */
     function buildOptionNode(ch) {
       var row = document.createElement('div');
       row.className = 'gt-ms-option';
@@ -1319,7 +1311,7 @@
       return row;
     }
 
-    /* ── setChoices: rebuild from state ── */
+    /* setChoices: rebuild from state */
     function setChoices(choices, opts) {
       opts = opts || {};
       var preserveSel = opts.preserveSelection !== false;
@@ -1378,7 +1370,7 @@
       if (doNotify) commitSelection();
     }
 
-    /* ── Search (debounced) ── */
+    /* Search (debounced) */
     function applySearchNow(q) {
       var qq = (q || '').toLowerCase().trim();
       state.query = qq;
@@ -1422,7 +1414,7 @@
       else applySearchNow(searchIn ? searchIn.value : '');
     }, 75);
 
-    /* ── Position the dropdown below the trigger ──
+    /* Position the dropdown below the trigger 
        Uses document-space coordinates (viewport + scrollY) to match
        position:absolute on the body-appended teleported element. */
     function positionDropdown() {
@@ -1453,7 +1445,7 @@
 
     var openedAt = 0;
 
-    /* ── Open / Close ── */
+    /* Open / Close */
     function open() {
       closeAllDropdowns(wrap);
       wrap.classList.add('gt-layer-active');
@@ -1484,11 +1476,11 @@
       }
     }
 
-    /* ── Event listeners ── */
+    /* Event listeners */
     trigger.addEventListener('click', function (e) {
       e.stopPropagation();
       if (dropdown.classList.contains('open')) {
-        /* Ignore close triggers within 500 ms of opening — prevents synthetic
+        /* Ignore close triggers within 500 ms of opening - prevents synthetic
            re-fires from focus changes (e.g. bs4Dash / AdminLTE environments) */
         if (Date.now() - openedAt < 500) return;
         close();
@@ -1573,7 +1565,7 @@
       searchIn.addEventListener('input', debouncedSearch);
     }
 
-    /* ── Destroy (lifecycle teardown) ── */
+    /* Destroy (lifecycle teardown) */
     function destroy() {
       if (wrap._gtDocClickHandler) {
         document.removeEventListener('click', wrap._gtDocClickHandler);
@@ -1590,17 +1582,17 @@
       wrap._gtMultiInit = false;
     }
 
-    /* ── Initial sync ── */
+    /* Initial sync */
     syncUI();
 
-    /* ── Emit initial value to Shiny ── */
+    /* Emit initial value to Shiny */
     if (window.Shiny && window.Shiny.setInputValue) {
       Shiny.setInputValue(inputId, getValue(), { priority: 'deferred' });
       Shiny.setInputValue(inputId + '_style', currentStyle, { priority: 'deferred' });
       Shiny.setInputValue(inputId + '_ready', true, { priority: 'deferred' });
     }
 
-    /* ── Public controller ── */
+    /* Public controller */
     wrap._gt = {
       kind: 'multi',
       getValue: getValue,
@@ -1661,14 +1653,12 @@
         setValue([], opts);
       },
       destroy: destroy,
-      /* Expose for binding — stable reference, not the closure var */
+      /* Expose for binding - stable reference, not the closure var */
       commitSelection: commitSelection
     };
   }
 
-  /* ══════════════════════════════════════════════════════
-     SHINY INPUT BINDINGS
-  ══════════════════════════════════════════════════════ */
+  /* SHINY INPUT BINDINGS */
   function registerBindings() {
     if (typeof Shiny === 'undefined' || !window.jQuery || registerBindings._done) return;
     registerBindings._done = true;
@@ -1701,7 +1691,7 @@
     });
     Shiny.inputBindings.register(glassTabsBinding, 'glasstabs.glassTabs');
 
-    /* ── Single-select binding ── */
+    /* Single-select binding */
     var glassSelectBinding = new Shiny.InputBinding();
     $.extend(glassSelectBinding, {
       find: function (scope) {
@@ -1768,7 +1758,7 @@
     });
     Shiny.inputBindings.register(glassSelectBinding, 'glasstabs.glassSelect');
 
-    /* ── Multi-select binding ── */
+    /* Multi-select binding */
     var glassMultiSelectBinding = new Shiny.InputBinding();
     $.extend(glassMultiSelectBinding, {
       find: function (scope) {
@@ -1833,9 +1823,7 @@
     Shiny.inputBindings.register(glassMultiSelectBinding, 'glasstabs.glassMultiSelect');
   }
 
-  /* ══════════════════════════════════════════════════════
-     BOOT
-  ══════════════════════════════════════════════════════ */
+  /* BOOT */
   var bootTimer = null;
 
   function scheduleBoot() {
@@ -1914,7 +1902,7 @@
   }
 
   /* Report the initial active tab for every navbar once the Shiny session
-     is ready — so glassTabsServer() is never NULL on first render. */
+     is ready - so glassTabsServer() is never NULL on first render. */
   document.addEventListener('shiny:sessioninitialized', function () {
     document.querySelectorAll('.gt-navbar').forEach(function (nb) {
       var ns = nb.getAttribute('data-ns');
@@ -2063,7 +2051,7 @@
         navbar.querySelectorAll('.gt-tab-link.active').forEach(function (l) {
           l.classList.remove('active');
           l.setAttribute('aria-selected', 'false');
-          /* Deactivate only this namespace's pane — not nested glassTabsUI panes */
+          /* Deactivate only this namespace's pane - not nested glassTabsUI panes */
           var v = l.getAttribute('data-value');
           var p = document.getElementById(msg.ns + '-pane-' + v);
           if (p) p.classList.remove('active');

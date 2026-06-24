@@ -8,7 +8,7 @@ glassTabsServer(id, bookmark = TRUE)
 }
 \arguments{
 \item{id}{Module id matching the \code{id} passed to \code{\link[=glassTabsUI]{glassTabsUI()}}.
-Do \strong{not} wrap this in \code{ns()} — \code{glassTabsServer()} handles namespacing
+Do \strong{not} wrap this in \code{ns()} - \code{glassTabsServer()} handles namespacing
 internally via \code{\link[shiny:moduleServer]{shiny::moduleServer()}}.}
 
 \item{bookmark}{Logical. When \code{TRUE} (default), registers \code{\link[shiny:onBookmark]{shiny::onBookmark()}}
@@ -82,7 +82,7 @@ my_module_ui <- function(id) {
   )
 }
 
-# Server side: pass the bare id — NOT ns("tabs")
+# Server side: pass the bare id - NOT ns("tabs")
 my_module_server <- function(id) {
   shiny::moduleServer(id, function(input, output, session) {
     active <- glassTabsServer("tabs")     # <-- bare id, no ns()

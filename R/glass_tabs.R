@@ -49,7 +49,7 @@ glassTabPanel <- function(value, label, ..., icon = NULL, selected = FALSE) {
 #' @param selected Value of the initially selected tab.
 #' @param wrap Logical. When `TRUE` wraps everything in a `div.gt-container`.
 #' @param compact Logical. When `TRUE` applies reduced padding and spacing via
-#'   the `.gt-compact` CSS modifier — useful inside dashboard cards or tight
+#'   the `.gt-compact` CSS modifier - useful inside dashboard cards or tight
 #'   layouts (e.g. bs4Dash).
 #' @param shape Corner style for the tab bar and content. One of `"rounded"`
 #'   (default) for the signature glass look, or `"square"` for crisp,
@@ -61,7 +61,7 @@ glassTabPanel <- function(value, label, ..., icon = NULL, selected = FALSE) {
 #'   dark mode (e.g. `"body.dark-mode"` for bs4Dash, `"[data-bs-theme=dark]"`
 #'   for Bootstrap 5). When provided and `theme = "light"`, a second scoped
 #'   `<style>` block overrides the CSS variables back to the dark-mode defaults
-#'   whenever that selector is active — so the tabs stay readable after a
+#'   whenever that selector is active - so the tabs stay readable after a
 #'   dark-mode toggle without any server-side intervention.
 #'
 #' @return An `htmltools::tagList` ready to use in a Shiny UI.
@@ -292,7 +292,7 @@ updateGlassTabsUI <- function(session, id, selected) {
 
 #' Update the badge count on a glass tab
 #'
-#' Adds or updates a small numeric badge on a tab button — useful for
+#' Adds or updates a small numeric badge on a tab button - useful for
 #' surfacing counts such as unread items, pending rows, or notification
 #' totals. Set `count` to `0` or `NA` to hide the badge.
 #'
@@ -558,7 +558,7 @@ removeGlassTab <- function(session, id, value) {
 #' UI, and call `glassTabsServer("tabs")` (without `ns()`) in the server.
 #'
 #' @param id       Module id matching the `id` passed to [glassTabsUI()].
-#'   Do **not** wrap this in `ns()` — `glassTabsServer()` handles namespacing
+#'   Do **not** wrap this in `ns()` - `glassTabsServer()` handles namespacing
 #'   internally via [shiny::moduleServer()].
 #' @param bookmark Logical. When `TRUE` (default), registers [shiny::onBookmark()]
 #'   and [shiny::onRestored()] hooks so the active tab is saved and restored
@@ -619,7 +619,7 @@ removeGlassTab <- function(session, id, value) {
 #'   )
 #' }
 #'
-#' # Server side: pass the bare id — NOT ns("tabs")
+#' # Server side: pass the bare id - NOT ns("tabs")
 #' my_module_server <- function(id) {
 #'   shiny::moduleServer(id, function(input, output, session) {
 #'     active <- glassTabsServer("tabs")     # <-- bare id, no ns()
@@ -686,7 +686,7 @@ glassTabsServer <- function(id, bookmark = TRUE) {
 #' @return A `shiny.tag` suitable for use in a Shiny UI.
 #'
 #' @examples
-#' # Creates a UI placeholder tag — no Shiny session needed:
+#' # Creates a UI placeholder tag - no Shiny session needed:
 #' tabs_placeholder <- glassTabsOutput("my_tabs")
 #'
 #' # Full dynamic-tab app example:
@@ -789,10 +789,10 @@ renderGlassTabs <- function(expr, env = parent.frame(), quoted = FALSE) {
 #' @return A single character string for use in [shiny::conditionalPanel()].
 #'
 #' @examples
-#' # Returns a plain JS condition string — no Shiny session needed:
+#' # Returns a plain JS condition string - no Shiny session needed:
 #' glassTabCondition("main", "details")
 #'
-#' # Inside a module — use ns() for the id:
+#' # Inside a module - use ns() for the id:
 #' # UI:   glassTabCondition(ns("tabs"), "details")
 #' # This produces: "input['mymod-tabs-active_tab'] === 'details'"
 #'

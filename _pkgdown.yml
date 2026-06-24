@@ -72,6 +72,7 @@ reference:
       - disableGlassTab
       - enableGlassTab
       - appendGlassTab
+      - removeGlassTab
 
   - title: Select widgets
     desc: |
@@ -91,4 +92,3 @@ reference:
 footer:
   structure:
     left: developed_by
-    right: built_with

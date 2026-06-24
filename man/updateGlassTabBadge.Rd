@@ -20,7 +20,7 @@ updateGlassTabBadge(session, id, value, count)
 Called for its side effect; returns \code{NULL} invisibly.
 }
 \description{
-Adds or updates a small numeric badge on a tab button — useful for
+Adds or updates a small numeric badge on a tab button - useful for
 surfacing counts such as unread items, pending rows, or notification
 totals. Set \code{count} to \code{0} or \code{NA} to hide the badge.
 }

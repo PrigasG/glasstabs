@@ -90,7 +90,7 @@ glasstabs_news <- function() {
 
 #' Attach glasstabs CSS and JS dependencies
 #'
-#' Call this once in your UI — either inside `fluidPage()`, `bs4DashPage()`,
+#' Call this once in your UI - either inside `fluidPage()`, `bs4DashPage()`,
 #' or any other Shiny page wrapper. It injects the required CSS and JS as
 #' proper `htmltools` dependencies so they are deduplicated automatically.
 #'
@@ -98,7 +98,7 @@ glasstabs_news <- function() {
 #'   consumed by Shiny's renderer).
 #'
 #' @examples
-#' # Returns an htmlDependency object — no Shiny session needed:
+#' # Returns an htmlDependency object - no Shiny session needed:
 #' deps <- useGlassTabs()
 #'
 #' # Typical usage inside a Shiny UI:
@@ -119,7 +119,7 @@ glasstabs_news <- function() {
 useGlassTabs <- function() {
   htmltools::htmlDependency(
     name    = "glasstabs",
-    version = "0.3.2.9000",
+    version = "0.3.3",
     src     = list(file = system.file("www", package = "glasstabs")),
     stylesheet = "glass.css",
     script     = "glass.js"

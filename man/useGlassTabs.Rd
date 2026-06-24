@@ -11,12 +11,12 @@ An \code{htmltools::htmlDependency} object (invisible to the user,
 consumed by Shiny's renderer).
 }
 \description{
-Call this once in your UI — either inside \code{fluidPage()}, \code{bs4DashPage()},
+Call this once in your UI - either inside \code{fluidPage()}, \code{bs4DashPage()},
 or any other Shiny page wrapper. It injects the required CSS and JS as
 proper \code{htmltools} dependencies so they are deduplicated automatically.
 }
 \examples{
-# Returns an htmlDependency object — no Shiny session needed:
+# Returns an htmlDependency object - no Shiny session needed:
 deps <- useGlassTabs()
 
 # Typical usage inside a Shiny UI:

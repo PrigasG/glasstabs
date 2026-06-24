@@ -1,4 +1,4 @@
-# glasstabs (development version)
+# glasstabs 0.3.3
 
 ## Native-layout parity
 
@@ -46,6 +46,16 @@
 * Added a runnable `runGlassExample("server-select")` example and vignette
   sections for server-backed single- and multi-select controls.
 
+## Bug fixes
+
+* Fixed `updateGlassMultiSelect()` updates being lost when a multi-select is
+  created or replaced by `renderUI()` in the same reactive flush. Dynamic
+  updates now target the replacement widget and retry briefly while it binds.
+* Fixed scalar `selected` values being interpreted as an empty selection by the
+  multi-select JavaScript binding.
+
+# glasstabs 0.3.2
+
 ## Public dashboard readiness
 
 * Removed all `color-mix()` usage from the shipped stylesheet. Select widget
@@ -68,11 +78,6 @@
 
 * Fixed tab initialization for `glassTabsUI()` inserted by `renderUI()` or
   dashboard layouts after the initial page boot.
-* Fixed `updateGlassMultiSelect()` updates being lost when a multi-select is
-  created or replaced by `renderUI()` in the same reactive flush. Dynamic
-  updates now target the replacement widget and retry briefly while it binds.
-* Fixed scalar `selected` values being interpreted as an empty selection by the
-  multi-select JavaScript binding.
 * Added a Shiny input binding and delegated activation fallback for tabs so
   click and keyboard activation remain reliable in public dashboards.
 * Bumped the html dependency version so browsers request fresh CSS/JS assets.
@@ -295,4 +300,4 @@ Initial release.
 * All theming uses pre-computed CSS variables (no `color-mix()`), ensuring
   compatibility with Shiny's embedded browser.
 * Multiple instances of either widget on the same page work independently;
-  each instance is scoped to its own `id`.
+  each instance is sc

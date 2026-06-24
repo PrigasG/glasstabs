@@ -1,68 +1,51 @@
-## Development snapshot
+## Submission
 
-This is a GitHub development snapshot (`0.3.2.9000`), not a CRAN submission.
-The next CRAN release should use a new release version, likely `0.3.3`, and
-refresh these comments immediately before submission.
+This is a new minor release (0.3.3) of glasstabs.
 
-## Last CRAN-oriented check results
+The previous CRAN version is 0.3.1. Version 0.3.2 was prepared as a development
+snapshot and was not submitted to CRAN; its changes ship as part of this
+release and are recorded under the `0.3.2` heading in NEWS.md.
+
+## Changes in this version (0.3.3)
+
+This release adds native-layout parity and square-corner styling for the select
+widgets, plus opt-in server-side search for large choice sets.
+
+- `glassSelect()` and `glassMultiSelect()` gained a `width` argument (passed to
+  `shiny::validateCssUnit()`) so the widgets can fill a column or match a fixed
+  layout, like native `selectizeInput()`.
+- Both selects now accept grouped choices as a named list (selectInput()-style),
+  rendering non-interactive group headers.
+- Added disabled support (`disabled` and `disabled_choices`), reachable at
+  runtime via `updateGlassSelect()` / `updateGlassMultiSelect()`.
+- Added a `shape` argument (`"rounded"` default or `"square"`) to the select
+  widgets and `glassTabsUI()` for crisp, selectize-style corners.
+- Added opt-in server-side search (`server = TRUE`, `glassSelectServer()`,
+  `glassMultiSelectServer()`) with loading and no-results states.
+- Bug fixes for `updateGlassMultiSelect()` updates being lost during a
+  `renderUI()` replacement, and for scalar `selected` values in the
+  multi-select binding.
+
+See NEWS.md for the full list.
+
+## Test environments
+
+- local Windows 11, R 4.5.1
+
+## R CMD check results
 
 0 errors | 0 warnings | 0 notes
 
-Tested on:
-- local Windows 11: R 4.5.1
-
 Command used locally:
-- `R CMD check --no-manual glasstabs_0.3.2.tar.gz`
+- `R CMD check --no-manual glasstabs_0.3.3.tar.gz`
 - local CRAN incoming check: `checking CRAN incoming feasibility ... OK`
 
-CRAN pretest follow-up:
+## CRAN pretest follow-up
 
-- The previous Debian pretest reported `checking for detritus in the temp
+- A previous Debian pretest reported `checking for detritus in the temp
   directory ... NOTE` with a `calibre-*` directory. CRAN indicated this can be
-  caused by opening a browser in non-interactive mode. The example-app launcher
-  now explicitly refuses to launch Shiny apps in non-interactive sessions, and
-  a regression test covers this guard. Visible `shinyApp(ui, server)` calls in
-  README/vignette examples and shipped example apps are also protected by
+  caused by opening a browser in non-interactive mode. `runGlassExample()`
+  explicitly refuses to launch Shiny apps in non-interactive sessions, and a
+  regression test covers this guard. All `shinyApp(ui, server)` calls in the
+  README, vignettes, and shipped example apps are protected by
   `if (interactive())`.
-
-## Changes in this version (0.3.2)
-
-This release focuses on public-dashboard readiness for `glassTabsUI()`,
-`glassSelect()`, and `glassMultiSelect()`.
-
-Browser compatibility:
-
-- Removed all `color-mix()` usage from the shipped stylesheet. Select widget
-  alpha colors are now precomputed as CSS custom properties at render time.
-- Bumped the html dependency version so browsers request fresh CSS/JS assets.
-
-Accessibility and keyboard behavior:
-
-- Added ARIA combobox/listbox/option semantics to `glassSelect()` and
-  `glassMultiSelect()`.
-- JavaScript now keeps `aria-expanded` and `aria-selected` in sync.
-- Escape and Tab close open select dropdowns and return focus to the trigger.
-- Single-select option clicks return focus to the trigger.
-
-Dashboard and layout fixes:
-
-- Fixed tab initialization for `glassTabsUI()` inserted by `renderUI()` or
-  dashboard layouts after the initial page boot.
-- Added a Shiny input binding and delegated activation fallback for tabs so
-  click and keyboard activation remain reliable in public dashboards.
-- Added Windows High Contrast (`forced-colors`) CSS support.
-- Added RTL layout support.
-- Improved narrow-screen select trigger behavior to avoid overflow in dashboard
-  cards.
-
-Security:
-
-- Added CSP nonce support for inline style tags via the `glasstabs.csp_nonce`
-  option.
-
-Internal/release preparation:
-
-- Added public-readiness tests covering browser compatibility, ARIA output,
-  focus management hooks, CSP nonce support, and release-facing CSS/JS checks.
-- Moved non-shipping stress-test apps out of `inst/examples/`; they are excluded
-  from the CRAN source package.

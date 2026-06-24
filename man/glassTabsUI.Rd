@@ -26,7 +26,7 @@ glassTabsUI(
 \item{wrap}{Logical. When \code{TRUE} wraps everything in a \code{div.gt-container}.}
 
 \item{compact}{Logical. When \code{TRUE} applies reduced padding and spacing via
-the \code{.gt-compact} CSS modifier — useful inside dashboard cards or tight
+the \code{.gt-compact} CSS modifier - useful inside dashboard cards or tight
 layouts (e.g. bs4Dash).}
 
 \item{shape}{Corner style for the tab bar and content. One of \code{"rounded"}
@@ -42,7 +42,7 @@ selectize-style corners that match \code{\link[=glassSelect]{glassSelect()}} and
 dark mode (e.g. \code{"body.dark-mode"} for bs4Dash, \code{"[data-bs-theme=dark]"}
 for Bootstrap 5). When provided and \code{theme = "light"}, a second scoped
 \verb{<style>} block overrides the CSS variables back to the dark-mode defaults
-whenever that selector is active — so the tabs stay readable after a
+whenever that selector is active - so the tabs stay readable after a
 dark-mode toggle without any server-side intervention.}
 }
 \value{

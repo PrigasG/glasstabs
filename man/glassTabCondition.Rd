@@ -23,10 +23,10 @@ specified glasstabs widget has a given active tab. Pass the result directly
 to the \code{condition} argument of \code{\link[shiny:conditionalPanel]{shiny::conditionalPanel()}}.
 }
 \examples{
-# Returns a plain JS condition string — no Shiny session needed:
+# Returns a plain JS condition string - no Shiny session needed:
 glassTabCondition("main", "details")
 
-# Inside a module — use ns() for the id:
+# Inside a module - use ns() for the id:
 # UI:   glassTabCondition(ns("tabs"), "details")
 # This produces: "input['mymod-tabs-active_tab'] === 'details'"
 

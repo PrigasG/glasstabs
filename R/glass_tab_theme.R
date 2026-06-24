@@ -1,7 +1,7 @@
 #' Create a custom color theme for glassTabsUI
 #'
 #' All arguments accept any valid CSS color string (hex, `rgb()`, `rgba()`,
-#' named colors). Pass only the fields you want to override — unset fields
+#' named colors). Pass only the fields you want to override - unset fields
 #' fall back to the dark-mode defaults.
 #'
 #' @note **Light mode color accessibility:** When building a light-mode theme,
