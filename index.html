@@ -790,30 +790,21 @@ glassMultiSelect("filters", choices, shape = "square")</code></pre>
 <hr>
 </div>
 <div class="section level2">
-<h2 id="whats-new-in-030">What’s new in 0.3.0<a class="anchor" aria-label="anchor" href="#whats-new-in-030"></a>
+<h2 id="whats-new-in-033">What’s new in 0.3.3<a class="anchor" aria-label="anchor" href="#whats-new-in-033"></a>
 </h2>
 <ul>
 <li>
-<code><a href="reference/runGlassExample.html">runGlassExample()</a></code> - launch any built-in example from the console</li>
+<code>width</code> argument in <code><a href="reference/glassSelect.html">glassSelect()</a></code> / <code><a href="reference/glassMultiSelect.html">glassMultiSelect()</a></code> - fill a column or match a fixed layout, like native <code><a href="https://rdrr.io/pkg/shiny/man/selectInput.html" class="external-link">selectizeInput()</a></code>
+</li>
+<li>Grouped choices - pass a named list (<code><a href="https://rdrr.io/pkg/shiny/man/selectInput.html" class="external-link">selectInput()</a></code>-style) to render non-interactive group headers</li>
 <li>
-<code>icon</code> argument in <code><a href="reference/glassTabPanel.html">glassTabPanel()</a></code> - add <code><a href="https://rdrr.io/pkg/shiny/man/icon.html" class="external-link">shiny::icon()</a></code> or any tag to a tab button</li>
+<code>disabled</code> / <code>disabled_choices</code> - disable a whole select or individual options, also at runtime via <code><a href="reference/updateGlassSelect.html">updateGlassSelect()</a></code> / <code><a href="reference/updateGlassMultiSelect.html">updateGlassMultiSelect()</a></code>
+</li>
 <li>
-<code><a href="reference/disableGlassTab.html">disableGlassTab()</a></code> / <code><a href="reference/disableGlassTab.html">enableGlassTab()</a></code> - gray out tabs without hiding them</li>
-<li>
-<code><a href="reference/updateGlassTabBadge.html">updateGlassTabBadge()</a></code> - set live numeric count badges on tab buttons</li>
-<li>
-<code>glassTabsServer(bookmark = TRUE)</code> - active tab preserved in Shiny URL bookmarks</li>
-<li>
-<code><a href="reference/glassTabsOutput.html">glassTabsOutput()</a></code> / <code><a href="reference/renderGlassTabs.html">renderGlassTabs()</a></code> - fully server-driven reactive tab sets</li>
-<li>
-<code>inst/cheatsheet/glasstabs-cheatsheet.tex</code> - printable two-column LaTeX reference card</li>
+<code>shape = "square"</code> in <code><a href="reference/glassSelect.html">glassSelect()</a></code>, <code><a href="reference/glassMultiSelect.html">glassMultiSelect()</a></code>, and <code><a href="reference/glassTabsUI.html">glassTabsUI()</a></code> - crisp, selectize-style corners</li>
+<li>Server-side search for large choice sets - <code>server = TRUE</code>, <code><a href="reference/glassSelectServer.html">glassSelectServer()</a></code>, <code><a href="reference/glassMultiSelectServer.html">glassMultiSelectServer()</a></code>
+</li>
 </ul>
-<hr>
-</div>
-<div class="section level2">
-<h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
-</h2>
-<p>MIT (c) glasstabs authors</p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">

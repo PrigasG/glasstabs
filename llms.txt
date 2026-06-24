@@ -550,34 +550,31 @@ server <- function(input, output, session) {
 
 ------------------------------------------------------------------------
 
-## What’s new in 0.3.0
+## What’s new in 0.3.3
 
-- [`runGlassExample()`](https://prigasg.github.io/glasstabs/reference/runGlassExample.md) -
-  launch any built-in example from the console
-- `icon` argument in
-  [`glassTabPanel()`](https://prigasg.github.io/glasstabs/reference/glassTabPanel.md) -
-  add [`shiny::icon()`](https://rdrr.io/pkg/shiny/man/icon.html) or any
-  tag to a tab button
-- [`disableGlassTab()`](https://prigasg.github.io/glasstabs/reference/disableGlassTab.md)
+- `width` argument in
+  [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md)
   /
-  [`enableGlassTab()`](https://prigasg.github.io/glasstabs/reference/disableGlassTab.md) -
-  gray out tabs without hiding them
-- [`updateGlassTabBadge()`](https://prigasg.github.io/glasstabs/reference/updateGlassTabBadge.md) -
-  set live numeric count badges on tab buttons
-- `glassTabsServer(bookmark = TRUE)` - active tab preserved in Shiny URL
-  bookmarks
-- [`glassTabsOutput()`](https://prigasg.github.io/glasstabs/reference/glassTabsOutput.md)
+  [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md) -
+  fill a column or match a fixed layout, like native
+  [`selectizeInput()`](https://rdrr.io/pkg/shiny/man/selectInput.html)
+- Grouped choices - pass a named list
+  ([`selectInput()`](https://rdrr.io/pkg/shiny/man/selectInput.html)-style)
+  to render non-interactive group headers
+- `disabled` / `disabled_choices` - disable a whole select or individual
+  options, also at runtime via
+  [`updateGlassSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassSelect.md)
   /
-  [`renderGlassTabs()`](https://prigasg.github.io/glasstabs/reference/renderGlassTabs.md) -
-  fully server-driven reactive tab sets
-- `inst/cheatsheet/glasstabs-cheatsheet.tex` - printable two-column
-  LaTeX reference card
-
-------------------------------------------------------------------------
-
-## License
-
-MIT (c) glasstabs authors
+  [`updateGlassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassMultiSelect.md)
+- `shape = "square"` in
+  [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md),
+  [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md),
+  and
+  [`glassTabsUI()`](https://prigasg.github.io/glasstabs/reference/glassTabsUI.md) -
+  crisp, selectize-style corners
+- Server-side search for large choice sets - `server = TRUE`,
+  [`glassSelectServer()`](https://prigasg.github.io/glasstabs/reference/glassSelectServer.md),
+  [`glassMultiSelectServer()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelectServer.md)
 
 # Package index
 
