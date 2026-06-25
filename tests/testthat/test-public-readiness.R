@@ -70,6 +70,48 @@ test_that("glass.js keeps ARIA and focus state in sync", {
   expect_true(grepl("trigger.focus()", js, fixed = TRUE))
 })
 
+test_that("closeGlass* helpers send dropdown close messages", {
+  msgs <- list()
+  fake_session <- list(
+    ns = function(id) paste0("ns-", id),
+    sendInputMessage = function(inputId, message) {
+      msgs[[length(msgs) + 1]] <<- list(inputId = inputId, message = message)
+    },
+    sendCustomMessage = function(type, message) {
+      msgs[[length(msgs) + 1]] <<- list(type = type, message = message)
+    }
+  )
+
+  expect_invisible(closeGlassSelect(fake_session, "region"))
+  expect_equal(msgs[[1]]$inputId, "region")
+  expect_equal(msgs[[1]]$message, list(close = TRUE))
+
+  expect_invisible(closeGlassMultiSelect(fake_session, "filters"))
+  expect_equal(msgs[[2]]$inputId, "filters")
+  expect_equal(msgs[[2]]$message, list(close = TRUE))
+
+  expect_invisible(closeAllGlassSelects(fake_session))
+  expect_equal(msgs[[3]]$type, "glasstabs_close_selects")
+  expect_equal(msgs[[3]]$message, list())
+})
+
+test_that("glass.js exposes close lifecycle hooks for select dropdowns", {
+  js_path <- file.path("inst", "www", "glass.js")
+  if (!file.exists(js_path)) {
+    js_path <- system.file("www", "glass.js", package = "glasstabs")
+  }
+
+  js <- paste(readLines(js_path, warn = FALSE), collapse = "\n")
+  expect_true(grepl("setDropdownOpenState", js, fixed = TRUE))
+  expect_true(grepl("inputId + '_open'", js, fixed = TRUE))
+  expect_true(grepl("glasstabs_close_select", js, fixed = TRUE))
+  expect_true(grepl("glasstabs_close_selects", js, fixed = TRUE))
+  expect_true(grepl("hasOwn(data, 'close')", js, fixed = TRUE))
+  expect_true(grepl("document.addEventListener('pointerdown'", js, fixed = TRUE))
+  expect_true(grepl("document.addEventListener('shiny:value'", js, fixed = TRUE))
+  expect_true(grepl("document.addEventListener('shiny:disconnected'", js, fixed = TRUE))
+})
+
 test_that("glass.js does not ship debug-only message handlers", {
   js_path <- file.path("inst", "www", "glass.js")
   if (!file.exists(js_path)) {

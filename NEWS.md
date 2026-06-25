@@ -1,4 +1,19 @@
+# glasstabs 0.3.4
+
+## Dropdown lifecycle
+
+* Added `closeGlassSelect()`, `closeGlassMultiSelect()`, and
+  `closeAllGlassSelects()` so apps can explicitly close dropdowns before tab
+  switches, modal changes, or dynamic UI replacement.
+* `glassSelect()` and `glassMultiSelect()` now expose open state as
+  `input$<inputId>_open`.
+* Open dropdowns now close on additional lifecycle events, including outside
+  pointer-down, window resize, Bootstrap tab/modal/collapse hiding,
+  sidebar/offcanvas transitions, Shiny value replacement, and Shiny disconnect.
+
 # glasstabs 0.3.3
+
+Released to CRAN.
 
 ## Native-layout parity
 

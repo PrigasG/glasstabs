@@ -136,6 +136,9 @@ example demonstrates `shape = "square"` on `glassSelect()` and
 | `glassSelectServer(inputId, choices, ...)` | Server-side search for large single-select choice sets |
 | `updateGlassSelect(session, inputId, ...)` | Update single-select choices, selection, or style |
 | `glassSelectValue(input, inputId)` | Reactive helper for selected value |
+| `closeGlassSelect(session, inputId)` | Close one open single-select dropdown |
+| `closeGlassMultiSelect(session, inputId)` | Close one open multi-select dropdown |
+| `closeAllGlassSelects(session)` | Close every open glasstabs select dropdown |
 | `glassFilterTags(inputId)` | Tag-pill display area synced to a multi-select |
 | `glass_select_theme(...)` | Custom colour theme for `glassSelect()` and `glassMultiSelect()` |
 
@@ -148,6 +151,7 @@ example demonstrates `shape = "square"` on `glassSelect()` and
 | `input[["<id>-active_tab"]]` | `character` | Currently active tab value from `glassTabsUI()` |
 | `input$<inputId>` | `character vector` | Selected values from `glassMultiSelect()` |
 | `input$<inputId>_style` | `character` | Active selection style from `glassMultiSelect()` |
+| `input$<inputId>_open` | `logical` | Whether a select dropdown is currently open |
 | `input$<inputId>` | `character` or `NULL` | Selected value from `glassSelect()` |
 
 ### conditionalPanel integration
@@ -517,6 +521,12 @@ server <- function(input, output, session) {
 ```
 
 ---
+
+## What's new in 0.3.4
+
+- Public close helpers - `closeGlassSelect()`, `closeGlassMultiSelect()`, and `closeAllGlassSelects()` for tab/modal/UI lifecycle cleanup
+- `input$<inputId>_open` - inspect whether a select dropdown is currently open from Shiny
+- Broader automatic dropdown cleanup on resize, tab/modal/sidebar transitions, Shiny value replacement, and disconnect
 
 ## What's new in 0.3.3
 

@@ -1,6 +1,6 @@
 Package: glasstabs
 Title: Animated Glass-Style Tabs and Multi-Select Filter for 'Shiny'
-Version: 0.3.3
+Version: 0.3.4
 Authors@R:
     person("George", "Arthur", , "prigasgenthian48@gmail.com", role = c("aut", "cre"))
 Description: Tools for creating animated glassmorphism-style tab
@@ -40,6 +40,6 @@ VignetteBuilder:
     knitr
 Config/testthat/edition: 3
 Encoding: UTF-8
-Language: eng
+Language: en-US
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3

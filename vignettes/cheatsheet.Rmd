@@ -319,6 +319,7 @@ glassMultiSelect(
 | `glassTabsUI("main", ...)` | `input[["main-active_tab"]]` or `glassTabsServer("main")()` |
 | `glassMultiSelect("metric", ...)` | `input$metric` or `glassMultiSelectValue(input, "metric")$selected()` |
 | multi-select style | `input$metric_style` or `glassMultiSelectValue(input, "metric")$style()` |
+| select open state | `input$metric_open` / `input$region_open` |
 | `glassSelect("region", ...)` | `input$region` or `glassSelectValue(input, "region")()` |
 
 ## conditionalPanel integration

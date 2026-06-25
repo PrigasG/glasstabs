@@ -1,30 +1,22 @@
 ## Submission
 
-This is a new minor release (0.3.3) of glasstabs.
+This is a development release (0.3.4) of glasstabs.
 
-The previous CRAN version is 0.3.1. Version 0.3.2 was prepared as a development
-snapshot and was not submitted to CRAN; its changes ship as part of this
-release and are recorded under the `0.3.2` heading in NEWS.md.
+The previous CRAN version is 0.3.3. This development release is not intended
+for immediate CRAN submission; it follows the 0.3.3 CRAN release with dropdown
+lifecycle hardening.
 
-## Changes in this version (0.3.3)
+## Changes in this version (0.3.4)
 
-This release adds native-layout parity and square-corner styling for the select
-widgets, plus opt-in server-side search for large choice sets.
+This release focuses on dropdown lifecycle hardening for complex Shiny layouts.
 
-- `glassSelect()` and `glassMultiSelect()` gained a `width` argument (passed to
-  `shiny::validateCssUnit()`) so the widgets can fill a column or match a fixed
-  layout, like native `selectizeInput()`.
-- Both selects now accept grouped choices as a named list (selectInput()-style),
-  rendering non-interactive group headers.
-- Added disabled support (`disabled` and `disabled_choices`), reachable at
-  runtime via `updateGlassSelect()` / `updateGlassMultiSelect()`.
-- Added a `shape` argument (`"rounded"` default or `"square"`) to the select
-  widgets and `glassTabsUI()` for crisp, selectize-style corners.
-- Added opt-in server-side search (`server = TRUE`, `glassSelectServer()`,
-  `glassMultiSelectServer()`) with loading and no-results states.
-- Bug fixes for `updateGlassMultiSelect()` updates being lost during a
-  `renderUI()` replacement, and for scalar `selected` values in the
-  multi-select binding.
+- Added public close helpers: `closeGlassSelect()`,
+  `closeGlassMultiSelect()`, and `closeAllGlassSelects()`.
+- Select widgets now expose `input$<inputId>_open` so applications can react to
+  open/closed dropdown state.
+- Open dropdowns close on more lifecycle events, including outside
+  pointer-down, resize, Bootstrap tab/modal/collapse hiding,
+  sidebar/offcanvas transitions, Shiny value replacement, and disconnect.
 
 See NEWS.md for the full list.
 
@@ -34,11 +26,15 @@ See NEWS.md for the full list.
 
 ## R CMD check results
 
-0 errors | 0 warnings | 0 notes
+0 errors | 0 warnings | 2 notes
 
 Command used locally:
-- `R CMD check --no-manual glasstabs_0.3.3.tar.gz`
-- local CRAN incoming check: `checking CRAN incoming feasibility ... OK`
+- `R CMD check --as-cran --no-manual glasstabs_0.3.4.tar.gz`
+
+Notes:
+- CRAN incoming reports `Days since last update: 0` because 0.3.3 was just
+  submitted.
+- The local Windows check reported `unable to verify current time`.
 
 ## CRAN pretest follow-up
 

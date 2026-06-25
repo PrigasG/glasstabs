@@ -86,6 +86,7 @@ reference:
       - updateGlassMultiSelect
       - glassMultiSelectValue
       - glassMultiSelectServer
+      - closeGlassSelect
       - glassFilterTags
       - glass_select_theme
 

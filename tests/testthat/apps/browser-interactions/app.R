@@ -42,6 +42,7 @@ ui <- fluidPage(
       selected = "rounded",
       inline = TRUE
     ),
+    verbatimTextOutput("fruit_open_state"),
     glassSelect(
       "shape_single",
       choices,
@@ -55,6 +56,10 @@ server <- function(input, output, session) {
   observe({
     req(input$shape)
     updateGlassSelect(session, "shape_single", shape = input$shape)
+  })
+
+  output$fruit_open_state <- renderText({
+    if (isTRUE(input$fruit_open)) "open" else "closed"
   })
 }
 

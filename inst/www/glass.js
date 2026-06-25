@@ -126,6 +126,15 @@
     return el._gt || null;
   }
 
+  function setDropdownOpenState(wrap, inputId, open) {
+    var value = !!open;
+    if (wrap._gtOpen === value) return;
+    wrap._gtOpen = value;
+    if (window.Shiny && window.Shiny.setInputValue && inputId) {
+      Shiny.setInputValue(inputId + '_open', value, { priority: 'event' });
+    }
+  }
+
   var MS_VARS = [
     '--ms-bg','--ms-border','--ms-text','--ms-accent','--ms-label',
     '--ms-ac-12','--ms-ac-16','--ms-ac-18','--ms-ac-22','--ms-ac-28',
@@ -177,22 +186,39 @@
     wrap.appendChild(dropdown);
   }
 
+  function closeDropdownWrap(w) {
+    if (!w) return;
+    if (w._gt && typeof w._gt.close === 'function') {
+      w._gt.close();
+      return;
+    }
+
+    w.classList.remove('gt-layer-active');
+    var dd = w._gtDropdown || w.querySelector('.gt-gs-dropdown, .gt-ms-dropdown');
+    if (dd) {
+      dd.classList.remove('open');
+      teleportClose(w, dd);
+    }
+    var trig = w.querySelector('.gt-gs-trigger, .gt-ms-trigger');
+    if (trig) {
+      trig.classList.remove('open');
+      trig.setAttribute('aria-expanded', 'false');
+    }
+    setDropdownOpenState(w, w.getAttribute('data-input-id'), false);
+  }
+
   /** Close every open glasstabs dropdown except the one being opened */
   function closeAllDropdowns(except) {
     document.querySelectorAll('.gt-gs-wrap.gt-layer-active, .gt-ms-wrap.gt-layer-active').forEach(function (w) {
       if (w === except) return;
-      w.classList.remove('gt-layer-active');
-      var dd = w._gtDropdown || w.querySelector('.gt-gs-dropdown, .gt-ms-dropdown');
-      if (dd) {
-        dd.classList.remove('open');
-        teleportClose(w, dd);
-      }
-      var trig = w.querySelector('.gt-gs-trigger, .gt-ms-trigger');
-      if (trig) {
-        trig.classList.remove('open');
-        trig.setAttribute('aria-expanded', 'false');
-      }
+      closeDropdownWrap(w);
     });
+  }
+
+  function closeDropdownById(inputId, type) {
+    if (!inputId) return;
+    var selector = type === 'multi' ? '.gt-ms-wrap' : '.gt-gs-wrap';
+    closeDropdownWrap(document.querySelector(selector + attrEquals('data-input-id', inputId)));
   }
 
   /* TAB ENGINE */
@@ -841,6 +867,7 @@
         trigger.classList.add('open');
         trigger.setAttribute('aria-expanded', 'true');
       });
+      setDropdownOpenState(wrap, inputId, true);
       openedAt = Date.now();
       /* Delay focus so synthetic-click re-fires from AdminLTE don't close us */
       if (searchIn) setTimeout(function () { searchIn.focus(); }, 100);
@@ -852,6 +879,7 @@
       trigger.classList.remove('open');
       trigger.setAttribute('aria-expanded', 'false');
       teleportClose(wrap, dropdown);
+      setDropdownOpenState(wrap, inputId, false);
     }
 
     function closeAndReturnFocus() {
@@ -892,11 +920,13 @@
       if (Date.now() - openedAt < 500) return;
       if (!wrap.contains(e.target) && !dropdown.contains(e.target)) close();
     };
-    document.addEventListener('click', wrap._gtDocClickHandler);
+    document.addEventListener('pointerdown', wrap._gtDocClickHandler);
 
     /* Reposition on scroll/resize while open */
-    wrap._gtScrollHandler = function () {
-      if (dropdown.classList.contains('open')) positionDropdown();
+    wrap._gtScrollHandler = function (e) {
+      if (!dropdown.classList.contains('open')) return;
+      if (e && e.type === 'resize') close();
+      else positionDropdown();
     };
     window.addEventListener('scroll', wrap._gtScrollHandler, true);
     window.addEventListener('resize', wrap._gtScrollHandler);
@@ -915,7 +945,7 @@
     /* Destroy (lifecycle teardown) */
     function destroy() {
       if (wrap._gtDocClickHandler) {
-        document.removeEventListener('click', wrap._gtDocClickHandler);
+        document.removeEventListener('pointerdown', wrap._gtDocClickHandler);
         wrap._gtDocClickHandler = null;
       }
       if (wrap._gtScrollHandler) {
@@ -923,6 +953,7 @@
         window.removeEventListener('resize', wrap._gtScrollHandler);
         wrap._gtScrollHandler = null;
       }
+      close();
       teleportClose(wrap, dropdown);
       wrap._gtDropdown = null;
       wrap._gt = null;
@@ -935,6 +966,7 @@
     /* Emit initial value to Shiny */
     if (window.Shiny && window.Shiny.setInputValue) {
       Shiny.setInputValue(inputId, state.selected, { priority: 'deferred' });
+      Shiny.setInputValue(inputId + '_open', false, { priority: 'deferred' });
       Shiny.setInputValue(inputId + '_ready', true, { priority: 'deferred' });
     }
 
@@ -988,6 +1020,7 @@
       clear: function (opts) {
         setValue(null, opts);
       },
+      close: close,
       destroy: destroy,
       commitSelection: commitSelection
     };
@@ -1456,6 +1489,7 @@
         trigger.classList.add('open');
         trigger.setAttribute('aria-expanded', 'true');
       });
+      setDropdownOpenState(wrap, inputId, true);
       openedAt = Date.now();
       /* Delay focus so synthetic-click re-fires from AdminLTE don't close us */
       if (searchIn) setTimeout(function () { searchIn.focus(); }, 100);
@@ -1467,6 +1501,7 @@
       trigger.classList.remove('open');
       trigger.setAttribute('aria-expanded', 'false');
       teleportClose(wrap, dropdown);
+      setDropdownOpenState(wrap, inputId, false);
     }
 
     function closeAndReturnFocus() {
@@ -1507,11 +1542,13 @@
       if (Date.now() - openedAt < 500) return;
       if (!wrap.contains(e.target) && !dropdown.contains(e.target)) close();
     };
-    document.addEventListener('click', wrap._gtDocClickHandler);
+    document.addEventListener('pointerdown', wrap._gtDocClickHandler);
 
     /* Reposition on scroll/resize while open */
-    wrap._gtScrollHandler = function () {
-      if (dropdown.classList.contains('open')) positionDropdown();
+    wrap._gtScrollHandler = function (e) {
+      if (!dropdown.classList.contains('open')) return;
+      if (e && e.type === 'resize') close();
+      else positionDropdown();
     };
     window.addEventListener('scroll', wrap._gtScrollHandler, true);
     window.addEventListener('resize', wrap._gtScrollHandler);
@@ -1568,7 +1605,7 @@
     /* Destroy (lifecycle teardown) */
     function destroy() {
       if (wrap._gtDocClickHandler) {
-        document.removeEventListener('click', wrap._gtDocClickHandler);
+        document.removeEventListener('pointerdown', wrap._gtDocClickHandler);
         wrap._gtDocClickHandler = null;
       }
       if (wrap._gtScrollHandler) {
@@ -1576,6 +1613,7 @@
         window.removeEventListener('resize', wrap._gtScrollHandler);
         wrap._gtScrollHandler = null;
       }
+      close();
       teleportClose(wrap, dropdown);
       wrap._gtDropdown = null;
       wrap._gt = null;
@@ -1589,6 +1627,7 @@
     if (window.Shiny && window.Shiny.setInputValue) {
       Shiny.setInputValue(inputId, getValue(), { priority: 'deferred' });
       Shiny.setInputValue(inputId + '_style', currentStyle, { priority: 'deferred' });
+      Shiny.setInputValue(inputId + '_open', false, { priority: 'deferred' });
       Shiny.setInputValue(inputId + '_ready', true, { priority: 'deferred' });
     }
 
@@ -1652,6 +1691,7 @@
       clear: function (opts) {
         setValue([], opts);
       },
+      close: close,
       destroy: destroy,
       /* Expose for binding - stable reference, not the closure var */
       commitSelection: commitSelection
@@ -1751,6 +1791,10 @@
           ctrl.setDisabledChoices(data.disabled_choices);
         }
 
+        if (hasOwn(data, 'close') && data.close && typeof ctrl.close === 'function') {
+          ctrl.close();
+        }
+
         /* Single commit after all fields are set */
         if (shouldCommit && ctrl.commitSelection) ctrl.commitSelection();
         if (shouldCommit) triggerShinyChange(el);
@@ -1815,6 +1859,10 @@
           ctrl.setDisabledChoices(data.disabled_choices);
         }
 
+        if (hasOwn(data, 'close') && data.close && typeof ctrl.close === 'function') {
+          ctrl.close();
+        }
+
         /* Single commit after all fields are set */
         if (shouldCommit && ctrl.commitSelection) ctrl.commitSelection();
         if (shouldCommit) triggerShinyChange(el);
@@ -1849,6 +1897,43 @@
 
     registerBindings();
     registerCustomMessageHandlers();
+    registerDropdownLifecycleHandlers();
+  }
+
+  function registerDropdownLifecycleHandlers() {
+    if (registerDropdownLifecycleHandlers._done) return;
+    registerDropdownLifecycleHandlers._done = true;
+
+    window.addEventListener('resize', function () {
+      closeAllDropdowns();
+    });
+
+    document.addEventListener('hide.bs.tab', function () {
+      closeAllDropdowns();
+    });
+
+    document.addEventListener('hidden.bs.modal', function () {
+      closeAllDropdowns();
+    });
+
+    document.addEventListener('hidden.bs.collapse', function () {
+      closeAllDropdowns();
+    });
+
+    document.addEventListener('transitionstart', function (e) {
+      var t = e.target;
+      if (t && t.closest && t.closest('.sidebar, .main-sidebar, .bslib-sidebar-layout, .offcanvas')) {
+        closeAllDropdowns();
+      }
+    });
+
+    document.addEventListener('shiny:value', function () {
+      closeAllDropdowns();
+    });
+
+    document.addEventListener('shiny:disconnected', function () {
+      closeAllDropdowns();
+    });
   }
 
   document.addEventListener('click', function (e) {
@@ -1911,6 +1996,13 @@
         Shiny.setInputValue(ns + '-active_tab', activeLink.getAttribute('data-value'));
       }
     });
+
+    document.querySelectorAll('.gt-gs-wrap, .gt-ms-wrap').forEach(function (w) {
+      var inputId = w.getAttribute('data-input-id');
+      var dd = w._gtDropdown || w.querySelector('.gt-gs-dropdown, .gt-ms-dropdown');
+      w._gtOpen = undefined;
+      setDropdownOpenState(w, inputId, !!(dd && dd.classList.contains('open')));
+    });
   });
 
   function registerCustomMessageHandlers() {
@@ -1962,6 +2054,15 @@
 
     Shiny.addCustomMessageHandler('glasstabs_update_multiselect', function (msg) {
       setTimeout(function () { applyMultiSelectUpdate(msg, 0); }, 50);
+    });
+
+    Shiny.addCustomMessageHandler('glasstabs_close_select', function (msg) {
+      if (!msg || !msg.inputId) return;
+      closeDropdownById(msg.inputId, msg.type);
+    });
+
+    Shiny.addCustomMessageHandler('glasstabs_close_selects', function () {
+      closeAllDropdowns();
     });
 
     Shiny.addCustomMessageHandler('glasstabs_server_choices', function (msg) {

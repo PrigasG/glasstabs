@@ -119,7 +119,7 @@ glasstabs_news <- function() {
 useGlassTabs <- function() {
   htmltools::htmlDependency(
     name    = "glasstabs",
-    version = "0.3.3",
+    version = "0.3.4",
     src     = list(file = system.file("www", package = "glasstabs")),
     stylesheet = "glass.css",
     script     = "glass.js"

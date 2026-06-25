@@ -56,7 +56,8 @@ Living document tracking completed features and planned work. Updated with each 
 | 18 | Grouped choices via named list (`selectInput()`-style) | ✅ |
 | 19 | Whole-widget + per-option `disabled` / `disabled_choices` | ✅ |
 | 20 | `shape = "square"` for selects and `glassTabsUI()` | ✅ |
-| 21 | Full in-dropdown keyboard navigation (arrow keys, type-ahead) | 📋 |
+| 21 | Public select close APIs + open-state input | ✅ |
+| 22 | Full in-dropdown keyboard navigation (arrow keys, type-ahead) | 📋 |
 
 ---
 
@@ -64,7 +65,7 @@ Living document tracking completed features and planned work. Updated with each 
 
 | Version | Highlights |
 |---------|-----------|
-| dev     | `shape = "square"` for selects + tabs, `width`, grouped choices, `disabled` / `disabled_choices`, server-side select search |
+| dev     | `shape = "square"` for selects + tabs, `width`, grouped choices, `disabled` / `disabled_choices`, server-side select search, public select close APIs |
 | v0.3.1  | `glassTabCondition()`, `glasstabs_news()`, actionable error messages, examples for theme helpers, container spacing fix, light-mode halo shadow |
 | v0.3.0  | Icons on tabs, numeric badges, disable/enable, URL bookmarking, `renderGlassTabs` / `glassTabsOutput`, `compact` mode, light theme CSS fix, z-index fix for bs4Dash |
 | v0.2.1  | CRAN release — `glassTabsUI`, `glassMultiSelect`, `glassSelect`, full theming API |
@@ -79,5 +80,6 @@ Living document tracking completed features and planned work. Updated with each 
 | Tab bar hiding | No `type="hidden"` equivalent | Phase 1: `show_navbar = FALSE` |
 | Module id pattern | `ns("tabs")` in UI, bare in server — asymmetric | Document clearly; consider future auto-detect |
 | Large choice sets | ~~Choices sent to browser upfront~~ | ✅ Resolved: opt-in server-side search (`server = TRUE`) |
-| Keyboard nav | Select dropdowns lack arrow-key / type-ahead navigation | Planned: in-dropdown keyboard support (item 21) |
+| Keyboard nav | Select dropdowns lack arrow-key / type-ahead navigation | Planned: in-dropdown keyboard support (item 22) |
+| Dropdown lifecycle | Complex tab/modal/sidebar layouts can leave stale open dropdowns | Partially resolved: close APIs, open-state input, and broader auto-close lifecycle hooks |
 | Screen readers | Custom divs, not native `<select>`; ARIA roles present | Ongoing ARIA audit |

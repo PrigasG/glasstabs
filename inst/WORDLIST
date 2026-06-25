@@ -8,7 +8,6 @@ JS
 README
 RTL
 Shiny's
-shinytest2
 Theming
 UI
 bootAll
@@ -32,6 +31,8 @@ glassTabCondition
 glassTabsUI
 glassmorphism
 grey
+greyed
+greys
 hardcoded
 htmltools
 initialisation
@@ -52,16 +53,14 @@ reinitialises
 renderGlassTabs
 renderer
 roxygen
-optgroup
-pkgload
 runGlassExample
-selectable
+runnable
+sc
 selectInput
+selectable
 selectize
-selectizeInput
 stylesheet
 themeable
 theming
 walkthrough
 widget's
-withr
