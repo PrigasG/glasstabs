@@ -55,8 +55,29 @@ glassTabPanel <- function(value, label, ..., icon = NULL, selected = FALSE) {
 #'   (default) for the signature glass look, or `"square"` for crisp,
 #'   selectize-style corners that match [glassSelect()] and
 #'   [glassMultiSelect()] when `shape = "square"`.
-#' @param extra_ui Optional additional UI placed to the right of the tab bar.
-#' @param theme One of `"dark"`, `"light"`, or a [glass_tab_theme()] object.
+#' @param indicator Style of the sliding active-tab indicator. One of:
+#'   * `"glass"` (default) - the signature frosted-glass halo with
+#'     backdrop blur, shimmer, and transfer particle.
+#'   * `"solid"` - a flat, opaque sliding pill. No `backdrop-filter` or
+#'     shimmer; lighter on the GPU and better suited to plain or
+#'     enterprise-style dashboards. Colors still follow the theme's
+#'     `halo_bg` / `halo_border`.
+#'   * `"underline"` - a slim sliding bar under the active tab; tab
+#'     buttons lose their pill background for a classic tabbed look.
+#'     The bar color follows the theme's `halo_border`.
+#' @param orientation One of `"horizontal"` (default) or `"vertical"`. In
+#'   vertical mode the tab buttons stack in a left-hand rail and the content
+#'   pane sits beside them. The sliding halo follows automatically, arrow-key
+#'   navigation switches to Up/Down, and `indicator = "underline"` renders as
+#'   a slim bar on the edge of the active tab adjacent to the content.
+#' @param extra_ui Optional additional UI placed to the right of the tab bar
+#'   (below the tab rail when `orientation = "vertical"`).
+#' @param theme One of `"dark"`, `"light"`, `"auto"`, or a
+#'   [glass_tab_theme()] object. `"auto"` bridges to Bootstrap 5 / bslib
+#'   color modes: light-theme variables apply by default and dark-theme
+#'   variables apply whenever an ancestor carries `data-bs-theme="dark"`
+#'   (e.g. `bslib::toggle_dark_mode()` or `input_dark_mode()`), with the
+#'   switch handled live in the browser - no server round-trip.
 #' @param dark_selector Optional CSS selector for a parent element that signals
 #'   dark mode (e.g. `"body.dark-mode"` for bs4Dash, `"[data-bs-theme=dark]"`
 #'   for Bootstrap 5). When provided and `theme = "light"`, a second scoped
@@ -72,13 +93,27 @@ glassTabsUI <- function(
     wrap = TRUE,
     compact = FALSE,
     shape = c("rounded", "square"),
+    indicator = c("glass", "solid", "underline"),
+    orientation = c("horizontal", "vertical"),
     extra_ui = NULL,
     theme = NULL,
     dark_selector = NULL
 ) {
-  ns     <- shiny::NS(id)
-  panels <- list(...)
-  shape  <- match.arg(shape)
+  ns          <- shiny::NS(id)
+  panels      <- list(...)
+  shape       <- match.arg(shape)
+  indicator   <- match.arg(indicator)
+  orientation <- match.arg(orientation)
+
+  ## theme = "auto": bridge to Bootstrap 5 / bslib color modes. Base vars are
+  ## the light preset; dark vars are scoped under [data-bs-theme="dark"] via
+  ## the existing dark_selector machinery. glass.js toggles the structural
+  ## .theme-light class live when the attribute changes.
+  is_auto <- identical(theme, "auto")
+  if (is_auto) {
+    if (is.null(dark_selector)) dark_selector <- '[data-bs-theme="dark"]'
+    theme <- "light"
+  }
 
   if (length(panels) == 0) {
     stop(
@@ -178,6 +213,7 @@ glassTabsUI <- function(
       id       = ns("navbar"),
       `data-ns` = id,
       role     = "tablist",
+      `aria-orientation` = orientation,
       tab_links
     ),
     extra_ui
@@ -244,6 +280,9 @@ glassTabsUI <- function(
       if (!isTRUE(wrap))   "gt-wrap-shell",
       if (isTRUE(compact)) "gt-compact",
       if (identical(shape, "square")) "shape-square",
+      if (!identical(indicator, "glass")) paste0("indicator-", indicator),
+      if (identical(orientation, "vertical")) "gt-vertical",
+      if (is_auto)         "theme-auto",
       if (is_light)        "theme-light"),
     collapse = " "
   ))

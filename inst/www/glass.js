@@ -7,9 +7,13 @@
   function centerOf(el, container) {
     var r = el.getBoundingClientRect();
     var cr = container.getBoundingClientRect();
+    /* Absolutely-positioned children are placed relative to the container's
+       padding box, but getBoundingClientRect() measures its border box.
+       Subtract clientLeft/clientTop so a border on fallback containers
+       (.card-body, .box-body) doesn't shift the halo. */
     return {
-      x: r.left + r.width / 2 - cr.left,
-      y: r.top + r.height / 2 - cr.top,
+      x: r.left + r.width / 2 - cr.left - container.clientLeft,
+      y: r.top + r.height / 2 - cr.top - container.clientTop,
       w: r.width,
       h: r.height
     };
@@ -236,7 +240,9 @@
       if (navbar._gtClickHandler)  navbar.removeEventListener('click',   navbar._gtClickHandler);
       if (navbar._gtKeyHandler)    document.removeEventListener('keydown', navbar._gtKeyHandler);
       if (navbar._gtResizeHandler) window.removeEventListener('resize',  navbar._gtResizeHandler);
+      if (navbar._gtResizeObserver) navbar._gtResizeObserver.disconnect();
       navbar._gtClickHandler = navbar._gtKeyHandler = navbar._gtResizeHandler = navbar._gtActivate = null;
+      navbar._gtResizeObserver = null;
     }
     navbar._gtTabsInit = true;
     navbar._gtTabTimers = navbar._gtTabTimers || [];
@@ -292,13 +298,30 @@
       if (!el || !container.isConnected) return;
       var c = centerOf(el, container);
       var s = scale || 1;
-      var w = Math.floor((c.w + 8) * s);
-      var h = Math.floor((c.h + 4) * s);
-      var br = (parseFloat(getComputedStyle(el).borderRadius) || 12) + 1;
+      /* Tight fit: match the tab rect exactly. Round width/height to even
+         numbers and the center to whole pixels so the centered transform
+         lands both edges on pixel boundaries - no one-sided spill. */
+      var w = 2 * Math.round(c.w * s / 2);
+      var h = 2 * Math.round(c.h * s / 2);
+      var br = parseFloat(getComputedStyle(el).borderRadius) || 12;
+
+      /* indicator = "underline": slim bar flush with the tab's bottom edge.
+         In vertical orientation it becomes a side bar on the edge adjacent
+         to the content pane. */
+      if (container.classList.contains('indicator-underline')) {
+        br = 2;
+        if (container.classList.contains('gt-vertical')) {
+          w = 3;
+          c = { x: c.x + c.w / 2 + 1.5, y: c.y, w: c.w, h: c.h };
+        } else {
+          h = 3;
+          c = { x: c.x, y: c.y + c.h / 2 + 1.5, w: c.w, h: c.h };
+        }
+      }
 
       function set() {
-        halo.style.left = c.x + 'px';
-        halo.style.top = c.y + 'px';
+        halo.style.left = px(c.x);
+        halo.style.top = px(c.y);
         halo.style.width = w + 'px';
         halo.style.height = h + 'px';
         halo.style.borderRadius = br + 'px';
@@ -505,17 +528,24 @@
         return;
       }
 
-      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      var isNext = e.key === 'ArrowRight' || e.key === 'ArrowDown';
+      var isPrev = e.key === 'ArrowLeft'  || e.key === 'ArrowUp';
+      if (!isNext && !isPrev) return;
+
+      /* Up/Down only act in vertical orientation (so they don't hijack
+         page scrolling in horizontal layouts); Left/Right always work. */
+      var vertical = container.classList.contains('gt-vertical');
+      if (!vertical && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) return;
 
       var visibleOrder = currentVisibleOrder();
       var idx = visibleOrder.indexOf(active);
       if (idx < 0) return;
 
-      if (e.key === 'ArrowRight') {
-        activateTab(visibleOrder[(idx + 1) % visibleOrder.length]);
-      }
+      e.preventDefault();
 
-      if (e.key === 'ArrowLeft') {
+      if (isNext) {
+        activateTab(visibleOrder[(idx + 1) % visibleOrder.length]);
+      } else {
         activateTab(visibleOrder[(idx - 1 + visibleOrder.length) % visibleOrder.length]);
       }
     };
@@ -526,6 +556,17 @@
       if (activeLink) placeHalo(activeLink, true, 1.0);
     };
     window.addEventListener('resize', navbar._gtResizeHandler);
+
+    /* Re-place the halo whenever tab geometry changes without a window
+       resize: badge count updates, label changes via renderUI, font swaps,
+       or container reflow (e.g. dashboard sidebar collapse). */
+    if (window.ResizeObserver) {
+      var realign = debounce(function () { navbar._gtResizeHandler(); }, 20);
+      navbar._gtResizeObserver = new ResizeObserver(realign);
+      navbar._gtResizeObserver.observe(navbar);
+      navbar._gtResizeObserver.observe(container);
+      links.forEach(function (l) { navbar._gtResizeObserver.observe(l); });
+    }
   }
 
   /* SINGLE-SELECT ENGINE */
@@ -1871,6 +1912,30 @@
     Shiny.inputBindings.register(glassMultiSelectBinding, 'glasstabs.glassMultiSelect');
   }
 
+  /* THEME AUTO-BRIDGE (theme = "auto")
+     Containers carrying .theme-auto follow the Bootstrap 5 / bslib color
+     mode: the structural .theme-light class is toggled from the nearest
+     data-bs-theme attribute (CSS variables are handled by scoped <style>
+     blocks emitted from R). */
+  function syncAutoThemes() {
+    document.querySelectorAll('.theme-auto').forEach(function (el) {
+      var scope = el.closest('[data-bs-theme]');
+      var mode = scope ? scope.getAttribute('data-bs-theme') : 'light';
+      el.classList.toggle('theme-light', mode !== 'dark');
+    });
+  }
+
+  var themeAutoObserver = null;
+  function watchAutoThemes() {
+    if (themeAutoObserver || !window.MutationObserver) return;
+    themeAutoObserver = new MutationObserver(syncAutoThemes);
+    themeAutoObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-bs-theme'],
+      subtree: true
+    });
+  }
+
   /* BOOT */
   var bootTimer = null;
 
@@ -1883,6 +1948,9 @@
   }
 
   function bootAll() {
+    syncAutoThemes();
+    watchAutoThemes();
+
     document.querySelectorAll('.gt-navbar').forEach(function (nb) {
       initTabs(nb);
     });

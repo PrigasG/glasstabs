@@ -39,6 +39,19 @@ server <- function(input, output, session) {
 }
 ```
 
+## Tabs: indicator, vertical, and auto theme
+
+```{r}
+glassTabsUI(
+  "main",
+  glassTabPanel("overview", "Overview", selected = TRUE, h3("Overview")),
+  glassTabPanel("details", "Details", h3("Details")),
+  indicator = "solid",      # "glass", "solid", or "underline"
+  orientation = "vertical", # "horizontal" or "vertical"
+  theme = "auto"            # follows Bootstrap 5 / bslib data-bs-theme
+)
+```
+
 ## Tabs: inside a Shiny module
 
 The key rule: use `ns()` in the UI, use the **bare** id in the server.

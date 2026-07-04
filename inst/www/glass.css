@@ -800,6 +800,59 @@
   display:none;
 }
 
+/*
+   VERTICAL ORIENTATION - glassTabsUI(orientation = "vertical")
+   Tab buttons stack in a left-hand rail; content sits beside them.
+   Halo geometry is JS-driven from element rects, so it follows free.
+ */
+.gt-vertical{display:flex;align-items:flex-start;gap:18px;}
+.gt-vertical > .gt-topbar{
+  flex:0 0 auto;flex-direction:column;align-items:stretch;
+  margin-bottom:0;min-width:150px;
+}
+.gt-vertical .gt-navbar{flex-direction:column;align-items:stretch;gap:8px;}
+.gt-vertical .gt-tab-link{text-align:left;white-space:normal;}
+.gt-vertical > .gt-tab-wrap{flex:1 1 auto;min-width:0;}
+.gt-vertical.gt-compact{gap:10px;}
+.gt-vertical.gt-compact > .gt-topbar{min-width:120px;}
+
+/* Stack back to horizontal-style column flow on narrow screens */
+@media(max-width:600px){
+  .gt-vertical{flex-direction:column;}
+  .gt-vertical > .gt-topbar{min-width:0;width:100%;}
+}
+
+/*
+   INDICATOR VARIANTS - glassTabsUI(indicator = "solid" | "underline")
+   "glass" is the default look; these modifiers strip the expensive /
+   showy effects for flatter designs.
+ */
+
+/* Solid: flat opaque sliding pill - no blur, shimmer, or particle */
+.indicator-solid .gt-halo{
+  backdrop-filter:none;-webkit-backdrop-filter:none;
+  background:var(--gt-halo-bg,rgba(126,195,247,0.22));
+  box-shadow:none;
+  filter:none;
+}
+.indicator-solid .gt-halo::before{display:none;}
+.indicator-solid .gt-transfer{display:none;}
+
+/* Underline: slim sliding bar under the active tab; tabs lose the pill */
+.indicator-underline .gt-tab-link{background:transparent;}
+.indicator-underline .gt-tab-link:hover{background:rgba(255,255,255,0.03);}
+.indicator-underline.theme-light .gt-tab-link{background:transparent;}
+.indicator-underline.theme-light .gt-tab-link:hover{background:rgba(37,99,235,0.05);}
+.indicator-underline .gt-halo{
+  backdrop-filter:none;-webkit-backdrop-filter:none;
+  background:var(--gt-halo-border,rgba(126,195,247,0.85));
+  border:none;
+  box-shadow:none;
+  filter:none;
+}
+.indicator-underline .gt-halo::before{display:none;}
+.indicator-underline .gt-transfer{display:none;}
+
 /* Tab disabled state */
 .gt-tab-link.gt-tab-disabled{
   opacity:0.38;
@@ -856,6 +909,13 @@
 }
 .theme-light .gt-tab-link.active{
   color:var(--gt-tab-active-text,#1e40af);
+}
+.indicator-underline.theme-light .gt-tab-link,
+.indicator-underline.theme-light .gt-tab-link.active{
+  background:transparent;
+}
+.indicator-underline.theme-light .gt-tab-link:hover{
+  background:rgba(37,99,235,0.05);
 }
 
 /* Halo shimmer - replace white gradient with blue-tinted glass */

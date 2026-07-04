@@ -99,16 +99,17 @@ if (interactive()) shinyApp(ui, server)
 | `glasstabs_news()` | Print the package changelog to the R console |
 
 Built-in examples currently include `basic`, `bs4dash`, `bslib`, `dashboard`,
-`server-select`, `smoke-test`, and `square-corners`. The `square-corners`
-example demonstrates `shape = "square"` on `glassSelect()` and
-`glassMultiSelect()` side by side with native `selectizeInput()`, while
-`bslib` shows square glass selects inside a Bootstrap 5 themed app.
+`indicators`, `server-select`, `smoke-test`, and `square-corners`. The
+`square-corners` example demonstrates `shape = "square"` on `glassSelect()`
+and `glassMultiSelect()` side by side with native `selectizeInput()`,
+`indicators` shows the three tab indicator styles plus vertical tabs and auto
+theming, and `bslib` shows square glass selects inside a Bootstrap 5 themed app.
 
 ### Tab widget
 
 | Function | Description |
 |---|---|
-| `glassTabsUI(id, ..., selected, wrap, compact, extra_ui, theme)` | Animated tab bar with content area; `compact=TRUE` for dashboard cards |
+| `glassTabsUI(id, ..., selected, wrap, compact, shape, indicator, orientation, extra_ui, theme)` | Animated tab bar with content area; `compact=TRUE` for dashboard cards |
 | `glassTabPanel(value, label, ..., icon, selected)` | Define one tab and its content; `icon` accepts `shiny::icon()` |
 | `glassTabsServer(id, bookmark)` | Reactive returning the active tab; bookmarks active tab in URL |
 | `glassTabsOutput(outputId)` | UI placeholder for a server-rendered tab widget |
@@ -485,6 +486,7 @@ Full vignettes are available on the documentation site:
 | [Cheatsheet](https://prigasg.github.io/glasstabs/articles/cheatsheet.html) | Quick reference for tabs, selects, updates, and server helpers |
 | [Getting started](https://prigasg.github.io/glasstabs/articles/getting-started.html) | Progressive walkthrough of both widgets |
 | [Animated tabs](https://prigasg.github.io/glasstabs/articles/tabs.html) | Full `glassTabsUI()` reference with theming and bs4Dash |
+| [Indicator styles](https://prigasg.github.io/glasstabs/articles/indicators.html) | `indicator = "glass" / "solid" / "underline"`, vertical orientation, and `theme = "auto"` |
 | [Multi-select filter](https://prigasg.github.io/glasstabs/articles/multiselect.html) | Full `glassMultiSelect()` reference with styles, tags and updates |
 | [Single-select filter](https://prigasg.github.io/glasstabs/articles/glassSelect.html) | Full `glassSelect()` reference with search, clear, and updates |
 | Server-side select search | Covered in the multi-select and single-select articles, plus `runGlassExample("server-select")` |
@@ -521,6 +523,14 @@ server <- function(input, output, session) {
 ```
 
 ---
+
+## What's new in development
+
+- `glassTabsUI(indicator = "glass" | "solid" | "underline")` - choose the signature glass halo, a lighter flat pill, or a classic underline bar
+- `glassTabsUI(orientation = "vertical")` - stack tabs in a left rail with Up/Down keyboard navigation
+- `glassTabsUI(theme = "auto")` - follow Bootstrap 5 / bslib `data-bs-theme` light and dark modes in the browser
+- Tighter halo alignment - no right-side overhang, crisp 1px borders, bordered-container offsets, and `ResizeObserver` realignment for dynamic labels and badges
+- New `runGlassExample("indicators")` demo and indicator styles article
 
 ## What's new in 0.3.4
 

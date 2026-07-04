@@ -106,7 +106,7 @@ glass_tab_theme <- function(
         sprintf(
           paste0(
             "glassTabsUI(): `theme = \"%s\"` is not a valid preset.\n",
-            "Use theme = \"dark\", theme = \"light\", or a glass_tab_theme() object."
+            "Use theme = \"dark\", \"light\", \"auto\", or a glass_tab_theme() object."
           ),
           theme
         ),

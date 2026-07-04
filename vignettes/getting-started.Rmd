@@ -352,6 +352,8 @@ if (interactive()) shinyApp(ui, server)
 
 - **[Animated Tabs](tabs.html)** — full reference for `glassTabsUI()`:
   theming, keyboard nav, multiple instances, server patterns
+- **[Indicator Styles](indicators.html)** - compare the glass, solid, and
+  underline tab indicators, vertical orientation, and `theme = "auto"`
 - **[Multi-Select Filter](multiselect.html)** — full reference for
   `glassMultiSelect()`: checkbox styles, custom hues, tag pills, theming
 - **[Single-Select Dropdown](glassSelect.html)**: search, clearable

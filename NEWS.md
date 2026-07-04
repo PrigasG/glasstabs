@@ -1,3 +1,47 @@
+# glasstabs (development version)
+
+## Vertical orientation
+
+* New `orientation` argument for `glassTabsUI()`: `"vertical"` stacks the
+  tab buttons in a left-hand rail beside the content pane. ArrowUp/ArrowDown
+  navigate in vertical mode, `aria-orientation` is set on the tablist, and
+  `indicator = "underline"` renders as a slim side bar adjacent to the
+  content. Falls back to stacked layout under 600px.
+
+## bslib / Bootstrap 5 auto theming
+
+* New `theme = "auto"` preset bridges to Bootstrap 5 color modes: light
+  variables apply by default and dark variables apply under
+  `data-bs-theme="dark"`, toggled live in the browser (works with
+  `bslib::input_dark_mode()` / `toggle_dark_mode()` with no server code).
+
+## New example and article
+
+* `runGlassExample("indicators")` demos the three indicator styles,
+  vertical orientation, and auto theming side by side.
+* New "Indicator Styles, Vertical Tabs, and Auto Theming" article.
+
+## Tab indicator
+
+* New `indicator` argument for `glassTabsUI()`: `"glass"` (default),
+  `"solid"` (flat opaque sliding pill, no `backdrop-filter` or shimmer -
+  lighter on the GPU and better suited to plain dashboards), and
+  `"underline"` (slim sliding bar under the active tab).
+
+## Halo alignment fixes
+
+* The halo now fits the active tab exactly (previously it overhung by
+  ~4px per side, which read as a spill on the right where the shimmer
+  gradient fades out).
+* Halo geometry is rounded to whole pixels (even widths/heights) so the
+  1px border no longer anti-aliases unevenly on one edge.
+* Halo position now accounts for container borders
+  (`clientLeft`/`clientTop`), fixing a horizontal shift inside bordered
+  fallback containers such as bs4Dash `.card-body`.
+* A `ResizeObserver` re-aligns the halo whenever tab geometry changes
+  without a window resize: badge count updates, label changes via
+  `renderUI`, font swaps, or sidebar collapse.
+
 # glasstabs 0.3.4
 
 ## Dropdown lifecycle
@@ -315,4 +359,4 @@ Initial release.
 * All theming uses pre-computed CSS variables (no `color-mix()`), ensuring
   compatibility with Shiny's embedded browser.
 * Multiple instances of either widget on the same page work independently;
-  each instance is sc
+  each instance is scoped to its own `id`.

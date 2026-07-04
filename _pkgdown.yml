@@ -38,6 +38,7 @@ articles:
     navbar: Widgets
     contents:
       - tabs
+      - indicators
       - glassSelect
       - multiselect
 
@@ -51,7 +52,7 @@ reference:
 
   - title: Tab widget - UI
     desc: |
-      Animated glass-morphism tab navigation with a sliding halo, spring easing, and transfer trace.
+      Animated tab navigation with glass, solid, or underline indicators; horizontal or vertical layouts; and Bootstrap 5 auto theming.
     contents:
       - glassTabsUI
       - glassTabPanel

@@ -10,7 +10,7 @@ test_that("all built-in examples have app files and README coverage", {
 
   expect_true(all(file.exists(app_files)))
   expect_no_error(lapply(app_files, parse))
-  expect_true(all(examples %in% c("basic", "bs4dash", "bslib", "dashboard", "server-select", "smoke-test", "square-corners")))
+  expect_true(all(examples %in% c("basic", "bs4dash", "bslib", "dashboard", "indicators", "server-select", "smoke-test", "square-corners")))
 
   readme_path <- test_path("..", "..", "README.md")
   if (file.exists(readme_path)) {

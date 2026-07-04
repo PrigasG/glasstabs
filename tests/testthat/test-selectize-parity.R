@@ -207,6 +207,14 @@ test_that("stylesheet ships optgroup, per-option disabled, and square-tab rules"
   expect_true(grepl(".gt-container.shape-square .gt-tab-link", css, fixed = TRUE))
 })
 
+test_that("stylesheet keeps underline tabs transparent in light mode", {
+  css <- paste(
+    readLines(system.file("www", "glass.css", package = "glasstabs"), warn = FALSE),
+    collapse = "\n"
+  )
+  expect_true(grepl(".indicator-underline.theme-light .gt-tab-link.active", css, fixed = TRUE))
+})
+
 test_that("script ships group + disabled handling", {
   js <- paste(
     readLines(system.file("www", "glass.js", package = "glasstabs"), warn = FALSE),

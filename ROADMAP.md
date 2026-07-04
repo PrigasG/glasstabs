@@ -33,6 +33,8 @@ Living document tracking completed features and planned work. Updated with each 
 | 9  | Tab groups (`glassTabGroup("label", ...)`) | 💡 |
 | 10 | Swipe gesture support (mobile left/right swipe) | 💡 |
 | 11 | `glassNavPage()` — full-page glassmorphism nav shell | 💡 |
+| 11a | `indicator = "glass" / "solid" / "underline"` — no-glass modes | ✅ dev |
+| 11b | Halo tight-fit alignment + `ResizeObserver` realignment | ✅ dev |
 
 ---
 
@@ -42,8 +44,8 @@ Living document tracking completed features and planned work. Updated with each 
 |---|---------|--------|
 | 12 | Keyboard shortcuts — `Ctrl+1–9` jump to tab N (`shortcuts = TRUE`) | 💡 |
 | 13 | Tab-level loading states (`setGlassTabLoading()`) | 💡 |
-| 14 | Vertical tab orientation (`orientation = "vertical"`) | 💡 |
-| 15 | bslib CSS variable bridging (auto light/dark from Bootstrap theme) | 💡 |
+| 14 | Vertical tab orientation (`orientation = "vertical"`) | ✅ dev |
+| 15 | bslib CSS variable bridging (`theme = "auto"`) | ✅ dev |
 | 16 | `updateGlassMultiSelect(choices = ...)` — dynamic choice list update | ✅ shipped |
 
 ---
