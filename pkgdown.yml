@@ -5,9 +5,10 @@ articles:
   cheatsheet: cheatsheet.html
   getting-started: getting-started.html
   glassSelect: glassSelect.html
+  indicators: indicators.html
   multiselect: multiselect.html
   tabs: tabs.html
-last_built: 2026-06-25T03:17Z
+last_built: 2026-07-04T10:45Z
 urls:
   reference: https://prigasg.github.io/glasstabs/reference
   article: https://prigasg.github.io/glasstabs/articles

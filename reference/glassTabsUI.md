@@ -12,6 +12,8 @@ glassTabsUI(
   wrap = TRUE,
   compact = FALSE,
   shape = c("rounded", "square"),
+  indicator = c("glass", "solid", "underline"),
+  orientation = c("horizontal", "vertical"),
   extra_ui = NULL,
   theme = NULL,
   dark_selector = NULL
@@ -54,15 +56,45 @@ glassTabsUI(
   [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md)
   when `shape = "square"`.
 
+- indicator:
+
+  Style of the sliding active-tab indicator. One of:
+
+  - `"glass"` (default) - the signature frosted-glass halo with backdrop
+    blur, shimmer, and transfer particle.
+
+  - `"solid"` - a flat, opaque sliding pill. No `backdrop-filter` or
+    shimmer; lighter on the GPU and better suited to plain or
+    enterprise-style dashboards. Colors still follow the theme's
+    `halo_bg` / `halo_border`.
+
+  - `"underline"` - a slim sliding bar under the active tab; tab buttons
+    lose their pill background for a classic tabbed look. The bar color
+    follows the theme's `halo_border`.
+
+- orientation:
+
+  One of `"horizontal"` (default) or `"vertical"`. In vertical mode the
+  tab buttons stack in a left-hand rail and the content pane sits beside
+  them. The sliding halo follows automatically, arrow-key navigation
+  switches to Up/Down, and `indicator = "underline"` renders as a slim
+  bar on the edge of the active tab adjacent to the content.
+
 - extra_ui:
 
-  Optional additional UI placed to the right of the tab bar.
+  Optional additional UI placed to the right of the tab bar (below the
+  tab rail when `orientation = "vertical"`).
 
 - theme:
 
-  One of `"dark"`, `"light"`, or a
+  One of `"dark"`, `"light"`, `"auto"`, or a
   [`glass_tab_theme()`](https://prigasg.github.io/glasstabs/reference/glass_tab_theme.md)
-  object.
+  object. `"auto"` bridges to Bootstrap 5 / bslib color modes:
+  light-theme variables apply by default and dark-theme variables apply
+  whenever an ancestor carries `data-bs-theme="dark"` (e.g.
+  [`bslib::toggle_dark_mode()`](https://rstudio.github.io/bslib/reference/input_dark_mode.html)
+  or `input_dark_mode()`), with the switch handled live in the browser -
+  no server round-trip.
 
 - dark_selector:
 

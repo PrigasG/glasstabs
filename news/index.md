@@ -1,6 +1,81 @@
 # Changelog
 
+## glasstabs (development version)
+
+### Vertical orientation
+
+- New `orientation` argument for
+  [`glassTabsUI()`](https://prigasg.github.io/glasstabs/reference/glassTabsUI.md):
+  `"vertical"` stacks the tab buttons in a left-hand rail beside the
+  content pane. ArrowUp/ArrowDown navigate in vertical mode,
+  `aria-orientation` is set on the tablist, and
+  `indicator = "underline"` renders as a slim side bar adjacent to the
+  content. Falls back to stacked layout under 600px.
+
+### bslib / Bootstrap 5 auto theming
+
+- New `theme = "auto"` preset bridges to Bootstrap 5 color modes: light
+  variables apply by default and dark variables apply under
+  `data-bs-theme="dark"`, toggled live in the browser (works with
+  [`bslib::input_dark_mode()`](https://rstudio.github.io/bslib/reference/input_dark_mode.html)
+  /
+  [`toggle_dark_mode()`](https://rstudio.github.io/bslib/reference/input_dark_mode.html)
+  with no server code).
+
+### New example and article
+
+- `runGlassExample("indicators")` demos the three indicator styles,
+  vertical orientation, and auto theming side by side.
+- New “Indicator Styles, Vertical Tabs, and Auto Theming” article.
+
+### Tab indicator
+
+- New `indicator` argument for
+  [`glassTabsUI()`](https://prigasg.github.io/glasstabs/reference/glassTabsUI.md):
+  `"glass"` (default), `"solid"` (flat opaque sliding pill, no
+  `backdrop-filter` or shimmer - lighter on the GPU and better suited to
+  plain dashboards), and `"underline"` (slim sliding bar under the
+  active tab).
+
+### Halo alignment fixes
+
+- The halo now fits the active tab exactly (previously it overhung by
+  ~4px per side, which read as a spill on the right where the shimmer
+  gradient fades out).
+- Halo geometry is rounded to whole pixels (even widths/heights) so the
+  1px border no longer anti-aliases unevenly on one edge.
+- Halo position now accounts for container borders
+  (`clientLeft`/`clientTop`), fixing a horizontal shift inside bordered
+  fallback containers such as bs4Dash `.card-body`.
+- A `ResizeObserver` re-aligns the halo whenever tab geometry changes
+  without a window resize: badge count updates, label changes via
+  `renderUI`, font swaps, or sidebar collapse.
+
+## glasstabs 0.3.4
+
+### Dropdown lifecycle
+
+- Added
+  [`closeGlassSelect()`](https://prigasg.github.io/glasstabs/reference/closeGlassSelect.md),
+  [`closeGlassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/closeGlassSelect.md),
+  and
+  [`closeAllGlassSelects()`](https://prigasg.github.io/glasstabs/reference/closeGlassSelect.md)
+  so apps can explicitly close dropdowns before tab switches, modal
+  changes, or dynamic UI replacement.
+- [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md)
+  and
+  [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md)
+  now expose open state as `input$<inputId>_open`.
+- Open dropdowns now close on additional lifecycle events, including
+  outside pointer-down, window resize, Bootstrap tab/modal/collapse
+  hiding, sidebar/offcanvas transitions, Shiny value replacement, and
+  Shiny disconnect.
+
 ## glasstabs 0.3.3
+
+CRAN release: 2026-06-25
+
+Released to CRAN.
 
 ### Native-layout parity
 
@@ -443,4 +518,4 @@ Initial release.
 - All theming uses pre-computed CSS variables (no `color-mix()`),
   ensuring compatibility with Shiny’s embedded browser.
 - Multiple instances of either widget on the same page work
-  independently; each instance is sc
+  independently; each instance is scoped to its own `id`.

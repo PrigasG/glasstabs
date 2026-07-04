@@ -13,8 +13,8 @@ Load CSS/JavaScript, launch built-in examples, and view the changelog.
 
 ## Tab widget - UI
 
-Animated glass-morphism tab navigation with a sliding halo, spring
-easing, and transfer trace.
+Animated tab navigation with glass, solid, or underline indicators;
+horizontal or vertical layouts; and Bootstrap 5 auto theming.
 
 - [`glassTabsUI()`](https://prigasg.github.io/glasstabs/reference/glassTabsUI.md)
   : Animated glass-style tab navigation UI
@@ -71,6 +71,10 @@ theming, search, update helpers, and reactive value helpers.
   : Reactive helpers for glassMultiSelect values
 - [`glassMultiSelectServer()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelectServer.md)
   : Register server-side search for a glassMultiSelect widget
+- [`closeGlassSelect()`](https://prigasg.github.io/glasstabs/reference/closeGlassSelect.md)
+  [`closeGlassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/closeGlassSelect.md)
+  [`closeAllGlassSelects()`](https://prigasg.github.io/glasstabs/reference/closeGlassSelect.md)
+  : Close open glass select dropdowns
 - [`glassFilterTags()`](https://prigasg.github.io/glasstabs/reference/glassFilterTags.md)
   : Shiny tag helper for a filter-tags display area tied to a
   glassMultiSelect

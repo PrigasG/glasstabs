@@ -15,7 +15,7 @@ runGlassExample(example = NULL, ...)
 - example:
 
   Name of the example to run, such as `"basic"`, `"bslib"`,
-  `"dashboard"`, `"server-select"`, `"smoke-test"`, or
+  `"dashboard"`, `"indicators"`, `"server-select"`, `"smoke-test"`, or
   `"square-corners"`. When `NULL` (default), lists all available
   examples.
 
@@ -38,6 +38,7 @@ runGlassExample()
 #>   - bs4dash
 #>   - bslib
 #>   - dashboard
+#>   - indicators
 #>   - server-select
 #>   - smoke-test
 #>   - square-corners

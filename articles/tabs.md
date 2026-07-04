@@ -71,6 +71,49 @@ server <- function(input, output, session) {
 Arrow keys move between tabs when focus is inside the widget — no extra
 code needed.
 
+## Indicator styles
+
+Use `indicator` to choose how the active tab is drawn:
+
+- `indicator = "glass"` keeps the default frosted halo with shimmer and
+  the transfer trace.
+- `indicator = "solid"` uses a flat sliding pill with no
+  `backdrop-filter`, which is lighter on the GPU for plain dashboards.
+- `indicator = "underline"` uses a slim sliding bar and removes the tab
+  pill background.
+
+``` r
+
+glassTabsUI("nav",
+  glassTabPanel("overview", "Overview", selected = TRUE, p("Overview")),
+  glassTabPanel("data", "Data", p("Data")),
+  glassTabPanel("settings", "Settings", p("Settings")),
+  indicator = "solid"
+)
+```
+
+See
+[`vignette("indicators", package = "glasstabs")`](https://prigasg.github.io/glasstabs/articles/indicators.md)
+for side-by-side examples of all three styles.
+
+## Vertical orientation
+
+Set `orientation = "vertical"` to stack the tabs in a left-hand rail
+beside the content pane. In vertical mode, Up/Down arrow keys move
+between tabs and `indicator = "underline"` becomes a side bar adjacent
+to the content.
+
+``` r
+
+glassTabsUI("side",
+  glassTabPanel("inbox", "Inbox", selected = TRUE, p("Inbox")),
+  glassTabPanel("sent", "Sent", p("Sent")),
+  glassTabPanel("archive", "Archive", p("Archive")),
+  orientation = "vertical",
+  indicator = "underline"
+)
+```
+
 ## Placing a filter widget beside the tabs
 
 Pass any UI element to `extra_ui` to place it to the right of the tab
@@ -109,6 +152,9 @@ glassTabsUI("nav", theme = "dark", ...)
 
 # Light — suits white page backgrounds and bs4Dash cards
 glassTabsUI("nav", theme = "light", ...)
+
+# Auto - follows Bootstrap 5 / bslib data-bs-theme light/dark mode
+glassTabsUI("nav", theme = "auto", ...)
 ```
 
 ### Custom theme with `glass_tab_theme()`

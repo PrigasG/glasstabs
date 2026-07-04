@@ -14,6 +14,8 @@
 
 - [Animated Tabs with
   glasstabs](https://prigasg.github.io/glasstabs/articles/tabs.md):
+- [Indicator Styles, Vertical Tabs, and Auto
+  Theming](https://prigasg.github.io/glasstabs/articles/indicators.md):
 - [Single-Select Dropdown with
   glasstabs](https://prigasg.github.io/glasstabs/articles/glassSelect.md):
 - [Multi-Select Filter with

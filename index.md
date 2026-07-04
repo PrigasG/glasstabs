@@ -113,21 +113,23 @@ if (interactive()) shinyApp(ui, server)
 | [`glasstabs_news()`](https://prigasg.github.io/glasstabs/reference/glasstabs_news.md) | Print the package changelog to the R console |
 
 Built-in examples currently include `basic`, `bs4dash`, `bslib`,
-`dashboard`, `server-select`, `smoke-test`, and `square-corners`. The
-`square-corners` example demonstrates `shape = "square"` on
+`dashboard`, `indicators`, `server-select`, `smoke-test`, and
+`square-corners`. The `square-corners` example demonstrates
+`shape = "square"` on
 [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md)
 and
 [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md)
 side by side with native
 [`selectizeInput()`](https://rdrr.io/pkg/shiny/man/selectInput.html),
-while `bslib` shows square glass selects inside a Bootstrap 5 themed
-app.
+`indicators` shows the three tab indicator styles plus vertical tabs and
+auto theming, and `bslib` shows square glass selects inside a Bootstrap
+5 themed app.
 
 ### Tab widget
 
 | Function | Description |
 |----|----|
-| `glassTabsUI(id, ..., selected, wrap, compact, extra_ui, theme)` | Animated tab bar with content area; `compact=TRUE` for dashboard cards |
+| `glassTabsUI(id, ..., selected, wrap, compact, shape, indicator, orientation, extra_ui, theme)` | Animated tab bar with content area; `compact=TRUE` for dashboard cards |
 | `glassTabPanel(value, label, ..., icon, selected)` | Define one tab and its content; `icon` accepts [`shiny::icon()`](https://rdrr.io/pkg/shiny/man/icon.html) |
 | `glassTabsServer(id, bookmark)` | Reactive returning the active tab; bookmarks active tab in URL |
 | `glassTabsOutput(outputId)` | UI placeholder for a server-rendered tab widget |
@@ -155,6 +157,9 @@ app.
 | `glassSelectServer(inputId, choices, ...)` | Server-side search for large single-select choice sets |
 | `updateGlassSelect(session, inputId, ...)` | Update single-select choices, selection, or style |
 | `glassSelectValue(input, inputId)` | Reactive helper for selected value |
+| `closeGlassSelect(session, inputId)` | Close one open single-select dropdown |
+| `closeGlassMultiSelect(session, inputId)` | Close one open multi-select dropdown |
+| `closeAllGlassSelects(session)` | Close every open glasstabs select dropdown |
 | `glassFilterTags(inputId)` | Tag-pill display area synced to a multi-select |
 | `glass_select_theme(...)` | Custom colour theme for [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md) and [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md) |
 
@@ -167,6 +172,7 @@ app.
 | `input[["<id>-active_tab"]]` | `character` | Currently active tab value from [`glassTabsUI()`](https://prigasg.github.io/glasstabs/reference/glassTabsUI.md) |
 | `input$<inputId>` | `character vector` | Selected values from [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md) |
 | `input$<inputId>_style` | `character` | Active selection style from [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md) |
+| `input$<inputId>_open` | `logical` | Whether a select dropdown is currently open |
 | `input$<inputId>` | `character` or `NULL` | Selected value from [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md) |
 
 ### conditionalPanel integration
@@ -512,6 +518,7 @@ Full vignettes are available on the documentation site:
 | [Cheatsheet](https://prigasg.github.io/glasstabs/articles/cheatsheet.html) | Quick reference for tabs, selects, updates, and server helpers |
 | [Getting started](https://prigasg.github.io/glasstabs/articles/getting-started.html) | Progressive walkthrough of both widgets |
 | [Animated tabs](https://prigasg.github.io/glasstabs/articles/tabs.html) | Full [`glassTabsUI()`](https://prigasg.github.io/glasstabs/reference/glassTabsUI.md) reference with theming and bs4Dash |
+| [Indicator styles](https://prigasg.github.io/glasstabs/articles/indicators.html) | `indicator = "glass" / "solid" / "underline"`, vertical orientation, and `theme = "auto"` |
 | [Multi-select filter](https://prigasg.github.io/glasstabs/articles/multiselect.html) | Full [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md) reference with styles, tags and updates |
 | [Single-select filter](https://prigasg.github.io/glasstabs/articles/glassSelect.html) | Full [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md) reference with search, clear, and updates |
 | Server-side select search | Covered in the multi-select and single-select articles, plus `runGlassExample("server-select")` |
@@ -549,6 +556,33 @@ server <- function(input, output, session) {
 ```
 
 ------------------------------------------------------------------------
+
+## What’s new in development
+
+- `glassTabsUI(indicator = "glass" | "solid" | "underline")` - choose
+  the signature glass halo, a lighter flat pill, or a classic underline
+  bar
+- `glassTabsUI(orientation = "vertical")` - stack tabs in a left rail
+  with Up/Down keyboard navigation
+- `glassTabsUI(theme = "auto")` - follow Bootstrap 5 / bslib
+  `data-bs-theme` light and dark modes in the browser
+- Tighter halo alignment - no right-side overhang, crisp 1px borders,
+  bordered-container offsets, and `ResizeObserver` realignment for
+  dynamic labels and badges
+- New `runGlassExample("indicators")` demo and indicator styles article
+
+## What’s new in 0.3.4
+
+- Public close helpers -
+  [`closeGlassSelect()`](https://prigasg.github.io/glasstabs/reference/closeGlassSelect.md),
+  [`closeGlassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/closeGlassSelect.md),
+  and
+  [`closeAllGlassSelects()`](https://prigasg.github.io/glasstabs/reference/closeGlassSelect.md)
+  for tab/modal/UI lifecycle cleanup
+- `input$<inputId>_open` - inspect whether a select dropdown is
+  currently open from Shiny
+- Broader automatic dropdown cleanup on resize, tab/modal/sidebar
+  transitions, Shiny value replacement, and disconnect
 
 ## What’s new in 0.3.3
 

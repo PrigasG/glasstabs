@@ -9,7 +9,8 @@ layout or completely on its own in any Shiny page.
 
 The widget behaves like a standard Shiny input: `input$<inputId>` stores
 the selected values, and `input$<inputId>_style` stores the active
-indicator style.
+indicator style. The `input$<inputId>_open` value reports whether the
+dropdown is currently open.
 
 It also supports server-side updates with
 [`updateGlassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassMultiSelect.md).
@@ -42,10 +43,11 @@ if (interactive()) shinyApp(ui, server)
 
 ## Shiny inputs produced
 
-| Input                   | Type             | Value                     |
-|-------------------------|------------------|---------------------------|
-| `input$<inputId>`       | character vector | Currently selected values |
-| `input$<inputId>_style` | character        | Active checkbox style     |
+| Input                   | Type             | Value                        |
+|-------------------------|------------------|------------------------------|
+| `input$<inputId>`       | character vector | Currently selected values    |
+| `input$<inputId>_style` | character        | Active checkbox style        |
+| `input$<inputId>_open`  | logical          | Whether the dropdown is open |
 
 ## Initial selection
 
@@ -151,6 +153,21 @@ glassMultiSelect("filters_dc", fruits, disabled_choices = "banana")
 `disabled_choices` are skipped by “Select all”, and both can be toggled
 at runtime with
 [`updateGlassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassMultiSelect.md).
+
+## Dropdown lifecycle
+
+For dynamic layouts, modals, sidebars, or tab changes, you can
+explicitly close an open dropdown from the server:
+
+``` r
+
+observeEvent(input$change_layout, {
+  closeGlassMultiSelect(session, "pick")
+})
+```
+
+Use `closeAllGlassSelects(session)` when a layout change should close
+any open glasstabs select dropdown.
 
 ## Show / hide UI chrome
 

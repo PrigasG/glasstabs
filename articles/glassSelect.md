@@ -19,6 +19,9 @@ It supports:
 - selectable marker styles via `check_style`
 - server-side updates with
   [`updateGlassSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassSelect.md)
+- lifecycle helpers with
+  [`closeGlassSelect()`](https://prigasg.github.io/glasstabs/reference/closeGlassSelect.md)
+  and `input$<inputId>_open`
 
 ## Basic usage
 
@@ -128,6 +131,30 @@ glassSelect("region_dc", fruits, disabled_choices = "banana")
 
 `disabled` and `disabled_choices` can also be toggled at runtime with
 [`updateGlassSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassSelect.md).
+
+## Dropdown lifecycle
+
+For dynamic layouts, modals, sidebars, or tab changes, you can
+explicitly close an open dropdown from the server:
+
+``` r
+
+observeEvent(input$change_layout, {
+  closeGlassSelect(session, "pick")
+})
+```
+
+The widget also reports whether its dropdown is open:
+
+``` r
+
+observe({
+  message("Dropdown open: ", isTRUE(input$pick_open))
+})
+```
+
+`closeAllGlassSelects(session)` closes every open glasstabs select
+dropdown in the current session.
 
 ## Searchable and clearable
 

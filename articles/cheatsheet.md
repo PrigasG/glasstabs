@@ -32,6 +32,20 @@ server <- function(input, output, session) {
 }
 ```
 
+## Tabs: indicator, vertical, and auto theme
+
+``` r
+
+glassTabsUI(
+  "main",
+  glassTabPanel("overview", "Overview", selected = TRUE, h3("Overview")),
+  glassTabPanel("details", "Details", h3("Details")),
+  indicator = "solid",      # "glass", "solid", or "underline"
+  orientation = "vertical", # "horizontal" or "vertical"
+  theme = "auto"            # follows Bootstrap 5 / bslib data-bs-theme
+)
+```
+
 ## Tabs: inside a Shiny module
 
 The key rule: use `ns()` in the UI, use the **bare** id in the server.
@@ -341,6 +355,7 @@ glassMultiSelect(
 | `glassTabsUI("main", ...)` | `input[["main-active_tab"]]` or `glassTabsServer("main")()` |
 | `glassMultiSelect("metric", ...)` | `input$metric` or `glassMultiSelectValue(input, "metric")$selected()` |
 | multi-select style | `input$metric_style` or `glassMultiSelectValue(input, "metric")$style()` |
+| select open state | `input$metric_open` / `input$region_open` |
 | `glassSelect("region", ...)` | `input$region` or `glassSelectValue(input, "region")()` |
 
 ## conditionalPanel integration

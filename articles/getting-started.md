@@ -362,6 +362,10 @@ if (interactive()) shinyApp(ui, server)
   reference for
   [`glassTabsUI()`](https://prigasg.github.io/glasstabs/reference/glassTabsUI.md):
   theming, keyboard nav, multiple instances, server patterns
+- **[Indicator
+  Styles](https://prigasg.github.io/glasstabs/articles/indicators.md)** -
+  compare the glass, solid, and underline tab indicators, vertical
+  orientation, and `theme = "auto"`
 - **[Multi-Select
   Filter](https://prigasg.github.io/glasstabs/articles/multiselect.md)**
   — full reference for
