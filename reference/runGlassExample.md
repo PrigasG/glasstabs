@@ -15,9 +15,9 @@ runGlassExample(example = NULL, ...)
 - example:
 
   Name of the example to run, such as `"basic"`, `"bslib"`,
-  `"dashboard"`, `"indicators"`, `"server-select"`, `"smoke-test"`, or
-  `"square-corners"`. When `NULL` (default), lists all available
-  examples.
+  `"connect-workflow"`, `"dashboard"`, `"indicators"`,
+  `"server-select"`, `"smoke-test"`, or `"square-corners"`. When `NULL`
+  (default), lists all available examples.
 
 - ...:
 
@@ -37,6 +37,7 @@ runGlassExample()
 #>   - basic
 #>   - bs4dash
 #>   - bslib
+#>   - connect-workflow
 #>   - dashboard
 #>   - indicators
 #>   - server-select
@@ -48,6 +49,7 @@ runGlassExample()
 # Run an example interactively
 if (interactive()) {
   runGlassExample("bslib")
+  runGlassExample("connect-workflow")
   runGlassExample("smoke-test")
   runGlassExample("server-select")
 }

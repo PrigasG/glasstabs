@@ -46,6 +46,7 @@
     <li><h6 class="dropdown-header" data-toc-skip>Cheatsheet</h6></li>
     <li><a class="dropdown-item" href="articles/cheatsheet.html">glasstabs Cheatsheet</a></li>
     <li><a class="dropdown-item" href="articles/getting-started.html">Getting Started with glasstabs</a></li>
+    <li><a class="dropdown-item" href="articles/posit-connect.html">Publishing a glasstabs Workflow to Posit Connect</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Widgets</h6></li>
     <li><a class="dropdown-item" href="articles/tabs.html">Animated Tabs with glasstabs</a></li>
@@ -189,7 +190,7 @@
 </tr>
 </tbody>
 </table>
-<p>Built-in examples currently include <code>basic</code>, <code>bs4dash</code>, <code>bslib</code>, <code>dashboard</code>, <code>indicators</code>, <code>server-select</code>, <code>smoke-test</code>, and <code>square-corners</code>. The <code>square-corners</code> example demonstrates <code>shape = "square"</code> on <code><a href="reference/glassSelect.html">glassSelect()</a></code> and <code><a href="reference/glassMultiSelect.html">glassMultiSelect()</a></code> side by side with native <code><a href="https://rdrr.io/pkg/shiny/man/selectInput.html" class="external-link">selectizeInput()</a></code>, <code>indicators</code> shows the three tab indicator styles plus vertical tabs and auto theming, and <code>bslib</code> shows square glass selects inside a Bootstrap 5 themed app.</p>
+<p>Built-in examples currently include <code>basic</code>, <code>bs4dash</code>, <code>bslib</code>, <code>connect-workflow</code>, <code>dashboard</code>, <code>indicators</code>, <code>server-select</code>, <code>smoke-test</code>, and <code>square-corners</code>. The <code>connect-workflow</code> example is a Posit Connect-ready review page that combines filters, workflow tabs, badges, server-side tab updates, and auto theming. The <code>square-corners</code> example demonstrates <code>shape = "square"</code> on <code><a href="reference/glassSelect.html">glassSelect()</a></code> and <code><a href="reference/glassMultiSelect.html">glassMultiSelect()</a></code> side by side with native <code><a href="https://rdrr.io/pkg/shiny/man/selectInput.html" class="external-link">selectizeInput()</a></code>, <code>indicators</code> shows the three tab indicator styles plus vertical tabs and auto theming, and <code>bslib</code> shows square glass selects inside a Bootstrap 5 themed app.</p>
 </div>
 <div class="section level3">
 <h3 id="tab-widget">Tab widget<a class="anchor" aria-label="anchor" href="#tab-widget"></a>
@@ -767,6 +768,10 @@ glassMultiSelect("filters", choices, shape = "square")</code></pre>
 </td>
 </tr>
 <tr>
+<td><a href="https://prigasg.github.io/glasstabs/articles/posit-connect.html">Posit Connect workflow</a></td>
+<td>Deploy <code>runGlassExample("connect-workflow")</code> as a Connect-ready review page</td>
+</tr>
+<tr>
 <td><a href="https://prigasg.github.io/glasstabs/articles/multiselect.html">Multi-select filter</a></td>
 <td>Full <code><a href="reference/glassMultiSelect.html">glassMultiSelect()</a></code> reference with styles, tags and updates</td>
 </tr>
@@ -825,6 +830,7 @@ glassMultiSelect("filters", choices, shape = "square")</code></pre>
 <code>glassTabsUI(theme = "auto")</code> - follow Bootstrap 5 / bslib <code>data-bs-theme</code> light and dark modes in the browser</li>
 <li>Tighter halo alignment - no right-side overhang, crisp 1px borders, bordered-container offsets, and <code>ResizeObserver</code> realignment for dynamic labels and badges</li>
 <li>New <code>runGlassExample("indicators")</code> demo and indicator styles article</li>
+<li>New <code>runGlassExample("connect-workflow")</code> Posit Connect-ready workflow page and deployment article</li>
 </ul>
 </div>
 <div class="section level2">

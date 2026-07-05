@@ -366,6 +366,10 @@ if (interactive()) shinyApp(ui, server)
   Styles](https://prigasg.github.io/glasstabs/articles/indicators.md)** -
   compare the glass, solid, and underline tab indicators, vertical
   orientation, and `theme = "auto"`
+- **[Posit Connect
+  Workflow](https://prigasg.github.io/glasstabs/articles/posit-connect.md)** -
+  deploy a review workflow page built from filters, badges, server-side
+  tab changes, and auto theming
 - **[Multi-Select
   Filter](https://prigasg.github.io/glasstabs/articles/multiselect.md)**
   — full reference for

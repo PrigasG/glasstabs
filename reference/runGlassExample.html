@@ -25,6 +25,7 @@ Example apps are launched only in interactive sessions."><meta property="og:imag
     <li><h6 class="dropdown-header" data-toc-skip>Cheatsheet</h6></li>
     <li><a class="dropdown-item" href="../articles/cheatsheet.html">glasstabs Cheatsheet</a></li>
     <li><a class="dropdown-item" href="../articles/getting-started.html">Getting Started with glasstabs</a></li>
+    <li><a class="dropdown-item" href="../articles/posit-connect.html">Publishing a glasstabs Workflow to Posit Connect</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Widgets</h6></li>
     <li><a class="dropdown-item" href="../articles/tabs.html">Animated Tabs with glasstabs</a></li>
@@ -65,9 +66,9 @@ Example apps are launched only in interactive sessions.</p>
 
 <dl><dt id="arg-example">example<a class="anchor" aria-label="anchor" href="#arg-example"></a></dt>
 <dd><p>Name of the example to run, such as <code>"basic"</code>,
-<code>"bslib"</code>, <code>"dashboard"</code>, <code>"indicators"</code>, <code>"server-select"</code>,
-<code>"smoke-test"</code>, or <code>"square-corners"</code>. When <code>NULL</code> (default), lists all
-available examples.</p></dd>
+<code>"bslib"</code>, <code>"connect-workflow"</code>, <code>"dashboard"</code>, <code>"indicators"</code>,
+<code>"server-select"</code>, <code>"smoke-test"</code>, or <code>"square-corners"</code>. When <code>NULL</code>
+(default), lists all available examples.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -87,6 +88,7 @@ available examples.</p></dd>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   - basic</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   - bs4dash</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   - bslib</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   - connect-workflow</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   - dashboard</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   - indicators</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   - server-select</span>
@@ -98,6 +100,7 @@ available examples.</p></dd>
 <span class="r-in"><span><span class="co"># Run an example interactively</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span>  <span class="fu">runGlassExample</span><span class="op">(</span><span class="st">"bslib"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu">runGlassExample</span><span class="op">(</span><span class="st">"connect-workflow"</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu">runGlassExample</span><span class="op">(</span><span class="st">"smoke-test"</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu">runGlassExample</span><span class="op">(</span><span class="st">"server-select"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>

@@ -113,9 +113,11 @@ if (interactive()) shinyApp(ui, server)
 | [`glasstabs_news()`](https://prigasg.github.io/glasstabs/reference/glasstabs_news.md) | Print the package changelog to the R console |
 
 Built-in examples currently include `basic`, `bs4dash`, `bslib`,
-`dashboard`, `indicators`, `server-select`, `smoke-test`, and
-`square-corners`. The `square-corners` example demonstrates
-`shape = "square"` on
+`connect-workflow`, `dashboard`, `indicators`, `server-select`,
+`smoke-test`, and `square-corners`. The `connect-workflow` example is a
+Posit Connect-ready review page that combines filters, workflow tabs,
+badges, server-side tab updates, and auto theming. The `square-corners`
+example demonstrates `shape = "square"` on
 [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md)
 and
 [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md)
@@ -519,6 +521,7 @@ Full vignettes are available on the documentation site:
 | [Getting started](https://prigasg.github.io/glasstabs/articles/getting-started.html) | Progressive walkthrough of both widgets |
 | [Animated tabs](https://prigasg.github.io/glasstabs/articles/tabs.html) | Full [`glassTabsUI()`](https://prigasg.github.io/glasstabs/reference/glassTabsUI.md) reference with theming and bs4Dash |
 | [Indicator styles](https://prigasg.github.io/glasstabs/articles/indicators.html) | `indicator = "glass" / "solid" / "underline"`, vertical orientation, and `theme = "auto"` |
+| [Posit Connect workflow](https://prigasg.github.io/glasstabs/articles/posit-connect.html) | Deploy `runGlassExample("connect-workflow")` as a Connect-ready review page |
 | [Multi-select filter](https://prigasg.github.io/glasstabs/articles/multiselect.html) | Full [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md) reference with styles, tags and updates |
 | [Single-select filter](https://prigasg.github.io/glasstabs/articles/glassSelect.html) | Full [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md) reference with search, clear, and updates |
 | Server-side select search | Covered in the multi-select and single-select articles, plus `runGlassExample("server-select")` |
@@ -570,6 +573,8 @@ server <- function(input, output, session) {
   bordered-container offsets, and `ResizeObserver` realignment for
   dynamic labels and badges
 - New `runGlassExample("indicators")` demo and indicator styles article
+- New `runGlassExample("connect-workflow")` Posit Connect-ready workflow
+  page and deployment article
 
 ## What’s new in 0.3.4
 
