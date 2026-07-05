@@ -32,16 +32,21 @@ test_that("bslib example app exists, parses, and demonstrates square selects", {
 
 test_that("connect workflow example exists, parses, and demonstrates workflow features", {
   app <- system.file("examples", "connect-workflow", "app.R", package = "glasstabs")
+  manifest <- system.file("examples", "connect-workflow", "manifest.json", package = "glasstabs")
   expect_true(nzchar(app) && file.exists(app))
+  expect_true(nzchar(manifest) && file.exists(manifest))
   expect_no_error(parse(app))
 
   app_src <- paste(readLines(app, warn = FALSE), collapse = "\n")
+  manifest_src <- paste(readLines(manifest, warn = FALSE), collapse = "\n")
   expect_match(app_src, "Posit Connect", fixed = TRUE)
   expect_match(app_src, 'orientation = "vertical"', fixed = TRUE)
   expect_match(app_src, 'indicator = "solid"', fixed = TRUE)
   expect_match(app_src, 'theme = "auto"', fixed = TRUE)
   expect_match(app_src, "updateGlassTabBadge", fixed = TRUE)
   expect_match(app_src, "updateGlassTabsUI", fixed = TRUE)
+  expect_match(manifest_src, '"appmode": "shiny"', fixed = TRUE)
+  expect_match(manifest_src, '"app.R"', fixed = TRUE)
 })
 
 test_that("pkgdown reference includes server select helpers", {
