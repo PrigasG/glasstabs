@@ -20,6 +20,10 @@
 * `runGlassExample("indicators")` demos the three indicator styles,
   vertical orientation, and auto theming side by side.
 * New "Indicator Styles, Vertical Tabs, and Auto Theming" article.
+* `runGlassExample("connect-workflow")` provides a Posit Connect-ready
+  workflow review page showing filters, badges, server-driven tab changes,
+  vertical tabs, and auto theming in one deployable Shiny app.
+* New "Publishing a glasstabs Workflow to Posit Connect" article.
 
 ## Tab indicator
 

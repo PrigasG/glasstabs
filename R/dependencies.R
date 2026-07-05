@@ -5,9 +5,9 @@
 #' Example apps are launched only in interactive sessions.
 #'
 #' @param example Name of the example to run, such as `"basic"`,
-#'   `"bslib"`, `"dashboard"`, `"indicators"`, `"server-select"`,
-#'   `"smoke-test"`, or `"square-corners"`. When `NULL` (default), lists all
-#'   available examples.
+#'   `"bslib"`, `"connect-workflow"`, `"dashboard"`, `"indicators"`,
+#'   `"server-select"`, `"smoke-test"`, or `"square-corners"`. When `NULL`
+#'   (default), lists all available examples.
 #' @param ... Additional arguments passed to [shiny::runApp()].
 #'
 #' @return Called for its side-effect (launches a Shiny app).
@@ -19,6 +19,7 @@
 #' # Run an example interactively
 #' if (interactive()) {
 #'   runGlassExample("bslib")
+#'   runGlassExample("connect-workflow")
 #'   runGlassExample("smoke-test")
 #'   runGlassExample("server-select")
 #' }
