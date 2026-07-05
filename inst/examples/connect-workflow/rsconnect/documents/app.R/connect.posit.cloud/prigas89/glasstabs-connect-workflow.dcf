@@ -1,0 +1,10 @@
+name: glasstabs-connect-workflow
+title: glasstabs Connect Workflow
+username: prigas89
+account: prigas89
+server: connect.posit.cloud
+hostUrl: https://api.connect.posit.cloud/v1
+appId: 019f3415-d088-dce3-b904-cefb4f14854a
+bundleId:
+url: https://connect.posit.cloud/prigas89/content/019f3415-d088-dce3-b904-cefb4f14854a
+version: 1
