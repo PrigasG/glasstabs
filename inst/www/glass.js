@@ -3,6 +3,7 @@
 
   /* UTILITIES */
   function px(n) { return Math.round(n) + 'px'; }
+  function exactPx(n) { return (Math.round(n * 100) / 100) + 'px'; }
 
   function centerOf(el, container) {
     var r = el.getBoundingClientRect();
@@ -16,6 +17,21 @@
       y: r.top + r.height / 2 - cr.top - container.clientTop,
       w: r.width,
       h: r.height
+    };
+  }
+
+  function rectOf(el, container) {
+    var r = el.getBoundingClientRect();
+    var cr = container.getBoundingClientRect();
+    var x1 = r.left - cr.left - container.clientLeft;
+    var y1 = r.top - cr.top - container.clientTop;
+    var x2 = r.right - cr.left - container.clientLeft;
+    var y2 = r.bottom - cr.top - container.clientTop;
+    return {
+      x: x1,
+      y: y1,
+      w: Math.max(0, x2 - x1),
+      h: Math.max(0, y2 - y1)
     };
   }
 
@@ -296,13 +312,14 @@
 
     function placeHalo(el, immediate, scale) {
       if (!el || !container.isConnected) return;
-      var c = centerOf(el, container);
+      var r = rectOf(el, container);
       var s = scale || 1;
-      /* Tight fit: match the tab rect exactly. Round width/height to even
-         numbers and the center to whole pixels so the centered transform
-         lands both edges on pixel boundaries - no one-sided spill. */
-      var w = 2 * Math.round(c.w * s / 2);
-      var h = 2 * Math.round(c.h * s / 2);
+      /* Tight fit: derive from the tab's exact rendered edges. This avoids
+         center/width rounding mismatches that can leave a visible right spill. */
+      var w = r.w * s;
+      var h = r.h * s;
+      var x = r.x + (r.w - w) / 2;
+      var y = r.y + (r.h - h) / 2;
       var br = parseFloat(getComputedStyle(el).borderRadius) || 12;
 
       /* indicator = "underline": slim bar flush with the tab's bottom edge.
@@ -312,18 +329,22 @@
         br = 2;
         if (container.classList.contains('gt-vertical')) {
           w = 3;
-          c = { x: c.x + c.w / 2 + 1.5, y: c.y, w: c.w, h: c.h };
+          h = r.h;
+          x = r.x + r.w - w;
+          y = r.y;
         } else {
           h = 3;
-          c = { x: c.x, y: c.y + c.h / 2 + 1.5, w: c.w, h: c.h };
+          w = r.w;
+          x = r.x;
+          y = r.y + r.h - h;
         }
       }
 
       function set() {
-        halo.style.left = px(c.x);
-        halo.style.top = px(c.y);
-        halo.style.width = w + 'px';
-        halo.style.height = h + 'px';
+        halo.style.left = exactPx(x);
+        halo.style.top = exactPx(y);
+        halo.style.width = exactPx(w);
+        halo.style.height = exactPx(h);
         halo.style.borderRadius = br + 'px';
       }
 
@@ -493,8 +514,7 @@
       requestAnimationFrame(function () {
         requestAnimationFrame(function () {
           requestAnimationFrame(function () {
-            placeHalo(el, true, 0.90);
-            setTimeout(function () { placeHalo(el, false, 1.0); }, 80);
+            placeHalo(el, true, 1.0);
           });
         });
       });

@@ -34,11 +34,11 @@
 
 ## Halo alignment fixes
 
-* The halo now fits the active tab exactly (previously it overhung by
-  ~4px per side, which read as a spill on the right where the shimmer
-  gradient fades out).
-* Halo geometry is rounded to whole pixels (even widths/heights) so the
-  1px border no longer anti-aliases unevenly on one edge.
+* The halo now fits the active tab exactly from its rendered edges, avoiding
+  the right-side spill that could appear after initial load or tab changes.
+* Initial halo placement now starts at the full tab size instead of briefly
+  rendering a smaller centered outline before the first tab change.
+* Default and compact tab buttons are larger and easier to hit.
 * Halo position now accounts for container borders
   (`clientLeft`/`clientTop`), fixing a horizontal shift inside bordered
   fallback containers such as bs4Dash `.card-body`.
