@@ -116,8 +116,10 @@ dark modes</li>
 <h2 id="manifest">Manifest<a class="anchor" aria-label="anchor" href="#manifest"></a>
 </h2>
 <p>The example folder ships with a <code>manifest.json</code> generated
-by <code>rsconnect::writeManifest()</code>. Regenerate it after changing
-the app or its dependencies:</p>
+by <code>rsconnect::writeManifest()</code>. Its <code>glasstabs</code>
+dependency points at GitHub so Connect installs the development tab APIs
+used by this workflow example. Regenerate it after changing the app or
+its dependencies:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">rsconnect</span><span class="fu">::</span><span class="fu">writeManifest</span><span class="op">(</span>appDir <span class="op">=</span> <span class="st">"inst/examples/connect-workflow"</span><span class="op">)</span></span></code></pre></div>
 </div>
