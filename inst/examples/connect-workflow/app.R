@@ -12,6 +12,20 @@
 library(shiny)
 library(glasstabs)
 
+required_glassTabsUI_args <- c("indicator", "orientation")
+missing_glassTabsUI_args <- setdiff(required_glassTabsUI_args, names(formals(glassTabsUI)))
+if (length(missing_glassTabsUI_args) > 0) {
+  stop(
+    paste0(
+      "The connect-workflow example requires the development version of glasstabs ",
+      "with glassTabsUI() arguments: ",
+      paste(required_glassTabsUI_args, collapse = ", "),
+      ". Install from https://github.com/PrigasG/glasstabs or deploy with the bundled manifest.json."
+    ),
+    call. = FALSE
+  )
+}
+
 has_bslib <- requireNamespace("bslib", quietly = TRUE)
 
 orders <- data.frame(

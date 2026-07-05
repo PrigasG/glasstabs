@@ -45,8 +45,11 @@ test_that("connect workflow example exists, parses, and demonstrates workflow fe
   expect_match(app_src, 'theme = "auto"', fixed = TRUE)
   expect_match(app_src, "updateGlassTabBadge", fixed = TRUE)
   expect_match(app_src, "updateGlassTabsUI", fixed = TRUE)
-  expect_match(manifest_src, '"appmode": "shiny"', fixed = TRUE)
+  expect_match(manifest_src, '"appmode"\\s*:\\s*"shiny"')
   expect_match(manifest_src, '"app.R"', fixed = TRUE)
+  expect_match(manifest_src, '"Source"\\s*:\\s*"GitHub"')
+  expect_match(manifest_src, '"RemoteUsername"\\s*:\\s*"PrigasG"')
+  expect_match(manifest_src, '"RemoteRepo"\\s*:\\s*"glasstabs"')
 })
 
 test_that("pkgdown reference includes server select helpers", {
