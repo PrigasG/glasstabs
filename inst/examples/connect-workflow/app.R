@@ -12,21 +12,8 @@
 library(shiny)
 library(glasstabs)
 
-required_glassTabsUI_args <- c("indicator", "orientation")
-missing_glassTabsUI_args <- setdiff(required_glassTabsUI_args, names(formals(glassTabsUI)))
-if (length(missing_glassTabsUI_args) > 0) {
-  stop(
-    paste0(
-      "The connect-workflow example requires the development version of glasstabs ",
-      "with glassTabsUI() arguments: ",
-      paste(required_glassTabsUI_args, collapse = ", "),
-      ". Install from https://github.com/PrigasG/glasstabs or deploy with the bundled manifest.json."
-    ),
-    call. = FALSE
-  )
-}
-
 has_bslib <- requireNamespace("bslib", quietly = TRUE)
+glassTabsUI_args <- names(formals(glassTabsUI))
 
 orders <- data.frame(
   region = c("North", "North", "South", "West", "East", "East", "West", "South"),
@@ -54,17 +41,7 @@ stage_card <- function(title, body, state) {
 }
 
 workflow_tabs <- function() {
-  glassTabsUI(
-    "workflow",
-    orientation = "vertical",
-    indicator = "solid",
-    compact = TRUE,
-    theme = "auto",
-    extra_ui = div(
-      class = "workflow-actions",
-      actionButton("go_explore", "Explore", class = "btn-primary"),
-      actionButton("go_approve", "Approve", class = "btn-outline-primary")
-    ),
+  panels <- list(
     glassTabPanel(
       "intake", "Intake", selected = TRUE,
       div(
@@ -91,6 +68,24 @@ workflow_tabs <- function() {
       )
     )
   )
+
+  args <- c(
+    list(
+      id = "workflow",
+      compact = TRUE,
+      theme = if ("indicator" %in% glassTabsUI_args) "auto" else "light",
+      extra_ui = div(
+        class = "workflow-actions",
+        actionButton("go_explore", "Explore", class = "btn-primary"),
+        actionButton("go_approve", "Approve", class = "btn-outline-primary")
+      )
+    ),
+    panels
+  )
+  if ("indicator" %in% glassTabsUI_args) args$indicator <- "solid"
+  if ("orientation" %in% glassTabsUI_args) args$orientation <- "vertical"
+
+  do.call(glassTabsUI, args)
 }
 
 page_body <- function() {
