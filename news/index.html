@@ -69,8 +69,9 @@
 </ul></div>
 <div class="section level3">
 <h3 id="halo-alignment-fixes-development-version">Halo alignment fixes<a class="anchor" aria-label="anchor" href="#halo-alignment-fixes-development-version"></a></h3>
-<ul><li>The halo now fits the active tab exactly (previously it overhung by ~4px per side, which read as a spill on the right where the shimmer gradient fades out).</li>
-<li>Halo geometry is rounded to whole pixels (even widths/heights) so the 1px border no longer anti-aliases unevenly on one edge.</li>
+<ul><li>The halo now fits the active tab exactly from its rendered edges, avoiding the right-side spill that could appear after initial load or tab changes.</li>
+<li>Initial halo placement now starts at the full tab size instead of briefly rendering a smaller centered outline before the first tab change.</li>
+<li>Default and compact tab buttons are larger and easier to hit.</li>
 <li>Halo position now accounts for container borders (<code>clientLeft</code>/<code>clientTop</code>), fixing a horizontal shift inside bordered fallback containers such as bs4Dash <code>.card-body</code>.</li>
 <li>A <code>ResizeObserver</code> re-aligns the halo whenever tab geometry changes without a window resize: badge count updates, label changes via <code>renderUI</code>, font swaps, or sidebar collapse.</li>
 </ul></div>
