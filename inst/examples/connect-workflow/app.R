@@ -16,6 +16,15 @@ library(glasstabs)
 
 has_bslib <- requireNamespace("bslib", quietly = TRUE)
 glassTabsUI_args <- names(formals(glassTabsUI))
+select_theme <- if (isTRUE(tryCatch({
+  as.character(glassSelect(
+    "gt_auto_probe",
+    c(Probe = "probe"),
+    selected = "probe",
+    theme = "auto"
+  ))
+  TRUE
+}, error = function(e) FALSE))) "auto" else "light"
 
 orders <- data.frame(
   region = c("North", "North", "South", "West", "East", "East", "West", "South"),
@@ -225,7 +234,7 @@ page_body <- function() {
           choices = sort(unique(orders$region)),
           selected = sort(unique(orders$region)),
           label = "Regions",
-          theme = "auto",
+          theme = select_theme,
           show_style_switcher = FALSE
         ),
         glassSelect(
@@ -233,7 +242,7 @@ page_body <- function() {
           choices = c("All", sort(unique(orders$status))),
           selected = "All",
           label = "Status",
-          theme = "auto"
+          theme = select_theme
         ),
         selectInput(
           "workflow_orientation",

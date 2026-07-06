@@ -398,17 +398,17 @@
         "RemoteHost": "api.github.com",
         "RemoteRepo": "glasstabs",
         "RemoteUsername": "PrigasG",
-        "RemoteRef": "694b35ef9a4acd98ceebc9def1e9ecb3c43695c5",
-        "RemoteSha": "694b35ef9a4acd98ceebc9def1e9ecb3c43695c5",
+        "RemoteRef": "aa04e47",
+        "RemoteSha": "aa04e47095971aba59ecef18bc4895a37225c234",
         "GithubRepo": "glasstabs",
         "GithubUsername": "PrigasG",
-        "GithubRef": "694b35ef9a4acd98ceebc9def1e9ecb3c43695c5",
-        "GithubSHA1": "694b35ef9a4acd98ceebc9def1e9ecb3c43695c5",
+        "GithubRef": "aa04e47",
+        "GithubSHA1": "aa04e47095971aba59ecef18bc4895a37225c234",
         "NeedsCompilation": "no",
-        "Packaged": "2026-07-05 21:01:13 UTC; priga",
+        "Packaged": "2026-07-06 20:38:30 UTC; priga",
         "Author": "George Arthur [aut, cre]",
         "Maintainer": "George Arthur <prigasgenthian48@gmail.com>",
-        "Built": "R 4.5.1; ; 2026-07-05 21:01:14 UTC; windows"
+        "Built": "R 4.5.1; ; 2026-07-06 20:38:31 UTC; windows"
       }
     },
     "glue": {
@@ -1057,7 +1057,7 @@
   },
   "files": {
     "app.R": {
-      "checksum": "71fe9200e659873968455f9cdaa924a0"
+      "checksum": "f6a53de635b173ced6b81fe5681926d7"
     }
   },
   "users": null
