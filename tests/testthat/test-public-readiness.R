@@ -112,6 +112,15 @@ test_that("glass.js exposes close lifecycle hooks for select dropdowns", {
   expect_true(grepl("document.addEventListener('shiny:disconnected'", js, fixed = TRUE))
 })
 
+test_that("teleported select dropdowns clamp to the viewport", {
+  js <- paste(readLines(system.file("www", "glass.js", package = "glasstabs"), warn = FALSE), collapse = "\n")
+
+  expect_true(grepl("positionTeleportedDropdown", js, fixed = TRUE))
+  expect_true(grepl("window.innerWidth", js, fixed = TRUE))
+  expect_true(grepl("dropdown.style.maxWidth", js, fixed = TRUE))
+  expect_true(grepl("dropdown.style.minWidth", js, fixed = TRUE))
+})
+
 test_that("glass.js does not ship debug-only message handlers", {
   js_path <- file.path("inst", "www", "glass.js")
   if (!file.exists(js_path)) {

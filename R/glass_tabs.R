@@ -70,6 +70,8 @@ glassTabPanel <- function(value, label, ..., icon = NULL, selected = FALSE) {
 #'   pane sits beside them. The sliding halo follows automatically, arrow-key
 #'   navigation switches to Up/Down, and `indicator = "underline"` renders as
 #'   a slim bar on the edge of the active tab adjacent to the content.
+#' @param tab_align Alignment for text and icons inside each tab button. One
+#'   of `"center"` (default), `"left"`, or `"right"`.
 #' @param extra_ui Optional additional UI placed to the right of the tab bar
 #'   (below the tab rail when `orientation = "vertical"`).
 #' @param theme One of `"dark"`, `"light"`, `"auto"`, or a
@@ -95,6 +97,7 @@ glassTabsUI <- function(
     shape = c("rounded", "square"),
     indicator = c("glass", "solid", "underline"),
     orientation = c("horizontal", "vertical"),
+    tab_align = c("center", "left", "right"),
     extra_ui = NULL,
     theme = NULL,
     dark_selector = NULL
@@ -104,6 +107,7 @@ glassTabsUI <- function(
   shape       <- match.arg(shape)
   indicator   <- match.arg(indicator)
   orientation <- match.arg(orientation)
+  tab_align   <- match.arg(tab_align)
 
   ## theme = "auto": bridge to Bootstrap 5 / bslib color modes. Base vars are
   ## the light preset; dark vars are scoped under [data-bs-theme="dark"] via
@@ -282,6 +286,7 @@ glassTabsUI <- function(
       if (identical(shape, "square")) "shape-square",
       if (!identical(indicator, "glass")) paste0("indicator-", indicator),
       if (identical(orientation, "vertical")) "gt-vertical",
+      paste0("gt-align-", tab_align),
       if (is_auto)         "theme-auto",
       if (is_light)        "theme-light"),
     collapse = " "

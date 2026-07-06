@@ -78,7 +78,7 @@ reference:
 
   - title: Select widgets
     desc: |
-      Animated single-select and multi-select dropdown widgets for Shiny, with theming, search, update helpers, and reactive value helpers.
+      Animated single-select and multi-select dropdown widgets for Shiny, with auto theming, search, update helpers, and reactive value helpers.
     contents:
       - glassSelect
       - updateGlassSelect

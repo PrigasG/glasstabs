@@ -109,9 +109,31 @@
 #' @noRd
 .is_light_theme <- function(theme) {
   isTRUE(
-    (is.character(theme) && length(theme) == 1 && identical(theme, "light")) ||
+    (is.character(theme) && length(theme) == 1 && theme %in% c("light", "auto")) ||
       (inherits(theme, "glass_select_theme") && identical(theme$mode, "light"))
   )
+}
+
+#' @noRd
+.is_auto_theme <- function(theme) {
+  is.character(theme) && length(theme) == 1 && identical(theme, "auto")
+}
+
+#' @noRd
+.select_dark_override_style <- function(selector, field_id) {
+  dark <- .ms_resolve_theme("dark")
+  css <- sprintf(
+    "%s #%s{--ms-bg:%s;--ms-border:%s;--ms-text:%s;--ms-accent:%s;--ms-label:%s;%s}",
+    selector,
+    field_id,
+    dark$bg,
+    dark$border,
+    dark$text,
+    dark$accent,
+    dark$label,
+    .to_rgba_vars(dark)
+  )
+  .make_style_tag(css)
 }
 
 #' Label helper for glassSelect

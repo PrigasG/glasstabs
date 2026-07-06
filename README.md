@@ -112,7 +112,7 @@ selects inside a Bootstrap 5 themed app.
 
 | Function | Description |
 |---|---|
-| `glassTabsUI(id, ..., selected, wrap, compact, shape, indicator, orientation, extra_ui, theme)` | Animated tab bar with content area; `compact=TRUE` for dashboard cards |
+| `glassTabsUI(id, ..., selected, wrap, compact, shape, indicator, orientation, tab_align, extra_ui, theme)` | Animated tab bar with content area; `compact=TRUE` for dashboard cards |
 | `glassTabPanel(value, label, ..., icon, selected)` | Define one tab and its content; `icon` accepts `shiny::icon()` |
 | `glassTabsServer(id, bookmark)` | Reactive returning the active tab; bookmarks active tab in URL |
 | `glassTabsOutput(outputId)` | UI placeholder for a server-rendered tab widget |
@@ -532,7 +532,9 @@ server <- function(input, output, session) {
 
 - `glassTabsUI(indicator = "glass" | "solid" | "underline")` - choose the signature glass halo, a lighter flat pill, or a classic underline bar
 - `glassTabsUI(orientation = "vertical")` - stack tabs in a left rail with Up/Down keyboard navigation
+- `glassTabsUI(tab_align = "center" | "left" | "right")` - align tab text and icons
 - `glassTabsUI(theme = "auto")` - follow Bootstrap 5 / bslib `data-bs-theme` light and dark modes in the browser
+- `glassSelect(theme = "auto")` and `glassMultiSelect(theme = "auto")` - glassy select controls that follow Bootstrap 5 / bslib color modes
 - Tighter halo alignment - no right-side overhang, crisp 1px borders, bordered-container offsets, and `ResizeObserver` realignment for dynamic labels and badges
 - New `runGlassExample("indicators")` demo and indicator styles article
 - New `runGlassExample("connect-workflow")` Posit Connect-ready workflow page and deployment article

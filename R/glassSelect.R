@@ -25,8 +25,10 @@
 #' @param all_choice_value Value used for the explicit "All" option.
 #' @param check_style One of \code{"checkbox"} (default),
 #'   \code{"check-only"}, or \code{"filled"}.
-#' @param theme Color theme. One of \code{"dark"} (default) or \code{"light"},
-#'   or a [glass_select_theme()] object.
+#' @param theme Color theme. One of \code{"dark"} (default), \code{"light"},
+#'   \code{"auto"}, or a [glass_select_theme()] object. \code{"auto"} uses the
+#'   light preset by default and switches to the dark preset when an ancestor
+#'   carries \code{data-bs-theme="dark"}.
 #' @param shape Corner style for the trigger and dropdown. One of
 #'   \code{"rounded"} (default) for the signature glass look, or
 #'   \code{"square"} for crisp, selectize-style corners so the widget sits
@@ -113,6 +115,7 @@ glassSelect <- function(
   server_limit <- .gt_positive_int(server_limit, "server_limit")
   server_min_chars <- .gt_nonnegative_int(server_min_chars, "server_min_chars")
   colors <- .ms_resolve_theme(theme)
+  is_auto <- .is_auto_theme(theme)
 
   normalized <- .gt_normalize_choices(choices)
   vals <- normalized$values
@@ -181,12 +184,18 @@ glassSelect <- function(
     field_id, colors$bg, colors$border, colors$text, colors$accent, colors$label,
     .to_rgba_vars(colors)
   )
+  dark_override_style <- if (is_auto) {
+    .select_dark_override_style('[data-bs-theme="dark"]', field_id)
+  } else {
+    NULL
+  }
 
   wrap_cls <- paste(
     "gt-gs-wrap",
     paste0("style-", check_style),
     if (identical(shape, "square")) "shape-square" else NULL,
     if (disabled) "gt-disabled" else NULL,
+    if (is_auto) "theme-auto" else NULL,
     if (.is_light_theme(theme)) "theme-light" else NULL
   )
 
@@ -270,6 +279,7 @@ glassSelect <- function(
 
   htmltools::tagList(
     .make_style_tag(theme_css),
+    dark_override_style,
     shiny::div(
       class = "gt-gs-field",
       id = field_id,

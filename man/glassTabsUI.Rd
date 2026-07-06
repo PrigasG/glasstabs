@@ -13,6 +13,7 @@ glassTabsUI(
   shape = c("rounded", "square"),
   indicator = c("glass", "solid", "underline"),
   orientation = c("horizontal", "vertical"),
+  tab_align = c("center", "left", "right"),
   extra_ui = NULL,
   theme = NULL,
   dark_selector = NULL
@@ -54,6 +55,9 @@ vertical mode the tab buttons stack in a left-hand rail and the content
 pane sits beside them. The sliding halo follows automatically, arrow-key
 navigation switches to Up/Down, and \code{indicator = "underline"} renders as
 a slim bar on the edge of the active tab adjacent to the content.}
+
+\item{tab_align}{Alignment for text and icons inside each tab button. One
+of \code{"center"} (default), \code{"left"}, or \code{"right"}.}
 
 \item{extra_ui}{Optional additional UI placed to the right of the tab bar
 (below the tab rail when \code{orientation = "vertical"}).}

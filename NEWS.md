@@ -6,7 +6,9 @@
   tab buttons in a left-hand rail beside the content pane. ArrowUp/ArrowDown
   navigate in vertical mode, `aria-orientation` is set on the tablist, and
   `indicator = "underline"` renders as a slim side bar adjacent to the
-  content. Falls back to stacked layout under 600px.
+  content. Falls back to stacked layout under 760px.
+* New `tab_align` argument for `glassTabsUI()`: `"center"` (default),
+  `"left"`, or `"right"` aligns tab button text and icons.
 
 ## bslib / Bootstrap 5 auto theming
 
@@ -14,6 +16,9 @@
   variables apply by default and dark variables apply under
   `data-bs-theme="dark"`, toggled live in the browser (works with
   `bslib::input_dark_mode()` / `toggle_dark_mode()` with no server code).
+* `glassSelect()` and `glassMultiSelect()` also support `theme = "auto"` so
+  their triggers and dropdown panels keep the glass look in both light and
+  dark Bootstrap 5 color modes.
 
 ## New example and article
 
@@ -22,8 +27,20 @@
 * New "Indicator Styles, Vertical Tabs, and Auto Theming" article.
 * `runGlassExample("connect-workflow")` provides a Posit Connect-ready
   workflow review page showing filters, badges, server-driven tab changes,
-  vertical tabs, and auto theming in one deployable Shiny app.
+  horizontal/vertical tabs, tab text alignment, and auto theming in one
+  deployable Shiny app.
+* The Connect workflow example now has stronger dark-mode contrast, auto-themed
+  glass select dropdowns, neutral quick-action buttons with selected state,
+  indicator and tab shape controls, and a
+  responsive controls grid for narrower browsers. Closed `glassSelect()` and
+  `glassMultiSelect()` fields remain readable when the page is in dark mode.
 * New "Publishing a glasstabs Workflow to Posit Connect" article.
+
+## Select dropdown positioning
+
+* Teleported `glassSelect()` and `glassMultiSelect()` dropdowns now clamp to
+  the viewport, so narrow browser widths no longer cut off the left or right
+  edge of the dropdown panel.
 
 ## Tab indicator
 

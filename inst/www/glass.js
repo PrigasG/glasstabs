@@ -194,6 +194,35 @@
     dropdown.style.position = 'absolute';
   }
 
+  function positionTeleportedDropdown(trigger, wrap, dropdown) {
+    var rect = trigger.getBoundingClientRect();
+    var scrollX = window.pageXOffset || 0;
+    var scrollY = window.pageYOffset || 0;
+    var vw = window.innerWidth;
+    var vh = window.innerHeight;
+    var margin = 8;
+    var maxWidth = Math.max(160, vw - margin * 2);
+    dropdown.style.maxWidth = maxWidth + 'px';
+    dropdown.style.minWidth = Math.min(232, maxWidth) + 'px';
+
+    var ddHeight = dropdown.offsetHeight || 0;
+    var ddWidth = Math.min(dropdown.offsetWidth || rect.width, maxWidth);
+    var top = rect.bottom + scrollY + margin;
+    if (rect.bottom + ddHeight + margin > vh - margin && rect.top - ddHeight - margin > 0) {
+      top = rect.top + scrollY - ddHeight - margin;
+    }
+
+    var docEl = document.documentElement;
+    var dirEl = wrap.closest ? wrap.closest('[dir]') : null;
+    var isRtl = (dirEl || docEl).getAttribute('dir') === 'rtl';
+    var left = isRtl ? rect.left : rect.right - ddWidth;
+    left = Math.max(margin, Math.min(left, vw - ddWidth - margin));
+
+    dropdown.style.top = top + 'px';
+    dropdown.style.left = (left + scrollX) + 'px';
+    dropdown.style.right = 'auto';
+  }
+
   /** Move a teleported dropdown back to its wrap */
   function teleportClose(wrap, dropdown) {
     if (dropdown.parentNode !== document.body) return;
@@ -202,6 +231,8 @@
     dropdown.style.removeProperty('top');
     dropdown.style.removeProperty('right');
     dropdown.style.removeProperty('left');
+    dropdown.style.removeProperty('max-width');
+    dropdown.style.removeProperty('min-width');
     TELEPORT_CLASSES.forEach(function (cls) { dropdown.classList.remove(cls); });
     wrap.appendChild(dropdown);
   }
@@ -888,29 +919,7 @@
        position:absolute on the body-appended teleported element.
        This avoids the position:fixed + overflow:hidden quirk in AdminLTE. */
     function positionDropdown() {
-      var rect = trigger.getBoundingClientRect();
-      var scrollY = window.pageYOffset || 0;
-      var vw = window.innerWidth;
-      var vh = window.innerHeight;
-      var ddHeight = dropdown.offsetHeight || 0;
-      var top = rect.bottom + scrollY + 8;
-      /* Flip upward if not enough room below */
-      if (rect.bottom + ddHeight + 8 > vh - 8 && rect.top - ddHeight - 8 > 0) {
-        top = rect.top + scrollY - ddHeight - 8;
-      }
-      dropdown.style.top = top + 'px';
-      if ((wrap.closest('[dir]') || document.documentElement).getAttribute('dir') === 'rtl') {
-        var left = rect.left;
-        if (left < 4) left = 4;
-        dropdown.style.left = left + 'px';
-        dropdown.style.right = 'auto';
-      } else {
-        /* Right-align with trigger; clamp to viewport edge */
-        var right = vw - rect.right;
-        if (right < 4) right = 4;
-        dropdown.style.right = right + 'px';
-        dropdown.style.left = 'auto';
-      }
+      positionTeleportedDropdown(trigger, wrap, dropdown);
     }
 
     var openedAt = 0;
@@ -1512,29 +1521,7 @@
        Uses document-space coordinates (viewport + scrollY) to match
        position:absolute on the body-appended teleported element. */
     function positionDropdown() {
-      var rect = trigger.getBoundingClientRect();
-      var scrollY = window.pageYOffset || 0;
-      var vw = window.innerWidth;
-      var vh = window.innerHeight;
-      var ddHeight = dropdown.offsetHeight || 0;
-      var top = rect.bottom + scrollY + 8;
-      /* Flip upward if not enough room below */
-      if (rect.bottom + ddHeight + 8 > vh - 8 && rect.top - ddHeight - 8 > 0) {
-        top = rect.top + scrollY - ddHeight - 8;
-      }
-      dropdown.style.top = top + 'px';
-      if ((wrap.closest('[dir]') || document.documentElement).getAttribute('dir') === 'rtl') {
-        var left = rect.left;
-        if (left < 4) left = 4;
-        dropdown.style.left = left + 'px';
-        dropdown.style.right = 'auto';
-      } else {
-        /* Right-align with trigger; clamp to viewport edge */
-        var right = vw - rect.right;
-        if (right < 4) right = 4;
-        dropdown.style.right = right + 'px';
-        dropdown.style.left = 'auto';
-      }
+      positionTeleportedDropdown(trigger, wrap, dropdown);
     }
 
     var openedAt = 0;

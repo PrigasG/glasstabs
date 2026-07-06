@@ -1,8 +1,10 @@
 # glasstabs example: Posit Connect workflow page
 #
 # A deployable Shiny app for Posit Connect that demonstrates:
-#   - indicator = "solid" for a dashboard-friendly tab surface
-#   - orientation = "vertical" for a left-rail workflow
+#   - indicator = "glass" / "solid" / "underline" for tab motion styles
+#   - orientation = "horizontal" / "vertical" for workflow navigation
+#   - tab_align = "center" / "left" / "right" for tab button alignment
+#   - shape = "rounded" / "square" for matching tab corner styles
 #   - theme = "auto" for Bootstrap 5 / bslib light-dark mode
 #   - glassSelect(), glassMultiSelect(), badges, and server-driven tab changes
 #
@@ -40,7 +42,17 @@ stage_card <- function(title, body, state) {
   )
 }
 
-workflow_tabs <- function() {
+workflow_tabs <- function(
+    orientation = "horizontal",
+    tab_align = "center",
+    shape = "rounded",
+    indicator = "glass"
+) {
+  orientation <- match.arg(orientation, c("horizontal", "vertical"))
+  tab_align <- match.arg(tab_align, c("center", "left", "right"))
+  shape <- match.arg(shape, c("rounded", "square"))
+  indicator <- match.arg(indicator, c("glass", "solid", "underline"))
+
   panels <- list(
     glassTabPanel(
       "intake", "Intake", selected = TRUE,
@@ -73,17 +85,14 @@ workflow_tabs <- function() {
     list(
       id = "workflow",
       compact = TRUE,
-      theme = if ("indicator" %in% glassTabsUI_args) "auto" else "light",
-      extra_ui = div(
-        class = "workflow-actions",
-        actionButton("go_explore", "Explore", class = "btn-primary"),
-        actionButton("go_approve", "Approve", class = "btn-outline-primary")
-      )
+      theme = if ("indicator" %in% glassTabsUI_args) "auto" else "light"
     ),
     panels
   )
-  if ("indicator" %in% glassTabsUI_args) args$indicator <- "solid"
-  if ("orientation" %in% glassTabsUI_args) args$orientation <- "vertical"
+  if ("indicator" %in% glassTabsUI_args) args$indicator <- indicator
+  if ("orientation" %in% glassTabsUI_args) args$orientation <- orientation
+  if ("tab_align" %in% glassTabsUI_args) args$tab_align <- tab_align
+  if ("shape" %in% glassTabsUI_args) args$shape <- shape
 
   do.call(glassTabsUI, args)
 }
@@ -97,24 +106,68 @@ page_body <- function() {
       .connect-header{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:18px;}
       .connect-title h1{font-size:30px;line-height:1.15;margin:0 0 8px;font-weight:700;}
       .connect-title p{margin:0;color:#475569;max-width:720px;}
-      [data-bs-theme='dark'] .connect-title p{color:#cbd5e1;}
+      [data-bs-theme='dark'] body,
+      body[data-bs-theme='dark']{background:#0b1020;color:#e5edf8;}
+      [data-bs-theme='dark'] .connect-title h1,
+      body[data-bs-theme='dark'] .connect-title h1{color:#f8fafc;}
+      [data-bs-theme='dark'] .connect-title p,
+      body[data-bs-theme='dark'] .connect-title p{color:#cbd5e1;}
       .connect-status{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end;}
       .connect-pill{border:1px solid rgba(37,99,235,.22);background:rgba(37,99,235,.08);color:#1d4ed8;border-radius:999px;padding:6px 10px;font-size:13px;font-weight:600;}
-      [data-bs-theme='dark'] .connect-pill{border-color:rgba(125,211,252,.28);background:rgba(125,211,252,.10);color:#bae6fd;}
+      [data-bs-theme='dark'] .connect-pill,
+      body[data-bs-theme='dark'] .connect-pill{border-color:rgba(125,211,252,.28);background:rgba(125,211,252,.10);color:#bae6fd;}
       .connect-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:18px 0;}
       .connect-kpi{border:1px solid rgba(15,23,42,.10);background:#fff;border-radius:8px;padding:14px;box-shadow:0 10px 30px rgba(15,23,42,.06);}
       .connect-kpi-label{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:#64748b;margin-bottom:4px;}
       .connect-kpi strong{font-size:24px;line-height:1.1;color:#0f172a;}
-      [data-bs-theme='dark'] .connect-kpi{background:#111827;border-color:rgba(148,163,184,.20);}
-      [data-bs-theme='dark'] .connect-kpi strong{color:#f8fafc;}
-      .connect-tools{display:grid;grid-template-columns:1fr 1fr auto;gap:12px;align-items:end;margin:18px 0;}
+      [data-bs-theme='dark'] .connect-kpi,
+      body[data-bs-theme='dark'] .connect-kpi{background:#111827;border-color:rgba(148,163,184,.20);}
+      [data-bs-theme='dark'] .connect-kpi strong,
+      body[data-bs-theme='dark'] .connect-kpi strong{color:#f8fafc;}
+      .connect-tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;align-items:end;margin:18px 0;}
+      .connect-tools > *{min-width:0;}
       .connect-tools .form-group{margin-bottom:0;}
-      .workflow-actions{display:flex;flex-direction:column;gap:8px;margin-top:12px;}
-      .workflow-actions .btn{width:100%;text-align:center;}
+      [data-bs-theme='dark'] .connect-tools label,
+      body[data-bs-theme='dark'] .connect-tools label{color:#dbeafe;}
+      [data-bs-theme='dark'] .selectize-input,
+      body[data-bs-theme='dark'] .selectize-input,
+      body[data-bs-theme='dark'] .form-select,
+      [data-bs-theme='dark'] .form-select{
+        background:#111827;color:#f8fafc;border-color:rgba(148,163,184,.35);
+        box-shadow:none;
+      }
+      [data-bs-theme='dark'] .selectize-dropdown,
+      body[data-bs-theme='dark'] .selectize-dropdown{background:#111827;color:#f8fafc;border-color:rgba(148,163,184,.35);}
+      [data-bs-theme='dark'] .selectize-dropdown .active,
+      body[data-bs-theme='dark'] .selectize-dropdown .active{background:#1e293b;color:#f8fafc;}
+      .workflow-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:2px 0 12px;}
+      .workflow-actions .btn{text-align:center;background:transparent;color:#0d6efd;border-color:#0d6efd;}
+      .workflow-actions .btn.active,
+      .workflow-actions .btn:active{
+        color:#fff;background:#0d6efd;border-color:#0d6efd;box-shadow:none;
+      }
+      [data-bs-theme='dark'] .workflow-actions .btn-outline-primary,
+      body[data-bs-theme='dark'] .workflow-actions .btn-outline-primary{
+        color:#93c5fd;border-color:#38bdf8;background:transparent;
+      }
+      [data-bs-theme='dark'] .workflow-actions .btn-outline-primary.active,
+      body[data-bs-theme='dark'] .workflow-actions .btn-outline-primary.active{
+        color:#07111f;background:#93c5fd;border-color:#93c5fd;
+      }
+      [data-bs-theme='dark'] .workflow-actions .btn-outline-primary:hover,
+      body[data-bs-theme='dark'] .workflow-actions .btn-outline-primary:hover{
+        color:#0b1020;background:#93c5fd;border-color:#93c5fd;
+      }
       .pane-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
       .stage-card{border:1px solid rgba(15,23,42,.10);border-radius:8px;padding:14px;background:rgba(255,255,255,.72);}
       .stage-card h4{margin:8px 0 6px;font-size:16px;}
       .stage-card p{margin:0;color:#475569;}
+      [data-bs-theme='dark'] .stage-card,
+      body[data-bs-theme='dark'] .stage-card{background:#111827;border-color:rgba(148,163,184,.22);}
+      [data-bs-theme='dark'] .stage-card p,
+      body[data-bs-theme='dark'] .stage-card p{color:#cbd5e1;}
+      [data-bs-theme='dark'] .table,
+      body[data-bs-theme='dark'] .table{color:#f8fafc;}
       .stage-state{display:inline-flex;border-radius:999px;padding:3px 8px;font-size:12px;font-weight:700;}
       .state-ready{background:rgba(34,197,94,.14);color:#15803d;}
       .state-review{background:rgba(245,158,11,.16);color:#a16207;}
@@ -126,6 +179,23 @@ page_body <- function() {
         .connect-tools > *{margin-bottom:10px;}
       }
     "))),
+    tags$script(HTML("
+      document.addEventListener('click', function(e) {
+        var btn = e.target.closest ? e.target.closest('[data-workflow-target]') : null;
+        var tabClick = e.target.closest ? e.target.closest('#workflow-navbar .gt-tab-link') : null;
+        if (!btn && !tabClick) return;
+        var target = btn ? btn.getAttribute('data-workflow-target') : tabClick.getAttribute('data-value');
+        var tabs = Array.prototype.slice.call(document.querySelectorAll('#workflow-navbar .gt-tab-link'));
+        var tab = tabs.find(function(el) { return el.getAttribute('data-value') === target; });
+        if (btn && tab) tab.click();
+        setTimeout(function() {
+          document.querySelectorAll('[data-workflow-target]').forEach(function(el) {
+            el.classList.toggle('active', el.getAttribute('data-workflow-target') === target);
+            el.setAttribute('aria-pressed', el.classList.contains('active') ? 'true' : 'false');
+          });
+        }, 0);
+      });
+    ")),
     div(
       class = "connect-shell",
       div(
@@ -155,7 +225,7 @@ page_body <- function() {
           choices = sort(unique(orders$region)),
           selected = sort(unique(orders$region)),
           label = "Regions",
-          theme = "light",
+          theme = "auto",
           show_style_switcher = FALSE
         ),
         glassSelect(
@@ -163,11 +233,40 @@ page_body <- function() {
           choices = c("All", sort(unique(orders$status))),
           selected = "All",
           label = "Status",
-          theme = "light"
+          theme = "auto"
+        ),
+        selectInput(
+          "workflow_orientation",
+          "Tab layout",
+          choices = c("Horizontal" = "horizontal", "Vertical" = "vertical"),
+          selected = "horizontal"
+        ),
+        selectInput(
+          "workflow_tab_align",
+          "Tab text",
+          choices = c("Center" = "center", "Left" = "left", "Right" = "right"),
+          selected = "center"
+        ),
+        selectInput(
+          "workflow_tab_shape",
+          "Tab shape",
+          choices = c("Rounded" = "rounded", "Square" = "square"),
+          selected = "rounded"
+        ),
+        selectInput(
+          "workflow_indicator",
+          "Indicator",
+          choices = c("Glass" = "glass", "Solid" = "solid", "Underline" = "underline"),
+          selected = "glass"
         ),
         actionButton("reset_filters", "Reset filters", class = "btn-secondary")
       ),
-      workflow_tabs()
+      div(
+        class = "workflow-actions",
+        actionButton("go_explore", "Explore", class = "btn-outline-primary", `data-workflow-target` = "explore"),
+        actionButton("go_approve", "Approve", class = "btn-outline-primary", `data-workflow-target` = "approve")
+      ),
+      uiOutput("workflow_tabs_ui")
     )
   )
 }
@@ -216,6 +315,24 @@ server <- function(input, output, session) {
   observeEvent(input$reset_filters, {
     updateGlassMultiSelect(session, "region_filter", selected = sort(unique(orders$region)))
     updateGlassSelect(session, "status_filter", selected = "All")
+  })
+
+  output$workflow_tabs_ui <- renderUI({
+    orientation <- input$workflow_orientation
+    if (is.null(orientation) || !nzchar(orientation)) orientation <- "horizontal"
+    tab_align <- input$workflow_tab_align
+    if (is.null(tab_align) || !nzchar(tab_align)) tab_align <- "center"
+    shape <- input$workflow_tab_shape
+    if (is.null(shape) || !nzchar(shape)) shape <- "rounded"
+    indicator <- input$workflow_indicator
+    if (is.null(indicator) || !nzchar(indicator)) indicator <- "glass"
+
+    workflow_tabs(
+      orientation = orientation,
+      tab_align = tab_align,
+      shape = shape,
+      indicator = indicator
+    )
   })
 
   output$order_table <- renderTable(filtered_orders(), striped = TRUE, bordered = FALSE)

@@ -141,6 +141,13 @@ test_that("glassSelect() light theme injects light accent color", {
   expect_match(html, "#2563eb")
 })
 
+test_that("glassSelect() auto theme emits auto class and Bootstrap dark override", {
+  html <- as.character(glassSelect("f", choices, theme = "auto"))
+  expect_match(html, "theme-auto", fixed = TRUE)
+  expect_match(html, "theme-light", fixed = TRUE)
+  expect_match(html, 'data-bs-theme="dark"', fixed = TRUE)
+})
+
 test_that("glassSelect() glass_select_theme() accent appears in HTML", {
   t <- glass_select_theme(accent_color = "#abcdef")
   html <- as.character(glassSelect("f", choices, theme = t))

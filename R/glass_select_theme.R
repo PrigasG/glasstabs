@@ -90,12 +90,12 @@ glass_select_theme <- function(
   }
 
   if (is.character(theme) && length(theme) == 1) {
-    if (!theme %in% c("dark", "light")) {
+    if (!theme %in% c("dark", "light", "auto")) {
       stop(
         sprintf(
           paste0(
             "`theme = \"%s\"` is not a valid preset.\n",
-            "Use theme = \"dark\", theme = \"light\", or a glass_select_theme() object.\n",
+            "Use theme = \"dark\", theme = \"light\", theme = \"auto\", or a glass_select_theme() object.\n",
             "See ?glass_select_theme for custom colours."
           ),
           theme
@@ -103,7 +103,7 @@ glass_select_theme <- function(
         call. = FALSE
       )
     }
-    return(if (theme == "light") light_defaults else dark_defaults)
+    return(if (theme %in% c("light", "auto")) light_defaults else dark_defaults)
   }
 
   if (inherits(theme, "glass_select_theme")) {
@@ -125,7 +125,7 @@ glass_select_theme <- function(
   stop(
     sprintf(
       paste0(
-        "`theme` must be \"dark\", \"light\", or a glass_select_theme() object, got %s.\n",
+        "`theme` must be \"dark\", \"light\", \"auto\", or a glass_select_theme() object, got %s.\n",
         "See ?glass_select_theme for custom theming."
       ),
       class(theme)[1]

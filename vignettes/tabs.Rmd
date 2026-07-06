@@ -114,6 +114,20 @@ glassTabsUI("side",
 )
 ```
 
+Use `tab_align = "left"`, `"center"`, or `"right"` to control how labels and
+icons sit inside each tab button:
+
+```{r tab-align}
+glassTabsUI("aligned",
+  glassTabPanel("drafts", "Drafts", selected = TRUE, p("Draft queue")),
+  glassTabPanel("review", "Review", p("Review queue")),
+  glassTabPanel("done", "Done", p("Completed queue")),
+  orientation = "vertical",
+  tab_align = "right",
+  indicator = "solid"
+)
+```
+
 ## Placing a filter widget beside the tabs
 
 Pass any UI element to `extra_ui` to place it to the right of the tab bar.

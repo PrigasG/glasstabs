@@ -13,12 +13,17 @@
 /* Tab links */
 .gt-tab-link{
   position:relative;padding:11px 20px;border-radius:12px;
+  display:inline-flex;align-items:center;justify-content:center;gap:0.35em;
+  text-align:center;
   background:rgba(255,255,255,0.02);
   color:var(--gt-tab-text,#cfe6ff);
   cursor:pointer;font-weight:600;font-size:15px;line-height:1.25;
   transition:color 120ms ease,background 120ms ease;
   z-index:6;user-select:none;white-space:nowrap;
 }
+.gt-align-left .gt-tab-link{justify-content:flex-start;text-align:left;}
+.gt-align-center .gt-tab-link{justify-content:center;text-align:center;}
+.gt-align-right .gt-tab-link{justify-content:flex-end;text-align:right;}
 .gt-tab-link:hover{background:rgba(255,255,255,0.04);}
 .gt-tab-link.active{color:var(--gt-tab-active-text,#ffffff);}
 .gt-tab-link.gt-tab-hidden{display:none;}
@@ -810,13 +815,13 @@
   margin-bottom:0;min-width:170px;
 }
 .gt-vertical .gt-navbar{flex-direction:column;align-items:stretch;gap:8px;}
-.gt-vertical .gt-tab-link{text-align:left;white-space:normal;}
+.gt-vertical .gt-tab-link{white-space:normal;}
 .gt-vertical > .gt-tab-wrap{flex:1 1 auto;min-width:0;}
 .gt-vertical.gt-compact{gap:10px;}
 .gt-vertical.gt-compact > .gt-topbar{min-width:120px;}
 
-/* Stack back to horizontal-style column flow on narrow screens */
-@media(max-width:600px){
+/* Stack before a left rail becomes cramped on narrow screens. */
+@media(max-width:760px){
   .gt-vertical{flex-direction:column;}
   .gt-vertical > .gt-topbar{min-width:0;width:100%;}
 }
@@ -863,7 +868,6 @@
 .gt-tab-icon{
   display:inline-flex;
   align-items:center;
-  margin-right:0.35em;
   font-size:0.9em;
   opacity:0.85;
   vertical-align:middle;

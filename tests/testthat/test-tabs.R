@@ -227,7 +227,28 @@ test_that("glassTabsUI() indicator and orientation classes are emitted", {
   expect_false(grepl("indicator-glass", glass, fixed = TRUE))
 })
 
-test_that("glassTabsUI() rejects invalid indicator and orientation", {
+test_that("glassTabsUI() tab alignment classes are emitted", {
+  centered <- as.character(glassTabsUI(
+    "nav",
+    glassTabPanel("a", "A", selected = TRUE)
+  ))
+  left <- as.character(glassTabsUI(
+    "nav",
+    glassTabPanel("a", "A", selected = TRUE),
+    tab_align = "left"
+  ))
+  right <- as.character(glassTabsUI(
+    "nav",
+    glassTabPanel("a", "A", selected = TRUE),
+    tab_align = "right"
+  ))
+
+  expect_true(grepl("gt-align-center", centered, fixed = TRUE))
+  expect_true(grepl("gt-align-left", left, fixed = TRUE))
+  expect_true(grepl("gt-align-right", right, fixed = TRUE))
+})
+
+test_that("glassTabsUI() rejects invalid indicator, orientation, and tab alignment", {
   expect_error(glassTabsUI(
     "nav",
     glassTabPanel("a", "A", selected = TRUE),
@@ -237,6 +258,11 @@ test_that("glassTabsUI() rejects invalid indicator and orientation", {
     "nav",
     glassTabPanel("a", "A", selected = TRUE),
     orientation = "diagonal"
+  ))
+  expect_error(glassTabsUI(
+    "nav",
+    glassTabPanel("a", "A", selected = TRUE),
+    tab_align = "wide"
   ))
 })
 

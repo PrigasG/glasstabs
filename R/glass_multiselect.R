@@ -27,8 +27,10 @@
 #'   the dropdown? Default \code{TRUE}.
 #' @param show_select_all Show the "Select all" row? Default \code{TRUE}.
 #' @param show_clear_all Show the "Clear all" footer link? Default \code{TRUE}.
-#' @param theme Color theme. One of \code{"dark"} (default) or \code{"light"},
-#'   or a [glass_select_theme()] object.
+#' @param theme Color theme. One of \code{"dark"} (default), \code{"light"},
+#'   \code{"auto"}, or a [glass_select_theme()] object. \code{"auto"} uses the
+#'   light preset by default and switches to the dark preset when an ancestor
+#'   carries \code{data-bs-theme="dark"}.
 #' @param shape Corner style for the trigger and dropdown. One of
 #'   \code{"rounded"} (default) for the signature glass look, or
 #'   \code{"square"} for crisp, selectize-style corners so the widget sits
@@ -43,8 +45,8 @@
 #' @param hues Optional named integer vector of HSL hue angles (0 to 360) for
 #'   the \code{"filled"} style. Auto-assigned if \code{NULL}.
 #' @param dark_selector Optional CSS selector that signals dark mode (e.g.
-#'   \code{"body.dark-mode"} for bs4Dash). When provided and
-#'   \code{theme = "light"}, emits an extra scoped \code{<style>} block that
+#'   \code{"body.dark-mode"} for bs4Dash). When provided, emits an extra
+#'   scoped \code{<style>} block that
 #'   reverts colors to the dark-mode defaults whenever that selector is active.
 #' @param server Logical. If \code{TRUE}, render only an initial slice of
 #'   choices and use [glassMultiSelectServer()] to search the full choice set
@@ -115,6 +117,8 @@ glassMultiSelect <- function(
   server_limit <- .gt_positive_int(server_limit, "server_limit")
   server_min_chars <- .gt_nonnegative_int(server_min_chars, "server_min_chars")
   colors <- .ms_resolve_theme(theme)
+  is_auto <- .is_auto_theme(theme)
+  if (is_auto && is.null(dark_selector)) dark_selector <- '[data-bs-theme="dark"]'
 
   normalized <- .gt_normalize_choices(choices)
   vals <- normalized$values
@@ -179,14 +183,7 @@ glassMultiSelect <- function(
   )
 
   dark_override_style <- if (!is.null(dark_selector) && nzchar(dark_selector)) {
-    dark_colors <- .ms_resolve_theme("dark")
-    .make_style_tag(sprintf(
-      "%s #%s{--ms-bg:%s;--ms-border:%s;--ms-text:%s;--ms-accent:%s;--ms-label:%s;%s}",
-      dark_selector, field_id,
-      dark_colors$bg, dark_colors$border, dark_colors$text,
-      dark_colors$accent, dark_colors$label,
-      .to_rgba_vars(dark_colors)
-    ))
+    .select_dark_override_style(dark_selector, field_id)
   } else {
     NULL
   }
@@ -379,6 +376,7 @@ glassMultiSelect <- function(
     paste0("style-", check_style),
     if (identical(shape, "square")) "shape-square" else NULL,
     if (disabled) "gt-disabled" else NULL,
+    if (is_auto) "theme-auto" else NULL,
     if (.is_light_theme(theme)) "theme-light" else NULL
   )
 
