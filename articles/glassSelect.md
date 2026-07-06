@@ -346,7 +346,11 @@ current value if it still exists in the new set of choices.
 
 glassSelect("f", fruits, theme = "dark")
 glassSelect("f", fruits, theme = "light")
+glassSelect("f", fruits, theme = "auto")
 ```
+
+Use `theme = "auto"` inside Bootstrap 5 / bslib apps to follow
+`data-bs-theme` light and dark modes without server code.
 
 ### Custom theme with `glass_select_theme()`
 

@@ -192,6 +192,18 @@ a side bar adjacent to the content.</p>
 <span>  orientation <span class="op">=</span> <span class="st">"vertical"</span>,</span>
 <span>  indicator <span class="op">=</span> <span class="st">"underline"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
+<p>Use <code>tab_align = "left"</code>, <code>"center"</code>, or
+<code>"right"</code> to control how labels and icons sit inside each tab
+button:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span><span class="st">"aligned"</span>,</span>
+<span>  <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"drafts"</span>, <span class="st">"Drafts"</span>, selected <span class="op">=</span> <span class="cn">TRUE</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"Draft queue"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"review"</span>, <span class="st">"Review"</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"Review queue"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"done"</span>, <span class="st">"Done"</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"Completed queue"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  orientation <span class="op">=</span> <span class="st">"vertical"</span>,</span>
+<span>  tab_align <span class="op">=</span> <span class="st">"right"</span>,</span>
+<span>  indicator <span class="op">=</span> <span class="st">"solid"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="placing-a-filter-widget-beside-the-tabs">Placing a filter widget beside the tabs<a class="anchor" aria-label="anchor" href="#placing-a-filter-widget-beside-the-tabs"></a>
@@ -199,7 +211,7 @@ a side bar adjacent to the content.</p>
 <p>Pass any UI element to <code>extra_ui</code> to place it to the right
 of the tab bar. The most common use is a <code><a href="../reference/glassMultiSelect.html">glassMultiSelect()</a></code>
 filter:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">choices</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Alpha <span class="op">=</span> <span class="st">"alpha"</span>, Beta <span class="op">=</span> <span class="st">"beta"</span>, Gamma <span class="op">=</span> <span class="st">"gamma"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span>
@@ -223,7 +235,7 @@ filter:</p>
 <div class="section level3">
 <h3 id="built-in-presets">Built-in presets<a class="anchor" aria-label="anchor" href="#built-in-presets"></a>
 </h3>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Dark (default)</span></span>
 <span><span class="fu"><a href="../reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span><span class="st">"nav"</span>, theme <span class="op">=</span> <span class="st">"dark"</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
@@ -238,7 +250,7 @@ filter:</p>
 </h3>
 <p>Supply only the values you want to change — everything else falls
 back to the dark preset:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Change only the halo colour</span></span>
 <span><span class="fu"><a href="../reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span><span class="st">"nav"</span>,</span>
 <span>  theme <span class="op">=</span> <span class="fu"><a href="../reference/glass_tab_theme.html">glass_tab_theme</a></span><span class="op">(</span></span>
@@ -298,7 +310,7 @@ back to the dark preset:</p>
 <code>bs4Card</code> or <code>bs4Box</code> — the card body already
 provides a constrained container. Pair with <code>theme = "light"</code>
 to match the card’s white background:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RinteRface/bs4Dash" class="external-link">bs4Dash</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/PrigasG/glasstabs" class="external-link">glasstabs</a></span><span class="op">)</span></span>
 <span></span>
@@ -326,7 +338,7 @@ to match the card’s white background:</p>
 </h2>
 <p>Each <code><a href="../reference/glassTabsUI.html">glassTabsUI()</a></code> instance is scoped to its own
 <code>id</code>, so multiple widgets work fully independently:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="../reference/useGlassTabs.html">useGlassTabs</a></span><span class="op">(</span><span class="op">)</span>,    <span class="co"># only needed once per page</span></span>
 <span>  <span class="fu"><a href="../reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span><span class="st">"widget1"</span>,</span>

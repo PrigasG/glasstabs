@@ -130,8 +130,10 @@ selection? Default <code>FALSE</code>.</p></dd>
 
 
 <dt id="arg-theme">theme<a class="anchor" aria-label="anchor" href="#arg-theme"></a></dt>
-<dd><p>Color theme. One of <code>"dark"</code> (default) or <code>"light"</code>,
-or a <code><a href="glass_select_theme.html">glass_select_theme()</a></code> object.</p></dd>
+<dd><p>Color theme. One of <code>"dark"</code> (default), <code>"light"</code>,
+<code>"auto"</code>, or a <code><a href="glass_select_theme.html">glass_select_theme()</a></code> object. <code>"auto"</code> uses the
+light preset by default and switches to the dark preset when an ancestor
+carries <code>data-bs-theme="dark"</code>.</p></dd>
 
 
 <dt id="arg-shape">shape<a class="anchor" aria-label="anchor" href="#arg-shape"></a></dt>

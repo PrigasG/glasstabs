@@ -10,7 +10,11 @@
   content pane. ArrowUp/ArrowDown navigate in vertical mode,
   `aria-orientation` is set on the tablist, and
   `indicator = "underline"` renders as a slim side bar adjacent to the
-  content. Falls back to stacked layout under 600px.
+  content. Falls back to stacked layout under 760px.
+- New `tab_align` argument for
+  [`glassTabsUI()`](https://prigasg.github.io/glasstabs/reference/glassTabsUI.md):
+  `"center"` (default), `"left"`, or `"right"` aligns tab button text
+  and icons.
 
 ### bslib / Bootstrap 5 auto theming
 
@@ -21,6 +25,11 @@
   /
   [`toggle_dark_mode()`](https://rstudio.github.io/bslib/reference/input_dark_mode.html)
   with no server code).
+- [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md)
+  and
+  [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md)
+  also support `theme = "auto"` so their triggers and dropdown panels
+  keep the glass look in both light and dark Bootstrap 5 color modes.
 
 ### New example and article
 
@@ -29,8 +38,26 @@
 - New “Indicator Styles, Vertical Tabs, and Auto Theming” article.
 - `runGlassExample("connect-workflow")` provides a Posit Connect-ready
   workflow review page showing filters, badges, server-driven tab
-  changes, vertical tabs, and auto theming in one deployable Shiny app.
+  changes, horizontal/vertical tabs, tab text alignment, and auto
+  theming in one deployable Shiny app.
+- The Connect workflow example now has stronger dark-mode contrast,
+  auto-themed glass select dropdowns, neutral quick-action buttons with
+  selected state, indicator and tab shape controls, and a responsive
+  controls grid for narrower browsers. Closed
+  [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md)
+  and
+  [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md)
+  fields remain readable when the page is in dark mode.
 - New “Publishing a glasstabs Workflow to Posit Connect” article.
+
+### Select dropdown positioning
+
+- Teleported
+  [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md)
+  and
+  [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md)
+  dropdowns now clamp to the viewport, so narrow browser widths no
+  longer cut off the left or right edge of the dropdown panel.
 
 ### Tab indicator
 

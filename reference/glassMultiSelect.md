@@ -76,9 +76,10 @@ glassMultiSelect(
 
 - theme:
 
-  Color theme. One of `"dark"` (default) or `"light"`, or a
+  Color theme. One of `"dark"` (default), `"light"`, `"auto"`, or a
   [`glass_select_theme()`](https://prigasg.github.io/glasstabs/reference/glass_select_theme.md)
-  object.
+  object. `"auto"` uses the light preset by default and switches to the
+  dark preset when an ancestor carries `data-bs-theme="dark"`.
 
 - shape:
 
@@ -114,9 +115,9 @@ glassMultiSelect(
 - dark_selector:
 
   Optional CSS selector that signals dark mode (e.g. `"body.dark-mode"`
-  for bs4Dash). When provided and `theme = "light"`, emits an extra
-  scoped `<style>` block that reverts colors to the dark-mode defaults
-  whenever that selector is active.
+  for bs4Dash). When provided, emits an extra scoped `<style>` block
+  that reverts colors to the dark-mode defaults whenever that selector
+  is active.
 
 - server:
 

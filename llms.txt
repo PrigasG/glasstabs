@@ -131,7 +131,7 @@ auto theming, and `bslib` shows square glass selects inside a Bootstrap
 
 | Function | Description |
 |----|----|
-| `glassTabsUI(id, ..., selected, wrap, compact, shape, indicator, orientation, extra_ui, theme)` | Animated tab bar with content area; `compact=TRUE` for dashboard cards |
+| `glassTabsUI(id, ..., selected, wrap, compact, shape, indicator, orientation, tab_align, extra_ui, theme)` | Animated tab bar with content area; `compact=TRUE` for dashboard cards |
 | `glassTabPanel(value, label, ..., icon, selected)` | Define one tab and its content; `icon` accepts [`shiny::icon()`](https://rdrr.io/pkg/shiny/man/icon.html) |
 | `glassTabsServer(id, bookmark)` | Reactive returning the active tab; bookmarks active tab in URL |
 | `glassTabsOutput(outputId)` | UI placeholder for a server-rendered tab widget |
@@ -567,8 +567,12 @@ server <- function(input, output, session) {
   bar
 - `glassTabsUI(orientation = "vertical")` - stack tabs in a left rail
   with Up/Down keyboard navigation
+- `glassTabsUI(tab_align = "center" | "left" | "right")` - align tab
+  text and icons
 - `glassTabsUI(theme = "auto")` - follow Bootstrap 5 / bslib
   `data-bs-theme` light and dark modes in the browser
+- `glassSelect(theme = "auto")` and `glassMultiSelect(theme = "auto")` -
+  glassy select controls that follow Bootstrap 5 / bslib color modes
 - Tighter halo alignment - no right-side overhang, crisp 1px borders,
   bordered-container offsets, and `ResizeObserver` realignment for
   dynamic labels and badges
@@ -670,7 +674,7 @@ badging, and dynamically rendering tabs.
 ## Select widgets
 
 Animated single-select and multi-select dropdown widgets for Shiny, with
-theming, search, update helpers, and reactive value helpers.
+auto theming, search, update helpers, and reactive value helpers.
 
 - [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md)
   : Animated glass single-select dropdown

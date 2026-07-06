@@ -14,6 +14,7 @@ glassTabsUI(
   shape = c("rounded", "square"),
   indicator = c("glass", "solid", "underline"),
   orientation = c("horizontal", "vertical"),
+  tab_align = c("center", "left", "right"),
   extra_ui = NULL,
   theme = NULL,
   dark_selector = NULL
@@ -79,6 +80,11 @@ glassTabsUI(
   them. The sliding halo follows automatically, arrow-key navigation
   switches to Up/Down, and `indicator = "underline"` renders as a slim
   bar on the edge of the active tab adjacent to the content.
+
+- tab_align:
+
+  Alignment for text and icons inside each tab button. One of `"center"`
+  (default), `"left"`, or `"right"`.
 
 - extra_ui:
 

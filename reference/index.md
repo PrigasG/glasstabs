@@ -53,7 +53,7 @@ badging, and dynamically rendering tabs.
 ## Select widgets
 
 Animated single-select and multi-select dropdown widgets for Shiny, with
-theming, search, update helpers, and reactive value helpers.
+auto theming, search, update helpers, and reactive value helpers.
 
 - [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md)
   : Animated glass single-select dropdown

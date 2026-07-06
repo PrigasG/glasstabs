@@ -60,6 +60,7 @@
 <span>  shape <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"rounded"</span>, <span class="st">"square"</span><span class="op">)</span>,</span>
 <span>  indicator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"glass"</span>, <span class="st">"solid"</span>, <span class="st">"underline"</span><span class="op">)</span>,</span>
 <span>  orientation <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"horizontal"</span>, <span class="st">"vertical"</span><span class="op">)</span>,</span>
+<span>  tab_align <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"center"</span>, <span class="st">"left"</span>, <span class="st">"right"</span><span class="op">)</span>,</span>
 <span>  extra_ui <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  theme <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  dark_selector <span class="op">=</span> <span class="cn">NULL</span></span>
@@ -118,6 +119,11 @@ vertical mode the tab buttons stack in a left-hand rail and the content
 pane sits beside them. The sliding halo follows automatically, arrow-key
 navigation switches to Up/Down, and <code>indicator = "underline"</code> renders as
 a slim bar on the edge of the active tab adjacent to the content.</p></dd>
+
+
+<dt id="arg-tab-align">tab_align<a class="anchor" aria-label="anchor" href="#arg-tab-align"></a></dt>
+<dd><p>Alignment for text and icons inside each tab button. One
+of <code>"center"</code> (default), <code>"left"</code>, or <code>"right"</code>.</p></dd>
 
 
 <dt id="arg-extra-ui">extra_ui<a class="anchor" aria-label="anchor" href="#arg-extra-ui"></a></dt>

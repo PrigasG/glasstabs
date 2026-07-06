@@ -48,11 +48,14 @@
 <h2 class="pkg-version" data-toc-text="development version" id="glasstabs-development-version">glasstabs (development version)<a class="anchor" aria-label="anchor" href="#glasstabs-development-version"></a></h2>
 <div class="section level3">
 <h3 id="vertical-orientation-development-version">Vertical orientation<a class="anchor" aria-label="anchor" href="#vertical-orientation-development-version"></a></h3>
-<ul><li>New <code>orientation</code> argument for <code><a href="../reference/glassTabsUI.html">glassTabsUI()</a></code>: <code>"vertical"</code> stacks the tab buttons in a left-hand rail beside the content pane. ArrowUp/ArrowDown navigate in vertical mode, <code>aria-orientation</code> is set on the tablist, and <code>indicator = "underline"</code> renders as a slim side bar adjacent to the content. Falls back to stacked layout under 600px.</li>
+<ul><li>New <code>orientation</code> argument for <code><a href="../reference/glassTabsUI.html">glassTabsUI()</a></code>: <code>"vertical"</code> stacks the tab buttons in a left-hand rail beside the content pane. ArrowUp/ArrowDown navigate in vertical mode, <code>aria-orientation</code> is set on the tablist, and <code>indicator = "underline"</code> renders as a slim side bar adjacent to the content. Falls back to stacked layout under 760px.</li>
+<li>New <code>tab_align</code> argument for <code><a href="../reference/glassTabsUI.html">glassTabsUI()</a></code>: <code>"center"</code> (default), <code>"left"</code>, or <code>"right"</code> aligns tab button text and icons.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="bslib--bootstrap-auto-theming-development-version">bslib / Bootstrap 5 auto theming<a class="anchor" aria-label="anchor" href="#bslib--bootstrap-auto-theming-development-version"></a></h3>
 <ul><li>New <code>theme = "auto"</code> preset bridges to Bootstrap 5 color modes: light variables apply by default and dark variables apply under <code>data-bs-theme="dark"</code>, toggled live in the browser (works with <code><a href="https://rstudio.github.io/bslib/reference/input_dark_mode.html" class="external-link">bslib::input_dark_mode()</a></code> / <code><a href="https://rstudio.github.io/bslib/reference/input_dark_mode.html" class="external-link">toggle_dark_mode()</a></code> with no server code).</li>
+<li>
+<code><a href="../reference/glassSelect.html">glassSelect()</a></code> and <code><a href="../reference/glassMultiSelect.html">glassMultiSelect()</a></code> also support <code>theme = "auto"</code> so their triggers and dropdown panels keep the glass look in both light and dark Bootstrap 5 color modes.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="new-example-and-article-development-version">New example and article<a class="anchor" aria-label="anchor" href="#new-example-and-article-development-version"></a></h3>
@@ -60,8 +63,13 @@
 <code>runGlassExample("indicators")</code> demos the three indicator styles, vertical orientation, and auto theming side by side.</li>
 <li>New “Indicator Styles, Vertical Tabs, and Auto Theming” article.</li>
 <li>
-<code>runGlassExample("connect-workflow")</code> provides a Posit Connect-ready workflow review page showing filters, badges, server-driven tab changes, vertical tabs, and auto theming in one deployable Shiny app.</li>
+<code>runGlassExample("connect-workflow")</code> provides a Posit Connect-ready workflow review page showing filters, badges, server-driven tab changes, horizontal/vertical tabs, tab text alignment, and auto theming in one deployable Shiny app.</li>
+<li>The Connect workflow example now has stronger dark-mode contrast, auto-themed glass select dropdowns, neutral quick-action buttons with selected state, indicator and tab shape controls, and a responsive controls grid for narrower browsers. Closed <code><a href="../reference/glassSelect.html">glassSelect()</a></code> and <code><a href="../reference/glassMultiSelect.html">glassMultiSelect()</a></code> fields remain readable when the page is in dark mode.</li>
 <li>New “Publishing a glasstabs Workflow to Posit Connect” article.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="select-dropdown-positioning-development-version">Select dropdown positioning<a class="anchor" aria-label="anchor" href="#select-dropdown-positioning-development-version"></a></h3>
+<ul><li>Teleported <code><a href="../reference/glassSelect.html">glassSelect()</a></code> and <code><a href="../reference/glassMultiSelect.html">glassMultiSelect()</a></code> dropdowns now clamp to the viewport, so narrow browser widths no longer cut off the left or right edge of the dropdown panel.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="tab-indicator-development-version">Tab indicator<a class="anchor" aria-label="anchor" href="#tab-indicator-development-version"></a></h3>

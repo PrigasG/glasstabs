@@ -350,7 +350,11 @@ intersection of the current selection and the new choice set.
 
 glassMultiSelect("f", fruits, theme = "dark")   # default
 glassMultiSelect("f", fruits, theme = "light")  # white panel, dark text
+glassMultiSelect("f", fruits, theme = "auto")   # follows Bootstrap/bslib color mode
 ```
+
+Use `theme = "auto"` inside Bootstrap 5 / bslib apps to follow
+`data-bs-theme` light and dark modes without server code.
 
 ### Custom theme with `glass_select_theme()`
 

@@ -126,8 +126,10 @@ the dropdown? Default <code>TRUE</code>.</p></dd>
 
 
 <dt id="arg-theme">theme<a class="anchor" aria-label="anchor" href="#arg-theme"></a></dt>
-<dd><p>Color theme. One of <code>"dark"</code> (default) or <code>"light"</code>,
-or a <code><a href="glass_select_theme.html">glass_select_theme()</a></code> object.</p></dd>
+<dd><p>Color theme. One of <code>"dark"</code> (default), <code>"light"</code>,
+<code>"auto"</code>, or a <code><a href="glass_select_theme.html">glass_select_theme()</a></code> object. <code>"auto"</code> uses the
+light preset by default and switches to the dark preset when an ancestor
+carries <code>data-bs-theme="dark"</code>.</p></dd>
 
 
 <dt id="arg-shape">shape<a class="anchor" aria-label="anchor" href="#arg-shape"></a></dt>
@@ -160,8 +162,8 @@ the <code>"filled"</code> style. Auto-assigned if <code>NULL</code>.</p></dd>
 
 <dt id="arg-dark-selector">dark_selector<a class="anchor" aria-label="anchor" href="#arg-dark-selector"></a></dt>
 <dd><p>Optional CSS selector that signals dark mode (e.g.
-<code>"body.dark-mode"</code> for bs4Dash). When provided and
-<code>theme = "light"</code>, emits an extra scoped <code>&lt;style&gt;</code> block that
+<code>"body.dark-mode"</code> for bs4Dash). When provided, emits an extra
+scoped <code>&lt;style&gt;</code> block that
 reverts colors to the dark-mode defaults whenever that selector is active.</p></dd>
 
 

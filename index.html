@@ -206,7 +206,7 @@
 </tr></thead>
 <tbody>
 <tr>
-<td><code>glassTabsUI(id, ..., selected, wrap, compact, shape, indicator, orientation, extra_ui, theme)</code></td>
+<td><code>glassTabsUI(id, ..., selected, wrap, compact, shape, indicator, orientation, tab_align, extra_ui, theme)</code></td>
 <td>Animated tab bar with content area; <code>compact=TRUE</code> for dashboard cards</td>
 </tr>
 <tr>
@@ -827,7 +827,11 @@ glassMultiSelect("filters", choices, shape = "square")</code></pre>
 <li>
 <code>glassTabsUI(orientation = "vertical")</code> - stack tabs in a left rail with Up/Down keyboard navigation</li>
 <li>
+<code>glassTabsUI(tab_align = "center" | "left" | "right")</code> - align tab text and icons</li>
+<li>
 <code>glassTabsUI(theme = "auto")</code> - follow Bootstrap 5 / bslib <code>data-bs-theme</code> light and dark modes in the browser</li>
+<li>
+<code>glassSelect(theme = "auto")</code> and <code>glassMultiSelect(theme = "auto")</code> - glassy select controls that follow Bootstrap 5 / bslib color modes</li>
 <li>Tighter halo alignment - no right-side overhang, crisp 1px borders, bordered-container offsets, and <code>ResizeObserver</code> realignment for dynamic labels and badges</li>
 <li>New <code>runGlassExample("indicators")</code> demo and indicator styles article</li>
 <li>New <code>runGlassExample("connect-workflow")</code> Posit Connect-ready workflow page and deployment article</li>
