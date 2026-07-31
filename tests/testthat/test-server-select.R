@@ -76,7 +76,7 @@ test_that("server-side select APIs are documented in top-level docs", {
     readme <- paste(readLines(readme_path, warn = FALSE), collapse = "\n")
     expect_match(readme, "glassSelectServer", fixed = TRUE)
     expect_match(readme, "glassMultiSelectServer", fixed = TRUE)
-    expect_match(readme, 'runGlassExample("server-select")', fixed = TRUE)
+    expect_match(readme, "`server-select`", fixed = TRUE)
   }
 })
 

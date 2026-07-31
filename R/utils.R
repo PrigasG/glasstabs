@@ -1,5 +1,7 @@
 #' @noRd
 `%||%` <- function(a, b) {
+  # Unlike rlang's operator, length-zero values intentionally fall back. This
+  # is load-bearing for update helpers where character(0) means "clear".
   if (is.null(a) || length(a) == 0) b else a
 }
 
@@ -173,13 +175,14 @@
 #'   JavaScript.
 #' @export
 glassFilterTags <- function(inputId, class = NULL) {
-  if (!is.character(inputId) || length(inputId) != 1L || !nzchar(inputId)) {
-    stop(
+  .gt_check_string(
+    inputId,
+    "inputId",
+    paste0(
       "glassFilterTags(): `inputId` must be a single non-empty string matching ",
-      "the inputId of the glassMultiSelect() widget.",
-      call. = FALSE
+      "the inputId of the glassMultiSelect() widget."
     )
-  }
+  )
   classes <- c("gt-filter-tags", class)
   classes <- classes[!is.na(classes) & nzchar(classes)]
 

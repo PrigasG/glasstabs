@@ -11,6 +11,7 @@ local_browser_pkg_root <- function() {
 }
 
 test_that("browser: glassSelect opens and clicking an option updates input", {
+  skip_on_covr()
   skip_if_not_installed("shinytest2")
   local_browser_pkg_root()
 
@@ -32,6 +33,7 @@ test_that("browser: glassSelect opens and clicking an option updates input", {
 })
 
 test_that("browser: glassMultiSelect toggles choices and updates input", {
+  skip_on_covr()
   skip_if_not_installed("shinytest2")
   local_browser_pkg_root()
 
@@ -55,6 +57,7 @@ test_that("browser: glassMultiSelect toggles choices and updates input", {
 })
 
 test_that("browser: runtime setShape reaches wrapper and teleported dropdown", {
+  skip_on_covr()
   skip_if_not_installed("shinytest2")
   local_browser_pkg_root()
 
@@ -95,6 +98,7 @@ test_that("browser: runtime setShape reaches wrapper and teleported dropdown", {
 })
 
 test_that("browser: controller close closes an open dropdown and updates open state", {
+  skip_on_covr()
   skip_if_not_installed("shinytest2")
   local_browser_pkg_root()
 

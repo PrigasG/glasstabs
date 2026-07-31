@@ -47,3 +47,17 @@ if (interactive()) {
   shinyApp(ui, server)
 }
 }
+\seealso{
+Other glass tabs:
+\code{\link{appendGlassTab}()},
+\code{\link{glassTabCondition}()},
+\code{\link{glassTabPanel}()},
+\code{\link{glassTabsOutput}()},
+\code{\link{glassTabsServer}()},
+\code{\link{glassTabsUI}()},
+\code{\link{renderGlassTabs}()},
+\code{\link{showGlassTab}()},
+\code{\link{updateGlassTabBadge}()},
+\code{\link{updateGlassTabsUI}()}
+}
+\concept{glass tabs}

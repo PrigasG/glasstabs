@@ -135,10 +135,35 @@ glassTabsUI("bs4",
 )
 ```
 
-## Try it
+## Putting the pieces together
 
-The package ships a runnable demo of everything on this page:
+This small app combines a vertical layout, a solid indicator, left-aligned
+labels, and automatic light/dark theming:
 
-```{r}
-glasstabs::runGlassExample("indicators")
+```{r complete-app}
+library(shiny)
+library(bslib)
+library(glasstabs)
+
+ui <- page_fluid(
+  theme = bs_theme(version = 5),
+  useGlassTabs(),
+  input_dark_mode(id = "mode"),
+  glassTabsUI(
+    "workflow",
+    glassTabPanel("inbox", "Inbox", selected = TRUE, p("New work")),
+    glassTabPanel("review", "Review", p("Items awaiting review")),
+    glassTabPanel("done", "Done", p("Completed work")),
+    orientation = "vertical",
+    indicator = "solid",
+    tab_align = "left",
+    theme = "auto"
+  )
+)
+
+server <- function(input, output, session) {}
+
+if (interactive()) {
+  shinyApp(ui, server)
+}
 ```

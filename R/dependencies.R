@@ -38,23 +38,31 @@ runGlassExample <- function(example = NULL, ...) {
   }
 
   if (!example %in% available) {
-    stop(
+    .gt_abort(
       sprintf(
         "Example \"%s\" not found. Available: %s",
         example,
         paste(available, collapse = ", ")
       ),
-      call. = FALSE
+      class = "glasstabs_error_bad_choice",
+      argument = "example",
+      value = example,
+      expected = available
     )
   }
 
   app_dir <- file.path(examples_dir, example)
   if (!interactive()) {
-    stop(
-      "runGlassExample() launches a Shiny app and must be called interactively.\n",
-      "Use if (interactive()) runGlassExample(\"", example, "\") in examples, ",
-      "tests, and vignettes.",
-      call. = FALSE
+    .gt_abort(
+      paste0(
+        "runGlassExample() launches a Shiny app and must be called interactively.\n",
+        "Use if (interactive()) runGlassExample(\"", example, "\") in examples, ",
+        "tests, and vignettes."
+      ),
+      class = "glasstabs_error_bad_argument",
+      argument = "example",
+      value = example,
+      expected = "an interactive R session"
     )
   }
   shiny::runApp(app_dir, ...)
@@ -120,7 +128,7 @@ glasstabs_news <- function() {
 useGlassTabs <- function() {
   htmltools::htmlDependency(
     name    = "glasstabs",
-    version = "0.3.4",
+    version = as.character(utils::packageVersion("glasstabs")),
     src     = list(file = system.file("www", package = "glasstabs")),
     stylesheet = "glass.css",
     script     = "glass.js"

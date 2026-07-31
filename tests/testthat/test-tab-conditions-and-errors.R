@@ -1,4 +1,5 @@
 
+# Tab condition and diagnostic behavior
 
 test_that("glassTabCondition() returns correct JS condition string", {
   cond <- glassTabCondition("main", "details")
@@ -23,19 +24,19 @@ test_that("glassTabCondition() returns a single character string", {
 })
 
 test_that("glassTabCondition() errors on empty id", {
-  expect_error(glassTabCondition("", "val"), "non-empty string")
+  expect_error(glassTabCondition("", "val"), "non-empty string", class = "glasstabs_error_bad_argument")
 })
 
 test_that("glassTabCondition() errors on non-character id", {
-  expect_error(glassTabCondition(123, "val"), "non-empty string")
+  expect_error(glassTabCondition(123, "val"), "non-empty string", class = "glasstabs_error_bad_argument")
 })
 
 test_that("glassTabCondition() errors on empty value", {
-  expect_error(glassTabCondition("main", ""), "non-empty string")
+  expect_error(glassTabCondition("main", ""), "non-empty string", class = "glasstabs_error_bad_argument")
 })
 
 test_that("glassTabCondition() errors on vector id", {
-  expect_error(glassTabCondition(c("a", "b"), "val"), "non-empty string")
+  expect_error(glassTabCondition(c("a", "b"), "val"), "non-empty string", class = "glasstabs_error_bad_argument")
 })
 
 

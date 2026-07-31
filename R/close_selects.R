@@ -36,34 +36,40 @@
 #'
 #' @export
 closeGlassSelect <- function(session = shiny::getDefaultReactiveDomain(), inputId) {
-  .gt_close_select(session, inputId, type = "single")
+  .gt_close_select(session, inputId)
 }
 
 #' @rdname closeGlassSelect
 #' @export
 closeGlassMultiSelect <- function(session = shiny::getDefaultReactiveDomain(), inputId) {
-  .gt_close_select(session, inputId, type = "multi")
+  .gt_close_select(session, inputId)
 }
 
 #' @rdname closeGlassSelect
 #' @export
 closeAllGlassSelects <- function(session = shiny::getDefaultReactiveDomain()) {
-  if (is.null(session) || !is.function(session$sendCustomMessage)) {
-    stop("`session` must be a Shiny session with sendCustomMessage().", call. = FALSE)
-  }
+  .gt_check_session(session, "sendCustomMessage")
 
   session$sendCustomMessage("glasstabs_close_selects", list())
   invisible(NULL)
 }
 
 #' @noRd
-.gt_close_select <- function(session, inputId, type) {
-  if (missing(inputId) || length(inputId) != 1 || is.na(inputId) || !nzchar(inputId)) {
-    stop("`inputId` must be a non-empty character scalar.", call. = FALSE)
+.gt_close_select <- function(session, inputId) {
+  if (missing(inputId)) {
+    .gt_abort(
+      "`inputId` must be a non-empty character scalar.",
+      class = "glasstabs_error_bad_argument",
+      argument = "inputId",
+      expected = "a non-empty character scalar"
+    )
   }
-  if (is.null(session) || !is.function(session$sendInputMessage)) {
-    stop("`session` must be a Shiny session with sendInputMessage().", call. = FALSE)
-  }
+  .gt_check_string(
+    inputId,
+    "inputId",
+    "`inputId` must be a non-empty character scalar."
+  )
+  .gt_check_session(session, "sendInputMessage")
 
   session$sendInputMessage(inputId, list(close = TRUE))
   invisible(NULL)

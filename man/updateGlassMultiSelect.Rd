@@ -61,3 +61,14 @@ This function now follows Shiny-style update semantics more closely:
 When \code{choices} is supplied and \code{selected} is not, the browser side
 keeps the intersection of the current selection and the new set of choices.
 }
+\seealso{
+Other glass select widgets:
+\code{\link{glassMultiSelect}()},
+\code{\link{glassMultiSelectServer}()},
+\code{\link{glassMultiSelectValue}()},
+\code{\link{glassSelect}()},
+\code{\link{glassSelectServer}()},
+\code{\link{glassSelectValue}()},
+\code{\link{updateGlassSelect}()}
+}
+\concept{glass select widgets}

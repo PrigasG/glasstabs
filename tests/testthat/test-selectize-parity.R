@@ -191,7 +191,7 @@ test_that("glassTabsUI rejects an invalid shape", {
     "tabs",
     glassTabPanel("a", "A", shiny::p("x")),
     shape = "oval"
-  ))
+  ), class = "glasstabs_error_bad_argument")
 })
 
 # ── shipped CSS/JS hooks ───────────────────────────────────────────────────

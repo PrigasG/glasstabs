@@ -1,4 +1,5 @@
 
+# Tab feature behavior
 
 make_session <- function(ns_prefix = NULL) {
   msgs <- list()
@@ -24,7 +25,11 @@ test_that("runGlassExample() lists include 'smoke-test'", {
 })
 
 test_that("runGlassExample() errors on unknown example name", {
-  expect_error(runGlassExample("does-not-exist"), "not found")
+  expect_error(
+    runGlassExample("does-not-exist"),
+    "not found",
+    class = "glasstabs_error_bad_choice"
+  )
 })
 
 test_that("runGlassExample() error message lists available examples", {
@@ -35,11 +40,13 @@ test_that("runGlassExample() error message lists available examples", {
 test_that("runGlassExample() does not launch apps during non-interactive checks", {
   expect_error(
     runGlassExample("smoke-test"),
-    "must be called interactively"
+    "must be called interactively",
+    class = "glasstabs_error_bad_argument"
   )
   expect_error(
     runGlassExample("smoke-test", launch.browser = FALSE),
-    "must be called interactively"
+    "must be called interactively",
+    class = "glasstabs_error_bad_argument"
   )
 })
 
@@ -260,7 +267,8 @@ test_that("glassTabsUI() errors on duplicate panel values", {
     glassTabsUI("nav",
                 glassTabPanel("a", "A"),
                 glassTabPanel("a", "A2")),
-    "Duplicate"
+    "Duplicate",
+    class = "glasstabs_error_bad_choice"
   )
 })
 

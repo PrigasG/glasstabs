@@ -35,8 +35,8 @@ test_that("square shape composes with light theme and check styles", {
 })
 
 test_that("invalid shape is rejected for both widgets", {
-  expect_error(glassSelect("f", choices, shape = "oval"))
-  expect_error(glassMultiSelect("f", choices, shape = "oval"))
+  expect_error(glassSelect("f", choices, shape = "oval"), class = "glasstabs_error_bad_argument")
+  expect_error(glassMultiSelect("f", choices, shape = "oval"), class = "glasstabs_error_bad_argument")
 })
 
 test_that("stylesheet ships square-corner rules and JS teleports the class", {

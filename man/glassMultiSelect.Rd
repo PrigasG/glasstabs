@@ -129,3 +129,14 @@ locked_filter <- glassMultiSelect(
 light_filter <- glassMultiSelect("f", fruits, theme = "light")
 
 }
+\seealso{
+Other glass select widgets:
+\code{\link{glassMultiSelectServer}()},
+\code{\link{glassMultiSelectValue}()},
+\code{\link{glassSelect}()},
+\code{\link{glassSelectServer}()},
+\code{\link{glassSelectValue}()},
+\code{\link{updateGlassMultiSelect}()},
+\code{\link{updateGlassSelect}()}
+}
+\concept{glass select widgets}
