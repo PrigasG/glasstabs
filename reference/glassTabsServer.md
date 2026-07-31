@@ -41,6 +41,20 @@ one. Inside a parent module, pair it with `glassTabsUI(ns("tabs"), ...)`
 in the UI, and call `glassTabsServer("tabs")` (without `ns()`) in the
 server.
 
+## See also
+
+Other glass tabs:
+[`appendGlassTab()`](https://prigasg.github.io/glasstabs/reference/appendGlassTab.md),
+[`disableGlassTab()`](https://prigasg.github.io/glasstabs/reference/disableGlassTab.md),
+[`glassTabCondition()`](https://prigasg.github.io/glasstabs/reference/glassTabCondition.md),
+[`glassTabPanel()`](https://prigasg.github.io/glasstabs/reference/glassTabPanel.md),
+[`glassTabsOutput()`](https://prigasg.github.io/glasstabs/reference/glassTabsOutput.md),
+[`glassTabsUI()`](https://prigasg.github.io/glasstabs/reference/glassTabsUI.md),
+[`renderGlassTabs()`](https://prigasg.github.io/glasstabs/reference/renderGlassTabs.md),
+[`showGlassTab()`](https://prigasg.github.io/glasstabs/reference/showGlassTab.md),
+[`updateGlassTabBadge()`](https://prigasg.github.io/glasstabs/reference/updateGlassTabBadge.md),
+[`updateGlassTabsUI()`](https://prigasg.github.io/glasstabs/reference/updateGlassTabsUI.md)
+
 ## Examples
 
 ``` r

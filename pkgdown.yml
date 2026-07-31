@@ -1,5 +1,5 @@
 pandoc: 3.8.3
-pkgdown: 2.2.0
+pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
   cheatsheet: cheatsheet.html
@@ -9,7 +9,7 @@ articles:
   multiselect: multiselect.html
   posit-connect: posit-connect.html
   tabs: tabs.html
-last_built: 2026-07-06T20:38Z
+last_built: 2026-07-31T15:15Z
 urls:
   reference: https://prigasg.github.io/glasstabs/reference
   article: https://prigasg.github.io/glasstabs/articles

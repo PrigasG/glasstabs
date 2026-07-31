@@ -79,3 +79,14 @@ This function follows Shiny-style update semantics:
 
 When `choices` is supplied and `selected` is not, the browser side keeps
 the current selection if it is still present in the new choices.
+
+## See also
+
+Other glass select widgets:
+[`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md),
+[`glassMultiSelectServer()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelectServer.md),
+[`glassMultiSelectValue()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelectValue.md),
+[`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md),
+[`glassSelectServer()`](https://prigasg.github.io/glasstabs/reference/glassSelectServer.md),
+[`glassSelectValue()`](https://prigasg.github.io/glasstabs/reference/glassSelectValue.md),
+[`updateGlassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassMultiSelect.md)

@@ -30,6 +30,20 @@ updateGlassTabsUI(session, id, selected)
 
 Called for its side effect; returns `NULL` invisibly.
 
+## See also
+
+Other glass tabs:
+[`appendGlassTab()`](https://prigasg.github.io/glasstabs/reference/appendGlassTab.md),
+[`disableGlassTab()`](https://prigasg.github.io/glasstabs/reference/disableGlassTab.md),
+[`glassTabCondition()`](https://prigasg.github.io/glasstabs/reference/glassTabCondition.md),
+[`glassTabPanel()`](https://prigasg.github.io/glasstabs/reference/glassTabPanel.md),
+[`glassTabsOutput()`](https://prigasg.github.io/glasstabs/reference/glassTabsOutput.md),
+[`glassTabsServer()`](https://prigasg.github.io/glasstabs/reference/glassTabsServer.md),
+[`glassTabsUI()`](https://prigasg.github.io/glasstabs/reference/glassTabsUI.md),
+[`renderGlassTabs()`](https://prigasg.github.io/glasstabs/reference/renderGlassTabs.md),
+[`showGlassTab()`](https://prigasg.github.io/glasstabs/reference/showGlassTab.md),
+[`updateGlassTabBadge()`](https://prigasg.github.io/glasstabs/reference/updateGlassTabBadge.md)
+
 ## Examples
 
 ``` r

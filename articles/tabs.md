@@ -92,9 +92,27 @@ glassTabsUI("nav",
 )
 ```
 
-See
-[`vignette("indicators", package = "glasstabs")`](https://prigasg.github.io/glasstabs/articles/indicators.md)
-for side-by-side examples of all three styles.
+The same tabs can be rendered in all three styles without changing their
+content or server logic:
+
+``` r
+
+make_tabs <- function(id, indicator) {
+  glassTabsUI(
+    id,
+    glassTabPanel("overview", "Overview", selected = TRUE, p("Overview")),
+    glassTabPanel("data", "Data", p("Data")),
+    indicator = indicator,
+    compact = TRUE
+  )
+}
+
+tagList(
+  make_tabs("glass_tabs", "glass"),
+  make_tabs("solid_tabs", "solid"),
+  make_tabs("underline_tabs", "underline")
+)
+```
 
 ## Vertical orientation
 

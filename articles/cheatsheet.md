@@ -399,3 +399,6 @@ glasstabs_news()      # prints changelog to the console
   reduce widget spacing.
 - If you add new JS/CSS behavior during development, reinstall or
   `load_all()` before retesting.
+
+That is the whole working model: load the dependency once, compose
+widgets in the UI, and read their values through ordinary Shiny inputs.

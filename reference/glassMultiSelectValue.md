@@ -32,6 +32,17 @@ A named list with two reactives:
 
   Reactive string for the active style
 
+## See also
+
+Other glass select widgets:
+[`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md),
+[`glassMultiSelectServer()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelectServer.md),
+[`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md),
+[`glassSelectServer()`](https://prigasg.github.io/glasstabs/reference/glassSelectServer.md),
+[`glassSelectValue()`](https://prigasg.github.io/glasstabs/reference/glassSelectValue.md),
+[`updateGlassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassMultiSelect.md),
+[`updateGlassSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassSelect.md)
+
 ## Examples
 
 ``` r

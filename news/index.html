@@ -45,20 +45,29 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="development version" id="glasstabs-development-version">glasstabs (development version)<a class="anchor" aria-label="anchor" href="#glasstabs-development-version"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.3.4" id="glasstabs-034">glasstabs 0.3.4<a class="anchor" aria-label="anchor" href="#glasstabs-034"></a></h2>
 <div class="section level3">
-<h3 id="vertical-orientation-development-version">Vertical orientation<a class="anchor" aria-label="anchor" href="#vertical-orientation-development-version"></a></h3>
+<h3 id="internal-consistency-and-diagnostics-0-3-4">Internal consistency and diagnostics<a class="anchor" aria-label="anchor" href="#internal-consistency-and-diagnostics-0-3-4"></a></h3>
+<ul><li>Refactored internal rendering, theme CSS, hue generation, serialization, and validation without changing exported signatures, rendered HTML contracts, or Shiny message formats.</li>
+<li>Package-generated errors now inherit from <code>glasstabs_error</code>, with the leaf classes <code>glasstabs_error_bad_argument</code>, <code>glasstabs_error_bad_choice</code>, <code>glasstabs_error_bad_theme</code>, and <code>glasstabs_error_no_session</code>. This makes errors easier to catch programmatically while retaining instructive messages.</li>
+<li>Side-effect update helpers now consistently return <code>NULL</code> invisibly, as documented.</li>
+<li>
+<code><a href="../reference/glassTabCondition.html">glassTabCondition()</a></code> now emits valid single-backslash JavaScript escapes for carriage returns, newlines, tabs, and Unicode line separators in tab values.</li>
+<li>Added golden HTML and message-payload regression tests, lint configuration, and a coverage workflow.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="vertical-orientation-0-3-4">Vertical orientation<a class="anchor" aria-label="anchor" href="#vertical-orientation-0-3-4"></a></h3>
 <ul><li>New <code>orientation</code> argument for <code><a href="../reference/glassTabsUI.html">glassTabsUI()</a></code>: <code>"vertical"</code> stacks the tab buttons in a left-hand rail beside the content pane. ArrowUp/ArrowDown navigate in vertical mode, <code>aria-orientation</code> is set on the tablist, and <code>indicator = "underline"</code> renders as a slim side bar adjacent to the content. Falls back to stacked layout under 760px.</li>
 <li>New <code>tab_align</code> argument for <code><a href="../reference/glassTabsUI.html">glassTabsUI()</a></code>: <code>"center"</code> (default), <code>"left"</code>, or <code>"right"</code> aligns tab button text and icons.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="bslib--bootstrap-auto-theming-development-version">bslib / Bootstrap 5 auto theming<a class="anchor" aria-label="anchor" href="#bslib--bootstrap-auto-theming-development-version"></a></h3>
+<h3 id="bslib--bootstrap-auto-theming-0-3-4">bslib / Bootstrap 5 auto theming<a class="anchor" aria-label="anchor" href="#bslib--bootstrap-auto-theming-0-3-4"></a></h3>
 <ul><li>New <code>theme = "auto"</code> preset bridges to Bootstrap 5 color modes: light variables apply by default and dark variables apply under <code>data-bs-theme="dark"</code>, toggled live in the browser (works with <code><a href="https://rstudio.github.io/bslib/reference/input_dark_mode.html" class="external-link">bslib::input_dark_mode()</a></code> / <code><a href="https://rstudio.github.io/bslib/reference/input_dark_mode.html" class="external-link">toggle_dark_mode()</a></code> with no server code).</li>
 <li>
 <code><a href="../reference/glassSelect.html">glassSelect()</a></code> and <code><a href="../reference/glassMultiSelect.html">glassMultiSelect()</a></code> also support <code>theme = "auto"</code> so their triggers and dropdown panels keep the glass look in both light and dark Bootstrap 5 color modes.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="new-example-and-article-development-version">New example and article<a class="anchor" aria-label="anchor" href="#new-example-and-article-development-version"></a></h3>
+<h3 id="new-example-and-article-0-3-4">New example and article<a class="anchor" aria-label="anchor" href="#new-example-and-article-0-3-4"></a></h3>
 <ul><li>
 <code>runGlassExample("indicators")</code> demos the three indicator styles, vertical orientation, and auto theming side by side.</li>
 <li>New “Indicator Styles, Vertical Tabs, and Auto Theming” article.</li>
@@ -68,24 +77,21 @@
 <li>New “Publishing a glasstabs Workflow to Posit Connect” article.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="select-dropdown-positioning-development-version">Select dropdown positioning<a class="anchor" aria-label="anchor" href="#select-dropdown-positioning-development-version"></a></h3>
+<h3 id="select-dropdown-positioning-0-3-4">Select dropdown positioning<a class="anchor" aria-label="anchor" href="#select-dropdown-positioning-0-3-4"></a></h3>
 <ul><li>Teleported <code><a href="../reference/glassSelect.html">glassSelect()</a></code> and <code><a href="../reference/glassMultiSelect.html">glassMultiSelect()</a></code> dropdowns now clamp to the viewport, so narrow browser widths no longer cut off the left or right edge of the dropdown panel.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="tab-indicator-development-version">Tab indicator<a class="anchor" aria-label="anchor" href="#tab-indicator-development-version"></a></h3>
+<h3 id="tab-indicator-0-3-4">Tab indicator<a class="anchor" aria-label="anchor" href="#tab-indicator-0-3-4"></a></h3>
 <ul><li>New <code>indicator</code> argument for <code><a href="../reference/glassTabsUI.html">glassTabsUI()</a></code>: <code>"glass"</code> (default), <code>"solid"</code> (flat opaque sliding pill, no <code>backdrop-filter</code> or shimmer - lighter on the GPU and better suited to plain dashboards), and <code>"underline"</code> (slim sliding bar under the active tab).</li>
 </ul></div>
 <div class="section level3">
-<h3 id="halo-alignment-fixes-development-version">Halo alignment fixes<a class="anchor" aria-label="anchor" href="#halo-alignment-fixes-development-version"></a></h3>
+<h3 id="halo-alignment-fixes-0-3-4">Halo alignment fixes<a class="anchor" aria-label="anchor" href="#halo-alignment-fixes-0-3-4"></a></h3>
 <ul><li>The halo now fits the active tab exactly from its rendered edges, avoiding the right-side spill that could appear after initial load or tab changes.</li>
 <li>Initial halo placement now starts at the full tab size instead of briefly rendering a smaller centered outline before the first tab change.</li>
 <li>Default and compact tab buttons are larger and easier to hit.</li>
 <li>Halo position now accounts for container borders (<code>clientLeft</code>/<code>clientTop</code>), fixing a horizontal shift inside bordered fallback containers such as bs4Dash <code>.card-body</code>.</li>
 <li>A <code>ResizeObserver</code> re-aligns the halo whenever tab geometry changes without a window resize: badge count updates, label changes via <code>renderUI</code>, font swaps, or sidebar collapse.</li>
 </ul></div>
-</div>
-    <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.3.4" id="glasstabs-034">glasstabs 0.3.4<a class="anchor" aria-label="anchor" href="#glasstabs-034"></a></h2>
 <div class="section level3">
 <h3 id="dropdown-lifecycle-0-3-4">Dropdown lifecycle<a class="anchor" aria-label="anchor" href="#dropdown-lifecycle-0-3-4"></a></h3>
 <ul><li>Added <code><a href="../reference/closeGlassSelect.html">closeGlassSelect()</a></code>, <code><a href="../reference/closeGlassSelect.html">closeGlassMultiSelect()</a></code>, and <code><a href="../reference/closeGlassSelect.html">closeAllGlassSelects()</a></code> so apps can explicitly close dropdowns before tab switches, modal changes, or dynamic UI replacement.</li>
@@ -325,7 +331,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

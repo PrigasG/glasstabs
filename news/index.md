@@ -1,6 +1,24 @@
 # Changelog
 
-## glasstabs (development version)
+## glasstabs 0.3.4
+
+### Internal consistency and diagnostics
+
+- Refactored internal rendering, theme CSS, hue generation,
+  serialization, and validation without changing exported signatures,
+  rendered HTML contracts, or Shiny message formats.
+- Package-generated errors now inherit from `glasstabs_error`, with the
+  leaf classes `glasstabs_error_bad_argument`,
+  `glasstabs_error_bad_choice`, `glasstabs_error_bad_theme`, and
+  `glasstabs_error_no_session`. This makes errors easier to catch
+  programmatically while retaining instructive messages.
+- Side-effect update helpers now consistently return `NULL` invisibly,
+  as documented.
+- [`glassTabCondition()`](https://prigasg.github.io/glasstabs/reference/glassTabCondition.md)
+  now emits valid single-backslash JavaScript escapes for carriage
+  returns, newlines, tabs, and Unicode line separators in tab values.
+- Added golden HTML and message-payload regression tests, lint
+  configuration, and a coverage workflow.
 
 ### Vertical orientation
 
@@ -83,8 +101,6 @@
 - A `ResizeObserver` re-aligns the halo whenever tab geometry changes
   without a window resize: badge count updates, label changes via
   `renderUI`, font swaps, or sidebar collapse.
-
-## glasstabs 0.3.4
 
 ### Dropdown lifecycle
 

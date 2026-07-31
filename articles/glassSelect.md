@@ -101,10 +101,29 @@ glassSelect("region_rounded", fruits, shape = "rounded")
 glassSelect("region_square", fruits, shape = "square")
 ```
 
-The shape can also be switched at runtime from the server with
-`updateGlassSelect(session, "region_square", shape = "square")`. See the
-corner shape side by side with native selectize in
-`runGlassExample("square-corners")`.
+The shape can also be switched at runtime with
+`updateGlassSelect(session, "region_square", shape = "square")`. Here is
+the complete side-by-side layout with a native Shiny control:
+
+``` r
+
+fluidRow(
+  column(
+    6,
+    selectizeInput("native_region", "Native", choices = fruits)
+  ),
+  column(
+    6,
+    glassSelect(
+      "glass_region",
+      fruits,
+      label = "glasstabs",
+      shape = "square",
+      width = "100%"
+    )
+  )
+)
+```
 
 ## Width, grouped choices, and disabled options
 

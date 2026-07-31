@@ -154,6 +154,17 @@ The widget registers two Shiny inputs:
 By default, when `selected = NULL`, all choices are initially selected.
 This preserves the existing package behavior.
 
+## See also
+
+Other glass select widgets:
+[`glassMultiSelectServer()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelectServer.md),
+[`glassMultiSelectValue()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelectValue.md),
+[`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md),
+[`glassSelectServer()`](https://prigasg.github.io/glasstabs/reference/glassSelectServer.md),
+[`glassSelectValue()`](https://prigasg.github.io/glasstabs/reference/glassSelectValue.md),
+[`updateGlassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassMultiSelect.md),
+[`updateGlassSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassSelect.md)
+
 ## Examples
 
 ``` r

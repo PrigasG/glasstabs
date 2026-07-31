@@ -409,35 +409,40 @@ relative to the card body rather than a full-page container. Pair with
 <hr>
 </div>
 <div class="section level2">
-<h2 id="next-steps">Next steps<a class="anchor" aria-label="anchor" href="#next-steps"></a>
+<h2 id="a-useful-starting-pattern">A useful starting pattern<a class="anchor" aria-label="anchor" href="#a-useful-starting-pattern"></a>
 </h2>
-<ul>
-<li>
-<strong><a href="tabs.html">Animated Tabs</a></strong> — full
-reference for <code><a href="../reference/glassTabsUI.html">glassTabsUI()</a></code>: theming, keyboard nav,
-multiple instances, server patterns</li>
-<li>
-<strong><a href="indicators.html">Indicator Styles</a></strong> -
-compare the glass, solid, and underline tab indicators, vertical
-orientation, and <code>theme = "auto"</code>
-</li>
-<li>
-<strong><a href="posit-connect.html">Posit Connect
-Workflow</a></strong> - deploy a review workflow page built from
-filters, badges, server-side tab changes, and auto theming</li>
-<li>
-<strong><a href="multiselect.html">Multi-Select Filter</a></strong>
-— full reference for <code><a href="../reference/glassMultiSelect.html">glassMultiSelect()</a></code>: checkbox styles,
-custom hues, tag pills, theming</li>
-<li>
-<strong><a href="glassSelect.html">Single-Select
-Dropdown</a></strong>: search, clearable inputs, explicit “All” choices,
-and server-side updates</li>
-<li>
-<strong>Reference</strong> — complete function documentation at
-<code><a href="https://prigasg.github.io/glasstabs/reference">help(package = "glasstabs")</a></code>
-</li>
-</ul>
+<p>Most apps only need one setup call, one navigation widget, and the
+controls that belong near it. This compact pattern is ready to
+adapt:</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="../reference/useGlassTabs.html">useGlassTabs</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="../reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
+<span>    <span class="st">"main"</span>,</span>
+<span>    <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"summary"</span>, <span class="st">"Summary"</span>, selected <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">summary_ui</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"details"</span>, <span class="st">"Details"</span>, <span class="va">details_ui</span><span class="op">)</span>,</span>
+<span>    extra_ui <span class="op">=</span> <span class="fu"><a href="../reference/glassSelect.html">glassSelect</a></span><span class="op">(</span></span>
+<span>      <span class="st">"region"</span>,</span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>North <span class="op">=</span> <span class="st">"north"</span>, South <span class="op">=</span> <span class="st">"south"</span><span class="op">)</span>,</span>
+<span>      clearable <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>      theme <span class="op">=</span> <span class="st">"auto"</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    theme <span class="op">=</span> <span class="st">"auto"</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">active_tab</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/glassTabsServer.html">glassTabsServer</a></span><span class="op">(</span><span class="st">"main"</span><span class="op">)</span></span>
+<span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/observe.html" class="external-link">observe</a></span><span class="op">(</span><span class="op">{</span></span>
+<span>    <span class="va">region</span> <span class="op">&lt;-</span> <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">region</span><span class="op">)</span><span class="op">)</span> <span class="st">"all"</span> <span class="kw">else</span> <span class="va">input</span><span class="op">$</span><span class="va">region</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"Tab: "</span>, <span class="fu">active_tab</span><span class="op">(</span><span class="op">)</span>, <span class="st">"; region: "</span>, <span class="va">region</span><span class="op">)</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p>From here, add only the options the app actually needs. Every widget
+keeps the usual Shiny model: place it in the UI, read its value from
+<code>input</code>, and use an update helper when the server needs to
+change it.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
@@ -450,7 +455,7 @@ and server-side updates</li>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

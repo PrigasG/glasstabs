@@ -355,29 +355,39 @@ if (interactive()) shinyApp(ui, server)
 
 ------------------------------------------------------------------------
 
-## Next steps
+## A useful starting pattern
 
-- **[Animated
-  Tabs](https://prigasg.github.io/glasstabs/articles/tabs.md)** — full
-  reference for
-  [`glassTabsUI()`](https://prigasg.github.io/glasstabs/reference/glassTabsUI.md):
-  theming, keyboard nav, multiple instances, server patterns
-- **[Indicator
-  Styles](https://prigasg.github.io/glasstabs/articles/indicators.md)** -
-  compare the glass, solid, and underline tab indicators, vertical
-  orientation, and `theme = "auto"`
-- **[Posit Connect
-  Workflow](https://prigasg.github.io/glasstabs/articles/posit-connect.md)** -
-  deploy a review workflow page built from filters, badges, server-side
-  tab changes, and auto theming
-- **[Multi-Select
-  Filter](https://prigasg.github.io/glasstabs/articles/multiselect.md)**
-  — full reference for
-  [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md):
-  checkbox styles, custom hues, tag pills, theming
-- **[Single-Select
-  Dropdown](https://prigasg.github.io/glasstabs/articles/glassSelect.md)**:
-  search, clearable inputs, explicit “All” choices, and server-side
-  updates
-- **Reference** — complete function documentation at
-  [`help(package = "glasstabs")`](https://prigasg.github.io/glasstabs/reference)
+Most apps only need one setup call, one navigation widget, and the
+controls that belong near it. This compact pattern is ready to adapt:
+
+``` r
+
+ui <- fluidPage(
+  useGlassTabs(),
+  glassTabsUI(
+    "main",
+    glassTabPanel("summary", "Summary", selected = TRUE, summary_ui),
+    glassTabPanel("details", "Details", details_ui),
+    extra_ui = glassSelect(
+      "region",
+      c(North = "north", South = "south"),
+      clearable = TRUE,
+      theme = "auto"
+    ),
+    theme = "auto"
+  )
+)
+
+server <- function(input, output, session) {
+  active_tab <- glassTabsServer("main")
+
+  observe({
+    region <- if (is.null(input$region)) "all" else input$region
+    message("Tab: ", active_tab(), "; region: ", region)
+  })
+}
+```
+
+From here, add only the options the app actually needs. Every widget
+keeps the usual Shiny model: place it in the UI, read its value from
+`input`, and use an update helper when the server needs to change it.

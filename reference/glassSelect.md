@@ -140,6 +140,17 @@ The widget registers one Shiny input:
 - `input$<inputId>` : selected value as a length-1 character string, or
   `NULL` when nothing is selected
 
+## See also
+
+Other glass select widgets:
+[`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md),
+[`glassMultiSelectServer()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelectServer.md),
+[`glassMultiSelectValue()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelectValue.md),
+[`glassSelectServer()`](https://prigasg.github.io/glasstabs/reference/glassSelectServer.md),
+[`glassSelectValue()`](https://prigasg.github.io/glasstabs/reference/glassSelectValue.md),
+[`updateGlassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassMultiSelect.md),
+[`updateGlassSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassSelect.md)
+
 ## Examples
 
 ``` r

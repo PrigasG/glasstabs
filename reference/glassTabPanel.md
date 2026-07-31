@@ -40,6 +40,20 @@ glassTabPanel(value, label, ..., icon = NULL, selected = FALSE)
 A list of class `"glassTabPanel"` consumed by
 [`glassTabsUI()`](https://prigasg.github.io/glasstabs/reference/glassTabsUI.md).
 
+## See also
+
+Other glass tabs:
+[`appendGlassTab()`](https://prigasg.github.io/glasstabs/reference/appendGlassTab.md),
+[`disableGlassTab()`](https://prigasg.github.io/glasstabs/reference/disableGlassTab.md),
+[`glassTabCondition()`](https://prigasg.github.io/glasstabs/reference/glassTabCondition.md),
+[`glassTabsOutput()`](https://prigasg.github.io/glasstabs/reference/glassTabsOutput.md),
+[`glassTabsServer()`](https://prigasg.github.io/glasstabs/reference/glassTabsServer.md),
+[`glassTabsUI()`](https://prigasg.github.io/glasstabs/reference/glassTabsUI.md),
+[`renderGlassTabs()`](https://prigasg.github.io/glasstabs/reference/renderGlassTabs.md),
+[`showGlassTab()`](https://prigasg.github.io/glasstabs/reference/showGlassTab.md),
+[`updateGlassTabBadge()`](https://prigasg.github.io/glasstabs/reference/updateGlassTabBadge.md),
+[`updateGlassTabsUI()`](https://prigasg.github.io/glasstabs/reference/updateGlassTabsUI.md)
+
 ## Examples
 
 ``` r

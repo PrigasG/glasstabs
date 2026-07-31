@@ -25,6 +25,17 @@ glassSelectValue(input, inputId)
 A reactive expression returning the current selected value as a
 character scalar, or `NULL` when nothing is selected.
 
+## See also
+
+Other glass select widgets:
+[`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md),
+[`glassMultiSelectServer()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelectServer.md),
+[`glassMultiSelectValue()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelectValue.md),
+[`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md),
+[`glassSelectServer()`](https://prigasg.github.io/glasstabs/reference/glassSelectServer.md),
+[`updateGlassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassMultiSelect.md),
+[`updateGlassSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassSelect.md)
+
 ## Examples
 
 ``` r

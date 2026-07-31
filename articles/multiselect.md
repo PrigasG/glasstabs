@@ -122,10 +122,31 @@ glassMultiSelect("filters_rounded", fruits, shape = "rounded")
 glassMultiSelect("filters_square", fruits, shape = "square")
 ```
 
-The shape can also be switched at runtime from the server with
+The shape can also be switched at runtime with
 `updateGlassMultiSelect(session, "filters_square", shape = "square")`.
-The `runGlassExample("square-corners")` app shows the square shape next
-to native selectize.
+This complete layout places it beside a native multiple select:
+
+``` r
+
+fluidRow(
+  column(
+    6,
+    selectizeInput(
+      "native_filters", "Native", choices = fruits, multiple = TRUE
+    )
+  ),
+  column(
+    6,
+    glassMultiSelect(
+      "glass_filters",
+      fruits,
+      label = "glasstabs",
+      shape = "square",
+      width = "100%"
+    )
+  )
+)
+```
 
 ## Width, grouped choices, and disabled options
 
