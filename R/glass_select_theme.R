@@ -52,7 +52,7 @@ glass_select_theme <- function(
     accent_color = NULL,
     label_color = NULL
 ) {
-  mode <- match.arg(mode)
+  mode <- .gt_match_arg(mode, c("dark", "light"), "mode")
 
   structure(
     list(
@@ -91,7 +91,7 @@ glass_select_theme <- function(
 
   if (is.character(theme) && length(theme) == 1) {
     if (!theme %in% c("dark", "light", "auto")) {
-      stop(
+      .gt_abort(
         sprintf(
           paste0(
             "`theme = \"%s\"` is not a valid preset.\n",
@@ -100,7 +100,10 @@ glass_select_theme <- function(
           ),
           theme
         ),
-        call. = FALSE
+        class = "glasstabs_error_bad_theme",
+        argument = "theme",
+        value = theme,
+        expected = c("dark", "light", "auto", "glass_select_theme")
       )
     }
     return(if (theme %in% c("light", "auto")) light_defaults else dark_defaults)
@@ -122,7 +125,7 @@ glass_select_theme <- function(
     return(base)
   }
 
-  stop(
+  .gt_abort(
     sprintf(
       paste0(
         "`theme` must be \"dark\", \"light\", \"auto\", or a glass_select_theme() object, got %s.\n",
@@ -130,6 +133,9 @@ glass_select_theme <- function(
       ),
       class(theme)[1]
     ),
-    call. = FALSE
+    class = "glasstabs_error_bad_theme",
+    argument = "theme",
+    value = theme,
+    expected = c("dark", "light", "auto", "glass_select_theme")
   )
 }

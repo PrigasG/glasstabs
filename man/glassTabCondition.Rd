@@ -52,3 +52,17 @@ if (interactive()) {
 }
 
 }
+\seealso{
+Other glass tabs:
+\code{\link{appendGlassTab}()},
+\code{\link{disableGlassTab}()},
+\code{\link{glassTabPanel}()},
+\code{\link{glassTabsOutput}()},
+\code{\link{glassTabsServer}()},
+\code{\link{glassTabsUI}()},
+\code{\link{renderGlassTabs}()},
+\code{\link{showGlassTab}()},
+\code{\link{updateGlassTabBadge}()},
+\code{\link{updateGlassTabsUI}()}
+}
+\concept{glass tabs}

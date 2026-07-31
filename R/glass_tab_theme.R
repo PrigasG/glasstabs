@@ -102,7 +102,7 @@ glass_tab_theme <- function(
 
   if (is.character(theme) && length(theme) == 1) {
     if (!theme %in% c("dark", "light")) {
-      stop(
+      .gt_abort(
         sprintf(
           paste0(
             "glassTabsUI(): `theme = \"%s\"` is not a valid preset.\n",
@@ -110,26 +110,21 @@ glass_tab_theme <- function(
           ),
           theme
         ),
-        call. = FALSE
+        class = "glasstabs_error_bad_theme",
+        argument = "theme",
+        value = theme,
+        expected = c("dark", "light", "auto", "glass_tab_theme")
       )
     }
     return(if (theme == "light") light_defaults else dark_defaults)
   }
 
   if (inherits(theme, "glass_tab_theme")) {
-    base <- dark_defaults
-    if (!is.null(theme$tab_text))        base$tab_text        <- theme$tab_text
-    if (!is.null(theme$tab_active_text)) base$tab_active_text <- theme$tab_active_text
-    if (!is.null(theme$halo_bg))         base$halo_bg         <- theme$halo_bg
-    if (!is.null(theme$halo_border))     base$halo_border     <- theme$halo_border
-    if (!is.null(theme$content_bg))      base$content_bg      <- theme$content_bg
-    if (!is.null(theme$content_border))  base$content_border  <- theme$content_border
-    if (!is.null(theme$card_bg))         base$card_bg         <- theme$card_bg
-    if (!is.null(theme$card_text))       base$card_text       <- theme$card_text
-    return(base)
+    overrides <- Filter(Negate(is.null), unclass(theme))
+    return(utils::modifyList(dark_defaults, overrides))
   }
 
-  stop(
+  .gt_abort(
     sprintf(
       paste0(
         "glassTabsUI(): `theme` must be \"dark\", \"light\", or a glass_tab_theme() object,\n",
@@ -137,6 +132,9 @@ glass_tab_theme <- function(
       ),
       class(theme)[1]
     ),
-    call. = FALSE
+    class = "glasstabs_error_bad_theme",
+    argument = "theme",
+    value = theme,
+    expected = c("dark", "light", "auto", "glass_tab_theme")
   )
 }

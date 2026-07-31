@@ -1,5 +1,5 @@
 Package: glasstabs
-Title: Animated Glass-Style Tabs and Multi-Select Filter for 'Shiny'
+Title: Animated Glass-Style Tabs and Select Inputs for 'Shiny'
 Version: 0.3.4
 Authors@R:
     person("George", "Arthur", , "prigasgenthian48@gmail.com", role = c("aut", "cre"))
@@ -23,17 +23,22 @@ URL: https://github.com/PrigasG/glasstabs,
     https://prigasg.github.io/glasstabs/
 BugReports: https://github.com/PrigasG/glasstabs/issues
 Imports:
+    cli,
     htmltools (>= 0.5.0),
+    jsonlite,
     shiny (>= 1.7.0)
 Suggests:
     bs4Dash,
     bslib,
+    covr,
     knitr,
+    lintr,
     mockery,
     pkgload,
     rmarkdown,
     shinytest2,
     spelling,
+    styler,
     testthat (>= 3.0.0),
     withr
 VignetteBuilder: 

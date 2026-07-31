@@ -1,6 +1,9 @@
+ArrowDown
+ArrowUp
 CMD
 CSP
 Cheatsheet
+Codecov
 DOM
 Dropdown
 HSL
@@ -22,6 +25,7 @@ combobox
 conditionalPanel
 debounced
 deduplicated
+deployable
 dismissible
 dropdown
 dropdowns
@@ -34,6 +38,7 @@ grey
 greyed
 greys
 hardcoded
+handoff
 htmltools
 initialisation
 initialised
@@ -44,8 +49,10 @@ morphism
 namespaced
 namespacing
 nav
+offcanvas
 pkgdown
 pre
+px
 reactively
 reactives
 reinitialised
@@ -60,7 +67,9 @@ selectInput
 selectable
 selectize
 stylesheet
+tablist
 themeable
 theming
+Teleported
 walkthrough
 widget's

@@ -1,215 +1,239 @@
 # glasstabs <img src="man/figures/logo.svg" align="right" height="120" />
 
-> Animated glass-morphism tab navigation and multi-select filter widgets for R Shiny
+> Animated tabs and select inputs that feel at home in a Shiny app.
 
 <!-- badges: start -->
 [![CRAN status](https://www.r-pkg.org/badges/version/glasstabs)](https://CRAN.R-project.org/package=glasstabs)
 [![R-CMD-check](https://github.com/prigasG/glasstabs/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/prigasG/glasstabs/actions/workflows/R-CMD-check.yaml)
+[![Codecov test coverage](https://codecov.io/gh/prigasG/glasstabs/graph/badge.svg)](https://app.codecov.io/gh/prigasG/glasstabs)
+[![Live Connect app](https://img.shields.io/badge/Live%20app-Posit%20Connect-447099)](https://prigas89-glasstabs.share.connect.posit.cloud)
 <!-- badges: end -->
 
----
+glasstabs gives Shiny apps polished navigation and filtering without asking you
+to write custom JavaScript or CSS. The package includes:
 
-## Overview
+- `glassTabsUI()` for animated horizontal or vertical tab navigation
+- `glassSelect()` for a searchable single-select input
+- `glassMultiSelect()` for multi-select filters with optional tag pills
 
-**glasstabs** provides animated Shiny widgets built around a glass-morphism aesthetic:
-
-- **`glassTabsUI()`** - an animated tab bar with a sliding glass halo that follows the active tab
-- **`glassMultiSelect()`** - a multi-select dropdown with three selection styles, live search, tag-pill syncing, and server-side update support
-- **`glassSelect()`** - an animated single-select dropdown with optional search, clear support, theming, selection styles, and server-side update support
-
-All widgets are self-contained, fully themeable, and work in plain `fluidPage()`, `bs4DashPage()`, or any other Shiny page wrapper.
-
-**Full documentation:** <https://prigasg.github.io/glasstabs/>
-
----
+The widgets work in a regular `fluidPage()`, a `bslib` app, or a `bs4Dash`
+dashboard. Each one can use a dark, light, automatic, or custom colour theme.
 
 ## Installation
 
-```r
-# From CRAN
-install.packages("glasstabs")
+Install the CRAN release:
 
-# From GitHub (development version)
-pak::pak("prigasG/glasstabs")
-# or
-devtools::install_github("prigasG/glasstabs")
+```r
+install.packages("glasstabs")
 ```
 
----
+Or install the development version from GitHub:
 
-## Quick start
+```r
+pak::pak("prigasG/glasstabs")
+```
+
+## A complete app
+
+Call `useGlassTabs()` once in the UI, then compose the widgets like ordinary
+Shiny controls. This app places a filter beside two tabs and displays the
+current tab and selection.
 
 ```r
 library(shiny)
 library(glasstabs)
+
+choices <- c(Apple = "apple", Banana = "banana", Cherry = "cherry")
 
 ui <- fluidPage(
   useGlassTabs(),
   glassTabsUI(
     "main",
     glassTabPanel(
-      "t1", "Overview", selected = TRUE,
-      h3("Overview"),
-      p("Content here."),
-      glassFilterTags("cat")
+      "overview", "Overview", selected = TRUE,
+      h3("Fruit summary"),
+      glassFilterTags("fruit")
     ),
     glassTabPanel(
-      "t2", "Details",
-      h3("Details"),
-      p("More content."),
-      glassFilterTags("cat")
+      "details", "Details",
+      h3("Selection details"),
+      verbatimTextOutput("selection")
     ),
     extra_ui = glassMultiSelect(
-      "cat",
-      c(A = "a", B = "b", C = "c"),
+      "fruit",
+      choices,
       show_style_switcher = FALSE
     )
   ),
-  verbatimTextOutput("info")
+  verbatimTextOutput("active_tab")
 )
 
 server <- function(input, output, session) {
-  tabs <- glassTabsServer("main")
-  filt <- glassMultiSelectValue(input, "cat")
+  active_tab <- glassTabsServer("main")
 
-  output$info <- renderPrint({
-    list(
-      active_tab = tabs(),
-      selected = filt$selected(),
-      style = filt$style()
-    )
+  output$active_tab <- renderPrint(active_tab())
+  output$selection <- renderPrint(input$fruit)
+}
+
+if (interactive()) {
+  shinyApp(ui, server)
+}
+```
+
+`glassMultiSelect()` selects every choice by default. Use
+`selected = character(0)` when the filter should start empty.
+
+## Pick the control you need
+
+Tabs are made from `glassTabPanel()` objects. The first selected panel is shown
+when the app opens.
+
+```r
+glassTabsUI(
+  "reports",
+  glassTabPanel("summary", "Summary", selected = TRUE, summary_ui),
+  glassTabPanel("table", "Table", tableOutput("results")),
+  glassTabPanel("notes", "Notes", textAreaInput("notes", NULL))
+)
+```
+
+A single-select behaves like a standard Shiny input. Its value is available at
+`input$region`.
+
+```r
+glassSelect(
+  "region",
+  c(North = "north", South = "south", East = "east", West = "west"),
+  label = "Region",
+  clearable = TRUE
+)
+```
+
+A multi-select returns a character vector and can display the selected values
+as tag pills anywhere in the UI.
+
+```r
+glassMultiSelect(
+  "status",
+  c(Open = "open", Review = "review", Closed = "closed"),
+  selected = c("open", "review"),
+  label = "Status"
+)
+
+glassFilterTags("status")
+```
+
+## Match the surrounding app
+
+Use `theme = "auto"` in Bootstrap 5 or `bslib` apps so the widgets follow the
+page's light and dark modes. Use `shape = "square"` when the controls sit next
+to native Shiny inputs.
+
+```r
+glassTabsUI(
+  "nav",
+  glassTabPanel("one", "One", selected = TRUE, p("First panel")),
+  glassTabPanel("two", "Two", p("Second panel")),
+  indicator = "underline",
+  theme = "auto"
+)
+
+glassSelect("region", choices, shape = "square", theme = "auto")
+glassMultiSelect("filters", choices, shape = "square", theme = "auto")
+```
+
+Tabs also support a vertical rail and three indicator styles:
+
+```r
+glassTabsUI(
+  "workflow",
+  glassTabPanel("intake", "Intake", selected = TRUE, intake_ui),
+  glassTabPanel("review", "Review", review_ui),
+  glassTabPanel("approve", "Approve", approve_ui),
+  orientation = "vertical",
+  indicator = "solid",
+  tab_align = "left"
+)
+```
+
+For a custom accent, change only the fields your app needs:
+
+```r
+glassTabsUI(
+  "nav",
+  glassTabPanel("a", "A", selected = TRUE, p("Content")),
+  glassTabPanel("b", "B", p("More content")),
+  theme = glass_tab_theme(
+    halo_bg = "rgba(37, 99, 235, 0.16)",
+    halo_border = "#2563eb"
+  )
+)
+
+glassSelect(
+  "region",
+  choices,
+  theme = glass_select_theme(mode = "light", accent_color = "#2563eb")
+)
+```
+
+Inside a `bs4Dash` card, `compact = TRUE` reduces spacing and `wrap = FALSE`
+lets the card provide the outer container.
+
+```r
+bs4Dash::box(
+  width = 12,
+  glasstabs::glassTabsUI(
+    "dashboard",
+    glassTabPanel("summary", "Summary", selected = TRUE, summary_ui),
+    glassTabPanel("detail", "Detail", detail_ui),
+    compact = TRUE,
+    wrap = FALSE,
+    theme = "light"
+  )
+)
+```
+
+## Read and update values
+
+The widgets expose familiar Shiny inputs:
+
+| Widget | Current value |
+|---|---|
+| `glassTabsUI("main", ...)` | `input[["main-active_tab"]]` |
+| `glassSelect("region", ...)` | `input$region` |
+| `glassMultiSelect("status", ...)` | `input$status` |
+| An open select dropdown | `input$region_open` or `input$status_open` |
+
+Server helpers cover common programmatic changes:
+
+```r
+server <- function(input, output, session) {
+  observeEvent(input$next_step, {
+    updateGlassTabsUI(session, "workflow", selected = "review")
+    updateGlassTabBadge(session, "workflow", "review", count = 3)
+  })
+
+  observeEvent(input$reset_filters, {
+    updateGlassSelect(session, "region", selected = character(0))
+    updateGlassMultiSelect(session, "status", selected = character(0))
   })
 }
-
-if (interactive()) shinyApp(ui, server)
 ```
 
-> **Note:** `useGlassTabs()` must be called once somewhere in the UI before any `glassTabsUI()` or `glassMultiSelect()` call. It injects the shared CSS and JavaScript as a properly deduplicated `htmltools` dependency.
-
----
-
-## Function reference
-
-### Setup
-
-| Function | Description |
-|---|---|
-| `useGlassTabs()` | Inject package CSS and JavaScript - call once in the UI |
-| `runGlassExample(example)` | Launch a built-in example app (`runGlassExample()` to list all) |
-| `glasstabs_news()` | Print the package changelog to the R console |
-
-Built-in examples currently include `basic`, `bs4dash`, `bslib`,
-`connect-workflow`, `dashboard`, `indicators`, `server-select`, `smoke-test`,
-and `square-corners`. The `connect-workflow` example is a Posit Connect-ready
-review page that combines filters, workflow tabs, badges, server-side tab
-updates, and auto theming. The `square-corners` example demonstrates
-`shape = "square"` on `glassSelect()` and `glassMultiSelect()` side by side
-with native `selectizeInput()`, `indicators` shows the three tab indicator
-styles plus vertical tabs and auto theming, and `bslib` shows square glass
-selects inside a Bootstrap 5 themed app.
-
-### Tab widget
-
-| Function | Description |
-|---|---|
-| `glassTabsUI(id, ..., selected, wrap, compact, shape, indicator, orientation, tab_align, extra_ui, theme)` | Animated tab bar with content area; `compact=TRUE` for dashboard cards |
-| `glassTabPanel(value, label, ..., icon, selected)` | Define one tab and its content; `icon` accepts `shiny::icon()` |
-| `glassTabsServer(id, bookmark)` | Reactive returning the active tab; bookmarks active tab in URL |
-| `glassTabsOutput(outputId)` | UI placeholder for a server-rendered tab widget |
-| `renderGlassTabs({expr})` | Render a `glassTabsUI()` reactively; JS reinitialises automatically |
-| `glassTabCondition(id, value)` | JS condition string for `conditionalPanel()` |
-| `updateGlassTabsUI(session, id, selected)` | Switch the active tab from the server |
-| `updateGlassTabBadge(session, id, value, count)` | Set a numeric badge on a tab button (`0` hides it) |
-| `showGlassTab(session, id, value)` | Show a hidden tab |
-| `hideGlassTab(session, id, value)` | Hide a tab from the navigation bar |
-| `disableGlassTab(session, id, value)` | Gray out a tab (stays visible, not clickable) |
-| `enableGlassTab(session, id, value)` | Re-enable a disabled tab |
-| `appendGlassTab(session, id, tab, select)` | Add a new tab at runtime |
-| `removeGlassTab(session, id, value)` | Remove a tab at runtime |
-| `glass_tab_theme(...)` | Custom colour theme for `glassTabsUI()` |
-
-### Select widgets
-
-| Function | Description |
-|---|---|
-| `glassMultiSelect(inputId, choices, ...)` | Multi-select dropdown widget |
-| `glassMultiSelectServer(inputId, choices, ...)` | Server-side search for large multi-select choice sets |
-| `updateGlassMultiSelect(session, inputId, ...)` | Update multi-select choices, selection, or style |
-| `glassMultiSelectValue(input, inputId)` | Reactive helper for multi-select value and style |
-| `glassSelect(inputId, choices, ...)` | Single-select dropdown widget |
-| `glassSelectServer(inputId, choices, ...)` | Server-side search for large single-select choice sets |
-| `updateGlassSelect(session, inputId, ...)` | Update single-select choices, selection, or style |
-| `glassSelectValue(input, inputId)` | Reactive helper for selected value |
-| `closeGlassSelect(session, inputId)` | Close one open single-select dropdown |
-| `closeGlassMultiSelect(session, inputId)` | Close one open multi-select dropdown |
-| `closeAllGlassSelects(session)` | Close every open glasstabs select dropdown |
-| `glassFilterTags(inputId)` | Tag-pill display area synced to a multi-select |
-| `glass_select_theme(...)` | Custom colour theme for `glassSelect()` and `glassMultiSelect()` |
-
----
-
-## Shiny inputs
-
-| Input | Type | Description |
-|---|---|---|
-| `input[["<id>-active_tab"]]` | `character` | Currently active tab value from `glassTabsUI()` |
-| `input$<inputId>` | `character vector` | Selected values from `glassMultiSelect()` |
-| `input$<inputId>_style` | `character` | Active selection style from `glassMultiSelect()` |
-| `input$<inputId>_open` | `logical` | Whether a select dropdown is currently open |
-| `input$<inputId>` | `character` or `NULL` | Selected value from `glassSelect()` |
-
-### conditionalPanel integration
-
-Use `glassTabCondition()` to avoid constructing the input key manually:
+Use `glassTabCondition()` when a regular `conditionalPanel()` should follow the
+active glass tab:
 
 ```r
-# Instead of: condition = "input['main-active_tab'] === 'details'"
 conditionalPanel(
   condition = glassTabCondition("main", "details"),
-  p("Only visible on the Details tab.")
+  p("This appears while the Details tab is active.")
 )
-
-# Inside a module - pass the same id as glassTabsUI():
-# glassTabsUI(ns("tabs"), ...)
-# conditionalPanel(condition = glassTabCondition(ns("tabs"), "details"), ...)
 ```
 
----
+## Large choice sets
 
-
-## Multi-select example
-
-```r
-library(shiny)
-library(glasstabs)
-
-choices <- c(
-  Apple  = "apple",
-  Banana = "banana",
-  Cherry = "cherry"
-)
-
-ui <- fluidPage(
-  useGlassTabs(),
-  glassMultiSelect("fruit", choices),
-  glassFilterTags("fruit"),
-  verbatimTextOutput("out")
-)
-
-server <- function(input, output, session) {
-  output$out <- renderPrint(input$fruit)
-}
-
-if (interactive()) shinyApp(ui, server)
-```
-
-> **Note:** By default, `glassMultiSelect()` starts with all choices selected.
-
-## Server-side search for large choice sets
-
-For large vectors, set `server = TRUE` in the UI and register the matching
-server helper. The widget renders only a bounded page of choices and asks
-Shiny for matches as the user types.
+For hundreds or thousands of choices, keep the full vector on the server and
+send a small page of matches to the browser.
 
 ```r
 many_choices <- stats::setNames(
@@ -219,336 +243,85 @@ many_choices <- stats::setNames(
 
 ui <- fluidPage(
   useGlassTabs(),
-  glassSelect("region", many_choices, server = TRUE, server_limit = 30),
+  glassSelect("item", many_choices, server = TRUE, server_limit = 30),
   glassMultiSelect("filters", many_choices, server = TRUE, server_limit = 30)
 )
 
 server <- function(input, output, session) {
-  glassSelectServer("region", many_choices, session = session, limit = 30)
+  glassSelectServer("item", many_choices, session = session, limit = 30)
   glassMultiSelectServer("filters", many_choices, session = session, limit = 30)
 }
 ```
 
-Try the shipped example with `runGlassExample("server-select")`.
+## Function reference
 
-## Server-side updates
+### Setup
 
-```r
-server <- function(input, output, session) {
-  observeEvent(input$clear, {
-    updateGlassMultiSelect(
-      session,
-      "fruit",
-      selected = character(0)
-    )
-  })
-
-  observeEvent(input$fill_style, {
-    updateGlassMultiSelect(
-      session,
-      "fruit",
-      check_style = "filled"
-    )
-  })
-}
-
-```
-
----
-
-
-## Single-select example
-
-```{r single-select}
-library(shiny)
-library(glasstabs)
-
-choices <- c(
-  North = "north",
-  South = "south",
-  East  = "east",
-  West  = "west"
-)
-
-ui <- fluidPage(
-  useGlassTabs(),
-  glassSelect(
-    "region",
-    choices,
-    clearable = TRUE,
-    check_style = "checkbox",
-    theme = "light"
-  ),
-  verbatimTextOutput("out")
-)
-
-server <- function(input, output, session) {
-  output$out <- renderPrint(input$region)
-}
-
-if (interactive()) shinyApp(ui, server)
-```
-
-## Square corners
-
-By default `glassSelect()` and `glassMultiSelect()` use the signature rounded
-glass corners. Pass `shape = "square"` for crisp, selectize-style corners so
-the widgets sit flush next to native `selectizeInput()` controls without
-looking out of place:
-
-```r
-glassSelect("region", choices, shape = "square")
-glassMultiSelect("filters", choices, shape = "square")
-```
-
-See it next to native selectize with `runGlassExample("square-corners")`, or
-inside a Bootstrap 5 theme with `runGlassExample("bslib")`. `glassTabsUI()` also
-takes `shape = "square"`, so the tab bar can match the selects.
-
-## Native-layout parity
-
-For drop-in use alongside native `selectizeInput()`, both selects also accept a
-`width`, grouped choices as a named list (selectInput()-style), and disabled
-state:
-
-```r
-glassSelect("region", choices, width = "240px")
-
-glassSelect("food", list(
-  Fruit = c(Apple = "apple", Banana = "banana"),
-  Veg   = c(Carrot = "carrot", Pea = "pea")
-))
-
-glassMultiSelect("filters", choices, disabled_choices = c("apple", "pear"))
-```
-
-`disabled` (whole widget) and `disabled_choices` (individual options) are also
-reachable at runtime through `updateGlassSelect()` / `updateGlassMultiSelect()`.
-
-## Server-side updates
-
-```r
-server <- function(input, output, session) {
-  observeEvent(input$pick_south, {
-    updateGlassSelect(
-      session,
-      "region",
-      selected = "south"
-    )
-  })
-
-  observeEvent(input$clear_region, {
-    updateGlassSelect(
-      session,
-      "region",
-      selected = character(0)
-    )
-  })
-  
-  observeEvent(input$fill_region, {
-  updateGlassSelect(
-    session,
-    "region",
-    check_style = "filled"
-  )
-})
-}
-```
-
----
-
-## Theming
-
-All widgets default to `"dark"`. You can switch to `"light"` or supply a custom theme object.
-
-```r
-# Tab widget
-glassTabsUI(
-  "nav",
-  glassTabPanel("a", "A", selected = TRUE, p("Content")),
-  theme = glass_tab_theme(
-    halo_bg = "rgba(251,191,36,0.15)",
-    tab_active_text = "#fef3c7"
-  )
-)
-
-# Multi-select
-glassMultiSelect(
-  "filter", choices,
-  theme = glass_select_theme(
-    mode = "dark",
-    accent_color = "#f59e0b"
-  )
-)
-
-# Single-select
-glassSelect(
-  "region", choices,
-  theme = glass_select_theme(
-    mode = "light",
-    accent_color = "#2563eb"
-  )
-)
-
-# Built-in light preset
-glassTabsUI("nav", theme = "light", ...)
-glassMultiSelect("f", choices, theme = "light", ...)
-glassSelect("s", choices, theme = "light", ...)
-```
-
-### `glass_tab_theme()` handles
-
-| Argument | Controls |
+| Function | Description |
 |---|---|
-| `tab_text` | Inactive tab label color |
-| `tab_active_text` | Active tab label color |
-| `halo_bg` | Sliding glass halo fill |
-| `halo_border` | Sliding glass halo border |
-| `content_bg` | Tab content panel background |
-| `content_border` | Tab content panel border |
-| `card_bg` | Inner card background |
-| `card_text` | Inner card text color |
+| `useGlassTabs()` | Inject package CSS and JavaScript—call once in the UI |
+| `runGlassExample(example)` | Launch a built-in example app (`runGlassExample()` lists all available apps) |
+| `glasstabs_news()` | Print the package changelog to the R console |
 
-### `glass_select_theme()` handles
+Built-in examples include `basic`, `bs4dash`, `bslib`, `connect-workflow`,
+`dashboard`, `indicators`, `server-select`, `smoke-test`, and
+`square-corners`.
 
-| Argument | Controls |
+### Tab widget
+
+| Function | Description |
 |---|---|
-| `mode` | Base preset, either `"dark"` or `"light"` |
-| `bg_color` | Dropdown panel and trigger background |
-| `border_color` | Border color |
-| `text_color` | Main text color |
-| `accent_color` | Ticks, badges, checked states, and clear controls |
-| `label_color` | Optional field label color |
+| `glassTabsUI(id, ..., selected, wrap, compact, shape, indicator, orientation, tab_align, extra_ui, theme)` | Animated tab bar with content area; use `compact = TRUE` for dashboard cards |
+| `glassTabPanel(value, label, ..., icon, selected)` | Define one tab and its content; `icon` accepts `shiny::icon()` |
+| `glassTabsServer(id, bookmark)` | Reactive returning the active tab; can bookmark the active tab in the URL |
+| `glassTabsOutput(outputId)` | UI placeholder for a server-rendered tab widget |
+| `renderGlassTabs({expr})` | Render a `glassTabsUI()` reactively; JavaScript reinitialises automatically |
+| `glassTabCondition(id, value)` | JavaScript condition string for `conditionalPanel()` |
+| `updateGlassTabsUI(session, id, selected)` | Switch the active tab from the server |
+| `updateGlassTabBadge(session, id, value, count)` | Set a numeric badge on a tab button (`0` hides it) |
+| `showGlassTab(session, id, value)` | Show a hidden tab |
+| `hideGlassTab(session, id, value)` | Hide a tab from the navigation bar |
+| `disableGlassTab(session, id, value)` | Disable a tab while keeping it visible |
+| `enableGlassTab(session, id, value)` | Re-enable a disabled tab |
+| `appendGlassTab(session, id, tab, select)` | Add a new tab at runtime |
+| `removeGlassTab(session, id, value)` | Remove a tab at runtime |
+| `glass_tab_theme(...)` | Create a custom colour theme for `glassTabsUI()` |
 
----
+### Select widgets
 
-## Checkbox styles
-
-`glassMultiSelect()` and `glassSelect()` support three selection indicator styles:
-
-| Style | Appearance |
+| Function | Description |
 |---|---|
-| `"checkbox"` | Ghost box with animated tick |
-| `"check-only"` | Tick only, no box |
-| `"filled"` | Solid colored box with no tick |
+| `glassMultiSelect(inputId, choices, ...)` | Multi-select dropdown widget |
+| `glassMultiSelectServer(inputId, choices, ...)` | Server-side search for large multi-select choice sets |
+| `updateGlassMultiSelect(session, inputId, ...)` | Update multi-select choices, selection, or style |
+| `glassMultiSelectValue(input, inputId)` | Reactive helpers for multi-select value and style |
+| `glassSelect(inputId, choices, ...)` | Single-select dropdown widget |
+| `glassSelectServer(inputId, choices, ...)` | Server-side search for large single-select choice sets |
+| `updateGlassSelect(session, inputId, ...)` | Update single-select choices, selection, or style |
+| `glassSelectValue(input, inputId)` | Reactive helper for the selected value |
+| `closeGlassSelect(session, inputId)` | Close one open single-select dropdown |
+| `closeGlassMultiSelect(session, inputId)` | Close one open multi-select dropdown |
+| `closeAllGlassSelects(session)` | Close every open glasstabs select dropdown |
+| `glassFilterTags(inputId)` | Tag-pill display area synced to a multi-select |
+| `glass_select_theme(...)` | Create a custom theme for `glassSelect()` and `glassMultiSelect()` |
 
-```r
-glassMultiSelect(
-  "f", choices,
-  check_style = "filled",
-  show_style_switcher = FALSE
-)
+## Shiny inputs
 
-glassSelect(
-  "s", choices,
-  check_style = "check-only"
-)
-```
+| Input | Type | Description |
+|---|---|---|
+| `input[["<id>-active_tab"]]` | `character` | Active tab value from `glassTabsUI()` |
+| `input$<inputId>` | `character vector` | Selected values from `glassMultiSelect()` |
+| `input$<inputId>_style` | `character` | Active selection style from `glassMultiSelect()` |
+| `input$<inputId>_open` | `logical` | Whether a select dropdown is open |
+| `input$<inputId>` | `character` or `NULL` | Selected value from `glassSelect()` |
 
-Hues distribute automatically around the color wheel or can be set manually under multi-select:
+## Documentation and support
 
-```r
-glassMultiSelect("f", c(Apple = "apple", Banana = "banana", Cherry = "cherry"),
-  check_style = "filled",
-  hues = c(apple = 10L, banana = 50L, cherry = 340L)
-)
-```
+The [glasstabs website](https://prigasg.github.io/glasstabs/) includes focused
+articles and a searchable function reference. Release notes are available in
+[`NEWS.md`](NEWS.md) or from R with `glasstabs_news()`.
 
----
-
-## bs4Dash compatibility
-
-Pass `wrap = FALSE` when embedding inside a bs4Dash card.
-
-```r
-bs4Card(
-  glassTabsUI("dash",
-    wrap     = FALSE,
-    theme    = "light",
-    extra_ui = glassMultiSelect("f", choices, theme = "light"),
-    glassTabPanel("a", "Overview", selected = TRUE, p("Content")),
-    glassTabPanel("b", "Details",  p("More"))
-  )
-)
-```
-
----
-
-## Multiple instances
-
-Multiple `glassTabsUI()` and `glassMultiSelect()` widgets on the same page work independently - each is scoped by its `id`, so CSS variables and JS event handlers never bleed across instances.
-
----
-
-## Articles
-
-Full vignettes are available on the documentation site:
-
-| Article | Description |
-|---|---|
-| [Cheatsheet](https://prigasg.github.io/glasstabs/articles/cheatsheet.html) | Quick reference for tabs, selects, updates, and server helpers |
-| [Getting started](https://prigasg.github.io/glasstabs/articles/getting-started.html) | Progressive walkthrough of both widgets |
-| [Animated tabs](https://prigasg.github.io/glasstabs/articles/tabs.html) | Full `glassTabsUI()` reference with theming and bs4Dash |
-| [Indicator styles](https://prigasg.github.io/glasstabs/articles/indicators.html) | `indicator = "glass" / "solid" / "underline"`, vertical orientation, and `theme = "auto"` |
-| [Posit Connect workflow](https://prigasg.github.io/glasstabs/articles/posit-connect.html) | Deploy `runGlassExample("connect-workflow")` as a Connect-ready review page |
-| [Multi-select filter](https://prigasg.github.io/glasstabs/articles/multiselect.html) | Full `glassMultiSelect()` reference with styles, tags and updates |
-| [Single-select filter](https://prigasg.github.io/glasstabs/articles/glassSelect.html) | Full `glassSelect()` reference with search, clear, and updates |
-| Server-side select search | Covered in the multi-select and single-select articles, plus `runGlassExample("server-select")` |
-
----
-
-## Server-side tab control
-
-```r
-server <- function(input, output, session) {
-  # Switch to a tab programmatically
-  observeEvent(input$next_btn, {
-    updateGlassTabsUI(session, "tabs", selected = "details")
-  })
-
-  # Show/hide tabs conditionally
-  observeEvent(input$is_admin, {
-    if (input$is_admin) showGlassTab(session, "tabs", "admin")
-    else                hideGlassTab(session, "tabs", "admin")
-  }, ignoreInit = FALSE)
-
-  # Add and remove tabs dynamically
-  observeEvent(input$add_tab, {
-    appendGlassTab(session, "tabs",
-      glassTabPanel("dynamic", "Dynamic", p("Added at runtime")),
-      select = TRUE
-    )
-  })
-
-  observeEvent(input$remove_tab, {
-    removeGlassTab(session, "tabs", "dynamic")
-  })
-}
-```
-
----
-
-## What's new in development
-
-- `glassTabsUI(indicator = "glass" | "solid" | "underline")` - choose the signature glass halo, a lighter flat pill, or a classic underline bar
-- `glassTabsUI(orientation = "vertical")` - stack tabs in a left rail with Up/Down keyboard navigation
-- `glassTabsUI(tab_align = "center" | "left" | "right")` - align tab text and icons
-- `glassTabsUI(theme = "auto")` - follow Bootstrap 5 / bslib `data-bs-theme` light and dark modes in the browser
-- `glassSelect(theme = "auto")` and `glassMultiSelect(theme = "auto")` - glassy select controls that follow Bootstrap 5 / bslib color modes
-- Tighter halo alignment - no right-side overhang, crisp 1px borders, bordered-container offsets, and `ResizeObserver` realignment for dynamic labels and badges
-- New `runGlassExample("indicators")` demo and indicator styles article
-- New `runGlassExample("connect-workflow")` Posit Connect-ready workflow page and deployment article
-
-## What's new in 0.3.4
-
-- Public close helpers - `closeGlassSelect()`, `closeGlassMultiSelect()`, and `closeAllGlassSelects()` for tab/modal/UI lifecycle cleanup
-- `input$<inputId>_open` - inspect whether a select dropdown is currently open from Shiny
-- Broader automatic dropdown cleanup on resize, tab/modal/sidebar transitions, Shiny value replacement, and disconnect
-
-## What's new in 0.3.3
-
-- `width` argument in `glassSelect()` / `glassMultiSelect()` - fill a column or match a fixed layout, like native `selectizeInput()`
-- Grouped choices - pass a named list (`selectInput()`-style) to render non-interactive group headers
-- `disabled` / `disabled_choices` - disable a whole select or individual options, also at runtime via `updateGlassSelect()` / `updateGlassMultiSelect()`
-- `shape = "square"` in `glassSelect()`, `glassMultiSelect()`, and `glassTabsUI()` - crisp, selectize-style corners
-- Server-side search for large choice sets - `server = TRUE`, `glassSelectServer()`, `glassMultiSelectServer()`
+If a widget does not fit naturally into your app, please open a
+[GitHub issue](https://github.com/PrigasG/glasstabs/issues) with a small Shiny
+example. Questions, bug reports, and ideas for making the package easier to use
+are all welcome.

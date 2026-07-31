@@ -58,6 +58,7 @@
 #'
 #' @return An \code{htmltools::tagList} containing the trigger button, dropdown
 #'   panel, and scoped \code{<style>} block.
+#' @family glass select widgets
 #'
 #' @examples
 #' fruits <- c(Apple = "apple", Banana = "banana", Cherry = "cherry")
@@ -101,14 +102,13 @@ glassMultiSelect <- function(
     server_limit        = 50L,
     server_min_chars    = 0L
 ) {
-  if (!is.character(inputId) || length(inputId) != 1L || !nzchar(inputId)) {
-    stop(
-      "glassMultiSelect(): `inputId` must be a single non-empty string.",
-      call. = FALSE
-    )
-  }
-  check_style <- match.arg(check_style)
-  shape <- match.arg(shape)
+  .gt_check_string(
+    inputId,
+    "inputId",
+    "glassMultiSelect(): `inputId` must be a single non-empty string."
+  )
+  check_style <- .gt_match_arg(check_style, c("checkbox", "check-only", "filled"), "check_style")
+  shape <- .gt_match_arg(shape, c("rounded", "square"), "shape")
   field_width_style <- .gt_field_width_style(width)
   inner_width_style <- if (is.null(width)) NULL else "width:100%;"
   disabled <- isTRUE(disabled)
@@ -136,11 +136,7 @@ glassMultiSelect <- function(
   selected <- vals[vals %in% selected]
 
   if (is.null(hues)) {
-    n <- length(vals)
-    hues <- stats::setNames(
-      as.integer(seq(200, 200 + 360 * (n - 1) / max(1, n), length.out = n) %% 360),
-      vals
-    )
+    hues <- .gt_hue_sequence(vals)
   } else {
     hues <- .gt_normalize_hues(hues = hues, vals = vals)
   }
@@ -540,6 +536,7 @@ glassMultiSelect <- function(
 #' @return No return value. Called for its side effect of updating the
 #'   client-side widget.
 #'
+#' @family glass select widgets
 #' @export
 updateGlassMultiSelect <- function(
     session,
@@ -552,10 +549,10 @@ updateGlassMultiSelect <- function(
     disabled_choices = NULL
 ) {
   if (!is.null(check_style)) {
-    check_style <- match.arg(check_style, c("checkbox", "check-only", "filled"))
+    check_style <- .gt_match_arg(check_style, c("checkbox", "check-only", "filled"), "check_style")
   }
   if (!is.null(shape)) {
-    shape <- match.arg(shape, c("rounded", "square"))
+    shape <- .gt_match_arg(shape, c("rounded", "square"), "shape")
   }
 
   message <- list()
@@ -603,6 +600,7 @@ updateGlassMultiSelect <- function(
   } else {
     session$sendInputMessage(inputId, message)
   }
+  invisible(NULL)
 }
 
 #' Reactive helpers for glassMultiSelect values
@@ -639,6 +637,7 @@ updateGlassMultiSelect <- function(
 #'   shinyApp(ui, server)
 #' }
 #'
+#' @family glass select widgets
 #' @export
 glassMultiSelectValue <- function(input, inputId) {
   list(
@@ -684,6 +683,7 @@ glassMultiSelectValue <- function(input, inputId) {
 #'   shinyApp(ui, server)
 #' }
 #'
+#' @family glass select widgets
 #' @export
 glassMultiSelectServer <- function(
     inputId,
@@ -705,14 +705,17 @@ glassMultiSelectServer <- function(
 #' @noRd
 .gt_normalize_choices <- function(choices) {
   if (is.null(choices)) {
-    stop(
+    .gt_abort(
       paste0(
         "`choices` cannot be NULL.\n",
         "Provide a character vector, e.g.:\n",
         "  choices = c(\"Option A\", \"Option B\")\n",
         "  choices = c(Label = \"value\", Other = \"other\")"
       ),
-      call. = FALSE
+      class = "glasstabs_error_bad_choice",
+      argument = "choices",
+      value = choices,
+      expected = "a character vector or named list of choices"
     )
   }
 
@@ -800,9 +803,12 @@ glassMultiSelectServer <- function(
 
   if (is.null(orig_names)) {
     if (length(hues) != length(vals)) {
-      stop(
+      .gt_abort(
         "`hues` must either be named by choice values or have the same length as `choices`.",
-        call. = FALSE
+        class = "glasstabs_error_bad_argument",
+        argument = "hues",
+        value = hues,
+        expected = "names matching choice values or the same length as choices"
       )
     }
     names(hues) <- vals
@@ -822,6 +828,15 @@ glassMultiSelectServer <- function(
 }
 
 #' @noRd
+.gt_hue_sequence <- function(values) {
+  n <- length(values)
+  stats::setNames(
+    as.integer(seq(200, 200 + 360 * (n - 1) / max(1, n), length.out = n) %% 360),
+    values
+  )
+}
+
+#' @noRd
 .gt_field_width_style <- function(width) {
   if (is.null(width)) {
     return(NULL)
@@ -833,7 +848,13 @@ glassMultiSelectServer <- function(
 #' @noRd
 .gt_positive_int <- function(x, name) {
   if (!is.numeric(x) || length(x) != 1L || is.na(x) || x < 1) {
-    stop(sprintf("`%s` must be a single positive integer.", name), call. = FALSE)
+    .gt_abort(
+      sprintf("`%s` must be a single positive integer.", name),
+      class = "glasstabs_error_bad_argument",
+      argument = name,
+      value = x,
+      expected = "a single positive integer"
+    )
   }
   as.integer(x)
 }
@@ -841,7 +862,13 @@ glassMultiSelectServer <- function(
 #' @noRd
 .gt_nonnegative_int <- function(x, name) {
   if (!is.numeric(x) || length(x) != 1L || is.na(x) || x < 0) {
-    stop(sprintf("`%s` must be a single non-negative integer.", name), call. = FALSE)
+    .gt_abort(
+      sprintf("`%s` must be a single non-negative integer.", name),
+      class = "glasstabs_error_bad_argument",
+      argument = name,
+      value = x,
+      expected = "a single non-negative integer"
+    )
   }
   as.integer(x)
 }
@@ -849,7 +876,7 @@ glassMultiSelectServer <- function(
 #' @noRd
 .gt_json_array <- function(x) {
   x <- unname(as.character(x %||% character(0)))
-  paste0("[", paste(vapply(x, .gt_js_string, character(1)), collapse = ","), "]")
+  as.character(jsonlite::toJSON(x, auto_unbox = FALSE))
 }
 
 #' @noRd
@@ -890,12 +917,17 @@ glassMultiSelectServer <- function(
   keep <- seq_along(values)
 
   if (nzchar(query)) {
-    haystack <- paste(labels, values)
+    label_haystack <- labels
+    value_haystack <- values
     if (isTRUE(ignore_case)) {
-      haystack <- tolower(haystack)
+      label_haystack <- tolower(label_haystack)
+      value_haystack <- tolower(value_haystack)
       query <- tolower(query)
     }
-    keep <- which(grepl(query, haystack, fixed = TRUE))
+    keep <- which(
+      grepl(query, label_haystack, fixed = TRUE) |
+        grepl(query, value_haystack, fixed = TRUE)
+    )
   }
 
   total <- length(keep)
@@ -920,21 +952,20 @@ glassMultiSelectServer <- function(
     type
 ) {
   if (is.null(session)) {
-    stop("A Shiny session is required for server-side glass choice search.", call. = FALSE)
+    .gt_abort(
+      "A Shiny session is required for server-side glass choice search.",
+      class = "glasstabs_error_no_session",
+      argument = "session",
+      value = session,
+      expected = "a Shiny session"
+    )
   }
-  if (!is.character(inputId) || length(inputId) != 1L || !nzchar(inputId)) {
-    stop("`inputId` must be a single non-empty string.", call. = FALSE)
-  }
+  .gt_check_string(inputId, "inputId")
   limit <- .gt_positive_int(limit, "limit")
   normalized <- .gt_normalize_choices(choices)
   hues <- NULL
   if (identical(type, "multi")) {
-    hues <- stats::setNames(
-      as.integer(seq(200, 200 + 360 * (length(normalized$values) - 1) / max(1, length(normalized$values)),
-        length.out = length(normalized$values)
-      ) %% 360),
-      normalized$values
-    )
+    hues <- .gt_hue_sequence(normalized$values)
   }
 
   shiny::observeEvent(

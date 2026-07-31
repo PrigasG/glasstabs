@@ -24,7 +24,7 @@ test_that("glassMultiSelect() renders all option values in HTML", {
 })
 
 test_that("glassMultiSelect() errors when choices is NULL", {
-  expect_error(glassMultiSelect("f", NULL))
+  expect_error(glassMultiSelect("f", NULL), class = "glasstabs_error_bad_choice")
 })
 
 
@@ -99,7 +99,7 @@ test_that("glassMultiSelect() check_style = 'filled' adds correct class", {
 })
 
 test_that("glassMultiSelect() rejects invalid check_style", {
-  expect_error(glassMultiSelect("f", choices, check_style = "dotted"))
+  expect_error(glassMultiSelect("f", choices, check_style = "dotted"), class = "glasstabs_error_bad_argument")
 })
 
 
@@ -155,7 +155,7 @@ test_that("glassMultiSelect() glass_select_theme() accent appears in HTML", {
 })
 
 test_that("glassMultiSelect() errors on invalid theme string", {
-  expect_error(glassMultiSelect("f", choices, theme = "monokai"))
+  expect_error(glassMultiSelect("f", choices, theme = "monokai"), class = "glasstabs_error_bad_theme")
 })
 
 
@@ -196,7 +196,8 @@ test_that("glassMultiSelect() errors on unnamed hues with wrong length", {
       choices,
       check_style = "filled",
       hues = c(10L, 50L)
-    )
+    ),
+    class = "glasstabs_error_bad_argument"
   )
 })
 
@@ -362,7 +363,7 @@ test_that("updateGlassMultiSelect() routes shape through retryable custom messag
 
 test_that("updateGlassMultiSelect() rejects an invalid shape", {
   fake_session <- list(sendInputMessage = function(...) NULL)
-  expect_error(updateGlassMultiSelect(fake_session, "pick", shape = "oval"))
+  expect_error(updateGlassMultiSelect(fake_session, "pick", shape = "oval"), class = "glasstabs_error_bad_argument")
 })
 
 test_that("updateGlassMultiSelect() rejects invalid style", {
@@ -373,7 +374,8 @@ test_that("updateGlassMultiSelect() rejects invalid style", {
       fake_session,
       "pick",
       check_style = "bad-style"
-    )
+    ),
+    class = "glasstabs_error_bad_argument"
   )
 })
 
@@ -463,5 +465,5 @@ test_that("glassMultiSelect(shape = 'square') adds the shape-square wrap class",
 })
 
 test_that("glassMultiSelect() rejects an invalid shape", {
-  expect_error(glassMultiSelect("f", choices, shape = "circle"))
+  expect_error(glassMultiSelect("f", choices, shape = "circle"), class = "glasstabs_error_bad_argument")
 })

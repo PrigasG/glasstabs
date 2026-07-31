@@ -36,11 +36,11 @@ test_that("glassTabsUI() returns an htmltools object", {
 })
 
 test_that("glassTabsUI() errors with no panels", {
-  expect_error(glassTabsUI("nav"), "at least one")
+  expect_error(glassTabsUI("nav"), "at least one", class = "glasstabs_error_bad_argument")
 })
 
 test_that("glassTabsUI() errors if non-glassTabPanel passed", {
-  expect_error(glassTabsUI("nav", "not a panel"), "glassTabPanel")
+  expect_error(glassTabsUI("nav", "not a panel"), "glassTabPanel", class = "glasstabs_error_bad_argument")
 })
 
 test_that("glassTabsUI() errors on invalid selected value", {
@@ -49,7 +49,8 @@ test_that("glassTabsUI() errors on invalid selected value", {
                 glassTabPanel("a", "A"),
                 glassTabPanel("b", "B"),
                 selected = "zzz"),
-    "zzz"
+    "zzz",
+    class = "glasstabs_error_bad_choice"
   )
 })
 
@@ -84,8 +85,10 @@ test_that("glassTabsUI() accepts auto theme string", {
 })
 
 test_that("glassTabsUI() errors on invalid theme string", {
-  expect_error(glassTabsUI("nav",
-                           glassTabPanel("a", "A", selected = TRUE), theme = "hot-pink"))
+  expect_error(
+    glassTabsUI("nav", glassTabPanel("a", "A", selected = TRUE), theme = "hot-pink"),
+    class = "glasstabs_error_bad_theme"
+  )
 })
 
 test_that("glassTabsUI() renders HTML containing all tab values", {
@@ -253,17 +256,17 @@ test_that("glassTabsUI() rejects invalid indicator, orientation, and tab alignme
     "nav",
     glassTabPanel("a", "A", selected = TRUE),
     indicator = "neon"
-  ))
+  ), class = "glasstabs_error_bad_argument")
   expect_error(glassTabsUI(
     "nav",
     glassTabPanel("a", "A", selected = TRUE),
     orientation = "diagonal"
-  ))
+  ), class = "glasstabs_error_bad_argument")
   expect_error(glassTabsUI(
     "nav",
     glassTabPanel("a", "A", selected = TRUE),
     tab_align = "wide"
-  ))
+  ), class = "glasstabs_error_bad_argument")
 })
 
 
@@ -342,7 +345,11 @@ test_that("appendGlassTab() errors on non-glassTabPanel input", {
     sendCustomMessage = function(...) NULL,
     ns = shiny::NS(NULL)
   )
-  expect_error(appendGlassTab(fake_session, "tabs", "not a panel"), "glassTabPanel")
+  expect_error(
+    appendGlassTab(fake_session, "tabs", "not a panel"),
+    "glassTabPanel",
+    class = "glasstabs_error_bad_argument"
+  )
 })
 
 test_that("appendGlassTab() sends correct message fields", {

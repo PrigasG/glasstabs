@@ -1,3 +1,5 @@
+# Accessibility, CSP, and dropdown lifecycle
+
 test_that("glass.css has no color-mix dependency", {
   css_path <- file.path("inst", "www", "glass.css")
   if (!file.exists(css_path)) {
@@ -93,6 +95,19 @@ test_that("closeGlass* helpers send dropdown close messages", {
   expect_invisible(closeAllGlassSelects(fake_session))
   expect_equal(msgs[[3]]$type, "glasstabs_close_selects")
   expect_equal(msgs[[3]]$message, list())
+})
+
+test_that("closeGlass* helpers reject non-character input ids", {
+  fake_session <- list(sendInputMessage = function(...) NULL)
+
+  expect_error(
+    closeGlassSelect(fake_session, 1),
+    class = "glasstabs_error_bad_argument"
+  )
+  expect_error(
+    closeGlassMultiSelect(fake_session, NA_character_),
+    class = "glasstabs_error_bad_argument"
+  )
 })
 
 test_that("glass.js exposes close lifecycle hooks for select dropdowns", {

@@ -27,6 +27,7 @@
 #'   shiny::p("Data content here.")
 #' )
 #'
+#' @family glass tabs
 #' @export
 glassTabPanel <- function(value, label, ..., icon = NULL, selected = FALSE) {
   structure(
@@ -88,6 +89,7 @@ glassTabPanel <- function(value, label, ..., icon = NULL, selected = FALSE) {
 #'   dark-mode toggle without any server-side intervention.
 #'
 #' @return An `htmltools::tagList` ready to use in a Shiny UI.
+#' @family glass tabs
 #' @export
 glassTabsUI <- function(
     id, ...,
@@ -104,10 +106,10 @@ glassTabsUI <- function(
 ) {
   ns          <- shiny::NS(id)
   panels      <- list(...)
-  shape       <- match.arg(shape)
-  indicator   <- match.arg(indicator)
-  orientation <- match.arg(orientation)
-  tab_align   <- match.arg(tab_align)
+  shape       <- .gt_match_arg(shape, c("rounded", "square"), "shape")
+  indicator   <- .gt_match_arg(indicator, c("glass", "solid", "underline"), "indicator")
+  orientation <- .gt_match_arg(orientation, c("horizontal", "vertical"), "orientation")
+  tab_align   <- .gt_match_arg(tab_align, c("center", "left", "right"), "tab_align")
 
   ## theme = "auto": bridge to Bootstrap 5 / bslib color modes. Base vars are
   ## the light preset; dark vars are scoped under [data-bs-theme="dark"] via
@@ -120,16 +122,21 @@ glassTabsUI <- function(
   }
 
   if (length(panels) == 0) {
-    stop(
-      "glassTabsUI() requires at least one glassTabPanel() child.\n",
-      "Add tabs like: glassTabPanel(\"tab1\", \"Tab Label\", p(\"Content\"))",
-      call. = FALSE
+    .gt_abort(
+      paste0(
+        "glassTabsUI() requires at least one glassTabPanel() child.\n",
+        "Add tabs like: glassTabPanel(\"tab1\", \"Tab Label\", p(\"Content\"))"
+      ),
+      class = "glasstabs_error_bad_argument",
+      argument = "...",
+      value = panels,
+      expected = "at least one glassTabPanel object"
     )
   }
   bad_panels <- Filter(function(p) !inherits(p, "glassTabPanel"), panels)
   if (length(bad_panels) > 0) {
     bad_cls <- unique(vapply(bad_panels, function(x) class(x)[1], character(1)))
-    stop(
+    .gt_abort(
       sprintf(
         paste0(
           "glassTabsUI() received %d non-panel argument(s) of class: %s.\n",
@@ -138,7 +145,10 @@ glassTabsUI <- function(
         ),
         length(bad_panels), paste(bad_cls, collapse = ", ")
       ),
-      call. = FALSE
+      class = "glasstabs_error_bad_argument",
+      argument = "...",
+      value = bad_panels,
+      expected = "glassTabPanel objects"
     )
   }
 
@@ -147,7 +157,7 @@ glassTabsUI <- function(
 
   if (anyDuplicated(panel_vals)) {
     dupes <- unique(panel_vals[duplicated(panel_vals)])
-    stop(
+    .gt_abort(
       sprintf(
         paste0(
           "Duplicate glassTabPanel() values found: %s\n",
@@ -155,12 +165,15 @@ glassTabsUI <- function(
         ),
         paste(dupes, collapse = ", ")
       ),
-      call. = FALSE
+      class = "glasstabs_error_bad_choice",
+      argument = "value",
+      value = dupes,
+      expected = "unique tab values"
     )
   }
 
   if (!is.null(selected) && !selected %in% panel_vals) {
-    stop(
+    .gt_abort(
       sprintf(
         paste0(
           "glassTabsUI(): `selected = \"%s\"` does not match any tab value.\n",
@@ -169,7 +182,10 @@ glassTabsUI <- function(
         selected,
         paste(panel_vals, collapse = ", ")
       ),
-      call. = FALSE
+      class = "glasstabs_error_bad_choice",
+      argument = "selected",
+      value = selected,
+      expected = panel_vals
     )
   }
 
@@ -179,34 +195,15 @@ glassTabsUI <- function(
   }
 
   tab_links <- lapply(panels, function(p) {
-    is_active <- p$value == active_val
-    cls <- paste("gt-tab-link", if (is_active) "active" else "")
-    label_content <- if (!is.null(p$icon)) {
-      list(
-        shiny::tags$span(class = "gt-tab-icon", p$icon),
-        shiny::tags$span(class = "gt-tab-label", p$label)
-      )
-    } else {
-      list(p$label)
-    }
-    shiny::tags$div(
-      class          = cls,
-      `data-value`   = p$value,
-      `data-ns`      = id,
-      role           = "tab",
-      tabindex       = "0",
-      `aria-selected` = if (is_active) "true" else "false",
-      label_content
-    )
+    .gt_tab_link(p, p$value == active_val, id, preserve_inactive_space = TRUE)
   })
 
   panes <- lapply(panels, function(p) {
-    cls <- paste("gt-tab-pane", if (p$value == active_val) "active" else "")
-    shiny::div(
-      class = cls,
-      id    = ns(paste0("pane-", p$value)),
-      role  = "tabpanel",
-      do.call(shiny::div, c(list(class = "gt-card"), p$content))
+    .gt_tab_pane(
+      p,
+      p$value == active_val,
+      ns(paste0("pane-", p$value)),
+      preserve_inactive_space = TRUE
     )
   })
 
@@ -225,43 +222,21 @@ glassTabsUI <- function(
 
   if (!is.null(dark_selector) &&
       (!is.character(dark_selector) || length(dark_selector) != 1L || !nzchar(dark_selector))) {
-    stop(
+    .gt_abort(
       "glassTabsUI(): `dark_selector` must be a single non-empty CSS selector string, e.g. \"body.dark-mode\".",
-      call. = FALSE
+      class = "glasstabs_error_bad_argument",
+      argument = "dark_selector",
+      value = dark_selector,
+      expected = "a single non-empty CSS selector string"
     )
   }
 
   scope_id <- ns("wrap")
-  theme_css <- sprintf(
-    "#%s{--gt-tab-text:%s;--gt-tab-active-text:%s;--gt-halo-bg:%s;--gt-halo-border:%s;--gt-halo-shadow:%s;--gt-content-bg:%s;--gt-content-border:%s;--gt-card-bg:%s;--gt-card-text:%s;}",
-    scope_id,
-    theme_vals$tab_text,
-    theme_vals$tab_active_text,
-    theme_vals$halo_bg,
-    theme_vals$halo_border,
-    theme_vals$halo_shadow,
-    theme_vals$content_bg,
-    theme_vals$content_border,
-    theme_vals$card_bg,
-    theme_vals$card_text
-  )
+  theme_css <- .gt_tab_theme_css(theme_vals, scope_id)
 
   dark_override_style <- if (!is.null(dark_selector)) {
     dark_vals <- .tab_resolve_theme("dark")
-    dark_css <- sprintf(
-      "%s #%s{--gt-tab-text:%s;--gt-tab-active-text:%s;--gt-halo-bg:%s;--gt-halo-border:%s;--gt-halo-shadow:%s;--gt-content-bg:%s;--gt-content-border:%s;--gt-card-bg:%s;--gt-card-text:%s;}",
-      dark_selector,
-      scope_id,
-      dark_vals$tab_text,
-      dark_vals$tab_active_text,
-      dark_vals$halo_bg,
-      dark_vals$halo_border,
-      dark_vals$halo_shadow,
-      dark_vals$content_bg,
-      dark_vals$content_border,
-      dark_vals$card_bg,
-      dark_vals$card_text
-    )
+    dark_css <- .gt_tab_theme_css(dark_vals, scope_id, dark_selector)
     .make_style_tag(dark_css)
   } else {
     NULL
@@ -326,12 +301,14 @@ glassTabsUI <- function(
 #'   }
 #'   shinyApp(ui, server)
 #' }
+#' @family glass tabs
 #' @export
 updateGlassTabsUI <- function(session, id, selected) {
   session$sendCustomMessage(
     "glasstabs_update_tabs",
     list(ns = session$ns(id), selected = selected)
   )
+  invisible(NULL)
 }
 
 #' Update the badge count on a glass tab
@@ -369,6 +346,7 @@ updateGlassTabsUI <- function(session, id, selected) {
 #'   }
 #'   shinyApp(ui, server)
 #' }
+#' @family glass tabs
 #' @export
 updateGlassTabBadge <- function(session, id, value, count) {
   count <- if (is.na(count)) 0L else as.integer(count)
@@ -376,6 +354,7 @@ updateGlassTabBadge <- function(session, id, value, count) {
     "glasstabs_tab_badge",
     list(ns = session$ns(id), value = value, count = count)
   )
+  invisible(NULL)
 }
 
 #' Show or hide a glass tab
@@ -411,12 +390,14 @@ updateGlassTabBadge <- function(session, id, value, count) {
 #'   }
 #'   shinyApp(ui, server)
 #' }
+#' @family glass tabs
 #' @export
 showGlassTab <- function(session, id, value) {
   session$sendCustomMessage(
     "glasstabs_show_tab",
     list(ns = session$ns(id), value = value)
   )
+  invisible(NULL)
 }
 
 #' @rdname showGlassTab
@@ -426,6 +407,7 @@ hideGlassTab <- function(session, id, value) {
     "glasstabs_hide_tab",
     list(ns = session$ns(id), value = value)
   )
+  invisible(NULL)
 }
 
 #' Disable or enable a glass tab
@@ -462,12 +444,14 @@ hideGlassTab <- function(session, id, value) {
 #'   }
 #'   shinyApp(ui, server)
 #' }
+#' @family glass tabs
 #' @export
 disableGlassTab <- function(session, id, value) {
   session$sendCustomMessage(
     "glasstabs_disable_tab",
     list(ns = session$ns(id), value = value)
   )
+  invisible(NULL)
 }
 
 #' @rdname disableGlassTab
@@ -477,6 +461,7 @@ enableGlassTab <- function(session, id, value) {
     "glasstabs_enable_tab",
     list(ns = session$ns(id), value = value)
   )
+  invisible(NULL)
 }
 
 #' Append or remove a glass tab at runtime
@@ -519,10 +504,11 @@ enableGlassTab <- function(session, id, value) {
 #'   }
 #'   shinyApp(ui, server)
 #' }
+#' @family glass tabs
 #' @export
 appendGlassTab <- function(session, id, tab, select = FALSE) {
   if (!inherits(tab, "glassTabPanel")) {
-    stop(
+    .gt_abort(
       sprintf(
         paste0(
           "appendGlassTab(): `tab` must be a glassTabPanel() object, got %s.\n",
@@ -530,44 +516,21 @@ appendGlassTab <- function(session, id, tab, select = FALSE) {
         ),
         class(tab)[1]
       ),
-      call. = FALSE
+      class = "glasstabs_error_bad_argument",
+      argument = "tab",
+      value = tab,
+      expected = "a glassTabPanel object"
     )
   }
 
   full_ns <- session$ns(id)
 
-  label_content <- if (!is.null(tab$icon)) {
-    list(
-      shiny::tags$span(class = "gt-tab-icon", tab$icon),
-      shiny::tags$span(class = "gt-tab-label", tab$label)
-    )
-  } else {
-    list(tab$label)
-  }
-
-  link_html <- as.character(do.call(
-    shiny::tags$div,
-    c(
-      list(
-        class           = "gt-tab-link",
-        `data-value`    = tab$value,
-        `data-ns`       = full_ns,
-        role            = "tab",
-        tabindex        = "0",
-        `aria-selected` = "false"
-      ),
-      label_content
-    )
+  link_html <- as.character(.gt_tab_link(tab, FALSE, full_ns))
+  pane_html <- as.character(.gt_tab_pane(
+    tab,
+    FALSE,
+    paste0(full_ns, "-pane-", tab$value)
   ))
-
-  pane_html <- as.character(
-    shiny::div(
-      class = "gt-tab-pane",
-      id    = paste0(full_ns, "-pane-", tab$value),
-      role  = "tabpanel",
-      do.call(shiny::div, c(list(class = "gt-card"), tab$content))
-    )
-  )
 
   session$sendCustomMessage(
     "glasstabs_append_tab",
@@ -579,6 +542,7 @@ appendGlassTab <- function(session, id, tab, select = FALSE) {
       select    = isTRUE(select)
     )
   )
+  invisible(NULL)
 }
 
 #' @rdname appendGlassTab
@@ -588,6 +552,7 @@ removeGlassTab <- function(session, id, value) {
     "glasstabs_remove_tab",
     list(ns = session$ns(id), value = value)
   )
+  invisible(NULL)
 }
 
 #' Server logic for glass tabs
@@ -670,6 +635,7 @@ removeGlassTab <- function(session, id, value) {
 #'     shiny::observe(print(active()))
 #'   })
 #' }
+#' @family glass tabs
 #' @export
 glassTabsServer <- function(id, bookmark = TRUE) {
   if (grepl("-", id, fixed = TRUE)) {
@@ -689,7 +655,7 @@ glassTabsServer <- function(id, bookmark = TRUE) {
 
   shiny::moduleServer(id, function(input, output, session) {
     active <- shiny::reactive({
-      input[["active_tab"]] %||% NULL
+      input$active_tab
     })
 
     if (isTRUE(bookmark)) {
@@ -761,6 +727,7 @@ glassTabsServer <- function(id, bookmark = TRUE) {
 #'
 #'   shinyApp(ui, server)
 #' }
+#' @family glass tabs
 #' @export
 glassTabsOutput <- function(outputId, ...) {
   shiny::uiOutput(outputId, ...)
@@ -802,6 +769,7 @@ glassTabsOutput <- function(outputId, ...) {
 #'
 #'   shinyApp(ui, server)
 #' }
+#' @family glass tabs
 #' @export
 renderGlassTabs <- function(expr, env = parent.frame(), quoted = FALSE) {
   func <- shiny::exprToFunction(expr, env, quoted)
@@ -861,22 +829,25 @@ renderGlassTabs <- function(expr, env = parent.frame(), quoted = FALSE) {
 #'   shinyApp(ui, server)
 #' }
 #'
+#' @family glass tabs
 #' @export
 glassTabCondition <- function(id, value) {
-  if (!is.character(id) || length(id) != 1 || !nzchar(id)) {
-    stop(
+  .gt_check_string(
+    id,
+    "id",
+    paste0(
       "glassTabCondition(): `id` must be a single non-empty string matching ",
-      "the id passed to glassTabsUI().",
-      call. = FALSE
+      "the id passed to glassTabsUI()."
     )
-  }
-  if (!is.character(value) || length(value) != 1 || !nzchar(value)) {
-    stop(
+  )
+  .gt_check_string(
+    value,
+    "value",
+    paste0(
       "glassTabCondition(): `value` must be a single non-empty string matching ",
-      "a glassTabPanel() value.",
-      call. = FALSE
+      "a glassTabPanel() value."
     )
-  }
+  )
   input_key <- .gt_js_string(paste0(id, "-active_tab"))
   tab_value <- .gt_js_string(value)
   sprintf("input[%s] === %s", input_key, tab_value)
@@ -887,8 +858,10 @@ glassTabCondition <- function(id, value) {
   x <- enc2utf8(as.character(x))
   x <- gsub("\\\\", "\\\\\\\\", x)
   x <- gsub("\"", "\\\\\"", x)
-  x <- gsub("\r", "\\\\r", x, fixed = TRUE)
-  x <- gsub("\n", "\\\\n", x, fixed = TRUE)
-  x <- gsub("\t", "\\\\t", x, fixed = TRUE)
+  x <- gsub("\r", "\\r", x, fixed = TRUE)
+  x <- gsub("\n", "\\n", x, fixed = TRUE)
+  x <- gsub("\t", "\\t", x, fixed = TRUE)
+  x <- gsub("\u2028", "\\u2028", x, fixed = TRUE)
+  x <- gsub("\u2029", "\\u2029", x, fixed = TRUE)
   paste0("\"", x, "\"")
 }
