@@ -303,6 +303,9 @@ server <- function(input, output, session) {
 | `glasstabs_news()` | Print the package changelog to the R console |
 
 Built-in examples include `basic`, `bs4dash`, `bslib`, `connect-workflow`, `dashboard`, `indicators`, `server-select`, `smoke-test`, and `square-corners`.
+The Connect workflow doubles as a v0.4.0 test lab, with the responsive,
+keyboard, touch, dynamic-tab, badge, theme, and page-wrapper checks collected
+in one app.
 
 ### Tab widget
 

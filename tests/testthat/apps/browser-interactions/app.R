@@ -68,6 +68,13 @@ ui <- fluidPage(
       glassTabPanel("complete", "Complete", p("Complete content")),
       overflow = "menu"
     ),
+    glassTabsUI(
+      "vertical_tabs",
+      glassTabPanel("first", "First", p("First vertical pane")),
+      glassTabPanel("second", "Second", p("Second vertical pane")),
+      glassTabPanel("third", "Third", p("Third vertical pane")),
+      orientation = "vertical"
+    ),
     actionButton("append_tab", "Append tab")
   )
 )

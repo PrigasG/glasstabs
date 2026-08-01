@@ -257,3 +257,35 @@ test_that("browser: select options support arrow keys and Enter", {
   app$wait_for_idle()
   expect_equal(app$get_value(input = "cats"), c("apple", "banana"))
 })
+
+test_that("browser: vertical halo keeps its animated movement", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-vertical-halo-motion",
+    height = 900,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+  app$wait_for_idle()
+
+  expect_true(app$get_js("
+    (function() {
+      var halo = document.querySelector('#vertical_tabs-wrap .gt-halo');
+      window.__gtVerticalHaloMoved = false;
+      halo.addEventListener('transitionrun', function(event) {
+        if (event.propertyName === 'top') window.__gtVerticalHaloMoved = true;
+      });
+      document.querySelector('#vertical_tabs-tab-second').click();
+      return true;
+    })()
+  "))
+  app$wait_for_js("window.__gtVerticalHaloMoved === true")
+  app$wait_for_js("
+    document.querySelector('#vertical_tabs-tab-second').classList.contains('active')
+  ")
+  expect_equal(app$get_value(input = "vertical_tabs-active_tab"), "second")
+})

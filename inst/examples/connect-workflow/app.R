@@ -6,7 +6,11 @@
 #   - tab_align = "center" / "left" / "right" for tab button alignment
 #   - shape = "rounded" / "square" for matching tab corner styles
 #   - theme = "auto" for Bootstrap 5 / bslib light-dark mode
+#   - overflow = "scroll" / "wrap" / "menu" on narrow screens
+#   - optional swipe gestures with interactive-content guards
 #   - glassSelect(), glassMultiSelect(), badges, and server-driven tab changes
+#   - dynamic append/remove, show/hide, and disable/enable tab helpers
+#   - keyboard, reduced-motion, high-contrast, and blur-fallback checks
 #
 # Deploy the folder with rsconnect::deployApp("inst/examples/connect-workflow")
 # or run locally with glasstabs::runGlassExample("connect-workflow").
@@ -55,12 +59,15 @@ workflow_tabs <- function(
     orientation = "horizontal",
     tab_align = "center",
     shape = "rounded",
-    indicator = "glass"
+    indicator = "glass",
+    overflow = "scroll",
+    swipe = FALSE
 ) {
   orientation <- match.arg(orientation, c("horizontal", "vertical"))
   tab_align <- match.arg(tab_align, c("center", "left", "right"))
   shape <- match.arg(shape, c("rounded", "square"))
   indicator <- match.arg(indicator, c("glass", "solid", "underline"))
+  overflow <- match.arg(overflow, c("scroll", "wrap", "menu"))
 
   panels <- list(
     glassTabPanel(
@@ -75,7 +82,7 @@ workflow_tabs <- function(
     glassTabPanel(
       "explore", "Explore",
       h3("Filtered order queue"),
-      tableOutput("order_table")
+      div(class = "table-scroll", tableOutput("order_table"))
     ),
     glassTabPanel(
       "approve", "Approve",
@@ -86,6 +93,21 @@ workflow_tabs <- function(
         checkboxInput("metrics_checked", "Metrics match Connect snapshot", value = FALSE),
         checkboxInput("publish_checked", "Ready to publish summary", value = FALSE),
         verbatimTextOutput("approval_summary", placeholder = TRUE)
+      )
+    ),
+    glassTabPanel(
+      "test_lab", "Test lab",
+      div(
+        class = "test-lab",
+        h3("A safe place to try the interactions"),
+        p("Swipe across this open space, use the keyboard on the tabs, and try the controls above. Inputs and the scroll box below should keep their own touch behavior."),
+        textInput("swipe_guard_input", "Interactive swipe guard", "Typing here should never change tabs"),
+        div(
+          class = "touch-scroll-test",
+          `data-gt-no-swipe` = "",
+          span("This box scrolls sideways without changing the active tab."),
+          span("Keep dragging to confirm the tab remains on Test lab.")
+        )
       )
     )
   )
@@ -102,6 +124,8 @@ workflow_tabs <- function(
   if ("orientation" %in% glassTabsUI_args) args$orientation <- orientation
   if ("tab_align" %in% glassTabsUI_args) args$tab_align <- tab_align
   if ("shape" %in% glassTabsUI_args) args$shape <- shape
+  if ("overflow" %in% glassTabsUI_args) args$overflow <- overflow
+  if ("swipe" %in% glassTabsUI_args) args$swipe <- swipe
 
   do.call(glassTabsUI, args)
 }
@@ -111,7 +135,7 @@ page_body <- function() {
     useGlassTabs(),
     tags$head(tags$style(HTML("
       body{background:#f5f7fb;}
-      .connect-shell{max-width:1180px;margin:0 auto;padding:24px 16px 34px;}
+      .connect-shell{box-sizing:border-box;width:100%;min-width:0;max-width:1180px;margin:0 auto;padding:24px 16px 34px;}
       .connect-header{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:18px;}
       .connect-title h1{font-size:30px;line-height:1.15;margin:0 0 8px;font-weight:700;}
       .connect-title p{margin:0;color:#475569;max-width:720px;}
@@ -177,14 +201,29 @@ page_body <- function() {
       body[data-bs-theme='dark'] .stage-card p{color:#cbd5e1;}
       [data-bs-theme='dark'] .table,
       body[data-bs-theme='dark'] .table{color:#f8fafc;}
+      .table-scroll{width:100%;max-width:100%;overflow-x:auto;}
       .stage-state{display:inline-flex;border-radius:999px;padding:3px 8px;font-size:12px;font-weight:700;}
       .state-ready{background:rgba(34,197,94,.14);color:#15803d;}
       .state-review{background:rgba(245,158,11,.16);color:#a16207;}
       .approval-panel{max-width:560px;}
+      .test-checklist{margin:18px 0;border:1px solid rgba(15,23,42,.12);border-radius:10px;background:rgba(255,255,255,.72);padding:14px 16px;}
+      .test-checklist summary{cursor:pointer;font-size:17px;font-weight:700;color:#0f172a;}
+      .test-checklist ol{margin:12px 0 0;padding-left:22px;columns:2;column-gap:32px;}
+      .test-checklist li{break-inside:avoid;margin:0 0 9px;color:#334155;}
+      .test-lab{max-width:760px;}
+      .touch-scroll-test{display:flex;gap:18px;overflow-x:auto;white-space:nowrap;border:1px dashed #64748b;border-radius:8px;padding:14px;margin-top:12px;touch-action:pan-x;}
+      .touch-scroll-test span{display:inline-block;min-width:430px;}
+      [data-bs-theme='dark'] .test-checklist,
+      body[data-bs-theme='dark'] .test-checklist{background:#111827;border-color:rgba(148,163,184,.22);}
+      [data-bs-theme='dark'] .test-checklist summary,
+      body[data-bs-theme='dark'] .test-checklist summary{color:#f8fafc;}
+      [data-bs-theme='dark'] .test-checklist li,
+      body[data-bs-theme='dark'] .test-checklist li{color:#cbd5e1;}
       @media(max-width:780px){
         .connect-header,.connect-tools{grid-template-columns:1fr;display:block;}
         .connect-status{justify-content:flex-start;margin-top:12px;}
         .connect-grid,.pane-grid{grid-template-columns:1fr;}
+        .test-checklist ol{columns:1;}
         .connect-tools > *{margin-bottom:10px;}
       }
     "))),
@@ -211,13 +250,14 @@ page_body <- function() {
         class = "connect-header",
         div(
           class = "connect-title",
-          h1("Connect workflow review"),
-          p("A compact Shiny page for Posit Connect: filters define the queue, glasstabs guides the workflow, and server actions move reviewers through intake, exploration, and approval.")
+          h1("Connect workflow and v0.4.0 test lab"),
+          p("A real review workflow with the new responsive, touch, keyboard, accessibility, and dynamic-tab features ready to test together.")
         ),
         div(
           class = "connect-status",
           span(class = "connect-pill", "Deployable app.R"),
-          span(class = "connect-pill", "theme = auto")
+          span(class = "connect-pill", "theme = auto"),
+          span(class = "connect-pill", paste0("glasstabs ", as.character(packageVersion("glasstabs"))))
         )
       ),
       div(
@@ -268,19 +308,68 @@ page_body <- function() {
           choices = c("Glass" = "glass", "Solid" = "solid", "Underline" = "underline"),
           selected = "glass"
         ),
+        selectInput(
+          "workflow_overflow",
+          "Narrow-screen tabs",
+          choices = c("Scroll" = "scroll", "Wrap" = "wrap", "Compact menu" = "menu"),
+          selected = "scroll"
+        ),
+        checkboxInput("workflow_swipe", "Swipe between tabs", value = TRUE),
         actionButton("reset_filters", "Reset filters", class = "btn-secondary")
       ),
       div(
         class = "workflow-actions",
+        actionButton("go_intake", "Intake", class = "btn-outline-primary", `data-workflow-target` = "intake"),
         actionButton("go_explore", "Explore", class = "btn-outline-primary", `data-workflow-target` = "explore"),
-        actionButton("go_approve", "Approve", class = "btn-outline-primary", `data-workflow-target` = "approve")
+        actionButton("go_approve", "Approve", class = "btn-outline-primary", `data-workflow-target` = "approve"),
+        actionButton("go_test_lab", "Test lab", class = "btn-outline-primary", `data-workflow-target` = "test_lab")
+      ),
+      div(
+        class = "workflow-actions",
+        actionButton("append_live_tab", "Add live tab"),
+        actionButton("remove_live_tab", "Remove live tab"),
+        actionButton("hide_approve", "Hide Approve"),
+        actionButton("show_approve", "Show Approve"),
+        actionButton("disable_explore", "Disable Explore"),
+        actionButton("enable_explore", "Enable Explore"),
+        actionButton("pulse_badge", "Update badge")
+      ),
+      tags$details(
+        class = "test-checklist",
+        open = NA,
+        tags$summary("What this app is testing"),
+        tags$ol(
+          tags$li("Resize the window and compare Scroll, Wrap, and Compact menu."),
+          tags$li("On a phone, swipe across empty panel space in both directions."),
+          tags$li("Confirm inputs, buttons, tables, and the sideways scroll box do not trigger a swipe."),
+          tags$li("Use arrow keys plus Home and End on the tab bar; focus should follow the active tab."),
+          tags$li("Open both glass selects and use arrows, Home, End, Enter, Space, and Escape."),
+          tags$li("Add and remove the live tab, then check that selection and keyboard focus stay sensible."),
+          tags$li("Hide and show Approve; disable and enable Explore."),
+          tags$li("Update the badge and confirm the pulse is subtle and never moves focus."),
+          tags$li("Switch light and dark mode and try each indicator, shape, alignment, and orientation."),
+          tags$li("Turn on reduced motion or high contrast in the operating system and reload the app."),
+          tags$li("Confirm the experimental glassPage layout fills the browser without clipping."),
+          tags$li("Refresh the published app and repeat the controls to catch Connect-only asset or session issues.")
+        )
       ),
       uiOutput("workflow_tabs_ui")
     )
   )
 }
 
-if (has_bslib) {
+if (has_bslib && "glassPage" %in% getNamespaceExports("glasstabs")) {
+  ui <- glassPage(
+    title = "glasstabs Connect test lab",
+    theme = bslib::bs_theme(version = 5),
+    padding = 0,
+    div(
+      style = "display:flex;justify-content:flex-end;padding:12px 16px 0;",
+      bslib::input_dark_mode(id = "mode")
+    ),
+    page_body()
+  )
+} else if (has_bslib) {
   ui <- bslib::page_fluid(
     theme = bslib::bs_theme(version = 5),
     div(
@@ -317,8 +406,60 @@ server <- function(input, output, session) {
     updateGlassTabsUI(session, "workflow", selected = "explore")
   })
 
+  observeEvent(input$go_intake, {
+    updateGlassTabsUI(session, "workflow", selected = "intake")
+  })
+
   observeEvent(input$go_approve, {
     updateGlassTabsUI(session, "workflow", selected = "approve")
+  })
+
+  observeEvent(input$go_test_lab, {
+    updateGlassTabsUI(session, "workflow", selected = "test_lab")
+  })
+
+  observeEvent(input$append_live_tab, {
+    appendGlassTab(
+      session,
+      "workflow",
+      glassTabPanel(
+        "live", "Live tab",
+        div(
+          class = "stage-card",
+          h3("Added while the app is running"),
+          p("The tab, panel, menu option, ARIA links, and keyboard order should all update together."),
+          actionButton("live_action", "A real button inside the new panel")
+        )
+      ),
+      select = TRUE
+    )
+  })
+
+  observeEvent(input$remove_live_tab, {
+    removeGlassTab(session, "workflow", "live")
+  })
+
+  observeEvent(input$hide_approve, {
+    hideGlassTab(session, "workflow", "approve")
+  })
+
+  observeEvent(input$show_approve, {
+    showGlassTab(session, "workflow", "approve")
+  })
+
+  observeEvent(input$disable_explore, {
+    disableGlassTab(session, "workflow", "explore")
+  })
+
+  observeEvent(input$enable_explore, {
+    enableGlassTab(session, "workflow", "explore")
+  })
+
+  badge_test_value <- reactiveVal(0L)
+  observeEvent(input$pulse_badge, {
+    next_value <- badge_test_value() + 1L
+    badge_test_value(next_value)
+    updateGlassTabBadge(session, "workflow", "test_lab", next_value)
   })
 
   observeEvent(input$reset_filters, {
@@ -335,12 +476,17 @@ server <- function(input, output, session) {
     if (is.null(shape) || !nzchar(shape)) shape <- "rounded"
     indicator <- input$workflow_indicator
     if (is.null(indicator) || !nzchar(indicator)) indicator <- "glass"
+    overflow <- input$workflow_overflow
+    if (is.null(overflow) || !nzchar(overflow)) overflow <- "scroll"
+    swipe <- isTRUE(input$workflow_swipe)
 
     workflow_tabs(
       orientation = orientation,
       tab_align = tab_align,
       shape = shape,
-      indicator = indicator
+      indicator = indicator,
+      overflow = overflow,
+      swipe = swipe
     )
   })
 

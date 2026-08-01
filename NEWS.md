@@ -12,6 +12,12 @@
   relationships between each tab and its panel.
 * `glassPage()` is an experimental, lightweight wrapper around
   `bslib::page_fillable()` that loads the glasstabs dependency automatically.
+* The Posit Connect workflow example is now a v0.4.0 test lab for responsive
+  overflow, swipes, keyboard behavior, dynamic tabs, badges, theming, and the
+  experimental page wrapper. Its in-app checklist keeps repeat testing clear.
+* Tab clicks and keyboard activation no longer pass through a second fallback
+  initialization, so the glass halo keeps its full movement in vertical and
+  horizontal layouts.
 
 # glasstabs 0.3.4
 

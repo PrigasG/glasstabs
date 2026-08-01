@@ -658,6 +658,7 @@
       }
 
       var dur = animated ? animateTransfer(fromEl, toEl) : 0;
+      if (dur > 0) navbar._gtAnimationUntil = Date.now() + dur;
 
       navbar._gtTabTimers.push(setTimeout(function () {
         /* Use the namespace-qualified ID so we never accidentally deactivate
@@ -688,6 +689,7 @@
         }, dur * 0.60));
 
         navbar._gtTabTimers.push(setTimeout(function () {
+          navbar._gtAnimationUntil = 0;
           placeHalo(toEl, true, 1.0);
           if (!reducedMotion()) {
             halo.classList.remove('gt-arrival-pulse');
@@ -780,6 +782,11 @@
     document.addEventListener('keydown', navbar._gtKeyHandler);
 
     navbar._gtResizeHandler = function () {
+      /* Pane changes can resize a vertical widget halfway through a tab
+         transition. Ignore that temporary geometry change so ResizeObserver
+         does not snap the halo before its movement begins. The final animation
+         timer places it exactly once the transition completes. */
+      if (navbar._gtAnimationUntil && Date.now() < navbar._gtAnimationUntil) return;
       var activeLink = navbar.querySelector('.gt-tab-link[data-value="' + active + '"]');
       if (activeLink) placeHalo(activeLink, true, 1.0);
       syncTabStops();
@@ -2100,12 +2107,12 @@
         return ns ? ns + '-active_tab' : null;
       },
       getValue: function (el) {
-        initTabs(el);
+        if (!el._gtTabsInit || !el._gtActivate) initTabs(el);
         var activeLink = el.querySelector('.gt-tab-link.active');
         return activeLink ? activeLink.getAttribute('data-value') : null;
       },
       subscribe: function (el, callback) {
-        initTabs(el);
+        if (!el._gtTabsInit || !el._gtActivate) initTabs(el);
         $(el).on('change.glasstabs', function () {
           callback();
         });
@@ -2353,6 +2360,11 @@
     if (!link || link.classList.contains('gt-tab-hidden') || link.classList.contains('gt-tab-disabled')) return;
     var navbar = link.closest ? link.closest('.gt-navbar') : null;
     if (!navbar) return;
+    /* An initialized navbar already handled this event while it bubbled up.
+       Re-initializing here would clear its animation timers and snap the halo
+       straight to the destination. Keep this as a fallback only for markup
+       that was clicked before bootAll() or the mutation observer reached it. */
+    if (navbar._gtClickHandler && navbar._gtActivate) return;
     initTabs(navbar);
     if (navbar._gtActivate) navbar._gtActivate(link.getAttribute('data-value'));
   });
@@ -2365,6 +2377,7 @@
     if (!link || link.classList.contains('gt-tab-hidden') || link.classList.contains('gt-tab-disabled')) return;
     var navbar = link.closest ? link.closest('.gt-navbar') : null;
     if (!navbar) return;
+    if (navbar._gtKeyHandler && navbar._gtActivate) return;
     e.preventDefault();
     initTabs(navbar);
     if (navbar._gtActivate) navbar._gtActivate(link.getAttribute('data-value'));
