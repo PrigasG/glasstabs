@@ -446,6 +446,27 @@
       });
     }
 
+    /* Horizontal buttons usually shrink to their labels, leaving no visible
+       space for left/right text alignment. When a non-centered alignment is
+       requested, match every visible button to the widest one. The tab group
+       still keeps its own independent alignment and overflow behavior. */
+    function syncTextWidths() {
+      links.forEach(function (link) { link.style.minWidth = ''; });
+      if (container.classList.contains('gt-vertical') ||
+          container.classList.contains('gt-text-align-center')) return;
+
+      var visible = links.filter(function (link) {
+        return !link.classList.contains('gt-tab-hidden');
+      });
+      var widest = visible.reduce(function (width, link) {
+        return Math.max(width, link.getBoundingClientRect().width);
+      }, 0);
+      if (widest <= 0) return;
+      visible.forEach(function (link) {
+        link.style.minWidth = Math.ceil(widest) + 'px';
+      });
+    }
+
     function syncMenu() {
       if (!menuSelect) return;
       var previous = menuSelect.value;
@@ -719,12 +740,16 @@
       });
     }
 
+    syncTextWidths();
     initHalo();
     syncTabStops();
     syncMenu();
 
     if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(initHalo).catch(function () {});
+      document.fonts.ready.then(function () {
+        syncTextWidths();
+        initHalo();
+      }).catch(function () {});
     }
 
     /* Single delegated click handler - covers dynamically appended tabs */
@@ -811,6 +836,7 @@
 
     navbar._gtRefresh = function () {
       links = Array.from(navbar.querySelectorAll('.gt-tab-link'));
+      syncTextWidths();
       syncTabStops();
       syncMenu();
       navbar._gtResizeHandler();
@@ -2738,6 +2764,7 @@
         void badge.offsetWidth;
         badge.classList.add('gt-badge-updated');
       }
+      if (navbar._gtRefresh) navbar._gtRefresh();
     });
 
     registerCustomMessageHandlers._done = true;

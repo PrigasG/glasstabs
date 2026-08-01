@@ -83,7 +83,7 @@ ui <- fluidPage(
       glassTabsUI(
         "right_tabs",
         glassTabPanel("one", "One", p("One")),
-        glassTabPanel("two", "Two", p("Two")),
+        glassTabPanel("two", "A longer label", p("Two")),
         tab_align = "right",
         text_align = "left"
       ),

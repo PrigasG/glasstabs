@@ -370,6 +370,11 @@ test_that("browser: horizontal tab alignment moves the whole tab group", {
     })()
   "))
   expect_true(app$get_js("
-    getComputedStyle(document.querySelector('#right_tabs-tab-one')).justifyContent === 'flex-start'
+    (function() {
+      var first = document.querySelector('#right_tabs-tab-one');
+      var second = document.querySelector('#right_tabs-tab-two');
+      return getComputedStyle(first).justifyContent === 'flex-start' &&
+        Math.abs(first.getBoundingClientRect().width - second.getBoundingClientRect().width) < 1;
+    })()
   "))
 })

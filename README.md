@@ -160,7 +160,8 @@ glassTabsUI(
 
 `tab_align` places the tab group at the left, center, or right of the available
 navigation area in either layout. `text_align` separately aligns labels and
-icons inside each tab button.
+icons inside each tab button. For visible left or right alignment in a
+horizontal bar, the buttons share the width of the widest label.
 
 ## Tabs that fit the screen
 
