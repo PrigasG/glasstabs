@@ -39,8 +39,7 @@ pak::pak("PrigasG/glasstabs@main")
 packageVersion("glasstabs")
 ```
 
-Installing from GitHub replaces the installed copy on that machine. It does
-not change the CRAN release or the tagged 0.3.4 source.
+Installing from GitHub replaces the installed copy on your machine and gives you access to current features before CRAN release.
 
 ## A complete app
 
