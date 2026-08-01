@@ -23,7 +23,8 @@
   repeat testing clear.
 - Tab clicks and keyboard activation no longer pass through a second
   fallback initialization, so the glass halo keeps its full movement in
-  vertical and horizontal layouts.
+  vertical and horizontal layouts. The arrival pulse also preserves the
+  halo’s settled alignment with the active tab in both orientations.
 
 ## glasstabs 0.3.4
 
