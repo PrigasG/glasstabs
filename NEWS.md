@@ -19,6 +19,8 @@
   initialization, so the glass halo keeps its full movement in vertical and
   horizontal layouts. The arrival pulse also preserves the halo's settled
   alignment with the active tab in both orientations.
+* Compact-menu options now use an explicit native dark or light colour scheme,
+  keeping option text readable when the operating system opens the select menu.
 
 # glasstabs 0.3.4
 

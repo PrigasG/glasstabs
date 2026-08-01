@@ -28,8 +28,17 @@
   border:1px solid var(--gt-halo-border,rgba(255,255,255,0.22));
   background:var(--gt-content-bg,rgba(20,32,48,0.96));
   color:var(--gt-tab-active-text,#fff);font:inherit;font-weight:600;
+  color-scheme:dark;
+}
+.gt-overflow-menu:not(.gt-vertical) .gt-tab-menu-select option,
+.gt-overflow-menu:not(.gt-vertical) .gt-tab-menu-select optgroup{
+  background:#0f172a;color:#fff;
 }
 .gt-overflow-menu.theme-light:not(.gt-vertical) .gt-tab-menu-select{
+  background:#fff;color:var(--gt-tab-active-text,#1e40af);color-scheme:light;
+}
+.gt-overflow-menu.theme-light:not(.gt-vertical) .gt-tab-menu-select option,
+.gt-overflow-menu.theme-light:not(.gt-vertical) .gt-tab-menu-select optgroup{
   background:#fff;color:var(--gt-tab-active-text,#1e40af);
 }
 

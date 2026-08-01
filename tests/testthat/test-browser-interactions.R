@@ -215,6 +215,17 @@ test_that("browser: tabs keep focus, scroll, menu state, and dynamic tabs in syn
   expect_true(app$get_js("
     (function() {
       var menu = document.querySelector('#menu_tabs-menu');
+      var option = menu.querySelector('option');
+      var menuStyle = getComputedStyle(menu);
+      var optionStyle = getComputedStyle(option);
+      return menuStyle.colorScheme === 'dark' &&
+        optionStyle.backgroundColor === 'rgb(15, 23, 42)' &&
+        optionStyle.color === 'rgb(255, 255, 255)';
+    })()
+  "))
+  expect_true(app$get_js("
+    (function() {
+      var menu = document.querySelector('#menu_tabs-menu');
       menu.value = 'complete';
       menu.dispatchEvent(new Event('change', {bubbles:true}));
       return true;
