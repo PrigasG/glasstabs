@@ -185,6 +185,16 @@ test_that("browser: tabs keep focus, scroll, menu state, and dynamic tabs in syn
     Shiny.shinyapp.$inputValues['mobile_tabs-active_tab'] === 'quality'
   ")
   expect_equal(app$get_value(input = "mobile_tabs-active_tab"), "quality")
+  app$wait_for_js("
+    (function() {
+      var halo = document.querySelector('#mobile_tabs-wrap .gt-halo').getBoundingClientRect();
+      var tab = document.querySelector('#mobile_tabs-tab-quality').getBoundingClientRect();
+      return Math.abs(halo.left - tab.left) < 1 &&
+        Math.abs(halo.top - tab.top) < 1 &&
+        Math.abs(halo.width - tab.width) < 1 &&
+        Math.abs(halo.height - tab.height) < 1;
+    })()
+  ")
 
   app$set_inputs(append_tab = "click")
   app$wait_for_idle()
@@ -286,6 +296,16 @@ test_that("browser: vertical halo keeps its animated movement", {
   app$wait_for_js("window.__gtVerticalHaloMoved === true")
   app$wait_for_js("
     document.querySelector('#vertical_tabs-tab-second').classList.contains('active')
+  ")
+  app$wait_for_js("
+    (function() {
+      var halo = document.querySelector('#vertical_tabs-wrap .gt-halo').getBoundingClientRect();
+      var tab = document.querySelector('#vertical_tabs-tab-second').getBoundingClientRect();
+      return Math.abs(halo.left - tab.left) < 1 &&
+        Math.abs(halo.top - tab.top) < 1 &&
+        Math.abs(halo.width - tab.width) < 1 &&
+        Math.abs(halo.height - tab.height) < 1;
+    })()
   ")
   expect_equal(app$get_value(input = "vertical_tabs-active_tab"), "second")
 })

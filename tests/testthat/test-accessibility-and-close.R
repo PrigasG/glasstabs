@@ -13,6 +13,7 @@ test_that("glass.css has no color-mix dependency", {
   expect_true(grepl("@supports not", css, fixed = TRUE))
   expect_true(grepl("gt-overflow-scroll", css, fixed = TRUE))
   expect_true(grepl('[dir="rtl"]', css, fixed = TRUE))
+  expect_false(grepl("transform:translate(-50%,-50%) scale", css, fixed = TRUE))
 })
 
 test_that("select widgets render ARIA combobox/listbox semantics", {

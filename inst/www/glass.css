@@ -345,11 +345,11 @@
 .gt-ms-clear:hover{opacity:1;}
 
 /* Arrival pulse */
-.gt-arrival-pulse{animation:gtHaloPulse 320ms cubic-bezier(.2,.9,.25,1) forwards;}
+.gt-arrival-pulse{animation:gtHaloPulse 320ms cubic-bezier(.2,.9,.25,1) forwards;transform-origin:center;}
 @keyframes gtHaloPulse{
-  0%  {transform:translate(-50%,-50%) scale(0.95);opacity:.82;}
-  48% {transform:translate(-50%,-50%) scale(1.05);opacity:1;}
-  100%{transform:translate(-50%,-50%) scale(1);   opacity:.92;}
+  0%  {transform:scale(0.95);opacity:.82;}
+  48% {transform:scale(1.05);opacity:1;}
+  100%{transform:scale(1);   opacity:.92;}
 }
 
 @media(max-width:600px){
