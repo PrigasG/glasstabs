@@ -31,11 +31,16 @@ Install the CRAN release:
 install.packages("glasstabs")
 ```
 
-Or install the development version from GitHub:
+The GitHub build is the development version, currently `0.3.4.9000` on the
+way to 0.4.0. It includes features that are not part of the CRAN release:
 
 ``` r
-pak::pak("prigasG/glasstabs")
+pak::pak("PrigasG/glasstabs@main")
+packageVersion("glasstabs")
 ```
+
+Installing from GitHub replaces the installed copy on that machine. It does
+not change the CRAN release or the tagged 0.3.4 source.
 
 ## A complete app
 
@@ -148,12 +153,14 @@ glassTabsUI(
   glassTabPanel("approve", "Approve", approve_ui),
   orientation = "vertical",
   indicator = "solid",
-  tab_align = "left"
+  tab_align = "left",
+  text_align = "left"
 )
 ```
 
-In a horizontal bar, `tab_align` places the tab group at the left, center, or
-right. In a vertical rail, it aligns the labels inside their tab buttons.
+`tab_align` places the tab group at the left, center, or right of the available
+navigation area in either layout. `text_align` separately aligns labels and
+icons inside each tab button.
 
 ## Tabs that fit the screen
 
@@ -172,7 +179,9 @@ glassTabsUI(
 ```
 
 `overflow = "wrap"` keeps every label visible on as many rows as needed.
-`overflow = "menu"` replaces the strip with a compact native chooser. Touch
+For horizontal tabs, `overflow = "menu"` replaces the strip with a compact
+native chooser. Vertical tabs already use a rail, so menu mode is not
+available there. Touch
 swipes are available with `swipe = TRUE`; they start only on ordinary panel
 content, leaving inputs, plots, maps, and horizontally scrolling tables alone.
 
@@ -314,7 +323,7 @@ in one app.
 
 | Function | Description |
 |------------------------------------|------------------------------------|
-| `glassTabsUI(id, ..., selected, wrap, compact, shape, indicator, orientation, tab_align, overflow, swipe, extra_ui, theme)` | Animated tab bar with responsive overflow and optional touch swipes |
+| `glassTabsUI(id, ..., selected, wrap, compact, shape, indicator, orientation, tab_align, overflow, swipe, extra_ui, theme, text_align)` | Animated tab bar with responsive overflow and optional touch swipes |
 | `glassTabPanel(value, label, ..., icon, selected)` | Define one tab and its content; `icon` accepts `shiny::icon()` |
 | `glassTabsServer(id, bookmark)` | Reactive returning the active tab; can bookmark the active tab in the URL |
 | `glassTabsOutput(outputId)` | UI placeholder for a server-rendered tab widget |

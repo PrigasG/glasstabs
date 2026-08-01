@@ -74,7 +74,9 @@ ui <- fluidPage(
       glassTabPanel("first", "First", p("First vertical pane")),
       glassTabPanel("second", "Second", p("Second vertical pane")),
       glassTabPanel("third", "Third", p("Third vertical pane")),
-      orientation = "vertical"
+      orientation = "vertical",
+      tab_align = "right",
+      text_align = "left"
     ),
     tags$div(
       class = "alignment-frame",
@@ -82,7 +84,8 @@ ui <- fluidPage(
         "right_tabs",
         glassTabPanel("one", "One", p("One")),
         glassTabPanel("two", "Two", p("Two")),
-        tab_align = "right"
+        tab_align = "right",
+        text_align = "left"
       ),
       glassTabsUI(
         "center_tabs",

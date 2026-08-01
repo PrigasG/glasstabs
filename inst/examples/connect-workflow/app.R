@@ -3,7 +3,8 @@
 # A deployable Shiny app for Posit Connect that demonstrates:
 #   - indicator = "glass" / "solid" / "underline" for tab motion styles
 #   - orientation = "horizontal" / "vertical" for workflow navigation
-#   - tab_align = "center" / "left" / "right" for tab button alignment
+#   - tab_align = "center" / "left" / "right" for tab group alignment
+#   - text_align = "center" / "left" / "right" for labels and icons
 #   - shape = "rounded" / "square" for matching tab corner styles
 #   - theme = "auto" for Bootstrap 5 / bslib light-dark mode
 #   - overflow = "scroll" / "wrap" / "menu" on narrow screens
@@ -58,6 +59,7 @@ stage_card <- function(title, body, state) {
 workflow_tabs <- function(
     orientation = "horizontal",
     tab_align = "center",
+    text_align = "center",
     shape = "rounded",
     indicator = "glass",
     overflow = "scroll",
@@ -65,6 +67,7 @@ workflow_tabs <- function(
 ) {
   orientation <- match.arg(orientation, c("horizontal", "vertical"))
   tab_align <- match.arg(tab_align, c("center", "left", "right"))
+  text_align <- match.arg(text_align, c("center", "left", "right"))
   shape <- match.arg(shape, c("rounded", "square"))
   indicator <- match.arg(indicator, c("glass", "solid", "underline"))
   overflow <- match.arg(overflow, c("scroll", "wrap", "menu"))
@@ -123,6 +126,7 @@ workflow_tabs <- function(
   if ("indicator" %in% glassTabsUI_args) args$indicator <- indicator
   if ("orientation" %in% glassTabsUI_args) args$orientation <- orientation
   if ("tab_align" %in% glassTabsUI_args) args$tab_align <- tab_align
+  if ("text_align" %in% glassTabsUI_args) args$text_align <- text_align
   if ("shape" %in% glassTabsUI_args) args$shape <- shape
   if ("overflow" %in% glassTabsUI_args) args$overflow <- overflow
   if ("swipe" %in% glassTabsUI_args) args$swipe <- swipe
@@ -297,6 +301,12 @@ page_body <- function() {
           selected = "center"
         ),
         selectInput(
+          "workflow_text_align",
+          "Text alignment",
+          choices = c("Center" = "center", "Left" = "left", "Right" = "right"),
+          selected = "center"
+        ),
+        selectInput(
           "workflow_tab_shape",
           "Tab shape",
           choices = c("Rounded" = "rounded", "Square" = "square"),
@@ -308,11 +318,14 @@ page_body <- function() {
           choices = c("Glass" = "glass", "Solid" = "solid", "Underline" = "underline"),
           selected = "glass"
         ),
-        selectInput(
-          "workflow_overflow",
-          "Narrow-screen tabs",
-          choices = c("Scroll" = "scroll", "Wrap" = "wrap", "Compact menu" = "menu"),
-          selected = "scroll"
+        conditionalPanel(
+          condition = "input.workflow_orientation === 'horizontal'",
+          selectInput(
+            "workflow_overflow",
+            "Narrow-screen tabs",
+            choices = c("Scroll" = "scroll", "Wrap" = "wrap", "Compact menu" = "menu"),
+            selected = "scroll"
+          )
         ),
         checkboxInput("workflow_swipe", "Swipe between tabs", value = TRUE),
         actionButton("reset_filters", "Reset filters", class = "btn-secondary")
@@ -472,17 +485,23 @@ server <- function(input, output, session) {
     if (is.null(orientation) || !nzchar(orientation)) orientation <- "horizontal"
     tab_align <- input$workflow_tab_align
     if (is.null(tab_align) || !nzchar(tab_align)) tab_align <- "center"
+    text_align <- input$workflow_text_align
+    if (is.null(text_align) || !nzchar(text_align)) text_align <- "center"
     shape <- input$workflow_tab_shape
     if (is.null(shape) || !nzchar(shape)) shape <- "rounded"
     indicator <- input$workflow_indicator
     if (is.null(indicator) || !nzchar(indicator)) indicator <- "glass"
     overflow <- input$workflow_overflow
     if (is.null(overflow) || !nzchar(overflow)) overflow <- "scroll"
+    if (identical(orientation, "vertical") && identical(overflow, "menu")) {
+      overflow <- "scroll"
+    }
     swipe <- isTRUE(input$workflow_swipe)
 
     workflow_tabs(
       orientation = orientation,
       tab_align = tab_align,
+      text_align = text_align,
       shape = shape,
       indicator = indicator,
       overflow = overflow,

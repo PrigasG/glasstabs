@@ -279,7 +279,7 @@ test_that("browser: select options support arrow keys and Enter", {
   expect_equal(app$get_value(input = "cats"), c("apple", "banana"))
 })
 
-test_that("browser: vertical halo keeps its animated movement", {
+test_that("browser: vertical halo respects motion settings and stays aligned", {
   skip_on_covr()
   skip_if_not_installed("shinytest2")
   local_browser_pkg_root()
@@ -293,6 +293,19 @@ test_that("browser: vertical halo keeps its animated movement", {
   on.exit(app$stop(), add = TRUE)
   app$wait_for_idle()
 
+  reduced_motion <- isTRUE(app$get_js(
+    "window.matchMedia('(prefers-reduced-motion: reduce)').matches"
+  ))
+  expect_true(app$get_js("
+    (function() {
+      var viewport = document.querySelector('#vertical_tabs-wrap .gt-tab-viewport').getBoundingClientRect();
+      var navbar = document.querySelector('#vertical_tabs-navbar').getBoundingClientRect();
+      var first = document.querySelector('#vertical_tabs-tab-first');
+      return Math.abs(viewport.right - navbar.right) < 1 &&
+        getComputedStyle(first).justifyContent === 'flex-start';
+    })()
+  "))
+
   expect_true(app$get_js("
     (function() {
       var halo = document.querySelector('#vertical_tabs-wrap .gt-halo');
@@ -304,7 +317,9 @@ test_that("browser: vertical halo keeps its animated movement", {
       return true;
     })()
   "))
-  app$wait_for_js("window.__gtVerticalHaloMoved === true")
+  if (!reduced_motion) {
+    app$wait_for_js("window.__gtVerticalHaloMoved === true")
+  }
   app$wait_for_js("
     document.querySelector('#vertical_tabs-tab-second').classList.contains('active')
   ")
@@ -353,5 +368,8 @@ test_that("browser: horizontal tab alignment moves the whole tab group", {
       var viewportCenter = (viewport.left + viewport.right) / 2;
       return Math.abs(groupCenter - viewportCenter) < 1;
     })()
+  "))
+  expect_true(app$get_js("
+    getComputedStyle(document.querySelector('#right_tabs-tab-one')).justifyContent === 'flex-start'
   "))
 })

@@ -18,7 +18,8 @@ glassTabsUI(
   swipe = FALSE,
   extra_ui = NULL,
   theme = NULL,
-  dark_selector = NULL
+  dark_selector = NULL,
+  text_align = c("center", "left", "right")
 )
 }
 \arguments{
@@ -58,14 +59,15 @@ pane sits beside them. The sliding halo follows automatically, arrow-key
 navigation switches to Up/Down, and \code{indicator = "underline"} renders as
 a slim bar on the edge of the active tab adjacent to the content.}
 
-\item{tab_align}{Alignment of the tab group in horizontal layouts, and of
-text and icons inside each tab button in vertical layouts. One of
+\item{tab_align}{Alignment of the tab group within the available navigation
+area in either orientation. One of
 \code{"center"} (default), \code{"left"}, or \code{"right"}.}
 
 \item{overflow}{How the tab strip behaves when labels no longer fit. One of
 \code{"scroll"} (the default), \code{"wrap"}, or \code{"menu"}. Scroll mode keeps a
 single touch-friendly row and brings the active tab into view. Wrap mode
-allows more than one row. Menu mode uses a compact native chooser.}
+allows more than one row. Menu mode uses a compact native chooser and is
+available only when \code{orientation = "horizontal"}.}
 
 \item{swipe}{Whether a horizontal touch swipe over non-interactive panel
 content should move to the previous or next available tab. The default is
@@ -88,6 +90,9 @@ for Bootstrap 5). When provided and \code{theme = "light"}, a second scoped
 \verb{<style>} block overrides the CSS variables back to the dark-mode defaults
 whenever that selector is active - so the tabs stay readable after a
 dark-mode toggle without any server-side intervention.}
+
+\item{text_align}{Alignment of text and icons inside each tab button. One of
+\code{"center"} (default), \code{"left"}, or \code{"right"}.}
 }
 \value{
 An \code{htmltools::tagList} ready to use in a Shiny UI.

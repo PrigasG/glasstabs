@@ -13,7 +13,8 @@ contrast mode.
 | Area | Scope | Status |
 |---|---|---|
 | Tab semantics | Roving focus, `aria-controls`, `aria-labelledby`, Home/End keys, and correct focus after dynamic updates | Implemented |
-| Mobile overflow | `overflow = "scroll"`, `"wrap"`, or `"menu"`; selected tabs remain visible | Implemented |
+| Mobile overflow | `overflow = "scroll"` or `"wrap"`; horizontal layouts also support `"menu"`; selected tabs remain visible | Implemented |
+| Tab alignment | Separate tab-group placement with `tab_align` from label and icon placement with `text_align` | Implemented |
 | Reduced motion | CSS and JavaScript follow `prefers-reduced-motion` without delaying content changes | Implemented |
 | Glass fallback | Solid surfaces when backdrop blur is unavailable; retain the existing forced-colors mode | Implemented |
 | Swipe | Optional horizontal pane gestures that avoid interactive and scrollable content | Implemented |
@@ -28,7 +29,8 @@ glassTabsUI(
   "reports",
   ...,
   overflow = c("scroll", "wrap", "menu"),
-  swipe = FALSE
+  swipe = FALSE,
+  text_align = c("center", "left", "right")
 )
 ```
 
@@ -36,8 +38,12 @@ glassTabsUI(
 outer content container. `overflow` controls the tab strip itself.
 
 `overflow = "scroll"` is the default and keeps one row of tabs. `"wrap"` is
-useful when every tab should remain visible. `"menu"` uses a compact native
-select and stays in step with dynamic tab updates.
+useful when every tab should remain visible. In horizontal layouts, `"menu"`
+uses a compact native select and stays in step with dynamic tab updates.
+
+`tab_align` places the tab group within the available navigation area in both
+orientations. `text_align` independently places text and icons inside each tab
+button.
 
 ## Experimental: `glassPage()`
 
@@ -76,8 +82,8 @@ These remain worthwhile, but they are outside the focused 0.4.0 release:
 - 2026-07-31: agreed on a responsive and accessibility-focused 0.4.0 scope.
 - 2026-07-31: moved the full-page concept out of the stable milestone and
   renamed the experimental thin wrapper to `glassPage()`.
-- 2026-07-31: kept existing CRAN submission artifacts intact and opened the
-  `codex/v0.4.0-responsive-accessibility` development branch.
+- 2026-07-31: kept existing CRAN submission artifacts intact while developing
+  the milestone on the repository's main branch.
 - 2026-07-31: implemented the stable responsive and accessibility scope,
   including all three overflow modes, guarded swipe gestures, motion and blur
   fallbacks, tab and select keyboard behavior, and accessible dynamic tabs.
@@ -90,3 +96,5 @@ These remain worthwhile, but they are outside the focused 0.4.0 release:
 - 2026-07-31: built the source package and ran `R CMD check --as-cran` with
   no errors or warnings. The only note is expected while the package uses the
   development version `0.3.4.9000`; release builds will use `0.4.0`.
+- 2026-08-01: separated tab-group and tab-content alignment, documented the
+  horizontal-only compact menu, and made browser CI respect reduced motion.

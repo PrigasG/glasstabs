@@ -71,15 +71,18 @@ glassTabPanel <- function(value, label, ..., icon = NULL, selected = FALSE) {
 #'   pane sits beside them. The sliding halo follows automatically, arrow-key
 #'   navigation switches to Up/Down, and `indicator = "underline"` renders as
 #'   a slim bar on the edge of the active tab adjacent to the content.
-#' @param tab_align Alignment of the tab group in horizontal layouts, and of
-#'   text and icons inside each tab button in vertical layouts. One of
+#' @param tab_align Alignment of the tab group within the available navigation
+#'   area in either orientation. One of
+#'   `"center"` (default), `"left"`, or `"right"`.
+#' @param text_align Alignment of text and icons inside each tab button. One of
 #'   `"center"` (default), `"left"`, or `"right"`.
 #' @param extra_ui Optional additional UI placed to the right of the tab bar
 #'   (below the tab rail when `orientation = "vertical"`).
 #' @param overflow How the tab strip behaves when labels no longer fit. One of
 #'   `"scroll"` (the default), `"wrap"`, or `"menu"`. Scroll mode keeps a
 #'   single touch-friendly row and brings the active tab into view. Wrap mode
-#'   allows more than one row. Menu mode uses a compact native chooser.
+#'   allows more than one row. Menu mode uses a compact native chooser and is
+#'   available only when `orientation = "horizontal"`.
 #' @param swipe Whether a horizontal touch swipe over non-interactive panel
 #'   content should move to the previous or next available tab. The default is
 #'   `FALSE` so maps, plots, tables, and other interactive content keep their
@@ -113,7 +116,8 @@ glassTabsUI <- function(
     swipe = FALSE,
     extra_ui = NULL,
     theme = NULL,
-    dark_selector = NULL
+    dark_selector = NULL,
+    text_align = c("center", "left", "right")
 ) {
   ns          <- shiny::NS(id)
   panels      <- list(...)
@@ -121,7 +125,21 @@ glassTabsUI <- function(
   indicator   <- .gt_match_arg(indicator, c("glass", "solid", "underline"), "indicator")
   orientation <- .gt_match_arg(orientation, c("horizontal", "vertical"), "orientation")
   tab_align   <- .gt_match_arg(tab_align, c("center", "left", "right"), "tab_align")
+  text_align  <- .gt_match_arg(text_align, c("center", "left", "right"), "text_align")
   overflow    <- .gt_match_arg(overflow, c("scroll", "wrap", "menu"), "overflow")
+
+  if (identical(orientation, "vertical") && identical(overflow, "menu")) {
+    .gt_abort(
+      paste0(
+        "glassTabsUI(): `overflow = \"menu\"` is available only for horizontal tabs.\n",
+        "Use `orientation = \"horizontal\"`, or choose `overflow = \"scroll\"` for a vertical tab rail."
+      ),
+      class = "glasstabs_error_bad_choice",
+      argument = "overflow",
+      value = overflow,
+      expected = "scroll or wrap when orientation is vertical"
+    )
+  }
 
   if (!is.logical(swipe) || length(swipe) != 1L || is.na(swipe)) {
     .gt_abort(
@@ -296,6 +314,7 @@ glassTabsUI <- function(
       if (identical(orientation, "vertical")) "gt-vertical",
       paste0("gt-overflow-", overflow),
       paste0("gt-align-", tab_align),
+      paste0("gt-text-align-", text_align),
       if (is_auto)         "theme-auto",
       if (is_light)        "theme-light"),
     collapse = " "

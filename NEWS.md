@@ -21,8 +21,14 @@
   alignment with the active tab in both orientations.
 * Compact-menu options now use an explicit native dark or light colour scheme,
   keeping option text readable when the operating system opens the select menu.
-* `tab_align` now has a visible role in both orientations: it places the tab
-  group in horizontal bars and aligns labels inside vertical tab buttons.
+* `tab_align` now places the tab group in both orientations. The new
+  `text_align` argument independently aligns labels and icons inside tab
+  buttons, keeping layout and text choices separate.
+* Compact menu overflow is now documented and validated as a horizontal-only
+  layout. A vertical tab rail paired with `overflow = "menu"` gets a clear
+  error instead of silently ignoring the setting.
+* Coverage uploads now use the authenticated Codecov action, and browser checks
+  respect the runner's reduced-motion preference.
 
 # glasstabs 0.3.4
 
