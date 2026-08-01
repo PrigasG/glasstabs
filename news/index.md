@@ -1,6 +1,26 @@
 # Changelog
 
+## glasstabs 0.3.4.9000
+
+### Responsive and accessible navigation
+
+- Development toward 0.4.0 now focuses on dependable tabs on small
+  screens, complete keyboard and screen-reader behavior, reduced-motion
+  support, and solid fallbacks when glass effects are unavailable.
+- [`glassTabsUI()`](https://prigasg.github.io/glasstabs/reference/glassTabsUI.md)
+  gains `overflow` and opt-in `swipe` controls. The selected tab stays
+  visible in a scrolling strip, wrapped tabs remain available, and menu
+  mode provides a compact native chooser.
+- Tabs now use roving keyboard focus, Home/End navigation, and explicit
+  ARIA relationships between each tab and its panel.
+- [`glassPage()`](https://prigasg.github.io/glasstabs/reference/glassPage.md)
+  is an experimental, lightweight wrapper around
+  [`bslib::page_fillable()`](https://rstudio.github.io/bslib/reference/page_fillable.html)
+  that loads the glasstabs dependency automatically.
+
 ## glasstabs 0.3.4
+
+CRAN release: 2026-07-31
 
 ### Internal consistency and diagnostics
 

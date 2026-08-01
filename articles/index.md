@@ -16,6 +16,8 @@
 
 - [Animated Tabs with
   glasstabs](https://prigasg.github.io/glasstabs/articles/tabs.md):
+- [Responsive and Accessible
+  Tabs](https://prigasg.github.io/glasstabs/articles/responsive-accessibility.md):
 - [Indicator Styles, Vertical Tabs, and Auto
   Theming](https://prigasg.github.io/glasstabs/articles/indicators.md):
 - [Single-Select Dropdown with

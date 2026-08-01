@@ -1,0 +1,6 @@
+/* Keep pkgdown's article sidebar inside narrow viewports. */
+@media (max-width: 767.98px) {
+  .template-article aside.col-md-3 {
+    max-width: calc(100% - 1rem);
+  }
+}

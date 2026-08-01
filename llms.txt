@@ -1,5 +1,9 @@
 # glasstabs
 
+------------------------------------------------------------------------
+
+editor_options: markdown: wrap: 72 —
+
 > Animated tabs and select inputs that feel at home in a Shiny app.
 
 glasstabs gives Shiny apps polished navigation and filtering without
@@ -166,6 +170,57 @@ glassTabsUI(
 )
 ```
 
+## Tabs that fit the screen
+
+Long tab bars stay on one line and scroll on smaller screens. The active
+tab comes back into view after a click, keyboard change, swipe, or
+server update.
+
+``` r
+
+glassTabsUI(
+  "reports",
+  glassTabPanel("summary", "Summary", selected = TRUE, summary_ui),
+  glassTabPanel("activity", "Recent activity", activity_ui),
+  glassTabPanel("quality", "Data quality", quality_ui),
+  glassTabPanel("settings", "Team settings", settings_ui),
+  overflow = "scroll"
+)
+```
+
+`overflow = "wrap"` keeps every label visible on as many rows as needed.
+`overflow = "menu"` replaces the strip with a compact native chooser.
+Touch swipes are available with `swipe = TRUE`; they start only on
+ordinary panel content, leaving inputs, plots, maps, and horizontally
+scrolling tables alone.
+
+Keyboard focus follows the selected tab. Arrow keys move between
+available tabs, while Home and End jump to the first and last. Motion is
+shortened when the device asks for reduced motion, and solid colors take
+over when glass blur is unavailable.
+
+## An experimental fillable page
+
+[`glassPage()`](https://prigasg.github.io/glasstabs/reference/glassPage.md)
+is a small wrapper around
+[`bslib::page_fillable()`](https://rstudio.github.io/bslib/reference/page_fillable.html).
+It loads the package assets automatically and starts with Bootstrap 5.
+The wrapper is experimental during the 0.4.x cycle; regular Shiny and
+bslib pages remain fully supported.
+
+``` r
+
+ui <- glassPage(
+  title = "Team review",
+  glassTabsUI(
+    "review",
+    glassTabPanel("queue", "Queue", queue_ui),
+    glassTabPanel("done", "Done", done_ui),
+    theme = "auto"
+  )
+)
+```
+
 For a custom accent, change only the fields your app needs:
 
 ``` r
@@ -278,6 +333,7 @@ server <- function(input, output, session) {
 | Function | Description |
 |----|----|
 | [`useGlassTabs()`](https://prigasg.github.io/glasstabs/reference/useGlassTabs.md) | Inject package CSS and JavaScript—call once in the UI |
+| `glassPage(...)` | Experimental fillable Bootstrap 5 page with glasstabs already loaded |
 | `runGlassExample(example)` | Launch a built-in example app ([`runGlassExample()`](https://prigasg.github.io/glasstabs/reference/runGlassExample.md) lists all available apps) |
 | [`glasstabs_news()`](https://prigasg.github.io/glasstabs/reference/glasstabs_news.md) | Print the package changelog to the R console |
 
@@ -289,7 +345,7 @@ Built-in examples include `basic`, `bs4dash`, `bslib`,
 
 | Function | Description |
 |----|----|
-| `glassTabsUI(id, ..., selected, wrap, compact, shape, indicator, orientation, tab_align, extra_ui, theme)` | Animated tab bar with content area; use `compact = TRUE` for dashboard cards |
+| `glassTabsUI(id, ..., selected, wrap, compact, shape, indicator, orientation, tab_align, overflow, swipe, extra_ui, theme)` | Animated tab bar with responsive overflow and optional touch swipes |
 | `glassTabPanel(value, label, ..., icon, selected)` | Define one tab and its content; `icon` accepts [`shiny::icon()`](https://rdrr.io/pkg/shiny/man/icon.html) |
 | `glassTabsServer(id, bookmark)` | Reactive returning the active tab; can bookmark the active tab in the URL |
 | `glassTabsOutput(outputId)` | UI placeholder for a server-rendered tab widget |
@@ -354,6 +410,8 @@ Load CSS/JavaScript, launch built-in examples, and view the changelog.
 
 - [`useGlassTabs()`](https://prigasg.github.io/glasstabs/reference/useGlassTabs.md)
   : Attach glasstabs CSS and JS dependencies
+- [`glassPage()`](https://prigasg.github.io/glasstabs/reference/glassPage.md)
+  : Experimental fillable page for glasstabs apps
 - [`runGlassExample()`](https://prigasg.github.io/glasstabs/reference/runGlassExample.md)
   : Run a built-in glasstabs example app
 - [`glasstabs_news()`](https://prigasg.github.io/glasstabs/reference/glasstabs_news.md)
@@ -447,6 +505,8 @@ auto theming, search, update helpers, and reactive value helpers.
 
 - [Animated Tabs with
   glasstabs](https://prigasg.github.io/glasstabs/articles/tabs.md):
+- [Responsive and Accessible
+  Tabs](https://prigasg.github.io/glasstabs/articles/responsive-accessibility.md):
 - [Indicator Styles, Vertical Tabs, and Auto
   Theming](https://prigasg.github.io/glasstabs/articles/indicators.md):
 - [Single-Select Dropdown with
