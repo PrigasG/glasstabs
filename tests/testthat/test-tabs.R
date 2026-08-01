@@ -202,7 +202,7 @@ test_that("glassTabsUI() links tabs and panels with roving focus", {
   expect_match(html, 'id="nav-tab-second"[^>]+tabindex="-1"')
   expect_match(html, 'aria-controls="nav-pane-first"')
   expect_match(html, 'id="nav-pane-first"[^>]+aria-labelledby="nav-tab-first"')
-  expect_match(html, 'id="nav-pane-second"[^>]+aria-hidden="true"[^>]+tabindex="-1"')
+  expect_match(html, 'id="nav-pane-second"[^>]+aria-hidden="true"[^>]+inert=""[^>]+tabindex="-1"')
 })
 
 test_that("glassTabsUI() renders each overflow mode and swipe preference", {
@@ -210,8 +210,8 @@ test_that("glassTabsUI() renders each overflow mode and swipe preference", {
 
   expect_match(as.character(glassTabsUI("a", panel)), "gt-overflow-scroll")
   expect_match(
-    as.character(glassTabsUI("b", panel, overflow = "wrap")),
-    "gt-overflow-wrap"
+    as.character(glassTabsUI("b", panel, overflow = "multiline")),
+    "gt-overflow-multiline"
   )
   menu <- as.character(glassTabsUI("c", panel, overflow = "menu"))
   expect_match(menu, "gt-overflow-menu")
@@ -227,7 +227,7 @@ test_that("glassTabsUI() explains invalid responsive arguments", {
 
   expect_error(
     glassTabsUI("tabs", panel, overflow = "collapse"),
-    "scroll.*wrap.*menu",
+    "scroll.*multiline.*menu",
     class = "glasstabs_error_bad_argument"
   )
   expect_error(

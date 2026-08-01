@@ -141,6 +141,30 @@ test_that("browser: tabs keep focus, scroll, menu state, and dynamic tabs in syn
   on.exit(app$stop(), add = TRUE)
   app$wait_for_idle()
 
+  app$wait_for_js("
+    document.querySelector('#mobile_tabs-tab-activity').getAttribute('aria-disabled') === 'true'
+  ")
+  expect_true(app$get_js("
+    (function() {
+      var activePane = document.querySelector('#mobile_tabs-pane-summary');
+      var inactivePane = document.querySelector('#mobile_tabs-pane-activity');
+      var inactiveButton = document.querySelector('#inactive_action');
+      var first = document.querySelector('#mobile_tabs-tab-summary');
+      first.focus();
+      first.dispatchEvent(new KeyboardEvent('keydown', {key:'ArrowRight', bubbles:true}));
+      var disabledIsFocused = document.activeElement.id === 'mobile_tabs-tab-activity';
+      document.activeElement.dispatchEvent(
+        new KeyboardEvent('keydown', {key:'Enter', bubbles:true})
+      );
+      var selectionStayedPut = first.classList.contains('active');
+      inactiveButton.focus();
+      return activePane.hasAttribute('inert') === false &&
+        inactivePane.hasAttribute('inert') &&
+        document.activeElement !== inactiveButton &&
+        disabledIsFocused && selectionStayedPut;
+    })()
+  "))
+
   expect_true(app$get_js("
     (function() {
       var viewport = document.querySelector('#mobile_tabs-wrap .gt-tab-viewport');
@@ -236,6 +260,21 @@ test_that("browser: tabs keep focus, scroll, menu state, and dynamic tabs in syn
     Shiny.shinyapp.$inputValues['menu_tabs-active_tab'] === 'complete'
   ")
   expect_equal(app$get_value(input = "menu_tabs-active_tab"), "complete")
+
+  expect_true(app$get_js("
+    (function() {
+      var quoted = document.getElementById('special_tabs-tab-team\"review');
+      quoted.click();
+      return true;
+    })()
+  "))
+  app$wait_for_js("
+    document.getElementById('special_tabs-tab-team\"review').classList.contains('active')
+  ")
+  app$wait_for_js("
+    Shiny.shinyapp.$inputValues['special_tabs-active_tab'] === 'team\"review'
+  ")
+  expect_equal(app$get_value(input = "special_tabs-active_tab"), 'team"review')
 })
 
 test_that("browser: select options support arrow keys and Enter", {

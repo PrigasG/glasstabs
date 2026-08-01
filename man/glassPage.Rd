@@ -7,6 +7,7 @@
 glassPage(
   ...,
   title = NULL,
+  lang = "en",
   theme = NULL,
   padding = NULL,
   gap = NULL,
@@ -17,6 +18,9 @@ glassPage(
 \item{...}{UI elements placed on the page.}
 
 \item{title}{Optional browser-window title.}
+
+\item{lang}{Language of the page content, such as \code{"en"} or \code{"en-GB"}.
+This becomes the \code{lang} attribute on the page's \verb{<html>} element.}
 
 \item{theme}{A \code{\link[bslib:bs_theme]{bslib::bs_theme()}} object. When \code{NULL}, a Bootstrap 5 theme
 is created for the page.}

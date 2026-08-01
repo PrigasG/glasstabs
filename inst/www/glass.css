@@ -21,7 +21,7 @@
 .gt-overflow-scroll:not(.gt-vertical) .gt-navbar{width:max-content;min-width:100%;}
 .gt-overflow-scroll:not(.gt-vertical) .gt-tab-link{scroll-snap-align:center;scroll-margin-inline:16px;}
 .gt-overflow-scroll:not(.gt-vertical) .gt-tab-viewport{scroll-snap-type:inline proximity;}
-.gt-overflow-wrap:not(.gt-vertical) .gt-navbar{flex-wrap:wrap;}
+.gt-overflow-multiline:not(.gt-vertical) .gt-navbar{flex-wrap:wrap;}
 .gt-overflow-menu:not(.gt-vertical) .gt-tab-viewport{display:none;}
 .gt-overflow-menu:not(.gt-vertical) .gt-tab-menu-select{
   display:block;padding:9px 34px 9px 12px;border-radius:10px;
@@ -62,7 +62,9 @@
 .gt-tab-link:hover{background:rgba(255,255,255,0.04);}
 .gt-tab-link.active{color:var(--gt-tab-active-text,#ffffff);}
 .gt-tab-link.gt-tab-hidden{display:none;}
-.gt-tab-link:focus-visible{outline:2px solid var(--gt-halo-border,#7ec3f7);outline-offset:3px;}
+.gt-tab-link:focus-visible{
+  outline:3px solid var(--gt-focus-ring,#1683ff);outline-offset:3px;
+}
 
 /* Glass halo */
 .gt-halo{

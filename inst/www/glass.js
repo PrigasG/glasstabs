@@ -108,6 +108,18 @@
       window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   }
 
+  /* Keep inactive panels out of both keyboard focus and the accessibility
+     tree. `inert` is the behavioral guard; ARIA remains useful to older
+     assistive technology and makes the panel state explicit. */
+  function setPaneActive(pane, isActive) {
+    if (!pane) return;
+    pane.classList.toggle('active', isActive);
+    pane.setAttribute('aria-hidden', isActive ? 'false' : 'true');
+    pane.setAttribute('tabindex', isActive ? '0' : '-1');
+    if (isActive) pane.removeAttribute('inert');
+    else pane.setAttribute('inert', '');
+  }
+
   /** Hide group headers whose options are all hidden (e.g. by search).
       Walks the options container once; a header is shown only when at least
       one option between it and the next header is visible. */
@@ -371,6 +383,8 @@
       navbar._gtSwipeStart = navbar._gtSwipeEnd = navbar._gtSwipeCancel = null;
       navbar._gtViewport = navbar._gtMenuSelect = navbar._gtPaneWrap = null;
       navbar._gtResizeObserver = null;
+      navbar._gtHaloTarget = null;
+      navbar._gtAnimationUntil = 0;
     }
     navbar._gtTabsInit = true;
     navbar._gtTabTimers = navbar._gtTabTimers || [];
@@ -387,8 +401,8 @@
 
     var viewport = navbar.closest('.gt-tab-viewport') || container;
     var indicatorHost = viewport;
-    var paneWrap = container.querySelector('.gt-tab-wrap');
-    var menuSelect = container.querySelector('.gt-tab-menu-select');
+    var paneWrap = container.querySelector(':scope > .gt-tab-wrap');
+    var menuSelect = document.getElementById(ns + '-menu');
     var halo = viewport.querySelector('.gt-halo') || container.querySelector('.gt-halo');
     var trf = viewport.querySelector('.gt-transfer') || container.querySelector('.gt-transfer');
     var links = Array.from(navbar.querySelectorAll('.gt-tab-link'));
@@ -410,25 +424,24 @@
       var v = l.getAttribute('data-value');
       var pane = document.getElementById(ns + '-pane-' + v);
       if (!pane) return;
-      if (l === activeEl) {
-        pane.classList.add('active');
-        pane.setAttribute('aria-hidden', 'false');
-        pane.setAttribute('tabindex', '0');
-      } else {
-        pane.classList.remove('active');
-        pane.setAttribute('aria-hidden', 'true');
-        pane.setAttribute('tabindex', '-1');
-      }
+      setPaneActive(pane, l === activeEl);
     });
 
+    function isVisible(link) {
+      return link && !link.classList.contains('gt-tab-hidden');
+    }
+
     function isAvailable(link) {
-      return link &&
-        !link.classList.contains('gt-tab-hidden') &&
+      return isVisible(link) &&
         !link.classList.contains('gt-tab-disabled');
     }
 
     function availableLinks() {
       return Array.from(navbar.querySelectorAll('.gt-tab-link')).filter(isAvailable);
+    }
+
+    function navigableLinks() {
+      return Array.from(navbar.querySelectorAll('.gt-tab-link')).filter(isVisible);
     }
 
     function currentVisibleOrder() {
@@ -438,9 +451,9 @@
     }
 
     function syncTabStops() {
-      var available = availableLinks();
+      var available = navigableLinks();
       var activeLink = navbar.querySelector('.gt-tab-link.active');
-      var focusable = isAvailable(activeLink) ? activeLink : available[0];
+      var focusable = isVisible(activeLink) ? activeLink : available[0];
       Array.from(navbar.querySelectorAll('.gt-tab-link')).forEach(function (link) {
         link.setAttribute('tabindex', link === focusable ? '0' : '-1');
       });
@@ -600,7 +613,7 @@
       var pts = [];
 
       for (var i = fi; step > 0 ? i <= ti : i >= ti; i += step) {
-        var link = navbar.querySelector('.gt-tab-link[data-value="' + order[i] + '"]');
+        var link = navbar.querySelector('.gt-tab-link' + attrEquals('data-value', order[i]));
         if (link) pts.push(centerOf(link, indicatorHost));
       }
 
@@ -647,7 +660,7 @@
     function activateTab(target, skipFromAnim, moveFocus) {
       clearTabTimers();
 
-      var toEl = navbar.querySelector('.gt-tab-link[data-value="' + target + '"]');
+      var toEl = navbar.querySelector('.gt-tab-link' + attrEquals('data-value', target));
       if (!isAvailable(toEl)) return;
       if (target === active) {
         syncTabStops();
@@ -658,7 +671,9 @@
       }
 
       var fromEl = skipFromAnim ? null
-        : navbar.querySelector('.gt-tab-link[data-value="' + active + '"]');
+        : navbar.querySelector('.gt-tab-link' + attrEquals('data-value', active));
+
+      navbar._gtHaloTarget = target;
 
       navbar.querySelectorAll('.gt-tab-link').forEach(function (t) {
         t.classList.remove('active');
@@ -685,17 +700,9 @@
         /* Use the namespace-qualified ID so we never accidentally deactivate
            a nested glassTabsUI pane that also carries gt-tab-pane.active */
         var ap = document.getElementById(ns + '-pane-' + active);
-        if (ap) {
-          ap.classList.remove('active');
-          ap.setAttribute('aria-hidden', 'true');
-          ap.setAttribute('tabindex', '-1');
-        }
+        setPaneActive(ap, false);
         var next = document.getElementById(ns + '-pane-' + target);
-        if (next) {
-          next.classList.add('active');
-          next.setAttribute('aria-hidden', 'false');
-          next.setAttribute('tabindex', '0');
-        }
+        setPaneActive(next, true);
         active = target;
         if (window.Shiny) Shiny.setInputValue(ns + '-active_tab', target, { priority: 'event' });
         triggerShinyChange(navbar);
@@ -712,6 +719,7 @@
         navbar._gtTabTimers.push(setTimeout(function () {
           navbar._gtAnimationUntil = 0;
           placeHalo(toEl, true, 1.0);
+          navbar._gtHaloTarget = null;
           if (!reducedMotion()) {
             halo.classList.remove('gt-arrival-pulse');
             void halo.offsetWidth;
@@ -720,6 +728,7 @@
         }, dur));
       } else {
         placeHalo(toEl, true, 1.0);
+        navbar._gtHaloTarget = null;
         navbar._gtTabTimers.push(setTimeout(function () { placeHalo(toEl, false, 1.0); }, 80));
       }
     }
@@ -768,9 +777,11 @@
         var focused = document.activeElement && document.activeElement.closest
           ? document.activeElement.closest('.gt-tab-link')
           : null;
-        if (focused && !focused.classList.contains('gt-tab-hidden')) {
+        if (isVisible(focused)) {
           e.preventDefault();
-          activateTab(focused.getAttribute('data-value'), false, true);
+          if (isAvailable(focused)) {
+            activateTab(focused.getAttribute('data-value'), false, true);
+          }
         }
         return;
       }
@@ -785,7 +796,7 @@
       var vertical = container.classList.contains('gt-vertical');
       if (!vertical && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) return;
 
-      var choices = availableLinks();
+      var choices = navigableLinks();
       if (!choices.length) return;
       var focusedTab = document.activeElement && document.activeElement.closest
         ? document.activeElement.closest('.gt-tab-link') : null;
@@ -802,18 +813,34 @@
       else if (e.key === 'End') destination = choices[choices.length - 1];
       else if (isNext) destination = choices[(idx + 1) % choices.length];
       else destination = choices[(idx - 1 + choices.length) % choices.length];
-      activateTab(destination.getAttribute('data-value'), false, true);
+      if (isAvailable(destination)) {
+        activateTab(destination.getAttribute('data-value'), false, true);
+      } else {
+        choices.forEach(function (link) {
+          link.setAttribute('tabindex', link === destination ? '0' : '-1');
+        });
+        ensureTabVisible(destination, true);
+        destination.focus();
+      }
     };
     document.addEventListener('keydown', navbar._gtKeyHandler);
 
-    navbar._gtResizeHandler = function () {
+    function realignHalo() {
       /* Pane changes can resize a vertical widget halfway through a tab
          transition. Ignore that temporary geometry change so ResizeObserver
          does not snap the halo before its movement begins. The final animation
          timer places it exactly once the transition completes. */
       if (navbar._gtAnimationUntil && Date.now() < navbar._gtAnimationUntil) return;
-      var activeLink = navbar.querySelector('.gt-tab-link[data-value="' + active + '"]');
+      var haloValue = navbar._gtHaloTarget || active;
+      var activeLink = navbar.querySelector(
+        '.gt-tab-link' + attrEquals('data-value', haloValue)
+      );
       if (activeLink) placeHalo(activeLink, true, 1.0);
+    }
+
+    navbar._gtResizeHandler = function () {
+      realignHalo();
+      syncTextWidths();
       syncTabStops();
       syncMenu();
     };
@@ -821,8 +848,7 @@
 
     navbar._gtViewport = viewport;
     navbar._gtScrollHandler = debounce(function () {
-      var activeLink = navbar.querySelector('.gt-tab-link[data-value="' + active + '"]');
-      if (activeLink) placeHalo(activeLink, true, 1.0);
+      realignHalo();
     }, 10);
     viewport.addEventListener('scroll', navbar._gtScrollHandler, { passive: true });
 
@@ -977,7 +1003,7 @@
       bindOption(el);
     });
 
-    var navigator = createOptionNavigator(
+    var optionNav = createOptionNavigator(
       dropdown,
       '.gt-gs-option',
       function () { return searchIn || trigger; },
@@ -1090,7 +1116,7 @@
       opt._gtBound = true;
 
       opt.addEventListener('mouseenter', function () {
-        if (!opt.classList.contains('disabled')) navigator.set(opt);
+        if (!opt.classList.contains('disabled')) optionNav.set(opt);
       });
       opt.addEventListener('click', function () {
         if (opt.classList.contains('disabled')) return;
@@ -1170,7 +1196,7 @@
       optionsBox.innerHTML = '';
       optionsBox.appendChild(frag);
       optionsBox.appendChild(statusRow);
-      navigator.prepare();
+      optionNav.prepare();
 
       /* Re-apply search if active */
       if (!serverMode && state.query) {
@@ -1193,7 +1219,7 @@
       });
 
       patchVisibility();
-      navigator.prepare();
+      optionNav.prepare();
       updateStatus();
     }
 
@@ -1242,7 +1268,7 @@
       openedAt = Date.now();
       /* Delay focus so synthetic-click re-fires from AdminLTE don't close us */
       setTimeout(function () {
-        navigator.move('current');
+        optionNav.move('current');
         if (searchIn) searchIn.focus();
       }, 100);
     }
@@ -1254,7 +1280,7 @@
       trigger.setAttribute('aria-expanded', 'false');
       teleportClose(wrap, dropdown);
       setDropdownOpenState(wrap, inputId, false);
-      navigator.clear();
+      optionNav.clear();
     }
 
     function closeAndReturnFocus() {
@@ -1287,9 +1313,9 @@
         e.preventDefault();
         if (!dropdown.classList.contains('open')) open();
         setTimeout(function () {
-          if (e.key === 'Home') navigator.move('first');
-          else if (e.key === 'End') navigator.move('last');
-          else navigator.move(e.key === 'ArrowDown' ? 1 : -1);
+          if (e.key === 'Home') optionNav.move('first');
+          else if (e.key === 'End') optionNav.move('last');
+          else optionNav.move(e.key === 'ArrowDown' ? 1 : -1);
         }, 110);
       } else if (e.key === 'Escape' || e.key === 'Tab') {
         closeAndReturnFocus();
@@ -1300,11 +1326,11 @@
       if (e.key === 'ArrowDown' || e.key === 'ArrowUp' ||
           e.key === 'Home' || e.key === 'End') {
         e.preventDefault();
-        if (e.key === 'Home') navigator.move('first');
-        else if (e.key === 'End') navigator.move('last');
-        else navigator.move(e.key === 'ArrowDown' ? 1 : -1);
+        if (e.key === 'Home') optionNav.move('first');
+        else if (e.key === 'End') optionNav.move('last');
+        else optionNav.move(e.key === 'ArrowDown' ? 1 : -1);
       } else if (e.key === 'Enter') {
-        var option = navigator.current();
+        var option = optionNav.current();
         if (option) {
           e.preventDefault();
           setValue(option.getAttribute('data-value'), { notify: true });
@@ -1506,7 +1532,7 @@
       state.selected.add(v);
     });
 
-    var navigator = createOptionNavigator(
+    var optionNav = createOptionNavigator(
       dropdown,
       '.gt-ms-option',
       function () { return searchIn || trigger; },
@@ -1714,7 +1740,7 @@
       opt._gtBound = true;
 
       opt.addEventListener('mouseenter', function () {
-        if (!opt.classList.contains('disabled')) navigator.set(opt);
+        if (!opt.classList.contains('disabled')) optionNav.set(opt);
       });
       opt.addEventListener('click', function () {
         if (opt.classList.contains('disabled')) return;
@@ -1802,7 +1828,7 @@
       optionsBox.innerHTML = '';
       optionsBox.appendChild(frag);
       optionsBox.appendChild(statusRow);
-      navigator.prepare();
+      optionNav.prepare();
 
       /* Re-apply search if active */
       if (!serverMode && state.query) {
@@ -1825,7 +1851,7 @@
       });
 
       patchVisibility();
-      navigator.prepare();
+      optionNav.prepare();
       /* Update allRow and counts without notifying Shiny */
       var vis = visibleChoices().length;
       var visSel = visibleSelectedCount();
@@ -1884,7 +1910,7 @@
       openedAt = Date.now();
       /* Delay focus so synthetic-click re-fires from AdminLTE don't close us */
       setTimeout(function () {
-        navigator.move('current');
+        optionNav.move('current');
         if (searchIn) searchIn.focus();
       }, 100);
     }
@@ -1896,7 +1922,7 @@
       trigger.setAttribute('aria-expanded', 'false');
       teleportClose(wrap, dropdown);
       setDropdownOpenState(wrap, inputId, false);
-      navigator.clear();
+      optionNav.clear();
     }
 
     function closeAndReturnFocus() {
@@ -1929,9 +1955,9 @@
         e.preventDefault();
         if (!dropdown.classList.contains('open')) open();
         setTimeout(function () {
-          if (e.key === 'Home') navigator.move('first');
-          else if (e.key === 'End') navigator.move('last');
-          else navigator.move(e.key === 'ArrowDown' ? 1 : -1);
+          if (e.key === 'Home') optionNav.move('first');
+          else if (e.key === 'End') optionNav.move('last');
+          else optionNav.move(e.key === 'ArrowDown' ? 1 : -1);
         }, 110);
       } else if (e.key === 'Escape' || e.key === 'Tab') {
         closeAndReturnFocus();
@@ -1942,11 +1968,11 @@
       if (e.key === 'ArrowDown' || e.key === 'ArrowUp' ||
           e.key === 'Home' || e.key === 'End') {
         e.preventDefault();
-        if (e.key === 'Home') navigator.move('first');
-        else if (e.key === 'End') navigator.move('last');
-        else navigator.move(e.key === 'ArrowDown' ? 1 : -1);
+        if (e.key === 'Home') optionNav.move('first');
+        else if (e.key === 'End') optionNav.move('last');
+        else optionNav.move(e.key === 'ArrowDown' ? 1 : -1);
       } else if (e.key === 'Enter' || e.key === ' ') {
-        var option = navigator.current();
+        var option = optionNav.current();
         if (option) {
           e.preventDefault();
           option.click();
@@ -2555,11 +2581,6 @@
       if (!navbar) return;
       var link = navbar.querySelector('.gt-tab-link' + attrEquals('data-value', msg.value));
       if (!link) return;
-      var container = navbar.closest('.gt-container, .gt-wrap-shell')
-        || navbar.closest('.card-body')
-        || navbar.closest('.box-body')
-        || (navbar.parentElement && navbar.parentElement.parentElement)
-        || navbar.parentElement;
       var pane = document.getElementById(msg.ns + '-pane-' + msg.value);
       var wasActive = link.classList.contains('active');
 
@@ -2569,9 +2590,7 @@
       link.setAttribute('aria-selected', 'false');
       link.setAttribute('aria-hidden', 'true');
       if (pane) {
-        pane.classList.remove('active');
-        pane.setAttribute('aria-hidden', 'true');
-        pane.setAttribute('tabindex', '-1');
+        setPaneActive(pane, false);
       }
 
       if (wasActive && navbar._gtActivate) {
@@ -2584,9 +2603,7 @@
         if (currentActive) {
           var currentPane = document.getElementById(msg.ns + '-pane-' + currentActive.getAttribute('data-value'));
           if (currentPane) {
-            if (!currentPane.classList.contains('active')) currentPane.classList.add('active');
-            currentPane.setAttribute('aria-hidden', 'false');
-            currentPane.setAttribute('tabindex', '0');
+            setPaneActive(currentPane, true);
           }
         }
       }
@@ -2608,7 +2625,7 @@
         || navbar.parentElement;
       if (!container) return;
 
-      var paneWrap = container.querySelector('.gt-tab-wrap');
+      var paneWrap = container.querySelector(':scope > .gt-tab-wrap');
       if (!paneWrap) return;
 
       if (msg.select) {
@@ -2618,11 +2635,7 @@
           /* Deactivate only this namespace's pane - not nested glassTabsUI panes */
           var v = l.getAttribute('data-value');
           var p = document.getElementById(msg.ns + '-pane-' + v);
-          if (p) {
-            p.classList.remove('active');
-            p.setAttribute('aria-hidden', 'true');
-            p.setAttribute('tabindex', '-1');
-          }
+          setPaneActive(p, false);
         });
       }
 
@@ -2638,9 +2651,9 @@
       tmp.innerHTML = msg.pane_html;
       var newPane = tmp.firstElementChild;
       if (msg.select) {
-        newPane.classList.add('active');
-        newPane.setAttribute('aria-hidden', 'false');
-        newPane.setAttribute('tabindex', '0');
+        setPaneActive(newPane, true);
+      } else {
+        setPaneActive(newPane, false);
       }
       paneWrap.appendChild(newPane);
 
@@ -2679,17 +2692,9 @@
           remaining[0].classList.add('active');
           remaining[0].setAttribute('aria-selected', 'true');
           var ap = document.getElementById(msg.ns + '-pane-' + msg.value);
-          if (ap) {
-            ap.classList.remove('active');
-            ap.setAttribute('aria-hidden', 'true');
-            ap.setAttribute('tabindex', '-1');
-          }
+          setPaneActive(ap, false);
           var nextPane = document.getElementById(msg.ns + '-pane-' + nextValue);
-          if (nextPane) {
-            nextPane.classList.add('active');
-            nextPane.setAttribute('aria-hidden', 'false');
-            nextPane.setAttribute('tabindex', '0');
-          }
+          setPaneActive(nextPane, true);
         }
       }
 

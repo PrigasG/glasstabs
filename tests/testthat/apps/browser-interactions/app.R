@@ -56,7 +56,11 @@ ui <- fluidPage(
       glassTabsUI(
         "mobile_tabs",
         glassTabPanel("summary", "Summary", p("Summary content")),
-        glassTabPanel("activity", "Recent activity", p("Activity content")),
+        glassTabPanel(
+          "activity",
+          "Recent activity",
+          actionButton("inactive_action", "Inactive action")
+        ),
         glassTabPanel("quality", "Data quality", p("Quality content")),
         glassTabPanel("settings", "Team settings", p("Settings content")),
         overflow = "scroll",
@@ -77,6 +81,11 @@ ui <- fluidPage(
       orientation = "vertical",
       tab_align = "right",
       text_align = "left"
+    ),
+    glassTabsUI(
+      "special_tabs",
+      glassTabPanel("plain", "Plain", p("Plain content")),
+      glassTabPanel('team"review', "Quoted value", p("Quoted value content"))
     ),
     tags$div(
       class = "alignment-frame",
@@ -99,6 +108,10 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
+  session$onFlushed(function() {
+    disableGlassTab(session, "mobile_tabs", "activity")
+  }, once = TRUE)
+
   observe({
     req(input$shape)
     updateGlassSelect(session, "shape_single", shape = input$shape)

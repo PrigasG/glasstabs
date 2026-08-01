@@ -79,10 +79,10 @@ glassTabPanel <- function(value, label, ..., icon = NULL, selected = FALSE) {
 #' @param extra_ui Optional additional UI placed to the right of the tab bar
 #'   (below the tab rail when `orientation = "vertical"`).
 #' @param overflow How the tab strip behaves when labels no longer fit. One of
-#'   `"scroll"` (the default), `"wrap"`, or `"menu"`. Scroll mode keeps a
-#'   single touch-friendly row and brings the active tab into view. Wrap mode
-#'   allows more than one row. Menu mode uses a compact native chooser and is
-#'   available only when `orientation = "horizontal"`.
+#'   `"scroll"` (the default), `"multiline"`, or `"menu"`. Scroll mode keeps a
+#'   single touch-friendly row and brings the active tab into view. Multiline
+#'   mode allows more than one row. Menu mode uses a compact native chooser
+#'   and is available only when `orientation = "horizontal"`.
 #' @param swipe Whether a horizontal touch swipe over non-interactive panel
 #'   content should move to the previous or next available tab. The default is
 #'   `FALSE` so maps, plots, tables, and other interactive content keep their
@@ -112,12 +112,12 @@ glassTabsUI <- function(
     indicator = c("glass", "solid", "underline"),
     orientation = c("horizontal", "vertical"),
     tab_align = c("center", "left", "right"),
-    overflow = c("scroll", "wrap", "menu"),
+    text_align = c("center", "left", "right"),
+    overflow = c("scroll", "multiline", "menu"),
     swipe = FALSE,
     extra_ui = NULL,
     theme = NULL,
-    dark_selector = NULL,
-    text_align = c("center", "left", "right")
+    dark_selector = NULL
 ) {
   ns          <- shiny::NS(id)
   panels      <- list(...)
@@ -126,7 +126,7 @@ glassTabsUI <- function(
   orientation <- .gt_match_arg(orientation, c("horizontal", "vertical"), "orientation")
   tab_align   <- .gt_match_arg(tab_align, c("center", "left", "right"), "tab_align")
   text_align  <- .gt_match_arg(text_align, c("center", "left", "right"), "text_align")
-  overflow    <- .gt_match_arg(overflow, c("scroll", "wrap", "menu"), "overflow")
+  overflow    <- .gt_match_arg(overflow, c("scroll", "multiline", "menu"), "overflow")
 
   if (identical(orientation, "vertical") && identical(overflow, "menu")) {
     .gt_abort(
@@ -137,7 +137,7 @@ glassTabsUI <- function(
       class = "glasstabs_error_bad_choice",
       argument = "overflow",
       value = overflow,
-      expected = "scroll or wrap when orientation is vertical"
+      expected = "scroll or multiline when orientation is vertical"
     )
   }
 

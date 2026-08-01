@@ -11,6 +11,10 @@
 ^docs$
 ^pkgdown$
 ^\.github$
+^eslint\.config\.mjs$
+^package\.json$
+^package-lock\.json$
+^node_modules$
 ^tools$
 ^CRAN-SUBMISSION$
 ^ROADMAP\.md$

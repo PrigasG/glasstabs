@@ -6,8 +6,21 @@ test_that("glassPage() creates a fillable bslib page with glasstabs", {
 
   expect_s3_class(page, "shiny.tag.list")
   expect_match(html, "Hello")
+  expect_identical(attr(page, "lang"), "en")
   deps <- htmltools::findDependencies(page)
   expect_true(any(vapply(deps, function(dep) dep$name == "glasstabs", logical(1))))
+})
+
+test_that("glassPage() accepts and validates the document language", {
+  skip_if_not_installed("bslib")
+
+  page <- glassPage(shiny::p("Bonjour"), lang = "fr-CA")
+  expect_identical(attr(page, "lang"), "fr-CA")
+  expect_error(
+    glassPage(lang = ""),
+    "single non-empty language tag",
+    class = "glasstabs_error_bad_argument"
+  )
 })
 
 test_that("glassPage() accepts a custom Bootstrap theme", {

@@ -23,7 +23,7 @@ published to Posit Connect. It demonstrates a practical review workflow:
 - `updateGlassTabBadge()` keeps tab badges aligned with the filtered data
 - `updateGlassTabsUI()` moves reviewers to the next stage from server actions
 - `theme = "auto"` follows Bootstrap 5 / bslib light and dark modes
-- `overflow = "scroll"`, `"wrap"`, and the horizontal-only `"menu"` mode can
+- `overflow = "scroll"`, `"multiline"`, and the horizontal-only `"menu"` mode can
   be compared without leaving the app
 - opt-in swipes, dynamic tab controls, keyboard behavior, and the experimental
   `glassPage()` wrapper can be exercised in one published session

@@ -7,7 +7,7 @@ on:
 name: lint
 
 jobs:
-  lint:
+  r-lint:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,3 +24,20 @@ jobs:
       - name: Lint package
         run: lintr::lint_package()
         shell: Rscript {0}
+
+  javascript-lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install JavaScript lint dependencies
+        run: npm ci
+
+      - name: Lint browser code
+        run: npm run lint:js

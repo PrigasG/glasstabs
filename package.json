@@ -1,0 +1,12 @@
+{
+  "name": "glasstabs-development",
+  "private": true,
+  "scripts": {
+    "lint:js": "eslint inst/www/glass.js"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.8.0",
+    "globals": "^17.8.0"
+  }
+}

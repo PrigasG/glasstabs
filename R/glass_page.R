@@ -7,6 +7,8 @@
 #'
 #' @param ... UI elements placed on the page.
 #' @param title Optional browser-window title.
+#' @param lang Language of the page content, such as `"en"` or `"en-GB"`.
+#'   This becomes the `lang` attribute on the page's `<html>` element.
 #' @param theme A [bslib::bs_theme()] object. When `NULL`, a Bootstrap 5 theme
 #'   is created for the page.
 #' @param padding Optional page padding passed to [bslib::page_fillable()].
@@ -36,7 +38,7 @@
 #'
 #' @family setup
 #' @export
-glassPage <- function(..., title = NULL, theme = NULL, padding = NULL,
+glassPage <- function(..., title = NULL, lang = "en", theme = NULL, padding = NULL,
                       gap = NULL, fillable_mobile = FALSE) {
   if (!requireNamespace("bslib", quietly = TRUE)) {
     .gt_abort(
@@ -58,6 +60,11 @@ glassPage <- function(..., title = NULL, theme = NULL, padding = NULL,
       "glassPage(): `title` must be a single non-empty string or NULL."
     )
   }
+  .gt_check_string(
+    lang,
+    "lang",
+    "glassPage(): `lang` must be a single non-empty language tag, such as \"en\" or \"en-GB\"."
+  )
   .gt_check_flag(fillable_mobile, "fillable_mobile")
 
   if (is.null(theme)) {
@@ -84,6 +91,7 @@ glassPage <- function(..., title = NULL, theme = NULL, padding = NULL,
       gap = gap,
       fillable_mobile = fillable_mobile,
       title = title,
+      lang = lang,
       theme = theme
     )
   )

@@ -7,7 +7,7 @@
 #   - text_align = "center" / "left" / "right" for labels and icons
 #   - shape = "rounded" / "square" for matching tab corner styles
 #   - theme = "auto" for Bootstrap 5 / bslib light-dark mode
-#   - overflow = "scroll" / "wrap" / "menu" on narrow screens
+#   - overflow = "scroll" / "multiline" / "menu" on narrow screens
 #   - optional swipe gestures with interactive-content guards
 #   - glassSelect(), glassMultiSelect(), badges, and server-driven tab changes
 #   - dynamic append/remove, show/hide, and disable/enable tab helpers
@@ -70,7 +70,7 @@ workflow_tabs <- function(
   text_align <- match.arg(text_align, c("center", "left", "right"))
   shape <- match.arg(shape, c("rounded", "square"))
   indicator <- match.arg(indicator, c("glass", "solid", "underline"))
-  overflow <- match.arg(overflow, c("scroll", "wrap", "menu"))
+  overflow <- match.arg(overflow, c("scroll", "multiline", "menu"))
 
   panels <- list(
     glassTabPanel(
@@ -323,7 +323,11 @@ page_body <- function() {
           selectInput(
             "workflow_overflow",
             "Narrow-screen tabs",
-            choices = c("Scroll" = "scroll", "Wrap" = "wrap", "Compact menu" = "menu"),
+            choices = c(
+              "Scroll" = "scroll",
+              "Multiline" = "multiline",
+              "Compact menu" = "menu"
+            ),
             selected = "scroll"
           )
         ),
@@ -352,7 +356,7 @@ page_body <- function() {
         open = NA,
         tags$summary("What this app is testing"),
         tags$ol(
-          tags$li("Resize the window and compare Scroll, Wrap, and Compact menu."),
+          tags$li("Resize the window and compare Scroll, Multiline, and Compact menu."),
           tags$li("On a phone, swipe across empty panel space in both directions."),
           tags$li("Confirm inputs, buttons, tables, and the sideways scroll box do not trigger a swipe."),
           tags$li("Use arrow keys plus Home and End on the tab bar; focus should follow the active tab."),

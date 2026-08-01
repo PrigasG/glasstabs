@@ -68,11 +68,6 @@ test_that("glass.js keeps ARIA and focus state in sync", {
   expect_true(grepl("--ms-ac-12", js, fixed = TRUE))
   expect_true(grepl("--ms-tx-80", js, fixed = TRUE))
   expect_true(grepl("glassTabsBinding", js, fixed = TRUE))
-  expect_true(grepl(
-    "if (!el._gtTabsInit || !el._gtActivate) initTabs(el);",
-    js,
-    fixed = TRUE
-  ))
   expect_true(grepl("MutationObserver", js, fixed = TRUE))
   expect_true(grepl("closeAndReturnFocus", js, fixed = TRUE))
   expect_true(grepl("asValueArray(data.selected)", js, fixed = TRUE))
@@ -87,16 +82,6 @@ test_that("glass.js keeps ARIA and focus state in sync", {
   expect_true(grepl("prefers-reduced-motion: reduce", js, fixed = TRUE))
   expect_true(grepl("touchstart", js, fixed = TRUE))
   expect_true(grepl("gt-badge-updated", js, fixed = TRUE))
-  expect_true(grepl(
-    "if (navbar._gtClickHandler && navbar._gtActivate) return;",
-    js,
-    fixed = TRUE
-  ))
-  expect_true(grepl(
-    "if (navbar._gtKeyHandler && navbar._gtActivate) return;",
-    js,
-    fixed = TRUE
-  ))
   expect_true(grepl(
     "glasstabs_close_selects', function (msg)",
     js,

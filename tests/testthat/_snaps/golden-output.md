@@ -45,7 +45,7 @@
               <p>First</p>
             </div>
           </div>
-          <div class="gt-tab-pane " id="tabs-pane-two" role="tabpanel" aria-labelledby="tabs-tab-two" aria-hidden="true" tabindex="-1">
+          <div class="gt-tab-pane " id="tabs-pane-two" role="tabpanel" aria-labelledby="tabs-tab-two" aria-hidden="true" inert="" tabindex="-1">
             <div class="gt-card">
               <p>Second</p>
             </div>
@@ -197,7 +197,7 @@
               <p>First</p>
             </div>
           </div>
-          <div class="gt-tab-pane " id="tabs-pane-two" role="tabpanel" aria-labelledby="tabs-tab-two" aria-hidden="true" tabindex="-1">
+          <div class="gt-tab-pane " id="tabs-pane-two" role="tabpanel" aria-labelledby="tabs-tab-two" aria-hidden="true" inert="" tabindex="-1">
             <div class="gt-card">
               <p>Second</p>
             </div>
@@ -350,7 +350,7 @@
               <p>First</p>
             </div>
           </div>
-          <div class="gt-tab-pane " id="tabs-pane-two" role="tabpanel" aria-labelledby="tabs-tab-two" aria-hidden="true" tabindex="-1">
+          <div class="gt-tab-pane " id="tabs-pane-two" role="tabpanel" aria-labelledby="tabs-tab-two" aria-hidden="true" inert="" tabindex="-1">
             <div class="gt-card">
               <p>Second</p>
             </div>
@@ -504,7 +504,7 @@
               <p>First</p>
             </div>
           </div>
-          <div class="gt-tab-pane " id="tabs-pane-two" role="tabpanel" aria-labelledby="tabs-tab-two" aria-hidden="true" tabindex="-1">
+          <div class="gt-tab-pane " id="tabs-pane-two" role="tabpanel" aria-labelledby="tabs-tab-two" aria-hidden="true" inert="" tabindex="-1">
             <div class="gt-card">
               <p>Second</p>
             </div>
@@ -656,7 +656,7 @@
               <p>First</p>
             </div>
           </div>
-          <div class="gt-tab-pane " id="tabs-pane-two" role="tabpanel" aria-labelledby="tabs-tab-two" aria-hidden="true" tabindex="-1">
+          <div class="gt-tab-pane " id="tabs-pane-two" role="tabpanel" aria-labelledby="tabs-tab-two" aria-hidden="true" inert="" tabindex="-1">
             <div class="gt-card">
               <p>Second</p>
             </div>
@@ -809,7 +809,7 @@
               <p>First</p>
             </div>
           </div>
-          <div class="gt-tab-pane " id="tabs-pane-two" role="tabpanel" aria-labelledby="tabs-tab-two" aria-hidden="true" tabindex="-1">
+          <div class="gt-tab-pane " id="tabs-pane-two" role="tabpanel" aria-labelledby="tabs-tab-two" aria-hidden="true" inert="" tabindex="-1">
             <div class="gt-card">
               <p>Second</p>
             </div>
@@ -1259,7 +1259,7 @@
                 {
                   "type": "character",
                   "attributes": {},
-                  "value": ["<div class=\"gt-tab-pane\" id=\"mod-tabs-pane-new\" role=\"tabpanel\" aria-labelledby=\"mod-tabs-tab-new\" aria-hidden=\"true\" tabindex=\"-1\">\n  <div class=\"gt-card\">\n    <p>Content<\/p>\n  <\/div>\n<\/div>"]
+                  "value": ["<div class=\"gt-tab-pane\" id=\"mod-tabs-pane-new\" role=\"tabpanel\" aria-labelledby=\"mod-tabs-tab-new\" aria-hidden=\"true\" inert=\"\" tabindex=\"-1\">\n  <div class=\"gt-card\">\n    <p>Content<\/p>\n  <\/div>\n<\/div>"]
                 },
                 {
                   "type": "logical",

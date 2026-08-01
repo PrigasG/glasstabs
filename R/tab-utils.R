@@ -51,6 +51,7 @@
     role = "tabpanel",
     `aria-labelledby` = tab_id,
     `aria-hidden` = if (is_active) "false" else "true",
+    inert = if (is_active) NULL else "",
     tabindex = if (is_active) "0" else "-1",
     do.call(shiny::div, c(list(class = "gt-card"), panel$content))
   )
