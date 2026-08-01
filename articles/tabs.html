@@ -173,8 +173,8 @@ stay in place when tabs are added or removed from the server.</p>
 <span><span class="op">)</span></span></code></pre></div>
 <p>The strip accepts touch scrolling and brings the selected tab into
 view. Use <code>overflow = "wrap"</code> when two or more rows suit the
-layout. Menu mode keeps the same tab content behind a compact native
-chooser:</p>
+layout. In a horizontal layout, menu mode keeps the same tab content
+behind a compact native chooser:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
 <span>  <span class="st">"compact_nav"</span>,</span>
@@ -256,9 +256,10 @@ a side bar adjacent to the content.</p>
 <span>  indicator <span class="op">=</span> <span class="st">"underline"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Use <code>tab_align = "left"</code>, <code>"center"</code>, or
-<code>"right"</code> to place the tab group in a horizontal bar. In a
-vertical rail, the same argument controls how labels and icons sit
-inside each tab button:</p>
+<code>"right"</code> to place the tab group in the available navigation
+area. This works in horizontal and vertical layouts. Use
+<code>text_align</code> when the labels and icons inside the buttons
+should have a different alignment:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span><span class="st">"aligned"</span>,</span>
 <span>  <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"drafts"</span>, <span class="st">"Drafts"</span>, selected <span class="op">=</span> <span class="cn">TRUE</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"Draft queue"</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -266,6 +267,7 @@ inside each tab button:</p>
 <span>  <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"done"</span>, <span class="st">"Done"</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"Completed queue"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  orientation <span class="op">=</span> <span class="st">"vertical"</span>,</span>
 <span>  tab_align <span class="op">=</span> <span class="st">"right"</span>,</span>
+<span>  text_align <span class="op">=</span> <span class="st">"left"</span>,</span>
 <span>  indicator <span class="op">=</span> <span class="st">"solid"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>

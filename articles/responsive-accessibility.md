@@ -47,8 +47,10 @@ destination back into view.
 ## Choosing the overflow style
 
 `"scroll"` is a natural fit for most tab bars. `"wrap"` is useful when
-every label should be visible at once. `"menu"` keeps the header compact
-and uses a native select control.
+every label should be visible at once. In a horizontal layout, `"menu"`
+keeps the header compact and uses a native select control. Vertical tabs
+already have a dedicated rail, so compact menu mode is not available
+there.
 
 ``` r
 

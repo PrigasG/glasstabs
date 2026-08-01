@@ -94,8 +94,9 @@ glassTabsUI(
 ```
 
 The strip accepts touch scrolling and brings the selected tab into view.
-Use `overflow = "wrap"` when two or more rows suit the layout. Menu mode
-keeps the same tab content behind a compact native chooser:
+Use `overflow = "wrap"` when two or more rows suit the layout. In a
+horizontal layout, menu mode keeps the same tab content behind a compact
+native chooser:
 
 ``` r
 
@@ -190,8 +191,9 @@ glassTabsUI("side",
 ```
 
 Use `tab_align = "left"`, `"center"`, or `"right"` to place the tab
-group in a horizontal bar. In a vertical rail, the same argument
-controls how labels and icons sit inside each tab button:
+group in the available navigation area. This works in horizontal and
+vertical layouts. Use `text_align` when the labels and icons inside the
+buttons should have a different alignment:
 
 ``` r
 
@@ -201,6 +203,7 @@ glassTabsUI("aligned",
   glassTabPanel("done", "Done", p("Completed queue")),
   orientation = "vertical",
   tab_align = "right",
+  text_align = "left",
   indicator = "solid"
 )
 ```

@@ -16,8 +16,8 @@ published to Posit Connect. It demonstrates a practical review workflow:
 - [`updateGlassTabsUI()`](https://prigasg.github.io/glasstabs/reference/updateGlassTabsUI.md)
   moves reviewers to the next stage from server actions
 - `theme = "auto"` follows Bootstrap 5 / bslib light and dark modes
-- `overflow = "scroll"`, `"wrap"`, and `"menu"` can be compared without
-  leaving the app
+- `overflow = "scroll"`, `"wrap"`, and the horizontal-only `"menu"` mode
+  can be compared without leaving the app
 - opt-in swipes, dynamic tab controls, keyboard behavior, and the
   experimental
   [`glassPage()`](https://prigasg.github.io/glasstabs/reference/glassPage.md)
@@ -38,7 +38,7 @@ instructions.
     active tab should be in the normal Tab-key order.
 4.  Open both glass selects and try arrow keys, Home, End, Enter, Space,
     and Escape.
-5.  Add and remove the live tab. Repeat this in compact-menu mode and
+5.  Add and remove the live tab. In horizontal compact-menu mode,
     confirm that its option appears and disappears too.
 6.  Hide and show Approve, then disable and enable Explore. A hidden or
     disabled tab should not trap selection or keyboard focus.

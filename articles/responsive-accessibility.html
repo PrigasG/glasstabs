@@ -126,8 +126,9 @@ destination back into view.</p>
 </h2>
 <p><code>"scroll"</code> is a natural fit for most tab bars.
 <code>"wrap"</code> is useful when every label should be visible at
-once. <code>"menu"</code> keeps the header compact and uses a native
-select control.</p>
+once. In a horizontal layout, <code>"menu"</code> keeps the header
+compact and uses a native select control. Vertical tabs already have a
+dedicated rail, so compact menu mode is not available there.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
 <span>  <span class="st">"wrapped"</span>,</span>

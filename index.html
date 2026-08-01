@@ -100,9 +100,11 @@
 <p>Install the CRAN release:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"glasstabs"</span><span class="op">)</span></span></code></pre></div>
-<p>Or install the development version from GitHub:</p>
+<p>The GitHub build is the development version, currently <code>0.3.4.9000</code> on the way to 0.4.0. It includes features that are not part of the CRAN release:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"prigasG/glasstabs"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"PrigasG/glasstabs@main"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"glasstabs"</span><span class="op">)</span></span></code></pre></div>
+<p>Installing from GitHub replaces the installed copy on that machine. It does not change the CRAN release or the tagged 0.3.4 source.</p>
 </div>
 <div class="section level2">
 <h2 id="a-complete-app">A complete app<a class="anchor" aria-label="anchor" href="#a-complete-app"></a>
@@ -203,9 +205,10 @@
 <span>  <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"approve"</span>, <span class="st">"Approve"</span>, <span class="va">approve_ui</span><span class="op">)</span>,</span>
 <span>  orientation <span class="op">=</span> <span class="st">"vertical"</span>,</span>
 <span>  indicator <span class="op">=</span> <span class="st">"solid"</span>,</span>
-<span>  tab_align <span class="op">=</span> <span class="st">"left"</span></span>
+<span>  tab_align <span class="op">=</span> <span class="st">"left"</span>,</span>
+<span>  text_align <span class="op">=</span> <span class="st">"left"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>In a horizontal bar, <code>tab_align</code> places the tab group at the left, center, or right. In a vertical rail, it aligns the labels inside their tab buttons.</p>
+<p><code>tab_align</code> places the tab group at the left, center, or right of the available navigation area in either layout. <code>text_align</code> separately aligns labels and icons inside each tab button.</p>
 </div>
 <div class="section level2">
 <h2 id="tabs-that-fit-the-screen">Tabs that fit the screen<a class="anchor" aria-label="anchor" href="#tabs-that-fit-the-screen"></a>
@@ -220,7 +223,7 @@
 <span>  <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"settings"</span>, <span class="st">"Team settings"</span>, <span class="va">settings_ui</span><span class="op">)</span>,</span>
 <span>  overflow <span class="op">=</span> <span class="st">"scroll"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><code>overflow = "wrap"</code> keeps every label visible on as many rows as needed. <code>overflow = "menu"</code> replaces the strip with a compact native chooser. Touch swipes are available with <code>swipe = TRUE</code>; they start only on ordinary panel content, leaving inputs, plots, maps, and horizontally scrolling tables alone.</p>
+<p><code>overflow = "wrap"</code> keeps every label visible on as many rows as needed. For horizontal tabs, <code>overflow = "menu"</code> replaces the strip with a compact native chooser. Vertical tabs already use a rail, so menu mode is not available there. Touch swipes are available with <code>swipe = TRUE</code>; they start only on ordinary panel content, leaving inputs, plots, maps, and horizontally scrolling tables alone.</p>
 <p>Keyboard focus follows the selected tab. Arrow keys move between available tabs, while Home and End jump to the first and last. Motion is shortened when the device asks for reduced motion, and solid colors take over when glass blur is unavailable.</p>
 </div>
 <div class="section level2">
@@ -389,7 +392,7 @@
 </tr></thead>
 <tbody>
 <tr>
-<td><code>glassTabsUI(id, ..., selected, wrap, compact, shape, indicator, orientation, tab_align, overflow, swipe, extra_ui, theme)</code></td>
+<td><code>glassTabsUI(id, ..., selected, wrap, compact, shape, indicator, orientation, tab_align, overflow, swipe, extra_ui, theme, text_align)</code></td>
 <td>Animated tab bar with responsive overflow and optional touch swipes</td>
 </tr>
 <tr>

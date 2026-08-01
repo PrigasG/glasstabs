@@ -19,7 +19,8 @@ glassTabsUI(
   swipe = FALSE,
   extra_ui = NULL,
   theme = NULL,
-  dark_selector = NULL
+  dark_selector = NULL,
+  text_align = c("center", "left", "right")
 )
 ```
 
@@ -85,16 +86,17 @@ glassTabsUI(
 
 - tab_align:
 
-  Alignment of the tab group in horizontal layouts, and of text and
-  icons inside each tab button in vertical layouts. One of `"center"`
-  (default), `"left"`, or `"right"`.
+  Alignment of the tab group within the available navigation area in
+  either orientation. One of `"center"` (default), `"left"`, or
+  `"right"`.
 
 - overflow:
 
   How the tab strip behaves when labels no longer fit. One of `"scroll"`
   (the default), `"wrap"`, or `"menu"`. Scroll mode keeps a single
   touch-friendly row and brings the active tab into view. Wrap mode
-  allows more than one row. Menu mode uses a compact native chooser.
+  allows more than one row. Menu mode uses a compact native chooser and
+  is available only when `orientation = "horizontal"`.
 
 - swipe:
 
@@ -127,6 +129,11 @@ glassTabsUI(
   `<style>` block overrides the CSS variables back to the dark-mode
   defaults whenever that selector is active - so the tabs stay readable
   after a dark-mode toggle without any server-side intervention.
+
+- text_align:
+
+  Alignment of text and icons inside each tab button. One of `"center"`
+  (default), `"left"`, or `"right"`.
 
 ## Value
 

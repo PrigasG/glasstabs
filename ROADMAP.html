@@ -59,7 +59,11 @@
 <td>Implemented</td>
 </tr><tr><td>Mobile overflow</td>
 <td>
-<code>overflow = "scroll"</code>, <code>"wrap"</code>, or <code>"menu"</code>; selected tabs remain visible</td>
+<code>overflow = "scroll"</code> or <code>"wrap"</code>; horizontal layouts also support <code>"menu"</code>; selected tabs remain visible</td>
+<td>Implemented</td>
+</tr><tr><td>Tab alignment</td>
+<td>Separate tab-group placement with <code>tab_align</code> from label and icon placement with <code>text_align</code>
+</td>
 <td>Implemented</td>
 </tr><tr><td>Reduced motion</td>
 <td>CSS and JavaScript follow <code>prefers-reduced-motion</code> without delaying content changes</td>
@@ -86,10 +90,12 @@
 <span>  <span class="st">"reports"</span>,</span>
 <span>  <span class="va">...</span>,</span>
 <span>  overflow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"scroll"</span>, <span class="st">"wrap"</span>, <span class="st">"menu"</span><span class="op">)</span>,</span>
-<span>  swipe <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  swipe <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  text_align <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"center"</span>, <span class="st">"left"</span>, <span class="st">"right"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><code>wrap</code> keeps its existing meaning: it controls whether glasstabs supplies the outer content container. <code>overflow</code> controls the tab strip itself.</p>
-<p><code>overflow = "scroll"</code> is the default and keeps one row of tabs. <code>"wrap"</code> is useful when every tab should remain visible. <code>"menu"</code> uses a compact native select and stays in step with dynamic tab updates.</p>
+<p><code>overflow = "scroll"</code> is the default and keeps one row of tabs. <code>"wrap"</code> is useful when every tab should remain visible. In horizontal layouts, <code>"menu"</code> uses a compact native select and stays in step with dynamic tab updates.</p>
+<p><code>tab_align</code> places the tab group within the available navigation area in both orientations. <code>text_align</code> independently places text and icons inside each tab button.</p>
 </div>
 </div>
 <div class="section level2">
@@ -128,12 +134,13 @@
 <h2 id="implementation-record">Implementation record<a class="anchor" aria-label="anchor" href="#implementation-record"></a></h2>
 <ul><li>2026-07-31: agreed on a responsive and accessibility-focused 0.4.0 scope.</li>
 <li>2026-07-31: moved the full-page concept out of the stable milestone and renamed the experimental thin wrapper to <code><a href="reference/glassPage.html">glassPage()</a></code>.</li>
-<li>2026-07-31: kept existing CRAN submission artifacts intact and opened the <code>codex/v0.4.0-responsive-accessibility</code> development branch.</li>
+<li>2026-07-31: kept existing CRAN submission artifacts intact while developing the milestone on the repository’s main branch.</li>
 <li>2026-07-31: implemented the stable responsive and accessibility scope, including all three overflow modes, guarded swipe gestures, motion and blur fallbacks, tab and select keyboard behavior, and accessible dynamic tabs.</li>
 <li>2026-07-31: added the experimental <code><a href="reference/glassPage.html">glassPage()</a></code> wrapper with classed, user-facing errors and optional <code>bslib</code> integration.</li>
 <li>2026-07-31: added unit and real-browser coverage, refreshed the README and pkgdown reference, and added a responsive-accessibility vignette.</li>
 <li>2026-07-31: verified the pkgdown article at desktop and phone widths; the narrow layout has no page-level overflow or browser errors.</li>
 <li>2026-07-31: built the source package and ran <code>R CMD check --as-cran</code> with no errors or warnings. The only note is expected while the package uses the development version <code>0.3.4.9000</code>; release builds will use <code>0.4.0</code>.</li>
+<li>2026-08-01: separated tab-group and tab-content alignment, documented the horizontal-only compact menu, and made browser CI respect reduced motion.</li>
 </ul></div>
 </div>
 
