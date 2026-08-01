@@ -379,15 +379,15 @@
       "Repository": null,
       "description": {
         "Package": "glasstabs",
-        "Title": "Animated Glass-Style Tabs and Multi-Select Filter for 'Shiny'",
-        "Version": "0.3.4",
+        "Title": "Animated Glass-Style Tabs and Select Inputs for 'Shiny'",
+        "Version": "0.3.4.9000",
         "Authors@R": "\n    person(\"George\", \"Arthur\", , \"prigasgenthian48@gmail.com\", role = c(\"aut\", \"cre\"))",
-        "Description": "Tools for creating animated glassmorphism-style tab\n    navigation and select filter widgets in 'Shiny' applications.\n    Provides a tab navigation component with a sliding glass halo\n    animation, a searchable multi-select dropdown, and a single-select\n    dropdown - all with multiple colour themes and server-side update\n    helpers. Tabs support icons, numeric badges, disable/enable toggling,\n    runtime append/remove, reactive rendering via 'renderGlassTabs()', URL\n    bookmarking, and compact mode for dashboard card layouts.\n    'glassTabCondition()' generates 'conditionalPanel()' condition strings\n    without needing to recall the internal input key pattern.\n    'glasstabs_news()' displays the release notes from the R console.\n    Built-in example apps can be launched with 'runGlassExample()'.  All\n    widgets are compatible with standard 'Shiny' layouts and 'bs4Dash'\n    dashboards and 'bslib' themed applications.  For full documentation\n    and examples see Arthur (2026) <https://prigasg.github.io/glasstabs/>.",
+        "Description": "Tools for creating animated glassmorphism-style tab\n    navigation and select filter widgets in 'Shiny' applications.\n    Provides a tab navigation component with a sliding glass halo\n    animation, a searchable multi-select dropdown, and a single-select\n    dropdown - all with multiple colour themes and server-side update\n    helpers. Tabs support icons, numeric badges, disable/enable toggling,\n    runtime append/remove, reactive rendering via 'renderGlassTabs()', URL\n    bookmarking, responsive overflow modes, optional touch gestures,\n    reduced-motion support, and compact mode for dashboard card layouts.\n    'glassTabCondition()' generates 'conditionalPanel()' condition strings\n    without needing to recall the internal input key pattern.\n    'glasstabs_news()' displays the release notes from the R console.\n    Built-in example apps can be launched with 'runGlassExample()'.  All\n    widgets are compatible with standard 'Shiny' layouts and 'bs4Dash'\n    dashboards and 'bslib' themed applications. An experimental\n    'glassPage()' helper provides a thin wrapper around a fillable 'bslib'\n    page when 'bslib' is installed. For full documentation\n    and examples see Arthur (2026) <https://prigasg.github.io/glasstabs/>.",
         "License": "MIT + file LICENSE",
         "URL": "https://github.com/PrigasG/glasstabs,\nhttps://prigasg.github.io/glasstabs/",
         "BugReports": "https://github.com/PrigasG/glasstabs/issues",
-        "Imports": "htmltools (>= 0.5.0), shiny (>= 1.7.0)",
-        "Suggests": "bs4Dash, bslib, knitr, mockery, pkgload, rmarkdown,\nshinytest2, spelling, testthat (>= 3.0.0), withr",
+        "Imports": "cli, htmltools (>= 0.5.0), jsonlite, shiny (>= 1.7.0)",
+        "Suggests": "bs4Dash, bslib, covr, knitr, lintr, mockery, pkgload,\nrmarkdown, shinytest2, spelling, styler, testthat (>= 3.0.0),\nwithr",
         "VignetteBuilder": "knitr",
         "Config/testthat/edition": "3",
         "Encoding": "UTF-8",
@@ -398,17 +398,18 @@
         "RemoteHost": "api.github.com",
         "RemoteRepo": "glasstabs",
         "RemoteUsername": "PrigasG",
-        "RemoteRef": "aa04e47",
-        "RemoteSha": "aa04e47095971aba59ecef18bc4895a37225c234",
+        "RemotePkgRef": "PrigasG/glasstabs@49fe242",
+        "RemoteRef": "49fe242",
+        "RemoteSha": "49fe24233bbe8807deea48249153e51c61664c90",
         "GithubRepo": "glasstabs",
         "GithubUsername": "PrigasG",
-        "GithubRef": "aa04e47",
-        "GithubSHA1": "aa04e47095971aba59ecef18bc4895a37225c234",
+        "GithubRef": "49fe242",
+        "GithubSHA1": "49fe24233bbe8807deea48249153e51c61664c90",
         "NeedsCompilation": "no",
-        "Packaged": "2026-07-06 20:38:30 UTC; priga",
+        "Packaged": "2026-08-01 15:52:55 UTC; priga",
         "Author": "George Arthur [aut, cre]",
         "Maintainer": "George Arthur <prigasgenthian48@gmail.com>",
-        "Built": "R 4.5.1; ; 2026-07-06 20:38:31 UTC; windows"
+        "Built": "R 4.5.1; ; 2026-08-01 15:52:58 UTC; windows"
       }
     },
     "glue": {
@@ -1057,7 +1058,7 @@
   },
   "files": {
     "app.R": {
-      "checksum": "f6a53de635b173ced6b81fe5681926d7"
+      "checksum": "ebd5be766363f5701809fb6bf8c1b103"
     }
   },
   "users": null
