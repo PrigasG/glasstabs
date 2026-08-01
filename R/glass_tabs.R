@@ -75,6 +75,14 @@ glassTabPanel <- function(value, label, ..., icon = NULL, selected = FALSE) {
 #'   of `"center"` (default), `"left"`, or `"right"`.
 #' @param extra_ui Optional additional UI placed to the right of the tab bar
 #'   (below the tab rail when `orientation = "vertical"`).
+#' @param overflow How the tab strip behaves when labels no longer fit. One of
+#'   `"scroll"` (the default), `"wrap"`, or `"menu"`. Scroll mode keeps a
+#'   single touch-friendly row and brings the active tab into view. Wrap mode
+#'   allows more than one row. Menu mode uses a compact native chooser.
+#' @param swipe Whether a horizontal touch swipe over non-interactive panel
+#'   content should move to the previous or next available tab. The default is
+#'   `FALSE` so maps, plots, tables, and other interactive content keep their
+#'   normal gestures.
 #' @param theme One of `"dark"`, `"light"`, `"auto"`, or a
 #'   [glass_tab_theme()] object. `"auto"` bridges to Bootstrap 5 / bslib
 #'   color modes: light-theme variables apply by default and dark-theme
@@ -100,6 +108,8 @@ glassTabsUI <- function(
     indicator = c("glass", "solid", "underline"),
     orientation = c("horizontal", "vertical"),
     tab_align = c("center", "left", "right"),
+    overflow = c("scroll", "wrap", "menu"),
+    swipe = FALSE,
     extra_ui = NULL,
     theme = NULL,
     dark_selector = NULL
@@ -110,6 +120,17 @@ glassTabsUI <- function(
   indicator   <- .gt_match_arg(indicator, c("glass", "solid", "underline"), "indicator")
   orientation <- .gt_match_arg(orientation, c("horizontal", "vertical"), "orientation")
   tab_align   <- .gt_match_arg(tab_align, c("center", "left", "right"), "tab_align")
+  overflow    <- .gt_match_arg(overflow, c("scroll", "wrap", "menu"), "overflow")
+
+  if (!is.logical(swipe) || length(swipe) != 1L || is.na(swipe)) {
+    .gt_abort(
+      "glassTabsUI(): `swipe` must be either TRUE or FALSE.",
+      class = "glasstabs_error_bad_argument",
+      argument = "swipe",
+      value = swipe,
+      expected = "TRUE or FALSE"
+    )
+  }
 
   ## theme = "auto": bridge to Bootstrap 5 / bslib color modes. Base vars are
   ## the light preset; dark vars are scoped under [data-bs-theme="dark"] via
@@ -203,12 +224,13 @@ glassTabsUI <- function(
       p,
       p$value == active_val,
       ns(paste0("pane-", p$value)),
+      tab_id = ns(paste0("tab-", p$value)),
       preserve_inactive_space = TRUE
     )
   })
 
   navbar <- shiny::div(
-    class = "gt-topbar",
+    class = "gt-tab-viewport",
     shiny::div(
       class    = "gt-navbar",
       id       = ns("navbar"),
@@ -216,6 +238,18 @@ glassTabsUI <- function(
       role     = "tablist",
       `aria-orientation` = orientation,
       tab_links
+    ),
+    shiny::tags$div(class = "gt-halo", id = ns("halo")),
+    shiny::tags$div(class = "gt-transfer", id = ns("transfer"))
+  )
+
+  topbar <- shiny::div(
+    class = "gt-topbar",
+    navbar,
+    shiny::tags$select(
+      class = "gt-tab-menu-select",
+      id = ns("menu"),
+      `aria-label` = "Choose a tab"
     ),
     extra_ui
   )
@@ -245,9 +279,7 @@ glassTabsUI <- function(
   inner <- htmltools::tagList(
     .make_style_tag(theme_css),
     dark_override_style,
-    navbar,
-    shiny::tags$div(class = "gt-halo", id = ns("halo")),
-    shiny::tags$div(class = "gt-transfer", id = ns("transfer")),
+    topbar,
     shiny::div(class = "gt-tab-wrap", panes)
   )
 
@@ -261,13 +293,18 @@ glassTabsUI <- function(
       if (identical(shape, "square")) "shape-square",
       if (!identical(indicator, "glass")) paste0("indicator-", indicator),
       if (identical(orientation, "vertical")) "gt-vertical",
+      paste0("gt-overflow-", overflow),
       paste0("gt-align-", tab_align),
       if (is_auto)         "theme-auto",
       if (is_light)        "theme-light"),
     collapse = " "
   ))
-  shiny::div(class = if (nzchar(container_cls)) container_cls else NULL,
-             id = scope_id, inner)
+  shiny::div(
+    class = if (nzchar(container_cls)) container_cls else NULL,
+    id = scope_id,
+    `data-swipe` = if (isTRUE(swipe)) "true" else "false",
+    inner
+  )
 }
 
 #' Programmatically switch the active glass tab
@@ -529,7 +566,8 @@ appendGlassTab <- function(session, id, tab, select = FALSE) {
   pane_html <- as.character(.gt_tab_pane(
     tab,
     FALSE,
-    paste0(full_ns, "-pane-", tab$value)
+    paste0(full_ns, "-pane-", tab$value),
+    tab_id = paste0(full_ns, "-tab-", tab$value)
   ))
 
   session$sendCustomMessage(

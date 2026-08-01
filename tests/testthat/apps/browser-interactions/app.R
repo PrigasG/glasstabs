@@ -18,6 +18,7 @@ ui <- fluidPage(
   tags$style(HTML("
     body { padding: 24px; }
     .test-row { max-width: 420px; display: grid; gap: 18px; }
+    .mobile-frame { width: 300px; }
   ")),
   tags$div(
     class = "test-row",
@@ -48,7 +49,26 @@ ui <- fluidPage(
       choices,
       selected = "apple",
       shape = "rounded"
-    )
+    ),
+    tags$div(
+      class = "mobile-frame",
+      glassTabsUI(
+        "mobile_tabs",
+        glassTabPanel("summary", "Summary", p("Summary content")),
+        glassTabPanel("activity", "Recent activity", p("Activity content")),
+        glassTabPanel("quality", "Data quality", p("Quality content")),
+        glassTabPanel("settings", "Team settings", p("Settings content")),
+        overflow = "scroll",
+        swipe = TRUE
+      )
+    ),
+    glassTabsUI(
+      "menu_tabs",
+      glassTabPanel("queue", "Queue", p("Queue content")),
+      glassTabPanel("complete", "Complete", p("Complete content")),
+      overflow = "menu"
+    ),
+    actionButton("append_tab", "Append tab")
   )
 )
 
@@ -61,6 +81,15 @@ server <- function(input, output, session) {
   output$fruit_open_state <- renderText({
     if (isTRUE(input$fruit_open)) "open" else "closed"
   })
+
+  observeEvent(input$append_tab, {
+    appendGlassTab(
+      session,
+      "mobile_tabs",
+      glassTabPanel("archive", "Archive", p("Archive content")),
+      select = TRUE
+    )
+  }, once = TRUE)
 }
 
 shinyApp(ui, server)

@@ -16,6 +16,10 @@ UI
 bootAll
 bs
 bslib
+fallbacks
+fillable
+scrollable
+scrollers
 changelog
 cheatsheet
 checkmarks

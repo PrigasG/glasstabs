@@ -9,6 +9,9 @@ test_that("glass.css has no color-mix dependency", {
   css <- paste(readLines(css_path, warn = FALSE), collapse = "\n")
   expect_false(grepl("color-mix\\(", css))
   expect_true(grepl("@media (forced-colors: active)", css, fixed = TRUE))
+  expect_true(grepl("@media (prefers-reduced-motion: reduce)", css, fixed = TRUE))
+  expect_true(grepl("@supports not", css, fixed = TRUE))
+  expect_true(grepl("gt-overflow-scroll", css, fixed = TRUE))
   expect_true(grepl('[dir="rtl"]', css, fixed = TRUE))
 })
 
@@ -70,6 +73,16 @@ test_that("glass.js keeps ARIA and focus state in sync", {
   expect_true(grepl("shiny:sessioninitialized.glasstabs", js, fixed = TRUE))
   expect_true(grepl("e.key === 'Escape' || e.key === 'Tab'", js, fixed = TRUE))
   expect_true(grepl("trigger.focus()", js, fixed = TRUE))
+  expect_true(grepl("createOptionNavigator", js, fixed = TRUE))
+  expect_true(grepl("e.key === 'Home'", js, fixed = TRUE))
+  expect_true(grepl("prefers-reduced-motion: reduce", js, fixed = TRUE))
+  expect_true(grepl("touchstart", js, fixed = TRUE))
+  expect_true(grepl("gt-badge-updated", js, fixed = TRUE))
+  expect_true(grepl(
+    "glasstabs_close_selects', function (msg)",
+    js,
+    fixed = TRUE
+  ))
 })
 
 test_that("closeGlass* helpers send dropdown close messages", {

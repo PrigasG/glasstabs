@@ -14,6 +14,8 @@ glassTabsUI(
   indicator = c("glass", "solid", "underline"),
   orientation = c("horizontal", "vertical"),
   tab_align = c("center", "left", "right"),
+  overflow = c("scroll", "wrap", "menu"),
+  swipe = FALSE,
   extra_ui = NULL,
   theme = NULL,
   dark_selector = NULL
@@ -58,6 +60,16 @@ a slim bar on the edge of the active tab adjacent to the content.}
 
 \item{tab_align}{Alignment for text and icons inside each tab button. One
 of \code{"center"} (default), \code{"left"}, or \code{"right"}.}
+
+\item{overflow}{How the tab strip behaves when labels no longer fit. One of
+\code{"scroll"} (the default), \code{"wrap"}, or \code{"menu"}. Scroll mode keeps a
+single touch-friendly row and brings the active tab into view. Wrap mode
+allows more than one row. Menu mode uses a compact native chooser.}
+
+\item{swipe}{Whether a horizontal touch swipe over non-interactive panel
+content should move to the previous or next available tab. The default is
+\code{FALSE} so maps, plots, tables, and other interactive content keep their
+normal gestures.}
 
 \item{extra_ui}{Optional additional UI placed to the right of the tab bar
 (below the tab rail when \code{orientation = "vertical"}).}

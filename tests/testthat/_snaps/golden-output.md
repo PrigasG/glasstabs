@@ -19,28 +19,33 @@
     Output
       
       TABS: dark rounded 
-      <div class="gt-container gt-align-center" id="tabs-wrap">
+      <div class="gt-container gt-overflow-scroll gt-align-center" id="tabs-wrap" data-swipe="false">
         <style>#tabs-wrap{--gt-tab-text:rgba(207,230,255,0.78);--gt-tab-active-text:#ffffff;--gt-halo-bg:rgba(126,195,247,0.16);--gt-halo-border:rgba(126,195,247,0.38);--gt-halo-shadow:inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(255,255,255,.06),0 6px 20px rgba(0,0,0,.38),0 0 0 1px rgba(255,255,255,.03);--gt-content-bg:transparent;--gt-content-border:transparent;--gt-card-bg:transparent;--gt-card-text:#cfe6ff;}</style>
         <div class="gt-topbar">
-          <div class="gt-navbar" id="tabs-navbar" data-ns="tabs" role="tablist" aria-orientation="horizontal">
-            <div class="gt-tab-link active" data-value="one" data-ns="tabs" role="tab" tabindex="0" aria-selected="true">One</div>
-            <div class="gt-tab-link " data-value="two" data-ns="tabs" role="tab" tabindex="0" aria-selected="false">
-              <span class="gt-tab-icon">
-                <i class="fas fa-table" role="presentation" aria-label="table icon"></i>
-              </span>
-              <span class="gt-tab-label">Two</span>
+          <div class="gt-tab-viewport">
+            <div class="gt-navbar" id="tabs-navbar" data-ns="tabs" role="tablist" aria-orientation="horizontal">
+              <div class="gt-tab-link active" id="tabs-tab-one" data-value="one" data-ns="tabs" role="tab" tabindex="0" aria-selected="true" aria-controls="tabs-pane-one">
+                <span class="gt-tab-label">One</span>
+              </div>
+              <div class="gt-tab-link " id="tabs-tab-two" data-value="two" data-ns="tabs" role="tab" tabindex="-1" aria-selected="false" aria-controls="tabs-pane-two">
+                <span class="gt-tab-icon">
+                  <i class="fas fa-table" role="presentation" aria-label="table icon"></i>
+                </span>
+                <span class="gt-tab-label">Two</span>
+              </div>
             </div>
+            <div class="gt-halo" id="tabs-halo"></div>
+            <div class="gt-transfer" id="tabs-transfer"></div>
           </div>
+          <select class="gt-tab-menu-select" id="tabs-menu" aria-label="Choose a tab"></select>
         </div>
-        <div class="gt-halo" id="tabs-halo"></div>
-        <div class="gt-transfer" id="tabs-transfer"></div>
         <div class="gt-tab-wrap">
-          <div class="gt-tab-pane active" id="tabs-pane-one" role="tabpanel">
+          <div class="gt-tab-pane active" id="tabs-pane-one" role="tabpanel" aria-labelledby="tabs-tab-one" aria-hidden="false" tabindex="0">
             <div class="gt-card">
               <p>First</p>
             </div>
           </div>
-          <div class="gt-tab-pane " id="tabs-pane-two" role="tabpanel">
+          <div class="gt-tab-pane " id="tabs-pane-two" role="tabpanel" aria-labelledby="tabs-tab-two" aria-hidden="true" tabindex="-1">
             <div class="gt-card">
               <p>Second</p>
             </div>
@@ -166,28 +171,33 @@
       </div>
       
       TABS: light rounded 
-      <div class="gt-container gt-align-center theme-light" id="tabs-wrap">
+      <div class="gt-container gt-overflow-scroll gt-align-center theme-light" id="tabs-wrap" data-swipe="false">
         <style>#tabs-wrap{--gt-tab-text:#374151;--gt-tab-active-text:#1d4ed8;--gt-halo-bg:rgba(37,99,235,0.12);--gt-halo-border:rgba(37,99,235,0.60);--gt-halo-shadow:inset 0 1px 0 rgba(255,255,255,.80),0 4px 16px rgba(37,99,235,.20),0 0 0 1px rgba(37,99,235,.12);--gt-content-bg:transparent;--gt-content-border:transparent;--gt-card-bg:transparent;--gt-card-text:#1e293b;}</style>
         <div class="gt-topbar">
-          <div class="gt-navbar" id="tabs-navbar" data-ns="tabs" role="tablist" aria-orientation="horizontal">
-            <div class="gt-tab-link active" data-value="one" data-ns="tabs" role="tab" tabindex="0" aria-selected="true">One</div>
-            <div class="gt-tab-link " data-value="two" data-ns="tabs" role="tab" tabindex="0" aria-selected="false">
-              <span class="gt-tab-icon">
-                <i class="fas fa-table" role="presentation" aria-label="table icon"></i>
-              </span>
-              <span class="gt-tab-label">Two</span>
+          <div class="gt-tab-viewport">
+            <div class="gt-navbar" id="tabs-navbar" data-ns="tabs" role="tablist" aria-orientation="horizontal">
+              <div class="gt-tab-link active" id="tabs-tab-one" data-value="one" data-ns="tabs" role="tab" tabindex="0" aria-selected="true" aria-controls="tabs-pane-one">
+                <span class="gt-tab-label">One</span>
+              </div>
+              <div class="gt-tab-link " id="tabs-tab-two" data-value="two" data-ns="tabs" role="tab" tabindex="-1" aria-selected="false" aria-controls="tabs-pane-two">
+                <span class="gt-tab-icon">
+                  <i class="fas fa-table" role="presentation" aria-label="table icon"></i>
+                </span>
+                <span class="gt-tab-label">Two</span>
+              </div>
             </div>
+            <div class="gt-halo" id="tabs-halo"></div>
+            <div class="gt-transfer" id="tabs-transfer"></div>
           </div>
+          <select class="gt-tab-menu-select" id="tabs-menu" aria-label="Choose a tab"></select>
         </div>
-        <div class="gt-halo" id="tabs-halo"></div>
-        <div class="gt-transfer" id="tabs-transfer"></div>
         <div class="gt-tab-wrap">
-          <div class="gt-tab-pane active" id="tabs-pane-one" role="tabpanel">
+          <div class="gt-tab-pane active" id="tabs-pane-one" role="tabpanel" aria-labelledby="tabs-tab-one" aria-hidden="false" tabindex="0">
             <div class="gt-card">
               <p>First</p>
             </div>
           </div>
-          <div class="gt-tab-pane " id="tabs-pane-two" role="tabpanel">
+          <div class="gt-tab-pane " id="tabs-pane-two" role="tabpanel" aria-labelledby="tabs-tab-two" aria-hidden="true" tabindex="-1">
             <div class="gt-card">
               <p>Second</p>
             </div>
@@ -313,29 +323,34 @@
       </div>
       
       TABS: auto rounded 
-      <div class="gt-container gt-align-center theme-auto theme-light" id="tabs-wrap">
+      <div class="gt-container gt-overflow-scroll gt-align-center theme-auto theme-light" id="tabs-wrap" data-swipe="false">
         <style>#tabs-wrap{--gt-tab-text:#374151;--gt-tab-active-text:#1d4ed8;--gt-halo-bg:rgba(37,99,235,0.12);--gt-halo-border:rgba(37,99,235,0.60);--gt-halo-shadow:inset 0 1px 0 rgba(255,255,255,.80),0 4px 16px rgba(37,99,235,.20),0 0 0 1px rgba(37,99,235,.12);--gt-content-bg:transparent;--gt-content-border:transparent;--gt-card-bg:transparent;--gt-card-text:#1e293b;}</style>
         <style>[data-bs-theme="dark"] #tabs-wrap{--gt-tab-text:rgba(207,230,255,0.78);--gt-tab-active-text:#ffffff;--gt-halo-bg:rgba(126,195,247,0.16);--gt-halo-border:rgba(126,195,247,0.38);--gt-halo-shadow:inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(255,255,255,.06),0 6px 20px rgba(0,0,0,.38),0 0 0 1px rgba(255,255,255,.03);--gt-content-bg:transparent;--gt-content-border:transparent;--gt-card-bg:transparent;--gt-card-text:#cfe6ff;}</style>
         <div class="gt-topbar">
-          <div class="gt-navbar" id="tabs-navbar" data-ns="tabs" role="tablist" aria-orientation="horizontal">
-            <div class="gt-tab-link active" data-value="one" data-ns="tabs" role="tab" tabindex="0" aria-selected="true">One</div>
-            <div class="gt-tab-link " data-value="two" data-ns="tabs" role="tab" tabindex="0" aria-selected="false">
-              <span class="gt-tab-icon">
-                <i class="fas fa-table" role="presentation" aria-label="table icon"></i>
-              </span>
-              <span class="gt-tab-label">Two</span>
+          <div class="gt-tab-viewport">
+            <div class="gt-navbar" id="tabs-navbar" data-ns="tabs" role="tablist" aria-orientation="horizontal">
+              <div class="gt-tab-link active" id="tabs-tab-one" data-value="one" data-ns="tabs" role="tab" tabindex="0" aria-selected="true" aria-controls="tabs-pane-one">
+                <span class="gt-tab-label">One</span>
+              </div>
+              <div class="gt-tab-link " id="tabs-tab-two" data-value="two" data-ns="tabs" role="tab" tabindex="-1" aria-selected="false" aria-controls="tabs-pane-two">
+                <span class="gt-tab-icon">
+                  <i class="fas fa-table" role="presentation" aria-label="table icon"></i>
+                </span>
+                <span class="gt-tab-label">Two</span>
+              </div>
             </div>
+            <div class="gt-halo" id="tabs-halo"></div>
+            <div class="gt-transfer" id="tabs-transfer"></div>
           </div>
+          <select class="gt-tab-menu-select" id="tabs-menu" aria-label="Choose a tab"></select>
         </div>
-        <div class="gt-halo" id="tabs-halo"></div>
-        <div class="gt-transfer" id="tabs-transfer"></div>
         <div class="gt-tab-wrap">
-          <div class="gt-tab-pane active" id="tabs-pane-one" role="tabpanel">
+          <div class="gt-tab-pane active" id="tabs-pane-one" role="tabpanel" aria-labelledby="tabs-tab-one" aria-hidden="false" tabindex="0">
             <div class="gt-card">
               <p>First</p>
             </div>
           </div>
-          <div class="gt-tab-pane " id="tabs-pane-two" role="tabpanel">
+          <div class="gt-tab-pane " id="tabs-pane-two" role="tabpanel" aria-labelledby="tabs-tab-two" aria-hidden="true" tabindex="-1">
             <div class="gt-card">
               <p>Second</p>
             </div>
@@ -463,28 +478,33 @@
       </div>
       
       TABS: dark square 
-      <div class="gt-container shape-square gt-align-center" id="tabs-wrap">
+      <div class="gt-container shape-square gt-overflow-scroll gt-align-center" id="tabs-wrap" data-swipe="false">
         <style>#tabs-wrap{--gt-tab-text:rgba(207,230,255,0.78);--gt-tab-active-text:#ffffff;--gt-halo-bg:rgba(126,195,247,0.16);--gt-halo-border:rgba(126,195,247,0.38);--gt-halo-shadow:inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(255,255,255,.06),0 6px 20px rgba(0,0,0,.38),0 0 0 1px rgba(255,255,255,.03);--gt-content-bg:transparent;--gt-content-border:transparent;--gt-card-bg:transparent;--gt-card-text:#cfe6ff;}</style>
         <div class="gt-topbar">
-          <div class="gt-navbar" id="tabs-navbar" data-ns="tabs" role="tablist" aria-orientation="horizontal">
-            <div class="gt-tab-link active" data-value="one" data-ns="tabs" role="tab" tabindex="0" aria-selected="true">One</div>
-            <div class="gt-tab-link " data-value="two" data-ns="tabs" role="tab" tabindex="0" aria-selected="false">
-              <span class="gt-tab-icon">
-                <i class="fas fa-table" role="presentation" aria-label="table icon"></i>
-              </span>
-              <span class="gt-tab-label">Two</span>
+          <div class="gt-tab-viewport">
+            <div class="gt-navbar" id="tabs-navbar" data-ns="tabs" role="tablist" aria-orientation="horizontal">
+              <div class="gt-tab-link active" id="tabs-tab-one" data-value="one" data-ns="tabs" role="tab" tabindex="0" aria-selected="true" aria-controls="tabs-pane-one">
+                <span class="gt-tab-label">One</span>
+              </div>
+              <div class="gt-tab-link " id="tabs-tab-two" data-value="two" data-ns="tabs" role="tab" tabindex="-1" aria-selected="false" aria-controls="tabs-pane-two">
+                <span class="gt-tab-icon">
+                  <i class="fas fa-table" role="presentation" aria-label="table icon"></i>
+                </span>
+                <span class="gt-tab-label">Two</span>
+              </div>
             </div>
+            <div class="gt-halo" id="tabs-halo"></div>
+            <div class="gt-transfer" id="tabs-transfer"></div>
           </div>
+          <select class="gt-tab-menu-select" id="tabs-menu" aria-label="Choose a tab"></select>
         </div>
-        <div class="gt-halo" id="tabs-halo"></div>
-        <div class="gt-transfer" id="tabs-transfer"></div>
         <div class="gt-tab-wrap">
-          <div class="gt-tab-pane active" id="tabs-pane-one" role="tabpanel">
+          <div class="gt-tab-pane active" id="tabs-pane-one" role="tabpanel" aria-labelledby="tabs-tab-one" aria-hidden="false" tabindex="0">
             <div class="gt-card">
               <p>First</p>
             </div>
           </div>
-          <div class="gt-tab-pane " id="tabs-pane-two" role="tabpanel">
+          <div class="gt-tab-pane " id="tabs-pane-two" role="tabpanel" aria-labelledby="tabs-tab-two" aria-hidden="true" tabindex="-1">
             <div class="gt-card">
               <p>Second</p>
             </div>
@@ -610,28 +630,33 @@
       </div>
       
       TABS: light square 
-      <div class="gt-container shape-square gt-align-center theme-light" id="tabs-wrap">
+      <div class="gt-container shape-square gt-overflow-scroll gt-align-center theme-light" id="tabs-wrap" data-swipe="false">
         <style>#tabs-wrap{--gt-tab-text:#374151;--gt-tab-active-text:#1d4ed8;--gt-halo-bg:rgba(37,99,235,0.12);--gt-halo-border:rgba(37,99,235,0.60);--gt-halo-shadow:inset 0 1px 0 rgba(255,255,255,.80),0 4px 16px rgba(37,99,235,.20),0 0 0 1px rgba(37,99,235,.12);--gt-content-bg:transparent;--gt-content-border:transparent;--gt-card-bg:transparent;--gt-card-text:#1e293b;}</style>
         <div class="gt-topbar">
-          <div class="gt-navbar" id="tabs-navbar" data-ns="tabs" role="tablist" aria-orientation="horizontal">
-            <div class="gt-tab-link active" data-value="one" data-ns="tabs" role="tab" tabindex="0" aria-selected="true">One</div>
-            <div class="gt-tab-link " data-value="two" data-ns="tabs" role="tab" tabindex="0" aria-selected="false">
-              <span class="gt-tab-icon">
-                <i class="fas fa-table" role="presentation" aria-label="table icon"></i>
-              </span>
-              <span class="gt-tab-label">Two</span>
+          <div class="gt-tab-viewport">
+            <div class="gt-navbar" id="tabs-navbar" data-ns="tabs" role="tablist" aria-orientation="horizontal">
+              <div class="gt-tab-link active" id="tabs-tab-one" data-value="one" data-ns="tabs" role="tab" tabindex="0" aria-selected="true" aria-controls="tabs-pane-one">
+                <span class="gt-tab-label">One</span>
+              </div>
+              <div class="gt-tab-link " id="tabs-tab-two" data-value="two" data-ns="tabs" role="tab" tabindex="-1" aria-selected="false" aria-controls="tabs-pane-two">
+                <span class="gt-tab-icon">
+                  <i class="fas fa-table" role="presentation" aria-label="table icon"></i>
+                </span>
+                <span class="gt-tab-label">Two</span>
+              </div>
             </div>
+            <div class="gt-halo" id="tabs-halo"></div>
+            <div class="gt-transfer" id="tabs-transfer"></div>
           </div>
+          <select class="gt-tab-menu-select" id="tabs-menu" aria-label="Choose a tab"></select>
         </div>
-        <div class="gt-halo" id="tabs-halo"></div>
-        <div class="gt-transfer" id="tabs-transfer"></div>
         <div class="gt-tab-wrap">
-          <div class="gt-tab-pane active" id="tabs-pane-one" role="tabpanel">
+          <div class="gt-tab-pane active" id="tabs-pane-one" role="tabpanel" aria-labelledby="tabs-tab-one" aria-hidden="false" tabindex="0">
             <div class="gt-card">
               <p>First</p>
             </div>
           </div>
-          <div class="gt-tab-pane " id="tabs-pane-two" role="tabpanel">
+          <div class="gt-tab-pane " id="tabs-pane-two" role="tabpanel" aria-labelledby="tabs-tab-two" aria-hidden="true" tabindex="-1">
             <div class="gt-card">
               <p>Second</p>
             </div>
@@ -757,29 +782,34 @@
       </div>
       
       TABS: auto square 
-      <div class="gt-container shape-square gt-align-center theme-auto theme-light" id="tabs-wrap">
+      <div class="gt-container shape-square gt-overflow-scroll gt-align-center theme-auto theme-light" id="tabs-wrap" data-swipe="false">
         <style>#tabs-wrap{--gt-tab-text:#374151;--gt-tab-active-text:#1d4ed8;--gt-halo-bg:rgba(37,99,235,0.12);--gt-halo-border:rgba(37,99,235,0.60);--gt-halo-shadow:inset 0 1px 0 rgba(255,255,255,.80),0 4px 16px rgba(37,99,235,.20),0 0 0 1px rgba(37,99,235,.12);--gt-content-bg:transparent;--gt-content-border:transparent;--gt-card-bg:transparent;--gt-card-text:#1e293b;}</style>
         <style>[data-bs-theme="dark"] #tabs-wrap{--gt-tab-text:rgba(207,230,255,0.78);--gt-tab-active-text:#ffffff;--gt-halo-bg:rgba(126,195,247,0.16);--gt-halo-border:rgba(126,195,247,0.38);--gt-halo-shadow:inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(255,255,255,.06),0 6px 20px rgba(0,0,0,.38),0 0 0 1px rgba(255,255,255,.03);--gt-content-bg:transparent;--gt-content-border:transparent;--gt-card-bg:transparent;--gt-card-text:#cfe6ff;}</style>
         <div class="gt-topbar">
-          <div class="gt-navbar" id="tabs-navbar" data-ns="tabs" role="tablist" aria-orientation="horizontal">
-            <div class="gt-tab-link active" data-value="one" data-ns="tabs" role="tab" tabindex="0" aria-selected="true">One</div>
-            <div class="gt-tab-link " data-value="two" data-ns="tabs" role="tab" tabindex="0" aria-selected="false">
-              <span class="gt-tab-icon">
-                <i class="fas fa-table" role="presentation" aria-label="table icon"></i>
-              </span>
-              <span class="gt-tab-label">Two</span>
+          <div class="gt-tab-viewport">
+            <div class="gt-navbar" id="tabs-navbar" data-ns="tabs" role="tablist" aria-orientation="horizontal">
+              <div class="gt-tab-link active" id="tabs-tab-one" data-value="one" data-ns="tabs" role="tab" tabindex="0" aria-selected="true" aria-controls="tabs-pane-one">
+                <span class="gt-tab-label">One</span>
+              </div>
+              <div class="gt-tab-link " id="tabs-tab-two" data-value="two" data-ns="tabs" role="tab" tabindex="-1" aria-selected="false" aria-controls="tabs-pane-two">
+                <span class="gt-tab-icon">
+                  <i class="fas fa-table" role="presentation" aria-label="table icon"></i>
+                </span>
+                <span class="gt-tab-label">Two</span>
+              </div>
             </div>
+            <div class="gt-halo" id="tabs-halo"></div>
+            <div class="gt-transfer" id="tabs-transfer"></div>
           </div>
+          <select class="gt-tab-menu-select" id="tabs-menu" aria-label="Choose a tab"></select>
         </div>
-        <div class="gt-halo" id="tabs-halo"></div>
-        <div class="gt-transfer" id="tabs-transfer"></div>
         <div class="gt-tab-wrap">
-          <div class="gt-tab-pane active" id="tabs-pane-one" role="tabpanel">
+          <div class="gt-tab-pane active" id="tabs-pane-one" role="tabpanel" aria-labelledby="tabs-tab-one" aria-hidden="false" tabindex="0">
             <div class="gt-card">
               <p>First</p>
             </div>
           </div>
-          <div class="gt-tab-pane " id="tabs-pane-two" role="tabpanel">
+          <div class="gt-tab-pane " id="tabs-pane-two" role="tabpanel" aria-labelledby="tabs-tab-two" aria-hidden="true" tabindex="-1">
             <div class="gt-card">
               <p>Second</p>
             </div>
@@ -1224,12 +1254,12 @@
                 {
                   "type": "character",
                   "attributes": {},
-                  "value": ["<div class=\"gt-tab-link\" data-value=\"new\" data-ns=\"mod-tabs\" role=\"tab\" tabindex=\"0\" aria-selected=\"false\">\n  <span class=\"gt-tab-icon\">\n    <i class=\"fas fa-table\" role=\"presentation\" aria-label=\"table icon\"><\/i>\n  <\/span>\n  <span class=\"gt-tab-label\">New<\/span>\n<\/div>"]
+                  "value": ["<div class=\"gt-tab-link\" id=\"mod-tabs-tab-new\" data-value=\"new\" data-ns=\"mod-tabs\" role=\"tab\" tabindex=\"-1\" aria-selected=\"false\" aria-controls=\"mod-tabs-pane-new\">\n  <span class=\"gt-tab-icon\">\n    <i class=\"fas fa-table\" role=\"presentation\" aria-label=\"table icon\"><\/i>\n  <\/span>\n  <span class=\"gt-tab-label\">New<\/span>\n<\/div>"]
                 },
                 {
                   "type": "character",
                   "attributes": {},
-                  "value": ["<div class=\"gt-tab-pane\" id=\"mod-tabs-pane-new\" role=\"tabpanel\">\n  <div class=\"gt-card\">\n    <p>Content<\/p>\n  <\/div>\n<\/div>"]
+                  "value": ["<div class=\"gt-tab-pane\" id=\"mod-tabs-pane-new\" role=\"tabpanel\" aria-labelledby=\"mod-tabs-tab-new\" aria-hidden=\"true\" tabindex=\"-1\">\n  <div class=\"gt-card\">\n    <p>Content<\/p>\n  <\/div>\n<\/div>"]
                 },
                 {
                   "type": "logical",

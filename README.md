@@ -1,45 +1,47 @@
-# glasstabs <img src="man/figures/logo.svg" align="right" height="120" />
+---
+
+editor_options:
+  markdown:
+    wrap: 72
+---
+
+# glasstabs <img src="man/figures/logo.svg" align="right" height="120"/>
 
 > Animated tabs and select inputs that feel at home in a Shiny app.
 
 <!-- badges: start -->
-[![CRAN status](https://www.r-pkg.org/badges/version/glasstabs)](https://CRAN.R-project.org/package=glasstabs)
-[![R-CMD-check](https://github.com/prigasG/glasstabs/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/prigasG/glasstabs/actions/workflows/R-CMD-check.yaml)
-[![Codecov test coverage](https://codecov.io/gh/prigasG/glasstabs/graph/badge.svg)](https://app.codecov.io/gh/prigasG/glasstabs)
-[![Live Connect app](https://img.shields.io/badge/Live%20app-Posit%20Connect-447099)](https://prigas89-glasstabs.share.connect.posit.cloud)
+
+[![CRAN status](https://www.r-pkg.org/badges/version/glasstabs)](https://CRAN.R-project.org/package=glasstabs) [![R-CMD-check](https://github.com/prigasG/glasstabs/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/prigasG/glasstabs/actions/workflows/R-CMD-check.yaml) [![Codecov test coverage](https://codecov.io/gh/prigasG/glasstabs/graph/badge.svg)](https://app.codecov.io/gh/prigasG/glasstabs) [![Live Connect app](https://img.shields.io/badge/Live%20app-Posit%20Connect-447099)](https://prigas89-glasstabs.share.connect.posit.cloud)
+
 <!-- badges: end -->
 
-glasstabs gives Shiny apps polished navigation and filtering without asking you
-to write custom JavaScript or CSS. The package includes:
+glasstabs gives Shiny apps polished navigation and filtering without asking you to write custom JavaScript or CSS. The package includes:
 
 - `glassTabsUI()` for animated horizontal or vertical tab navigation
 - `glassSelect()` for a searchable single-select input
 - `glassMultiSelect()` for multi-select filters with optional tag pills
 
-The widgets work in a regular `fluidPage()`, a `bslib` app, or a `bs4Dash`
-dashboard. Each one can use a dark, light, automatic, or custom colour theme.
+The widgets work in a regular `fluidPage()`, a `bslib` app, or a `bs4Dash` dashboard. Each one can use a dark, light, automatic, or custom colour theme.
 
 ## Installation
 
 Install the CRAN release:
 
-```r
+``` r
 install.packages("glasstabs")
 ```
 
 Or install the development version from GitHub:
 
-```r
+``` r
 pak::pak("prigasG/glasstabs")
 ```
 
 ## A complete app
 
-Call `useGlassTabs()` once in the UI, then compose the widgets like ordinary
-Shiny controls. This app places a filter beside two tabs and displays the
-current tab and selection.
+Call `useGlassTabs()` once in the UI, then compose the widgets like ordinary Shiny controls. This app places a filter beside two tabs and displays the current tab and selection.
 
-```r
+``` r
 library(shiny)
 library(glasstabs)
 
@@ -80,15 +82,13 @@ if (interactive()) {
 }
 ```
 
-`glassMultiSelect()` selects every choice by default. Use
-`selected = character(0)` when the filter should start empty.
+`glassMultiSelect()` selects every choice by default. Use `selected = character(0)` when the filter should start empty.
 
 ## Pick the control you need
 
-Tabs are made from `glassTabPanel()` objects. The first selected panel is shown
-when the app opens.
+Tabs are made from `glassTabPanel()` objects. The first selected panel is shown when the app opens.
 
-```r
+``` r
 glassTabsUI(
   "reports",
   glassTabPanel("summary", "Summary", selected = TRUE, summary_ui),
@@ -97,10 +97,9 @@ glassTabsUI(
 )
 ```
 
-A single-select behaves like a standard Shiny input. Its value is available at
-`input$region`.
+A single-select behaves like a standard Shiny input. Its value is available at `input$region`.
 
-```r
+``` r
 glassSelect(
   "region",
   c(North = "north", South = "south", East = "east", West = "west"),
@@ -109,10 +108,9 @@ glassSelect(
 )
 ```
 
-A multi-select returns a character vector and can display the selected values
-as tag pills anywhere in the UI.
+A multi-select returns a character vector and can display the selected values as tag pills anywhere in the UI.
 
-```r
+``` r
 glassMultiSelect(
   "status",
   c(Open = "open", Review = "review", Closed = "closed"),
@@ -125,11 +123,9 @@ glassFilterTags("status")
 
 ## Match the surrounding app
 
-Use `theme = "auto"` in Bootstrap 5 or `bslib` apps so the widgets follow the
-page's light and dark modes. Use `shape = "square"` when the controls sit next
-to native Shiny inputs.
+Use `theme = "auto"` in Bootstrap 5 or `bslib` apps so the widgets follow the page's light and dark modes. Use `shape = "square"` when the controls sit next to native Shiny inputs.
 
-```r
+``` r
 glassTabsUI(
   "nav",
   glassTabPanel("one", "One", selected = TRUE, p("First panel")),
@@ -144,7 +140,7 @@ glassMultiSelect("filters", choices, shape = "square", theme = "auto")
 
 Tabs also support a vertical rail and three indicator styles:
 
-```r
+``` r
 glassTabsUI(
   "workflow",
   glassTabPanel("intake", "Intake", selected = TRUE, intake_ui),
@@ -156,9 +152,54 @@ glassTabsUI(
 )
 ```
 
+## Tabs that fit the screen
+
+Long tab bars stay on one line and scroll on smaller screens. The active tab
+comes back into view after a click, keyboard change, swipe, or server update.
+
+``` r
+glassTabsUI(
+  "reports",
+  glassTabPanel("summary", "Summary", selected = TRUE, summary_ui),
+  glassTabPanel("activity", "Recent activity", activity_ui),
+  glassTabPanel("quality", "Data quality", quality_ui),
+  glassTabPanel("settings", "Team settings", settings_ui),
+  overflow = "scroll"
+)
+```
+
+`overflow = "wrap"` keeps every label visible on as many rows as needed.
+`overflow = "menu"` replaces the strip with a compact native chooser. Touch
+swipes are available with `swipe = TRUE`; they start only on ordinary panel
+content, leaving inputs, plots, maps, and horizontally scrolling tables alone.
+
+Keyboard focus follows the selected tab. Arrow keys move between available
+tabs, while Home and End jump to the first and last. Motion is shortened when
+the device asks for reduced motion, and solid colors take over when glass blur
+is unavailable.
+
+## An experimental fillable page
+
+`glassPage()` is a small wrapper around `bslib::page_fillable()`. It loads the
+package assets automatically and starts with Bootstrap 5. The wrapper is
+experimental during the 0.4.x cycle; regular Shiny and bslib pages remain fully
+supported.
+
+``` r
+ui <- glassPage(
+  title = "Team review",
+  glassTabsUI(
+    "review",
+    glassTabPanel("queue", "Queue", queue_ui),
+    glassTabPanel("done", "Done", done_ui),
+    theme = "auto"
+  )
+)
+```
+
 For a custom accent, change only the fields your app needs:
 
-```r
+``` r
 glassTabsUI(
   "nav",
   glassTabPanel("a", "A", selected = TRUE, p("Content")),
@@ -176,10 +217,9 @@ glassSelect(
 )
 ```
 
-Inside a `bs4Dash` card, `compact = TRUE` reduces spacing and `wrap = FALSE`
-lets the card provide the outer container.
+Inside a `bs4Dash` card, `compact = TRUE` reduces spacing and `wrap = FALSE` lets the card provide the outer container.
 
-```r
+``` r
 bs4Dash::box(
   width = 12,
   glasstabs::glassTabsUI(
@@ -198,7 +238,7 @@ bs4Dash::box(
 The widgets expose familiar Shiny inputs:
 
 | Widget | Current value |
-|---|---|
+|----|----|
 | `glassTabsUI("main", ...)` | `input[["main-active_tab"]]` |
 | `glassSelect("region", ...)` | `input$region` |
 | `glassMultiSelect("status", ...)` | `input$status` |
@@ -206,7 +246,7 @@ The widgets expose familiar Shiny inputs:
 
 Server helpers cover common programmatic changes:
 
-```r
+``` r
 server <- function(input, output, session) {
   observeEvent(input$next_step, {
     updateGlassTabsUI(session, "workflow", selected = "review")
@@ -220,10 +260,9 @@ server <- function(input, output, session) {
 }
 ```
 
-Use `glassTabCondition()` when a regular `conditionalPanel()` should follow the
-active glass tab:
+Use `glassTabCondition()` when a regular `conditionalPanel()` should follow the active glass tab:
 
-```r
+``` r
 conditionalPanel(
   condition = glassTabCondition("main", "details"),
   p("This appears while the Details tab is active.")
@@ -232,10 +271,9 @@ conditionalPanel(
 
 ## Large choice sets
 
-For hundreds or thousands of choices, keep the full vector on the server and
-send a small page of matches to the browser.
+For hundreds or thousands of choices, keep the full vector on the server and send a small page of matches to the browser.
 
-```r
+``` r
 many_choices <- stats::setNames(
   sprintf("value-%04d", 1:2000),
   sprintf("Choice %04d", 1:2000)
@@ -258,20 +296,19 @@ server <- function(input, output, session) {
 ### Setup
 
 | Function | Description |
-|---|---|
+|------------------------------------|------------------------------------|
 | `useGlassTabs()` | Inject package CSS and JavaScript—call once in the UI |
+| `glassPage(...)` | Experimental fillable Bootstrap 5 page with glasstabs already loaded |
 | `runGlassExample(example)` | Launch a built-in example app (`runGlassExample()` lists all available apps) |
 | `glasstabs_news()` | Print the package changelog to the R console |
 
-Built-in examples include `basic`, `bs4dash`, `bslib`, `connect-workflow`,
-`dashboard`, `indicators`, `server-select`, `smoke-test`, and
-`square-corners`.
+Built-in examples include `basic`, `bs4dash`, `bslib`, `connect-workflow`, `dashboard`, `indicators`, `server-select`, `smoke-test`, and `square-corners`.
 
 ### Tab widget
 
 | Function | Description |
-|---|---|
-| `glassTabsUI(id, ..., selected, wrap, compact, shape, indicator, orientation, tab_align, extra_ui, theme)` | Animated tab bar with content area; use `compact = TRUE` for dashboard cards |
+|------------------------------------|------------------------------------|
+| `glassTabsUI(id, ..., selected, wrap, compact, shape, indicator, orientation, tab_align, overflow, swipe, extra_ui, theme)` | Animated tab bar with responsive overflow and optional touch swipes |
 | `glassTabPanel(value, label, ..., icon, selected)` | Define one tab and its content; `icon` accepts `shiny::icon()` |
 | `glassTabsServer(id, bookmark)` | Reactive returning the active tab; can bookmark the active tab in the URL |
 | `glassTabsOutput(outputId)` | UI placeholder for a server-rendered tab widget |
@@ -290,7 +327,7 @@ Built-in examples include `basic`, `bs4dash`, `bslib`, `connect-workflow`,
 ### Select widgets
 
 | Function | Description |
-|---|---|
+|------------------------------------|------------------------------------|
 | `glassMultiSelect(inputId, choices, ...)` | Multi-select dropdown widget |
 | `glassMultiSelectServer(inputId, choices, ...)` | Server-side search for large multi-select choice sets |
 | `updateGlassMultiSelect(session, inputId, ...)` | Update multi-select choices, selection, or style |
@@ -308,7 +345,7 @@ Built-in examples include `basic`, `bs4dash`, `bslib`, `connect-workflow`,
 ## Shiny inputs
 
 | Input | Type | Description |
-|---|---|---|
+|------------------------|------------------------|------------------------|
 | `input[["<id>-active_tab"]]` | `character` | Active tab value from `glassTabsUI()` |
 | `input$<inputId>` | `character vector` | Selected values from `glassMultiSelect()` |
 | `input$<inputId>_style` | `character` | Active selection style from `glassMultiSelect()` |
@@ -317,11 +354,6 @@ Built-in examples include `basic`, `bs4dash`, `bslib`, `connect-workflow`,
 
 ## Documentation and support
 
-The [glasstabs website](https://prigasg.github.io/glasstabs/) includes focused
-articles and a searchable function reference. Release notes are available in
-[`NEWS.md`](NEWS.md) or from R with `glasstabs_news()`.
+The [glasstabs website](https://prigasg.github.io/glasstabs/) includes focused articles and a searchable function reference. Release notes are available in [`NEWS.md`](NEWS.md) or from R with `glasstabs_news()`.
 
-If a widget does not fit naturally into your app, please open a
-[GitHub issue](https://github.com/PrigasG/glasstabs/issues) with a small Shiny
-example. Questions, bug reports, and ideas for making the package easier to use
-are all welcome.
+If a widget does not fit naturally into your app, please open a [GitHub issue](https://github.com/PrigasG/glasstabs/issues) with a small Shiny example. Questions, bug reports, and ideas for making the package easier to use are all welcome.

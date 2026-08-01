@@ -13,8 +13,8 @@
        Subtract clientLeft/clientTop so a border on fallback containers
        (.card-body, .box-body) doesn't shift the halo. */
     return {
-      x: r.left + r.width / 2 - cr.left - container.clientLeft,
-      y: r.top + r.height / 2 - cr.top - container.clientTop,
+      x: r.left + r.width / 2 - cr.left - container.clientLeft + container.scrollLeft,
+      y: r.top + r.height / 2 - cr.top - container.clientTop + container.scrollTop,
       w: r.width,
       h: r.height
     };
@@ -23,10 +23,10 @@
   function rectOf(el, container) {
     var r = el.getBoundingClientRect();
     var cr = container.getBoundingClientRect();
-    var x1 = r.left - cr.left - container.clientLeft;
-    var y1 = r.top - cr.top - container.clientTop;
-    var x2 = r.right - cr.left - container.clientLeft;
-    var y2 = r.bottom - cr.top - container.clientTop;
+    var x1 = r.left - cr.left - container.clientLeft + container.scrollLeft;
+    var y1 = r.top - cr.top - container.clientTop + container.scrollTop;
+    var x2 = r.right - cr.left - container.clientLeft + container.scrollLeft;
+    var y2 = r.bottom - cr.top - container.clientTop + container.scrollTop;
     return {
       x: x1,
       y: y1,
@@ -103,6 +103,11 @@
     }
   }
 
+  function reducedMotion() {
+    return !!(window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  }
+
   /** Hide group headers whose options are all hidden (e.g. by search).
       Walks the options container once; a header is shown only when at least
       one option between it and the next header is visible. */
@@ -126,6 +131,68 @@
       }
     }
     if (header) header.classList.toggle('hidden', !anyVisible);
+  }
+
+  function createOptionNavigator(dropdown, selector, owner, idPrefix) {
+    var active = null;
+
+    function options() {
+      return Array.from(dropdown.querySelectorAll(selector)).filter(function (el) {
+        return !el.classList.contains('hidden') && !el.classList.contains('disabled');
+      });
+    }
+
+    function prepare() {
+      Array.from(dropdown.querySelectorAll(selector)).forEach(function (el, index) {
+        if (!el.id) el.id = idPrefix + '-' + (index + 1);
+      });
+      if (active && !options().includes(active)) setActive(null);
+    }
+
+    function setActive(el) {
+      if (active) active.classList.remove('gt-option-active');
+      active = el || null;
+      var focusOwner = owner();
+      if (active) {
+        active.classList.add('gt-option-active');
+        if (focusOwner) focusOwner.setAttribute('aria-activedescendant', active.id);
+        if (active.scrollIntoView) active.scrollIntoView({ block: 'nearest' });
+      } else if (focusOwner) {
+        focusOwner.removeAttribute('aria-activedescendant');
+      }
+    }
+
+    function move(where) {
+      prepare();
+      var available = options();
+      if (!available.length) {
+        setActive(null);
+        return null;
+      }
+      var index = available.indexOf(active);
+      if (index < 0) {
+        index = available.findIndex(function (el) {
+          return el.classList.contains('selected') || el.classList.contains('checked');
+        });
+      }
+      if (where === 'current') index = index < 0 ? 0 : index;
+      else if (where === 'first') index = 0;
+      else if (where === 'last') index = available.length - 1;
+      else if (where > 0) index = index < 0 ? 0 : (index + 1) % available.length;
+      else index = index < 0 ? available.length - 1
+        : (index - 1 + available.length) % available.length;
+      setActive(available[index]);
+      return active;
+    }
+
+    prepare();
+    return {
+      current: function () { return active; },
+      move: move,
+      prepare: prepare,
+      clear: function () { setActive(null); },
+      set: setActive
+    };
   }
 
   /** Build a group-header node for the rebuilt-from-payload path. */
@@ -287,8 +354,22 @@
       if (navbar._gtClickHandler)  navbar.removeEventListener('click',   navbar._gtClickHandler);
       if (navbar._gtKeyHandler)    document.removeEventListener('keydown', navbar._gtKeyHandler);
       if (navbar._gtResizeHandler) window.removeEventListener('resize',  navbar._gtResizeHandler);
+      if (navbar._gtScrollHandler && navbar._gtViewport) {
+        navbar._gtViewport.removeEventListener('scroll', navbar._gtScrollHandler);
+      }
+      if (navbar._gtMenuHandler && navbar._gtMenuSelect) {
+        navbar._gtMenuSelect.removeEventListener('change', navbar._gtMenuHandler);
+      }
+      if (navbar._gtSwipeStart && navbar._gtPaneWrap) {
+        navbar._gtPaneWrap.removeEventListener('touchstart', navbar._gtSwipeStart);
+        navbar._gtPaneWrap.removeEventListener('touchend', navbar._gtSwipeEnd);
+        navbar._gtPaneWrap.removeEventListener('touchcancel', navbar._gtSwipeCancel);
+      }
       if (navbar._gtResizeObserver) navbar._gtResizeObserver.disconnect();
       navbar._gtClickHandler = navbar._gtKeyHandler = navbar._gtResizeHandler = navbar._gtActivate = null;
+      navbar._gtScrollHandler = navbar._gtMenuHandler = navbar._gtRefresh = null;
+      navbar._gtSwipeStart = navbar._gtSwipeEnd = navbar._gtSwipeCancel = null;
+      navbar._gtViewport = navbar._gtMenuSelect = navbar._gtPaneWrap = null;
       navbar._gtResizeObserver = null;
     }
     navbar._gtTabsInit = true;
@@ -304,8 +385,12 @@
 
     if (!container) return;
 
-    var halo = container.querySelector('.gt-halo');
-    var trf = container.querySelector('.gt-transfer');
+    var viewport = navbar.closest('.gt-tab-viewport') || container;
+    var indicatorHost = viewport;
+    var paneWrap = container.querySelector('.gt-tab-wrap');
+    var menuSelect = container.querySelector('.gt-tab-menu-select');
+    var halo = viewport.querySelector('.gt-halo') || container.querySelector('.gt-halo');
+    var trf = viewport.querySelector('.gt-transfer') || container.querySelector('.gt-transfer');
     var links = Array.from(navbar.querySelectorAll('.gt-tab-link'));
     var activeEl = links.find(function (l) { return l.classList.contains('active'); }) || links[0];
 
@@ -327,10 +412,24 @@
       if (!pane) return;
       if (l === activeEl) {
         pane.classList.add('active');
+        pane.setAttribute('aria-hidden', 'false');
+        pane.setAttribute('tabindex', '0');
       } else {
         pane.classList.remove('active');
+        pane.setAttribute('aria-hidden', 'true');
+        pane.setAttribute('tabindex', '-1');
       }
     });
+
+    function isAvailable(link) {
+      return link &&
+        !link.classList.contains('gt-tab-hidden') &&
+        !link.classList.contains('gt-tab-disabled');
+    }
+
+    function availableLinks() {
+      return Array.from(navbar.querySelectorAll('.gt-tab-link')).filter(isAvailable);
+    }
 
     function currentVisibleOrder() {
       return Array.from(navbar.querySelectorAll('.gt-tab-link'))
@@ -338,12 +437,56 @@
         .map(function (l) { return l.getAttribute('data-value'); });
     }
 
+    function syncTabStops() {
+      var available = availableLinks();
+      var activeLink = navbar.querySelector('.gt-tab-link.active');
+      var focusable = isAvailable(activeLink) ? activeLink : available[0];
+      Array.from(navbar.querySelectorAll('.gt-tab-link')).forEach(function (link) {
+        link.setAttribute('tabindex', link === focusable ? '0' : '-1');
+      });
+    }
+
+    function syncMenu() {
+      if (!menuSelect) return;
+      var previous = menuSelect.value;
+      menuSelect.innerHTML = '';
+      Array.from(navbar.querySelectorAll('.gt-tab-link')).forEach(function (link) {
+        if (link.classList.contains('gt-tab-hidden')) return;
+        var option = document.createElement('option');
+        option.value = link.getAttribute('data-value');
+        var label = link.querySelector('.gt-tab-label');
+        option.textContent = (label || link).textContent.trim();
+        option.disabled = link.classList.contains('gt-tab-disabled');
+        option.selected = link.classList.contains('active');
+        menuSelect.appendChild(option);
+      });
+      var selected = navbar.querySelector('.gt-tab-link.active');
+      if (selected) menuSelect.value = selected.getAttribute('data-value');
+      else if (previous) menuSelect.value = previous;
+    }
+
+    function ensureTabVisible(el, smooth) {
+      if (!el || viewport === container || container.classList.contains('gt-vertical')) return;
+      if (!container.classList.contains('gt-overflow-scroll')) return;
+      var er = el.getBoundingClientRect();
+      var vr = viewport.getBoundingClientRect();
+      var delta = 0;
+      if (er.left < vr.left + 8) delta = er.left - vr.left - 12;
+      else if (er.right > vr.right - 8) delta = er.right - vr.right + 12;
+      if (delta) {
+        viewport.scrollBy({
+          left: delta,
+          behavior: smooth && !reducedMotion() ? 'smooth' : 'auto'
+        });
+      }
+    }
+
     var cs = getComputedStyle(container);
     if (cs.position === 'static') container.style.position = 'relative';
 
     function placeHalo(el, immediate, scale) {
       if (!el || !container.isConnected) return;
-      var r = rectOf(el, container);
+      var r = rectOf(el, indicatorHost);
       var s = scale || 1;
       /* Tight fit: derive from the tab's exact rendered edges. This avoids
          center/width rounding mismatches that can leave a visible right spill. */
@@ -425,7 +568,7 @@
     }
 
     function animateTransfer(fromEl, toEl) {
-      if (!fromEl || !toEl) return 200;
+      if (!fromEl || !toEl || reducedMotion()) return 0;
 
       var order = currentVisibleOrder();
       var fi = order.indexOf(fromEl.getAttribute('data-value'));
@@ -437,7 +580,7 @@
 
       for (var i = fi; step > 0 ? i <= ti : i >= ti; i += step) {
         var link = navbar.querySelector('.gt-tab-link[data-value="' + order[i] + '"]');
-        if (link) pts.push(centerOf(link, container));
+        if (link) pts.push(centerOf(link, indicatorHost));
       }
 
       if (pts.length === 0) return 200;
@@ -480,11 +623,18 @@
 
     /* Activate a tab by value. skipFromAnim = true skips the transfer
        animation (used when the previous tab is hidden or removed). */
-    function activateTab(target, skipFromAnim) {
+    function activateTab(target, skipFromAnim, moveFocus) {
       clearTabTimers();
 
       var toEl = navbar.querySelector('.gt-tab-link[data-value="' + target + '"]');
-      if (!toEl || target === active) return;
+      if (!isAvailable(toEl)) return;
+      if (target === active) {
+        syncTabStops();
+        syncMenu();
+        ensureTabVisible(toEl, true);
+        if (moveFocus) toEl.focus();
+        return;
+      }
 
       var fromEl = skipFromAnim ? null
         : navbar.querySelector('.gt-tab-link[data-value="' + active + '"]');
@@ -492,11 +642,16 @@
       navbar.querySelectorAll('.gt-tab-link').forEach(function (t) {
         t.classList.remove('active');
         t.setAttribute('aria-selected', 'false');
+        t.setAttribute('tabindex', '-1');
       });
       toEl.classList.add('active');
       toEl.setAttribute('aria-selected', 'true');
+      toEl.setAttribute('tabindex', '0');
+      syncMenu();
+      ensureTabVisible(toEl, true);
+      if (moveFocus) toEl.focus();
 
-      var animated = fromEl && !fromEl.classList.contains('gt-tab-hidden');
+      var animated = !reducedMotion() && fromEl && !fromEl.classList.contains('gt-tab-hidden');
       if (animated) {
         placeHalo(fromEl, true, 1.0);
         halo.style.opacity = '0.38';
@@ -508,9 +663,17 @@
         /* Use the namespace-qualified ID so we never accidentally deactivate
            a nested glassTabsUI pane that also carries gt-tab-pane.active */
         var ap = document.getElementById(ns + '-pane-' + active);
-        if (ap) ap.classList.remove('active');
+        if (ap) {
+          ap.classList.remove('active');
+          ap.setAttribute('aria-hidden', 'true');
+          ap.setAttribute('tabindex', '-1');
+        }
         var next = document.getElementById(ns + '-pane-' + target);
-        if (next) next.classList.add('active');
+        if (next) {
+          next.classList.add('active');
+          next.setAttribute('aria-hidden', 'false');
+          next.setAttribute('tabindex', '0');
+        }
         active = target;
         if (window.Shiny) Shiny.setInputValue(ns + '-active_tab', target, { priority: 'event' });
         triggerShinyChange(navbar);
@@ -526,9 +689,11 @@
 
         navbar._gtTabTimers.push(setTimeout(function () {
           placeHalo(toEl, true, 1.0);
-          halo.classList.remove('gt-arrival-pulse');
-          void halo.offsetWidth;
-          halo.classList.add('gt-arrival-pulse');
+          if (!reducedMotion()) {
+            halo.classList.remove('gt-arrival-pulse');
+            void halo.offsetWidth;
+            halo.classList.add('gt-arrival-pulse');
+          }
         }, dur));
       } else {
         placeHalo(toEl, true, 1.0);
@@ -546,12 +711,15 @@
         requestAnimationFrame(function () {
           requestAnimationFrame(function () {
             placeHalo(el, true, 1.0);
+            ensureTabVisible(el, false);
           });
         });
       });
     }
 
     initHalo();
+    syncTabStops();
+    syncMenu();
 
     if (document.fonts && document.fonts.ready) {
       document.fonts.ready.then(initHalo).catch(function () {});
@@ -561,7 +729,8 @@
     navbar._gtClickHandler = function (e) {
       var link = e.target.closest ? e.target.closest('.gt-tab-link') : null;
       if (!link || link.classList.contains('gt-tab-hidden')) return;
-      activateTab(link.getAttribute('data-value'));
+      if (link.classList.contains('gt-tab-disabled')) return;
+      activateTab(link.getAttribute('data-value'), false, true);
     };
     navbar.addEventListener('click', navbar._gtClickHandler);
 
@@ -574,39 +743,124 @@
           : null;
         if (focused && !focused.classList.contains('gt-tab-hidden')) {
           e.preventDefault();
-          activateTab(focused.getAttribute('data-value'));
+          activateTab(focused.getAttribute('data-value'), false, true);
         }
         return;
       }
 
       var isNext = e.key === 'ArrowRight' || e.key === 'ArrowDown';
       var isPrev = e.key === 'ArrowLeft'  || e.key === 'ArrowUp';
-      if (!isNext && !isPrev) return;
+      var isEdge = e.key === 'Home' || e.key === 'End';
+      if (!isNext && !isPrev && !isEdge) return;
 
       /* Up/Down only act in vertical orientation (so they don't hijack
          page scrolling in horizontal layouts); Left/Right always work. */
       var vertical = container.classList.contains('gt-vertical');
       if (!vertical && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) return;
 
-      var visibleOrder = currentVisibleOrder();
-      var idx = visibleOrder.indexOf(active);
+      var choices = availableLinks();
+      if (!choices.length) return;
+      var focusedTab = document.activeElement && document.activeElement.closest
+        ? document.activeElement.closest('.gt-tab-link') : null;
+      var idx = choices.indexOf(focusedTab);
+      if (idx < 0) idx = choices.findIndex(function (link) {
+        return link.getAttribute('data-value') === active;
+      });
       if (idx < 0) return;
 
       e.preventDefault();
 
-      if (isNext) {
-        activateTab(visibleOrder[(idx + 1) % visibleOrder.length]);
-      } else {
-        activateTab(visibleOrder[(idx - 1 + visibleOrder.length) % visibleOrder.length]);
-      }
+      var destination;
+      if (e.key === 'Home') destination = choices[0];
+      else if (e.key === 'End') destination = choices[choices.length - 1];
+      else if (isNext) destination = choices[(idx + 1) % choices.length];
+      else destination = choices[(idx - 1 + choices.length) % choices.length];
+      activateTab(destination.getAttribute('data-value'), false, true);
     };
     document.addEventListener('keydown', navbar._gtKeyHandler);
 
     navbar._gtResizeHandler = function () {
       var activeLink = navbar.querySelector('.gt-tab-link[data-value="' + active + '"]');
       if (activeLink) placeHalo(activeLink, true, 1.0);
+      syncTabStops();
+      syncMenu();
     };
     window.addEventListener('resize', navbar._gtResizeHandler);
+
+    navbar._gtViewport = viewport;
+    navbar._gtScrollHandler = debounce(function () {
+      var activeLink = navbar.querySelector('.gt-tab-link[data-value="' + active + '"]');
+      if (activeLink) placeHalo(activeLink, true, 1.0);
+    }, 10);
+    viewport.addEventListener('scroll', navbar._gtScrollHandler, { passive: true });
+
+    if (menuSelect) {
+      navbar._gtMenuSelect = menuSelect;
+      navbar._gtMenuHandler = function () {
+        activateTab(menuSelect.value, false, false);
+      };
+      menuSelect.addEventListener('change', navbar._gtMenuHandler);
+    }
+
+    navbar._gtRefresh = function () {
+      links = Array.from(navbar.querySelectorAll('.gt-tab-link'));
+      syncTabStops();
+      syncMenu();
+      navbar._gtResizeHandler();
+    };
+
+    function swipeIgnored(target) {
+      var node = target;
+      var blocked = 'a,button,input,select,textarea,label,[contenteditable="true"],' +
+        '[role="button"],[role="slider"],.html-widget,.shiny-bound-output,[data-gt-no-swipe]';
+      while (node && node !== paneWrap) {
+        if (node.matches && node.matches(blocked)) return true;
+        if (node.nodeType === 1 && node.clientWidth > 0 && node.scrollWidth > node.clientWidth + 2) {
+          var overflowX = getComputedStyle(node).overflowX;
+          if (overflowX === 'auto' || overflowX === 'scroll') return true;
+        }
+        node = node.parentElement;
+      }
+      return false;
+    }
+
+    if (paneWrap && parseBoolAttr(container, 'data-swipe')) {
+      var swipeState = null;
+      navbar._gtPaneWrap = paneWrap;
+      navbar._gtSwipeStart = function (e) {
+        if (e.touches.length !== 1 || swipeIgnored(e.target)) {
+          swipeState = null;
+          return;
+        }
+        swipeState = { x: e.touches[0].clientX, y: e.touches[0].clientY, at: Date.now() };
+      };
+      navbar._gtSwipeEnd = function (e) {
+        if (!swipeState || !e.changedTouches.length) return;
+        var touch = e.changedTouches[0];
+        var dx = touch.clientX - swipeState.x;
+        var dy = touch.clientY - swipeState.y;
+        var elapsed = Date.now() - swipeState.at;
+        swipeState = null;
+        if (elapsed > 800 || Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.25) return;
+
+        var choices = availableLinks();
+        var idx = choices.findIndex(function (link) {
+          return link.getAttribute('data-value') === active;
+        });
+        if (idx < 0 || choices.length < 2) return;
+        var rtl = getComputedStyle(container).direction === 'rtl';
+        var forward = dx < 0;
+        if (rtl) forward = !forward;
+        var next = forward
+          ? choices[(idx + 1) % choices.length]
+          : choices[(idx - 1 + choices.length) % choices.length];
+        activateTab(next.getAttribute('data-value'), false, false);
+      };
+      navbar._gtSwipeCancel = function () { swipeState = null; };
+      paneWrap.addEventListener('touchstart', navbar._gtSwipeStart, { passive: true });
+      paneWrap.addEventListener('touchend', navbar._gtSwipeEnd, { passive: true });
+      paneWrap.addEventListener('touchcancel', navbar._gtSwipeCancel, { passive: true });
+    }
 
     /* Re-place the halo whenever tab geometry changes without a window
        resize: badge count updates, label changes via renderUI, font swaps,
@@ -616,6 +870,7 @@
       navbar._gtResizeObserver = new ResizeObserver(realign);
       navbar._gtResizeObserver.observe(navbar);
       navbar._gtResizeObserver.observe(container);
+      navbar._gtResizeObserver.observe(viewport);
       links.forEach(function (l) { navbar._gtResizeObserver.observe(l); });
     }
   }
@@ -688,6 +943,13 @@
       }
       bindOption(el);
     });
+
+    var navigator = createOptionNavigator(
+      dropdown,
+      '.gt-gs-option',
+      function () { return searchIn || trigger; },
+      inputId + '-option'
+    );
 
     /* State readers */
     function getValue() {
@@ -794,7 +1056,11 @@
       if (!opt || opt._gtBound) return;
       opt._gtBound = true;
 
+      opt.addEventListener('mouseenter', function () {
+        if (!opt.classList.contains('disabled')) navigator.set(opt);
+      });
       opt.addEventListener('click', function () {
+        if (opt.classList.contains('disabled')) return;
         setValue(opt.getAttribute('data-value'), { notify: true });
         close();
         trigger.focus();
@@ -871,6 +1137,7 @@
       optionsBox.innerHTML = '';
       optionsBox.appendChild(frag);
       optionsBox.appendChild(statusRow);
+      navigator.prepare();
 
       /* Re-apply search if active */
       if (!serverMode && state.query) {
@@ -893,6 +1160,7 @@
       });
 
       patchVisibility();
+      navigator.prepare();
       updateStatus();
     }
 
@@ -914,7 +1182,7 @@
       else applySearchNow(searchIn ? searchIn.value : '');
     }, 75);
 
-    /* Position the dropdown below the trigger 
+    /* Position the dropdown below the trigger
        Uses document-space coordinates (viewport + scrollY) to match
        position:absolute on the body-appended teleported element.
        This avoids the position:fixed + overflow:hidden quirk in AdminLTE. */
@@ -940,7 +1208,10 @@
       setDropdownOpenState(wrap, inputId, true);
       openedAt = Date.now();
       /* Delay focus so synthetic-click re-fires from AdminLTE don't close us */
-      if (searchIn) setTimeout(function () { searchIn.focus(); }, 100);
+      setTimeout(function () {
+        navigator.move('current');
+        if (searchIn) searchIn.focus();
+      }, 100);
     }
 
     function close() {
@@ -950,6 +1221,7 @@
       trigger.setAttribute('aria-expanded', 'false');
       teleportClose(wrap, dropdown);
       setDropdownOpenState(wrap, inputId, false);
+      navigator.clear();
     }
 
     function closeAndReturnFocus() {
@@ -977,13 +1249,38 @@
         e.preventDefault();
         if (dropdown.classList.contains('open')) closeAndReturnFocus();
         else open();
+      } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp' ||
+                 e.key === 'Home' || e.key === 'End') {
+        e.preventDefault();
+        if (!dropdown.classList.contains('open')) open();
+        setTimeout(function () {
+          if (e.key === 'Home') navigator.move('first');
+          else if (e.key === 'End') navigator.move('last');
+          else navigator.move(e.key === 'ArrowDown' ? 1 : -1);
+        }, 110);
       } else if (e.key === 'Escape' || e.key === 'Tab') {
         closeAndReturnFocus();
       }
     });
 
     dropdown.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' || e.key === 'Tab') closeAndReturnFocus();
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp' ||
+          e.key === 'Home' || e.key === 'End') {
+        e.preventDefault();
+        if (e.key === 'Home') navigator.move('first');
+        else if (e.key === 'End') navigator.move('last');
+        else navigator.move(e.key === 'ArrowDown' ? 1 : -1);
+      } else if (e.key === 'Enter') {
+        var option = navigator.current();
+        if (option) {
+          e.preventDefault();
+          setValue(option.getAttribute('data-value'), { notify: true });
+          close();
+          trigger.focus();
+        }
+      } else if (e.key === 'Escape' || e.key === 'Tab') {
+        closeAndReturnFocus();
+      }
     });
 
     wrap._gtDocClickHandler = function (e) {
@@ -1175,6 +1472,13 @@
     parseJsonArrayAttr(wrap, 'data-selected-values').forEach(function (v) {
       state.selected.add(v);
     });
+
+    var navigator = createOptionNavigator(
+      dropdown,
+      '.gt-ms-option',
+      function () { return searchIn || trigger; },
+      inputId + '-option'
+    );
 
     /* State readers */
     function getValue() {
@@ -1376,7 +1680,11 @@
       if (!opt || opt._gtBound) return;
       opt._gtBound = true;
 
+      opt.addEventListener('mouseenter', function () {
+        if (!opt.classList.contains('disabled')) navigator.set(opt);
+      });
       opt.addEventListener('click', function () {
+        if (opt.classList.contains('disabled')) return;
         var v = opt.getAttribute('data-value');
         if (state.selected.has(v)) {
           state.selected.delete(v);
@@ -1461,6 +1769,7 @@
       optionsBox.innerHTML = '';
       optionsBox.appendChild(frag);
       optionsBox.appendChild(statusRow);
+      navigator.prepare();
 
       /* Re-apply search if active */
       if (!serverMode && state.query) {
@@ -1483,6 +1792,7 @@
       });
 
       patchVisibility();
+      navigator.prepare();
       /* Update allRow and counts without notifying Shiny */
       var vis = visibleChoices().length;
       var visSel = visibleSelectedCount();
@@ -1517,7 +1827,7 @@
       else applySearchNow(searchIn ? searchIn.value : '');
     }, 75);
 
-    /* Position the dropdown below the trigger 
+    /* Position the dropdown below the trigger
        Uses document-space coordinates (viewport + scrollY) to match
        position:absolute on the body-appended teleported element. */
     function positionDropdown() {
@@ -1540,7 +1850,10 @@
       setDropdownOpenState(wrap, inputId, true);
       openedAt = Date.now();
       /* Delay focus so synthetic-click re-fires from AdminLTE don't close us */
-      if (searchIn) setTimeout(function () { searchIn.focus(); }, 100);
+      setTimeout(function () {
+        navigator.move('current');
+        if (searchIn) searchIn.focus();
+      }, 100);
     }
 
     function close() {
@@ -1550,6 +1863,7 @@
       trigger.setAttribute('aria-expanded', 'false');
       teleportClose(wrap, dropdown);
       setDropdownOpenState(wrap, inputId, false);
+      navigator.clear();
     }
 
     function closeAndReturnFocus() {
@@ -1577,13 +1891,36 @@
         e.preventDefault();
         if (dropdown.classList.contains('open')) closeAndReturnFocus();
         else open();
+      } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp' ||
+                 e.key === 'Home' || e.key === 'End') {
+        e.preventDefault();
+        if (!dropdown.classList.contains('open')) open();
+        setTimeout(function () {
+          if (e.key === 'Home') navigator.move('first');
+          else if (e.key === 'End') navigator.move('last');
+          else navigator.move(e.key === 'ArrowDown' ? 1 : -1);
+        }, 110);
       } else if (e.key === 'Escape' || e.key === 'Tab') {
         closeAndReturnFocus();
       }
     });
 
     dropdown.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' || e.key === 'Tab') closeAndReturnFocus();
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp' ||
+          e.key === 'Home' || e.key === 'End') {
+        e.preventDefault();
+        if (e.key === 'Home') navigator.move('first');
+        else if (e.key === 'End') navigator.move('last');
+        else navigator.move(e.key === 'ArrowDown' ? 1 : -1);
+      } else if (e.key === 'Enter' || e.key === ' ') {
+        var option = navigator.current();
+        if (option) {
+          e.preventDefault();
+          option.click();
+        }
+      } else if (e.key === 'Escape' || e.key === 'Tab') {
+        closeAndReturnFocus();
+      }
     });
 
     wrap._gtDocClickHandler = function (e) {
@@ -2136,7 +2473,7 @@
       closeDropdownById(msg.inputId, msg.type);
     });
 
-    Shiny.addCustomMessageHandler('glasstabs_close_selects', function () {
+    Shiny.addCustomMessageHandler('glasstabs_close_selects', function (msg) {
       closeAllDropdowns();
     });
 
@@ -2168,6 +2505,7 @@
       link.classList.remove('gt-tab-hidden');
       link.style.display = '';
       link.setAttribute('aria-hidden', 'false');
+      if (navbar._gtRefresh) navbar._gtRefresh();
       if (navbar._gtResizeHandler) {
         setTimeout(function () { navbar._gtResizeHandler(); }, 0);
       }
@@ -2191,21 +2529,32 @@
       link.style.display = 'none';
       link.setAttribute('aria-selected', 'false');
       link.setAttribute('aria-hidden', 'true');
-      if (pane) pane.classList.remove('active');
+      if (pane) {
+        pane.classList.remove('active');
+        pane.setAttribute('aria-hidden', 'true');
+        pane.setAttribute('tabindex', '-1');
+      }
 
       if (wasActive && navbar._gtActivate) {
-        var first = navbar.querySelector('.gt-tab-link:not(.gt-tab-hidden)');
+        var first = navbar.querySelector(
+          '.gt-tab-link:not(.gt-tab-hidden):not(.gt-tab-disabled)'
+        );
         if (first) navbar._gtActivate(first.getAttribute('data-value'), true);
       } else if (!wasActive) {
         var currentActive = navbar.querySelector('.gt-tab-link.active:not(.gt-tab-hidden)');
         if (currentActive) {
           var currentPane = document.getElementById(msg.ns + '-pane-' + currentActive.getAttribute('data-value'));
-          if (currentPane && !currentPane.classList.contains('active')) currentPane.classList.add('active');
+          if (currentPane) {
+            if (!currentPane.classList.contains('active')) currentPane.classList.add('active');
+            currentPane.setAttribute('aria-hidden', 'false');
+            currentPane.setAttribute('tabindex', '0');
+          }
         }
       }
       if (!wasActive && navbar._gtResizeHandler) {
         setTimeout(function () { navbar._gtResizeHandler(); }, 0);
       }
+      if (navbar._gtRefresh) navbar._gtRefresh();
     });
 
     Shiny.addCustomMessageHandler('glasstabs_append_tab', function (msg) {
@@ -2230,7 +2579,11 @@
           /* Deactivate only this namespace's pane - not nested glassTabsUI panes */
           var v = l.getAttribute('data-value');
           var p = document.getElementById(msg.ns + '-pane-' + v);
-          if (p) p.classList.remove('active');
+          if (p) {
+            p.classList.remove('active');
+            p.setAttribute('aria-hidden', 'true');
+            p.setAttribute('tabindex', '-1');
+          }
         });
       }
 
@@ -2245,7 +2598,11 @@
 
       tmp.innerHTML = msg.pane_html;
       var newPane = tmp.firstElementChild;
-      if (msg.select) newPane.classList.add('active');
+      if (msg.select) {
+        newPane.classList.add('active');
+        newPane.setAttribute('aria-hidden', 'false');
+        newPane.setAttribute('tabindex', '0');
+      }
       paneWrap.appendChild(newPane);
 
       initTabs(navbar);
@@ -2274,16 +2631,26 @@
       var nextValue = null;
 
       if (wasActive) {
-        var remaining = Array.from(navbar.querySelectorAll('.gt-tab-link:not(.gt-tab-hidden)'))
+        var remaining = Array.from(navbar.querySelectorAll(
+          '.gt-tab-link:not(.gt-tab-hidden):not(.gt-tab-disabled)'
+        ))
           .filter(function (l) { return l.getAttribute('data-value') !== msg.value; });
         if (remaining.length) {
           nextValue = remaining[0].getAttribute('data-value');
           remaining[0].classList.add('active');
           remaining[0].setAttribute('aria-selected', 'true');
           var ap = document.getElementById(msg.ns + '-pane-' + msg.value);
-          if (ap) ap.classList.remove('active');
+          if (ap) {
+            ap.classList.remove('active');
+            ap.setAttribute('aria-hidden', 'true');
+            ap.setAttribute('tabindex', '-1');
+          }
           var nextPane = document.getElementById(msg.ns + '-pane-' + nextValue);
-          if (nextPane) nextPane.classList.add('active');
+          if (nextPane) {
+            nextPane.classList.add('active');
+            nextPane.setAttribute('aria-hidden', 'false');
+            nextPane.setAttribute('tabindex', '0');
+          }
         }
       }
 
@@ -2311,6 +2678,16 @@
       link.classList.add('gt-tab-disabled');
       link.setAttribute('aria-disabled', 'true');
       link.setAttribute('tabindex', '-1');
+      if (link.classList.contains('active') && navbar._gtActivate) {
+        var next = Array.from(navbar.querySelectorAll('.gt-tab-link'))
+          .find(function (candidate) {
+            return candidate !== link &&
+              !candidate.classList.contains('gt-tab-hidden') &&
+              !candidate.classList.contains('gt-tab-disabled');
+          });
+        if (next) navbar._gtActivate(next.getAttribute('data-value'), true, false);
+      }
+      if (navbar._gtRefresh) navbar._gtRefresh();
     });
 
     Shiny.addCustomMessageHandler('glasstabs_enable_tab', function (msg) {
@@ -2320,7 +2697,7 @@
       if (!link) return;
       link.classList.remove('gt-tab-disabled');
       link.removeAttribute('aria-disabled');
-      link.setAttribute('tabindex', '0');
+      if (navbar._gtRefresh) navbar._gtRefresh();
     });
 
     Shiny.addCustomMessageHandler('glasstabs_tab_badge', function (msg) {
@@ -2334,6 +2711,7 @@
         badge.className = 'gt-tab-badge';
         link.appendChild(badge);
       }
+      var previous = badge.textContent;
       var n = parseInt(msg.count, 10);
       if (isNaN(n) || n <= 0) {
         badge.textContent = '';
@@ -2341,6 +2719,11 @@
       } else {
         badge.textContent = n > 99 ? '99+' : String(n);
         badge.style.display = '';
+      }
+      if (badge.textContent !== previous && !reducedMotion()) {
+        badge.classList.remove('gt-badge-updated');
+        void badge.offsetWidth;
+        badge.classList.add('gt-badge-updated');
       }
     });
 

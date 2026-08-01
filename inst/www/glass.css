@@ -7,8 +7,31 @@
 .gt-wrap-shell{width:100%;position:relative;}
 
 /* Top bar */
-.gt-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:12px;flex-wrap:wrap;}
+.gt-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:12px;flex-wrap:wrap;min-width:0;}
+.gt-tab-viewport{position:relative;flex:1 1 auto;min-width:0;max-width:100%;}
 .gt-navbar{display:flex;gap:12px;position:relative;z-index:6;align-items:center;}
+.gt-tab-menu-select{display:none;max-width:100%;min-width:180px;}
+
+/* Tab-strip overflow modes */
+.gt-overflow-scroll:not(.gt-vertical) .gt-tab-viewport{
+  overflow-x:auto;overflow-y:hidden;overscroll-behavior-inline:contain;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch;
+}
+.gt-overflow-scroll:not(.gt-vertical) .gt-tab-viewport::-webkit-scrollbar{display:none;}
+.gt-overflow-scroll:not(.gt-vertical) .gt-navbar{width:max-content;min-width:100%;}
+.gt-overflow-scroll:not(.gt-vertical) .gt-tab-link{scroll-snap-align:center;scroll-margin-inline:16px;}
+.gt-overflow-scroll:not(.gt-vertical) .gt-tab-viewport{scroll-snap-type:inline proximity;}
+.gt-overflow-wrap:not(.gt-vertical) .gt-navbar{flex-wrap:wrap;}
+.gt-overflow-menu:not(.gt-vertical) .gt-tab-viewport{display:none;}
+.gt-overflow-menu:not(.gt-vertical) .gt-tab-menu-select{
+  display:block;padding:9px 34px 9px 12px;border-radius:10px;
+  border:1px solid var(--gt-halo-border,rgba(255,255,255,0.22));
+  background:var(--gt-content-bg,rgba(20,32,48,0.96));
+  color:var(--gt-tab-active-text,#fff);font:inherit;font-weight:600;
+}
+.gt-overflow-menu.theme-light:not(.gt-vertical) .gt-tab-menu-select{
+  background:#fff;color:var(--gt-tab-active-text,#1e40af);
+}
 
 /* Tab links */
 .gt-tab-link{
@@ -27,6 +50,7 @@
 .gt-tab-link:hover{background:rgba(255,255,255,0.04);}
 .gt-tab-link.active{color:var(--gt-tab-active-text,#ffffff);}
 .gt-tab-link.gt-tab-hidden{display:none;}
+.gt-tab-link:focus-visible{outline:2px solid var(--gt-halo-border,#7ec3f7);outline-offset:3px;}
 
 /* Glass halo */
 .gt-halo{
@@ -894,6 +918,19 @@
   vertical-align:middle;
   letter-spacing:0.01em;
 }
+.gt-tab-badge.gt-badge-updated{animation:gtBadgePulse 300ms ease-out;}
+@keyframes gtBadgePulse{
+  0%{transform:scale(1);}
+  45%{transform:scale(1.22);box-shadow:0 0 0 4px rgba(126,195,247,0.18);}
+  100%{transform:scale(1);box-shadow:none;}
+}
+
+.gt-gs-option.gt-option-active,
+.gt-ms-option.gt-option-active{
+  outline:2px solid var(--ms-accent,#7ec3f7);
+  outline-offset:-2px;
+  background:var(--ms-ac-12,rgba(126,195,247,0.12));
+}
 
 /*
    LIGHT MODE - tab widget overrides
@@ -1138,4 +1175,27 @@
     outline:2px solid Highlight;
     outline-offset:2px;
   }
+}
+
+/* Solid surfaces keep the controls readable when backdrop blur is absent. */
+@supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
+  .gt-halo{background:var(--gt-halo-bg,rgba(28,42,58,0.96));}
+  .gt-gs-trigger,.gt-ms-trigger{background:rgba(28,42,58,0.96);}
+  .gt-gs-dropdown,.gt-ms-dropdown{background:rgba(20,30,44,0.98);}
+  .theme-light .gt-gs-trigger,.theme-light .gt-ms-trigger,
+  .theme-light .gt-gs-dropdown,.theme-light .gt-ms-dropdown{background:#fff;}
+}
+
+/* Motion preferences apply to CSS transitions and the JS engine reads the
+   same media query before starting transfer or swipe animations. */
+@media (prefers-reduced-motion: reduce){
+  .gt-halo,.gt-tab-pane,.gt-transfer,.gt-tab-link,
+  .gt-gs-trigger,.gt-ms-trigger,.gt-gs-dropdown,.gt-ms-dropdown{
+    transition-duration:0.01ms !important;
+    animation-duration:0.01ms !important;
+    animation-iteration-count:1 !important;
+  }
+  .gt-transfer{display:none !important;}
+  .gt-tab-pane{transform:none;}
+  .gt-arrival-pulse,.gt-tab-badge.gt-badge-updated{animation:none !important;}
 }

@@ -39,6 +39,7 @@ articles:
     navbar: Widgets
     contents:
       - tabs
+      - responsive-accessibility
       - indicators
       - glassSelect
       - multiselect
@@ -48,6 +49,7 @@ reference:
     desc: Load CSS/JavaScript, launch built-in examples, and view the changelog.
     contents:
       - useGlassTabs
+      - glassPage
       - runGlassExample
       - glasstabs_news
 

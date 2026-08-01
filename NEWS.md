@@ -1,3 +1,18 @@
+# glasstabs 0.3.4.9000
+
+## Responsive and accessible navigation
+
+* Development toward 0.4.0 now focuses on dependable tabs on small screens,
+  complete keyboard and screen-reader behavior, reduced-motion support, and
+  solid fallbacks when glass effects are unavailable.
+* `glassTabsUI()` gains `overflow` and opt-in `swipe` controls. The selected
+  tab stays visible in a scrolling strip, wrapped tabs remain available, and
+  menu mode provides a compact native chooser.
+* Tabs now use roving keyboard focus, Home/End navigation, and explicit ARIA
+  relationships between each tab and its panel.
+* `glassPage()` is an experimental, lightweight wrapper around
+  `bslib::page_fillable()` that loads the glasstabs dependency automatically.
+
 # glasstabs 0.3.4
 
 ## Internal consistency and diagnostics
@@ -260,7 +275,7 @@ Released to CRAN.
 ---
 
 # glasstabs 0.2.1
- 
+
 ## New features
 
 ### Tab widget
@@ -284,21 +299,21 @@ Released to CRAN.
   changes.
 
 ## Bug fixes
- 
+
 * Opening a dropdown now closes any other open glasstabs dropdown, fixing
   a visual stacking issue where multiple dropdowns appeared simultaneously.
- 
+
 * Improved widget lifecycle in dynamic UI (`renderUI()`, `conditionalPanel()`).
   Widgets initialize more reliably and clean up properly when removed.
- 
+
 * Widgets now emit their initial value to Shiny immediately after rendering,
   fixing timing issues with `conditionalPanel()` and dynamic UI.
- 
+
 ## Internal improvements
- 
+
 * JavaScript engine refactored to use internal state instead of DOM scanning.
   No changes to the R API — all existing code works without modification.
- 
+
 * Added scroll containers for long option lists, debounced search, and
   `.gt-loading` / `.gt-disabled` CSS utility classes.
 

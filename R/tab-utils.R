@@ -13,7 +13,7 @@
       shiny::tags$span(class = "gt-tab-label", panel$label)
     )
   } else {
-    list(panel$label)
+    list(shiny::tags$span(class = "gt-tab-label", panel$label))
   }
 
   do.call(
@@ -21,11 +21,13 @@
     c(
       list(
         class = class,
+        id = paste0(data_ns, "-tab-", panel$value),
         `data-value` = panel$value,
         `data-ns` = data_ns,
         role = "tab",
-        tabindex = "0",
-        `aria-selected` = if (is_active) "true" else "false"
+        tabindex = if (is_active) "0" else "-1",
+        `aria-selected` = if (is_active) "true" else "false",
+        `aria-controls` = paste0(data_ns, "-pane-", panel$value)
       ),
       label_content
     )
@@ -33,7 +35,8 @@
 }
 
 #' @noRd
-.gt_tab_pane <- function(panel, is_active, id, preserve_inactive_space = FALSE) {
+.gt_tab_pane <- function(panel, is_active, id, tab_id = NULL,
+                         preserve_inactive_space = FALSE) {
   class <- if (is_active) {
     "gt-tab-pane active"
   } else if (preserve_inactive_space) {
@@ -46,6 +49,9 @@
     class = class,
     id = id,
     role = "tabpanel",
+    `aria-labelledby` = tab_id,
+    `aria-hidden` = if (is_active) "false" else "true",
+    tabindex = if (is_active) "0" else "-1",
     do.call(shiny::div, c(list(class = "gt-card"), panel$content))
   )
 }
