@@ -58,8 +58,9 @@ pane sits beside them. The sliding halo follows automatically, arrow-key
 navigation switches to Up/Down, and \code{indicator = "underline"} renders as
 a slim bar on the edge of the active tab adjacent to the content.}
 
-\item{tab_align}{Alignment for text and icons inside each tab button. One
-of \code{"center"} (default), \code{"left"}, or \code{"right"}.}
+\item{tab_align}{Alignment of the tab group in horizontal layouts, and of
+text and icons inside each tab button in vertical layouts. One of
+\code{"center"} (default), \code{"left"}, or \code{"right"}.}
 
 \item{overflow}{How the tab strip behaves when labels no longer fit. One of
 \code{"scroll"} (the default), \code{"wrap"}, or \code{"menu"}. Scroll mode keeps a

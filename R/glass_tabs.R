@@ -71,8 +71,9 @@ glassTabPanel <- function(value, label, ..., icon = NULL, selected = FALSE) {
 #'   pane sits beside them. The sliding halo follows automatically, arrow-key
 #'   navigation switches to Up/Down, and `indicator = "underline"` renders as
 #'   a slim bar on the edge of the active tab adjacent to the content.
-#' @param tab_align Alignment for text and icons inside each tab button. One
-#'   of `"center"` (default), `"left"`, or `"right"`.
+#' @param tab_align Alignment of the tab group in horizontal layouts, and of
+#'   text and icons inside each tab button in vertical layouts. One of
+#'   `"center"` (default), `"left"`, or `"right"`.
 #' @param extra_ui Optional additional UI placed to the right of the tab bar
 #'   (below the tab rail when `orientation = "vertical"`).
 #' @param overflow How the tab strip behaves when labels no longer fit. One of

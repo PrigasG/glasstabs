@@ -320,3 +320,38 @@ test_that("browser: vertical halo keeps its animated movement", {
   ")
   expect_equal(app$get_value(input = "vertical_tabs-active_tab"), "second")
 })
+
+test_that("browser: horizontal tab alignment moves the whole tab group", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-horizontal-tab-alignment",
+    height = 900,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+  app$wait_for_idle()
+
+  expect_true(app$get_js("
+    (function() {
+      var viewport = document.querySelector('#right_tabs-wrap .gt-tab-viewport').getBoundingClientRect();
+      var tabs = document.querySelectorAll('#right_tabs-navbar .gt-tab-link');
+      var last = tabs[tabs.length - 1].getBoundingClientRect();
+      return Math.abs(viewport.right - last.right) < 1;
+    })()
+  "))
+  expect_true(app$get_js("
+    (function() {
+      var viewport = document.querySelector('#center_tabs-wrap .gt-tab-viewport').getBoundingClientRect();
+      var tabs = document.querySelectorAll('#center_tabs-navbar .gt-tab-link');
+      var first = tabs[0].getBoundingClientRect();
+      var last = tabs[tabs.length - 1].getBoundingClientRect();
+      var groupCenter = (first.left + last.right) / 2;
+      var viewportCenter = (viewport.left + viewport.right) / 2;
+      return Math.abs(groupCenter - viewportCenter) < 1;
+    })()
+  "))
+})

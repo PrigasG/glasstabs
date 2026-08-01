@@ -56,6 +56,9 @@
 .gt-align-left .gt-tab-link{justify-content:flex-start;text-align:left;}
 .gt-align-center .gt-tab-link{justify-content:center;text-align:center;}
 .gt-align-right .gt-tab-link{justify-content:flex-end;text-align:right;}
+.gt-align-left:not(.gt-vertical) .gt-navbar{justify-content:flex-start;}
+.gt-align-center:not(.gt-vertical) .gt-navbar{justify-content:center;}
+.gt-align-right:not(.gt-vertical) .gt-navbar{justify-content:flex-end;}
 .gt-tab-link:hover{background:rgba(255,255,255,0.04);}
 .gt-tab-link.active{color:var(--gt-tab-active-text,#ffffff);}
 .gt-tab-link.gt-tab-hidden{display:none;}

@@ -44,6 +44,7 @@ test_that("connect workflow example exists, parses, and demonstrates workflow fe
   expect_match(app_src, '"Vertical" = "vertical"', fixed = TRUE)
   expect_match(app_src, '"Square" = "square"', fixed = TRUE)
   expect_match(app_src, 'tab_align = "center"', fixed = TRUE)
+  expect_match(app_src, '"Tab alignment"', fixed = TRUE)
   expect_match(app_src, 'shape = "rounded"', fixed = TRUE)
   expect_match(app_src, '"Glass" = "glass"', fixed = TRUE)
   expect_match(app_src, 'indicator = "glass"', fixed = TRUE)

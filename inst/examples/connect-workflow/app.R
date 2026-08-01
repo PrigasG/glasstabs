@@ -292,7 +292,7 @@ page_body <- function() {
         ),
         selectInput(
           "workflow_tab_align",
-          "Tab text",
+          "Tab alignment",
           choices = c("Center" = "center", "Left" = "left", "Right" = "right"),
           selected = "center"
         ),

@@ -21,6 +21,8 @@
   alignment with the active tab in both orientations.
 * Compact-menu options now use an explicit native dark or light colour scheme,
   keeping option text readable when the operating system opens the select menu.
+* `tab_align` now has a visible role in both orientations: it places the tab
+  group in horizontal bars and aligns labels inside vertical tab buttons.
 
 # glasstabs 0.3.4
 

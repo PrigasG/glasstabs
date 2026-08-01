@@ -19,6 +19,7 @@ ui <- fluidPage(
     body { padding: 24px; }
     .test-row { max-width: 420px; display: grid; gap: 18px; }
     .mobile-frame { width: 300px; }
+    .alignment-frame { width: 480px; }
   ")),
   tags$div(
     class = "test-row",
@@ -74,6 +75,21 @@ ui <- fluidPage(
       glassTabPanel("second", "Second", p("Second vertical pane")),
       glassTabPanel("third", "Third", p("Third vertical pane")),
       orientation = "vertical"
+    ),
+    tags$div(
+      class = "alignment-frame",
+      glassTabsUI(
+        "right_tabs",
+        glassTabPanel("one", "One", p("One")),
+        glassTabPanel("two", "Two", p("Two")),
+        tab_align = "right"
+      ),
+      glassTabsUI(
+        "center_tabs",
+        glassTabPanel("one", "One", p("One")),
+        glassTabPanel("two", "Two", p("Two")),
+        tab_align = "center"
+      )
     ),
     actionButton("append_tab", "Append tab")
   )
