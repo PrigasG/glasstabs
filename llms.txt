@@ -170,6 +170,10 @@ glassTabsUI(
 )
 ```
 
+In a horizontal bar, `tab_align` places the tab group at the left,
+center, or right. In a vertical rail, it aligns the labels inside their
+tab buttons.
+
 ## Tabs that fit the screen
 
 Long tab bars stay on one line and scroll on smaller screens. The active

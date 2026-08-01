@@ -189,8 +189,9 @@ glassTabsUI("side",
 )
 ```
 
-Use `tab_align = "left"`, `"center"`, or `"right"` to control how labels
-and icons sit inside each tab button:
+Use `tab_align = "left"`, `"center"`, or `"right"` to place the tab
+group in a horizontal bar. In a vertical rail, the same argument
+controls how labels and icons sit inside each tab button:
 
 ``` r
 

@@ -85,7 +85,8 @@ glassTabsUI(
 
 - tab_align:
 
-  Alignment for text and icons inside each tab button. One of `"center"`
+  Alignment of the tab group in horizontal layouts, and of text and
+  icons inside each tab button in vertical layouts. One of `"center"`
   (default), `"left"`, or `"right"`.
 
 - overflow:
