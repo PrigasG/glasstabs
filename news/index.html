@@ -59,7 +59,7 @@
 <li>Tab clicks and keyboard activation no longer pass through a second fallback initialization, so the glass halo keeps its full movement in vertical and horizontal layouts. The arrival pulse also preserves the halo’s settled alignment with the active tab in both orientations.</li>
 <li>Compact-menu options now use an explicit native dark or light colour scheme, keeping option text readable when the operating system opens the select menu.</li>
 <li>
-<code>tab_align</code> now places the tab group in both orientations. The new <code>text_align</code> argument independently aligns labels and icons inside tab buttons, keeping layout and text choices separate.</li>
+<code>tab_align</code> now places the tab group in both orientations. The new <code>text_align</code> argument independently aligns labels and icons inside tab buttons, keeping layout and text choices separate. Non-centered horizontal labels use equal button widths so their alignment remains visible.</li>
 <li>Compact menu overflow is now documented and validated as a horizontal-only layout. A vertical tab rail paired with <code>overflow = "menu"</code> gets a clear error instead of silently ignoring the setting.</li>
 <li>Coverage uploads now use the authenticated Codecov action, and browser checks respect the runner’s reduced-motion preference.</li>
 </ul></div>

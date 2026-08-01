@@ -30,7 +30,9 @@
   the select menu.
 - `tab_align` now places the tab group in both orientations. The new
   `text_align` argument independently aligns labels and icons inside tab
-  buttons, keeping layout and text choices separate.
+  buttons, keeping layout and text choices separate. Non-centered
+  horizontal labels use equal button widths so their alignment remains
+  visible.
 - Compact menu overflow is now documented and validated as a
   horizontal-only layout. A vertical tab rail paired with
   `overflow = "menu"` gets a clear error instead of silently ignoring
