@@ -8,8 +8,6 @@
 .quarto
 inst/doc
 docs
-CLAUDE.md
 /doc/
 /Meta/
-.claude
 dev/

@@ -13,10 +13,8 @@
 ^\.github$
 ^tools$
 ^CRAN-SUBMISSION$
-^CLAUDE\.md$
 ^ROADMAP\.md$
 ^dev$
-^\.claude$
 ^doc$
 ^Meta$
 ^inst/cheatsheet/.*\.aux$
