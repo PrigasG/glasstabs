@@ -64,6 +64,7 @@ may change during the 0.4.x development cycle as it is used in more apps.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">glassPage</span><span class="op">(</span></span>
 <span>  <span class="va">...</span>,</span>
 <span>  title <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  lang <span class="op">=</span> <span class="st">"en"</span>,</span>
 <span>  theme <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  padding <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  gap <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -81,6 +82,11 @@ may change during the 0.4.x development cycle as it is used in more apps.</p>
 
 <dt id="arg-title">title<a class="anchor" aria-label="anchor" href="#arg-title"></a></dt>
 <dd><p>Optional browser-window title.</p></dd>
+
+
+<dt id="arg-lang">lang<a class="anchor" aria-label="anchor" href="#arg-lang"></a></dt>
+<dd><p>Language of the page content, such as <code>"en"</code> or <code>"en-GB"</code>.
+This becomes the <code>lang</code> attribute on the page's <code>&lt;html&gt;</code> element.</p></dd>
 
 
 <dt id="arg-theme">theme<a class="anchor" aria-label="anchor" href="#arg-theme"></a></dt>

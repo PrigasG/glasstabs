@@ -125,7 +125,7 @@ destination back into view.</p>
 <h2 id="choosing-the-overflow-style">Choosing the overflow style<a class="anchor" aria-label="anchor" href="#choosing-the-overflow-style"></a>
 </h2>
 <p><code>"scroll"</code> is a natural fit for most tab bars.
-<code>"wrap"</code> is useful when every label should be visible at
+<code>"multiline"</code> is useful when every label should be visible at
 once. In a horizontal layout, <code>"menu"</code> keeps the header
 compact and uses a native select control. Vertical tabs already have a
 dedicated rail, so compact menu mode is not available there.</p>
@@ -135,7 +135,7 @@ dedicated rail, so compact menu mode is not available there.</p>
 <span>  <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"one"</span>, <span class="st">"First report"</span>, selected <span class="op">=</span> <span class="cn">TRUE</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"First"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"two"</span>, <span class="st">"Second report"</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"Second"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"three"</span>, <span class="st">"Third report"</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"Third"</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  overflow <span class="op">=</span> <span class="st">"wrap"</span></span>
+<span>  overflow <span class="op">=</span> <span class="st">"multiline"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>

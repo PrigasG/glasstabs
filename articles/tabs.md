@@ -94,7 +94,7 @@ glassTabsUI(
 ```
 
 The strip accepts touch scrolling and brings the selected tab into view.
-Use `overflow = "wrap"` when two or more rows suit the layout. In a
+Use `overflow = "multiline"` when two or more rows suit the layout. In a
 horizontal layout, menu mode keeps the same tab content behind a compact
 native chooser:
 

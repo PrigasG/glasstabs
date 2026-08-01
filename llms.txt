@@ -1,9 +1,5 @@
 # glasstabs
 
-------------------------------------------------------------------------
-
-editor_options: markdown: wrap: 72 —
-
 > Animated tabs and select inputs that feel at home in a Shiny app.
 
 glasstabs gives Shiny apps polished navigation and filtering without
@@ -201,9 +197,9 @@ glassTabsUI(
 )
 ```
 
-`overflow = "wrap"` keeps every label visible on as many rows as needed.
-For horizontal tabs, `overflow = "menu"` replaces the strip with a
-compact native chooser. Vertical tabs already use a rail, so menu mode
+`overflow = "multiline"` keeps every label visible on as many rows as
+needed. For horizontal tabs, `overflow = "menu"` replaces the strip with
+a compact native chooser. Vertical tabs already use a rail, so menu mode
 is not available there. Touch swipes are available with `swipe = TRUE`;
 they start only on ordinary panel content, leaving inputs, plots, maps,
 and horizontally scrolling tables alone.
@@ -361,7 +357,7 @@ badge, theme, and page-wrapper checks collected in one app.
 
 | Function | Description |
 |----|----|
-| `glassTabsUI(id, ..., selected, wrap, compact, shape, indicator, orientation, tab_align, overflow, swipe, extra_ui, theme, text_align)` | Animated tab bar with responsive overflow and optional touch swipes |
+| `glassTabsUI(id, ..., selected, wrap, compact, shape, indicator, orientation, tab_align, text_align, overflow, swipe, extra_ui, theme)` | Animated tab bar with responsive overflow and optional touch swipes |
 | `glassTabPanel(value, label, ..., icon, selected)` | Define one tab and its content; `icon` accepts [`shiny::icon()`](https://rdrr.io/pkg/shiny/man/icon.html) |
 | `glassTabsServer(id, bookmark)` | Reactive returning the active tab; can bookmark the active tab in the URL |
 | `glassTabsOutput(outputId)` | UI placeholder for a server-rendered tab widget |

@@ -14,6 +14,7 @@ cycle as it is used in more apps.
 glassPage(
   ...,
   title = NULL,
+  lang = "en",
   theme = NULL,
   padding = NULL,
   gap = NULL,
@@ -30,6 +31,11 @@ glassPage(
 - title:
 
   Optional browser-window title.
+
+- lang:
+
+  Language of the page content, such as `"en"` or `"en-GB"`. This
+  becomes the `lang` attribute on the page's `<html>` element.
 
 - theme:
 

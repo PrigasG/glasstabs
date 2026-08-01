@@ -16,8 +16,8 @@ published to Posit Connect. It demonstrates a practical review workflow:
 - [`updateGlassTabsUI()`](https://prigasg.github.io/glasstabs/reference/updateGlassTabsUI.md)
   moves reviewers to the next stage from server actions
 - `theme = "auto"` follows Bootstrap 5 / bslib light and dark modes
-- `overflow = "scroll"`, `"wrap"`, and the horizontal-only `"menu"` mode
-  can be compared without leaving the app
+- `overflow = "scroll"`, `"multiline"`, and the horizontal-only `"menu"`
+  mode can be compared without leaving the app
 - opt-in swipes, dynamic tab controls, keyboard behavior, and the
   experimental
   [`glassPage()`](https://prigasg.github.io/glasstabs/reference/glassPage.md)

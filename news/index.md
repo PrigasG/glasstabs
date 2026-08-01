@@ -9,14 +9,17 @@
   support, and solid fallbacks when glass effects are unavailable.
 - [`glassTabsUI()`](https://prigasg.github.io/glasstabs/reference/glassTabsUI.md)
   gains `overflow` and opt-in `swipe` controls. The selected tab stays
-  visible in a scrolling strip, wrapped tabs remain available, and menu
-  mode provides a compact native chooser.
+  visible in a scrolling strip, multiline tabs remain available, and
+  menu mode provides a compact native chooser.
 - Tabs now use roving keyboard focus, Home/End navigation, and explicit
   ARIA relationships between each tab and its panel.
 - [`glassPage()`](https://prigasg.github.io/glasstabs/reference/glassPage.md)
   is an experimental, lightweight wrapper around
   [`bslib::page_fillable()`](https://rstudio.github.io/bslib/reference/page_fillable.html)
-  that loads the glasstabs dependency automatically.
+  that loads the glasstabs dependency automatically. It exposes the page
+  language through `lang`, which defaults to `"en"`.
+- Missing optional packages now report the documented
+  `glasstabs_error_missing_package` condition class.
 - The Posit Connect workflow example is now a v0.4.0 test lab for
   responsive overflow, swipes, keyboard behavior, dynamic tabs, badges,
   theming, and the experimental page wrapper. Its in-app checklist keeps
