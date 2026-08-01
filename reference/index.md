@@ -6,8 +6,6 @@ Load CSS/JavaScript, launch built-in examples, and view the changelog.
 
 - [`useGlassTabs()`](https://prigasg.github.io/glasstabs/reference/useGlassTabs.md)
   : Attach glasstabs CSS and JS dependencies
-- [`glassPage()`](https://prigasg.github.io/glasstabs/reference/glassPage.md)
-  : Experimental fillable page for glasstabs apps
 - [`runGlassExample()`](https://prigasg.github.io/glasstabs/reference/runGlassExample.md)
   : Run a built-in glasstabs example app
 - [`glasstabs_news()`](https://prigasg.github.io/glasstabs/reference/glasstabs_news.md)

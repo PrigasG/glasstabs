@@ -26,18 +26,12 @@ Install the CRAN release:
 install.packages("glasstabs")
 ```
 
-The GitHub build is the development version, currently `0.3.4.9000` on
-the way to 0.4.0. It includes features that are not part of the CRAN
-release:
+Or install the development version from GitHub:
 
 ``` r
 
-pak::pak("PrigasG/glasstabs@main")
-packageVersion("glasstabs")
+pak::pak("prigasG/glasstabs")
 ```
-
-Installing from GitHub replaces the installed copy on your machine and
-gives you access to current features before CRAN release.
 
 ## A complete app
 
@@ -168,66 +162,7 @@ glassTabsUI(
   glassTabPanel("approve", "Approve", approve_ui),
   orientation = "vertical",
   indicator = "solid",
-  tab_align = "left",
-  text_align = "left"
-)
-```
-
-`tab_align` places the tab group at the left, center, or right of the
-available navigation area in either layout. `text_align` separately
-aligns labels and icons inside each tab button. For visible left or
-right alignment in a horizontal bar, the buttons share the width of the
-widest label.
-
-## Tabs that fit the screen
-
-Long tab bars stay on one line and scroll on smaller screens. The active
-tab comes back into view after a click, keyboard change, swipe, or
-server update.
-
-``` r
-
-glassTabsUI(
-  "reports",
-  glassTabPanel("summary", "Summary", selected = TRUE, summary_ui),
-  glassTabPanel("activity", "Recent activity", activity_ui),
-  glassTabPanel("quality", "Data quality", quality_ui),
-  glassTabPanel("settings", "Team settings", settings_ui),
-  overflow = "scroll"
-)
-```
-
-`overflow = "multiline"` keeps every label visible on as many rows as
-needed. For horizontal tabs, `overflow = "menu"` replaces the strip with
-a compact native chooser. Vertical tabs already use a rail, so menu mode
-is not available there. Touch swipes are available with `swipe = TRUE`;
-they start only on ordinary panel content, leaving inputs, plots, maps,
-and horizontally scrolling tables alone.
-
-Keyboard focus follows the selected tab. Arrow keys move between
-available tabs, while Home and End jump to the first and last. Motion is
-shortened when the device asks for reduced motion, and solid colors take
-over when glass blur is unavailable.
-
-## An experimental fillable page
-
-[`glassPage()`](https://prigasg.github.io/glasstabs/reference/glassPage.md)
-is a small wrapper around
-[`bslib::page_fillable()`](https://rstudio.github.io/bslib/reference/page_fillable.html).
-It loads the package assets automatically and starts with Bootstrap 5.
-The wrapper is experimental during the 0.4.x cycle; regular Shiny and
-bslib pages remain fully supported.
-
-``` r
-
-ui <- glassPage(
-  title = "Team review",
-  glassTabsUI(
-    "review",
-    glassTabPanel("queue", "Queue", queue_ui),
-    glassTabPanel("done", "Done", done_ui),
-    theme = "auto"
-  )
+  tab_align = "left"
 )
 ```
 
@@ -343,21 +278,18 @@ server <- function(input, output, session) {
 | Function | Description |
 |----|----|
 | [`useGlassTabs()`](https://prigasg.github.io/glasstabs/reference/useGlassTabs.md) | Inject package CSS and JavaScript—call once in the UI |
-| `glassPage(...)` | Experimental fillable Bootstrap 5 page with glasstabs already loaded |
 | `runGlassExample(example)` | Launch a built-in example app ([`runGlassExample()`](https://prigasg.github.io/glasstabs/reference/runGlassExample.md) lists all available apps) |
 | [`glasstabs_news()`](https://prigasg.github.io/glasstabs/reference/glasstabs_news.md) | Print the package changelog to the R console |
 
 Built-in examples include `basic`, `bs4dash`, `bslib`,
 `connect-workflow`, `dashboard`, `indicators`, `server-select`,
-`smoke-test`, and `square-corners`. The Connect workflow doubles as a
-v0.4.0 test lab, with the responsive, keyboard, touch, dynamic-tab,
-badge, theme, and page-wrapper checks collected in one app.
+`smoke-test`, and `square-corners`.
 
 ### Tab widget
 
 | Function | Description |
 |----|----|
-| `glassTabsUI(id, ..., selected, wrap, compact, shape, indicator, orientation, tab_align, text_align, overflow, swipe, extra_ui, theme)` | Animated tab bar with responsive overflow and optional touch swipes |
+| `glassTabsUI(id, ..., selected, wrap, compact, shape, indicator, orientation, tab_align, extra_ui, theme)` | Animated tab bar with content area; use `compact = TRUE` for dashboard cards |
 | `glassTabPanel(value, label, ..., icon, selected)` | Define one tab and its content; `icon` accepts [`shiny::icon()`](https://rdrr.io/pkg/shiny/man/icon.html) |
 | `glassTabsServer(id, bookmark)` | Reactive returning the active tab; can bookmark the active tab in the URL |
 | `glassTabsOutput(outputId)` | UI placeholder for a server-rendered tab widget |
@@ -422,8 +354,6 @@ Load CSS/JavaScript, launch built-in examples, and view the changelog.
 
 - [`useGlassTabs()`](https://prigasg.github.io/glasstabs/reference/useGlassTabs.md)
   : Attach glasstabs CSS and JS dependencies
-- [`glassPage()`](https://prigasg.github.io/glasstabs/reference/glassPage.md)
-  : Experimental fillable page for glasstabs apps
 - [`runGlassExample()`](https://prigasg.github.io/glasstabs/reference/runGlassExample.md)
   : Run a built-in glasstabs example app
 - [`glasstabs_news()`](https://prigasg.github.io/glasstabs/reference/glasstabs_news.md)
@@ -517,8 +447,6 @@ auto theming, search, update helpers, and reactive value helpers.
 
 - [Animated Tabs with
   glasstabs](https://prigasg.github.io/glasstabs/articles/tabs.md):
-- [Responsive and Accessible
-  Tabs](https://prigasg.github.io/glasstabs/articles/responsive-accessibility.md):
 - [Indicator Styles, Vertical Tabs, and Auto
   Theming](https://prigasg.github.io/glasstabs/articles/indicators.md):
 - [Single-Select Dropdown with

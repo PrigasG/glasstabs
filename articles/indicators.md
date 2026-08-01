@@ -157,7 +157,6 @@ ui <- page_fluid(
     orientation = "vertical",
     indicator = "solid",
     tab_align = "left",
-    text_align = "left",
     theme = "auto"
   )
 )
