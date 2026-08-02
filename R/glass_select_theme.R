@@ -9,7 +9,9 @@
 #' @param border_color Border color of the trigger and dropdown.
 #' @param text_color   Main text color for options and the trigger label.
 #' @param accent_color Highlight color for checkmarks, badges, and selected
-#'   states. Also used for the focus ring.
+#'   states.
+#' @param focus_ring Keyboard focus indicator color. Choose a color with at
+#'   least 3:1 contrast against the trigger and dropdown surfaces.
 #' @param label_color  Widget label color. Defaults to `text_color` when `NULL`.
 #'
 #' @return A named list of class `"glass_select_theme"` for passing to the
@@ -50,6 +52,7 @@ glass_select_theme <- function(
     border_color = NULL,
     text_color = NULL,
     accent_color = NULL,
+    focus_ring = NULL,
     label_color = NULL
 ) {
   mode <- .gt_match_arg(mode, c("dark", "light"), "mode")
@@ -61,6 +64,7 @@ glass_select_theme <- function(
       border_color = border_color,
       text_color = text_color,
       accent_color = accent_color,
+      focus_ring = focus_ring,
       label_color = label_color
     ),
     class = "glass_select_theme"
@@ -74,6 +78,7 @@ glass_select_theme <- function(
     border = "rgba(255,255,255,0.10)",
     text   = "#cfe6ff",
     accent = "#7ec3f7",
+    focus  = "#7ec3f7",
     label  = "#cfe6ff"
   )
 
@@ -82,6 +87,7 @@ glass_select_theme <- function(
     border = "rgba(0,0,0,0.12)",
     text   = "#111111",
     accent = "#2563eb",
+    focus  = "#1d4ed8",
     label  = "#111111"
   )
 
@@ -117,6 +123,7 @@ glass_select_theme <- function(
     if (!is.null(theme$border_color)) base$border <- theme$border_color
     if (!is.null(theme$text_color))   base$text   <- theme$text_color
     if (!is.null(theme$accent_color)) base$accent <- theme$accent_color
+    if (!is.null(theme$focus_ring))   base$focus  <- theme$focus_ring
     if (!is.null(theme$label_color))  base$label  <- theme$label_color
     if (is.null(theme$label_color) && !is.null(theme$text_color)) {
       base$label <- theme$text_color

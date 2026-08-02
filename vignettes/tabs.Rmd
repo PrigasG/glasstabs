@@ -258,7 +258,7 @@ glassTabsUI("nav",
 )
 ```
 
-All eight handles available in `glass_tab_theme()`:
+All nine handles available in `glass_tab_theme()`:
 
 | Argument | What it controls |
 |---|---|
@@ -266,6 +266,7 @@ All eight handles available in `glass_tab_theme()`:
 | `tab_active_text` | Active tab label colour |
 | `halo_bg` | Sliding glass halo fill |
 | `halo_border` | Sliding glass halo border |
+| `focus_ring` | Keyboard focus indicator |
 | `content_bg` | Tab content panel background |
 | `content_border` | Tab content panel border |
 | `card_bg` | Inner card background |

@@ -17,6 +17,9 @@ test_that("glass.css has no color-mix dependency", {
   expect_true(grepl("color-scheme:dark", css, fixed = TRUE))
   expect_true(grepl("color-scheme:light", css, fixed = TRUE))
   expect_true(grepl(".gt-tab-menu-select option", css, fixed = TRUE))
+  expect_true(grepl(".gt-gs-trigger:focus-visible", css, fixed = TRUE))
+  expect_true(grepl(".gt-ms-search:focus-within", css, fixed = TRUE))
+  expect_true(grepl("--ms-focus-ring", css, fixed = TRUE))
 })
 
 test_that("select widgets render ARIA combobox/listbox semantics", {
@@ -78,6 +81,8 @@ test_that("glass.js keeps ARIA and focus state in sync", {
   expect_true(grepl("e.key === 'Escape' || e.key === 'Tab'", js, fixed = TRUE))
   expect_true(grepl("trigger.focus()", js, fixed = TRUE))
   expect_true(grepl("createOptionNavigator", js, fixed = TRUE))
+  expect_true(grepl("'--ms-focus-ring'", js, fixed = TRUE))
+  expect_true(grepl("function commitSwitch", js, fixed = TRUE))
   expect_true(grepl("e.key === 'Home'", js, fixed = TRUE))
   expect_true(grepl("prefers-reduced-motion: reduce", js, fixed = TRUE))
   expect_true(grepl("touchstart", js, fixed = TRUE))

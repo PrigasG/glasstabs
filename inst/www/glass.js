@@ -235,7 +235,7 @@
   }
 
   var MS_VARS = [
-    '--ms-bg','--ms-border','--ms-text','--ms-accent','--ms-label',
+    '--ms-bg','--ms-border','--ms-text','--ms-accent','--ms-focus-ring','--ms-label',
     '--ms-ac-12','--ms-ac-16','--ms-ac-18','--ms-ac-22','--ms-ac-28',
     '--ms-ac-32','--ms-ac-40','--ms-ac-55','--ms-ac-60','--ms-ac-75',
     '--ms-tx-03','--ms-tx-04','--ms-tx-05','--ms-tx-06','--ms-tx-08',
@@ -254,9 +254,11 @@
     var isLight = wrap.classList.contains('theme-light');
     var fallbacks = isLight
       ? { '--ms-bg': 'rgba(255,255,255,0.98)', '--ms-border': 'rgba(0,0,0,0.12)',
-          '--ms-text': '#111111', '--ms-accent': '#2563eb', '--ms-label': '#111111' }
+          '--ms-text': '#111111', '--ms-accent': '#2563eb',
+          '--ms-focus-ring': '#1d4ed8', '--ms-label': '#111111' }
       : { '--ms-bg': 'rgba(9,20,42,0.97)', '--ms-border': 'rgba(255,255,255,0.10)',
-          '--ms-text': '#cfe6ff', '--ms-accent': '#7ec3f7', '--ms-label': '#cfe6ff' };
+          '--ms-text': '#cfe6ff', '--ms-accent': '#7ec3f7',
+          '--ms-focus-ring': '#7ec3f7', '--ms-label': '#cfe6ff' };
     MS_VARS.forEach(function (v) {
       var val = cs.getPropertyValue(v).trim();
       if (val) dropdown.style.setProperty(v, val);
@@ -411,6 +413,8 @@
     if (!halo || !trf || links.length === 0 || !activeEl) return;
 
     var active = activeEl.getAttribute('data-value');
+    var pending = null;
+    var lastNotified = active;
     if (window.Shiny && window.Shiny.setInputValue) {
       Shiny.setInputValue(ns + '-active_tab', active, { priority: 'deferred' });
     }
@@ -655,14 +659,82 @@
       return dur;
     }
 
+    function cancelVisualTransfer() {
+      if (trf.getAnimations) {
+        trf.getAnimations().forEach(function (animation) { animation.cancel(); });
+      }
+      if (halo.getAnimations) {
+        halo.getAnimations().forEach(function (animation) { animation.cancel(); });
+      }
+      trf.style.opacity = '0';
+      halo.classList.remove('gt-arrival-pulse');
+      halo.style.opacity = '0.92';
+      navbar._gtAnimationUntil = 0;
+      navbar._gtHaloTarget = null;
+    }
+
+    function pulseArrival(el) {
+      placeHalo(el, true, 1.0);
+      halo.style.opacity = '0.92';
+      if (reducedMotion()) return;
+      halo.classList.remove('gt-arrival-pulse');
+      void halo.offsetWidth;
+      halo.classList.add('gt-arrival-pulse');
+    }
+
+    function commitSwitch(target, options) {
+      var settings = options || {};
+      if (settings.cancelAnimation) cancelVisualTransfer();
+
+      var targetLink = navbar.querySelector(
+        '.gt-tab-link' + attrEquals('data-value', target)
+      );
+      if (!targetLink) return false;
+
+      Array.from(navbar.querySelectorAll('.gt-tab-link')).forEach(function (link) {
+        var selected = link === targetLink;
+        link.classList.toggle('active', selected);
+        link.setAttribute('aria-selected', selected ? 'true' : 'false');
+        var value = link.getAttribute('data-value');
+        setPaneActive(document.getElementById(ns + '-pane-' + value), selected);
+      });
+
+      active = target;
+      pending = null;
+      syncTabStops();
+      syncMenu();
+
+      if (settings.notify && lastNotified !== target) {
+        lastNotified = target;
+        if (window.Shiny) {
+          Shiny.setInputValue(ns + '-active_tab', target, { priority: 'event' });
+        }
+        triggerShinyChange(navbar);
+      }
+      return true;
+    }
+
     /* Activate a tab by value. skipFromAnim = true skips the transfer
        animation (used when the previous tab is hidden or removed). */
     function activateTab(target, skipFromAnim, moveFocus) {
+      var interrupted = pending !== null ||
+        (navbar._gtAnimationUntil && Date.now() < navbar._gtAnimationUntil);
       clearTabTimers();
+
+      if (pending !== null) {
+        /* Reconcile the abandoned destination without notifying Shiny. The
+           next settled destination is the only state the server should see. */
+        commitSwitch(pending, { cancelAnimation: true, notify: false });
+      } else if (interrupted) {
+        cancelVisualTransfer();
+      }
+
+      if (interrupted) skipFromAnim = true;
 
       var toEl = navbar.querySelector('.gt-tab-link' + attrEquals('data-value', target));
       if (!isAvailable(toEl)) return;
       if (target === active) {
+        if (interrupted) pulseArrival(toEl);
         syncTabStops();
         syncMenu();
         ensureTabVisible(toEl, true);
@@ -695,17 +767,10 @@
 
       var dur = animated ? animateTransfer(fromEl, toEl) : 0;
       if (dur > 0) navbar._gtAnimationUntil = Date.now() + dur;
+      pending = target;
 
       navbar._gtTabTimers.push(setTimeout(function () {
-        /* Use the namespace-qualified ID so we never accidentally deactivate
-           a nested glassTabsUI pane that also carries gt-tab-pane.active */
-        var ap = document.getElementById(ns + '-pane-' + active);
-        setPaneActive(ap, false);
-        var next = document.getElementById(ns + '-pane-' + target);
-        setPaneActive(next, true);
-        active = target;
-        if (window.Shiny) Shiny.setInputValue(ns + '-active_tab', target, { priority: 'event' });
-        triggerShinyChange(navbar);
+        commitSwitch(target, { notify: true });
       }, dur > 0 ? Math.max(100, dur * 0.50) : 0));
 
       if (dur > 0) {
@@ -718,16 +783,12 @@
 
         navbar._gtTabTimers.push(setTimeout(function () {
           navbar._gtAnimationUntil = 0;
-          placeHalo(toEl, true, 1.0);
+          pulseArrival(toEl);
           navbar._gtHaloTarget = null;
-          if (!reducedMotion()) {
-            halo.classList.remove('gt-arrival-pulse');
-            void halo.offsetWidth;
-            halo.classList.add('gt-arrival-pulse');
-          }
         }, dur));
       } else {
-        placeHalo(toEl, true, 1.0);
+        if (interrupted || skipFromAnim) pulseArrival(toEl);
+        else placeHalo(toEl, true, 1.0);
         navbar._gtHaloTarget = null;
         navbar._gtTabTimers.push(setTimeout(function () { placeHalo(toEl, false, 1.0); }, 80));
       }
@@ -839,8 +900,8 @@
     }
 
     navbar._gtResizeHandler = function () {
-      realignHalo();
       syncTextWidths();
+      realignHalo();
       syncTabStops();
       syncMenu();
     };

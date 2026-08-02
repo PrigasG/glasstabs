@@ -173,8 +173,8 @@ glassMultiSelect <- function(
   scope_id <- paste0(inputId, "-wrap")
 
   theme_css <- sprintf(
-    "#%s{--ms-bg:%s;--ms-border:%s;--ms-text:%s;--ms-accent:%s;--ms-label:%s;%s}",
-    field_id, colors$bg, colors$border, colors$text, colors$accent, colors$label,
+    "#%s{--ms-bg:%s;--ms-border:%s;--ms-text:%s;--ms-accent:%s;--ms-focus-ring:%s;--ms-label:%s;%s}",
+    field_id, colors$bg, colors$border, colors$text, colors$accent, colors$focus, colors$label,
     .to_rgba_vars(colors)
   )
 

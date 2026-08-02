@@ -111,3 +111,6 @@ These remain worthwhile, but they are outside the focused 0.4.0 release:
   confusing it with the existing `wrap` container argument, exposed the page
   language in `glassPage()`, hardened tab-value selectors and widget scoping,
   and added JavaScript linting plus browser regression coverage.
+- 2026-08-01: made rapid tab changes transactional, suppressed abandoned
+  intermediate server values, and added consistent themeable focus rings for
+  tabs, select triggers, and teleported select search fields.

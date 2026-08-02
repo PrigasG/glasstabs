@@ -14,6 +14,8 @@
 #' @param tab_active_text Active tab text color (and headings inside cards).
 #' @param halo_bg    Background fill of the animated glass halo.
 #' @param halo_border Border color of the glass halo.
+#' @param focus_ring Keyboard focus indicator color. Choose a color with at
+#'   least 3:1 contrast against the tab surface.
 #' @param content_bg  Tab content area background.
 #' @param content_border Tab content area border.
 #' @param card_bg    Inner `.gt-card` background.
@@ -51,6 +53,7 @@ glass_tab_theme <- function(
     tab_active_text = NULL,
     halo_bg = NULL,
     halo_border = NULL,
+    focus_ring = NULL,
     content_bg = NULL,
     content_border = NULL,
     card_bg = NULL,
@@ -62,6 +65,7 @@ glass_tab_theme <- function(
       tab_active_text = tab_active_text,
       halo_bg = halo_bg,
       halo_border = halo_border,
+      focus_ring = focus_ring,
       content_bg = content_bg,
       content_border = content_border,
       card_bg = card_bg,
@@ -77,6 +81,7 @@ glass_tab_theme <- function(
     tab_active_text = "#ffffff",
     halo_bg         = "rgba(126,195,247,0.16)",
     halo_border     = "rgba(126,195,247,0.38)",
+    focus_ring      = "#7ec3f7",
     halo_shadow     = "inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(255,255,255,.06),0 6px 20px rgba(0,0,0,.38),0 0 0 1px rgba(255,255,255,.03)",
     content_bg      = "transparent",
     content_border  = "transparent",
@@ -89,6 +94,7 @@ glass_tab_theme <- function(
     tab_active_text = "#1d4ed8",
     halo_bg         = "rgba(37,99,235,0.12)",
     halo_border     = "rgba(37,99,235,0.60)",
+    focus_ring      = "#1d4ed8",
     halo_shadow     = "inset 0 1px 0 rgba(255,255,255,.80),0 4px 16px rgba(37,99,235,.20),0 0 0 1px rgba(37,99,235,.12)",
     content_bg      = "transparent",
     content_border  = "transparent",

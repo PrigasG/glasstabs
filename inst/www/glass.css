@@ -442,6 +442,12 @@
     0 4px 14px rgba(0,0,0,0.2);
 }
 
+.gt-gs-trigger:focus-visible,
+.gt-ms-trigger:focus-visible{
+  outline:3px solid var(--ms-focus-ring,#7ec3f7);
+  outline-offset:3px;
+}
+
 .gt-gs-wrap.theme-light .gt-gs-trigger{
   background:rgba(0,0,0,0.04);
   box-shadow:0 1px 4px rgba(0,0,0,0.08);
@@ -535,6 +541,13 @@
 
 .gt-gs-search input::placeholder{
   color:var(--ms-tx-35);
+}
+
+.gt-gs-search:focus-within,
+.gt-ms-search:focus-within{
+  border-color:var(--ms-focus-ring,#7ec3f7);
+  outline:2px solid var(--ms-focus-ring,#7ec3f7);
+  outline-offset:2px;
 }
 
 /* Option rows */

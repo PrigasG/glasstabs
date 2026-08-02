@@ -10,6 +10,7 @@ glass_select_theme(
   border_color = NULL,
   text_color = NULL,
   accent_color = NULL,
+  focus_ring = NULL,
   label_color = NULL
 )
 }
@@ -24,7 +25,10 @@ Custom colors are layered on top.}
 \item{text_color}{Main text color for options and the trigger label.}
 
 \item{accent_color}{Highlight color for checkmarks, badges, and selected
-states. Also used for the focus ring.}
+states.}
+
+\item{focus_ring}{Keyboard focus indicator color. Choose a color with at
+least 3:1 contrast against the trigger and dropdown surfaces.}
 
 \item{label_color}{Widget label color. Defaults to \code{text_color} when \code{NULL}.}
 }

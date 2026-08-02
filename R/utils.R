@@ -125,13 +125,14 @@
 .select_dark_override_style <- function(selector, field_id) {
   dark <- .ms_resolve_theme("dark")
   css <- sprintf(
-    "%s #%s{--ms-bg:%s;--ms-border:%s;--ms-text:%s;--ms-accent:%s;--ms-label:%s;%s}",
+    "%s #%s{--ms-bg:%s;--ms-border:%s;--ms-text:%s;--ms-accent:%s;--ms-focus-ring:%s;--ms-label:%s;%s}",
     selector,
     field_id,
     dark$bg,
     dark$border,
     dark$text,
     dark$accent,
+    dark$focus,
     dark$label,
     .to_rgba_vars(dark)
   )

@@ -155,6 +155,12 @@ test_that("glassSelect() glass_select_theme() accent appears in HTML", {
   expect_match(html, "#abcdef")
 })
 
+test_that("glassSelect() custom focus ring appears in HTML", {
+  theme <- glass_select_theme(focus_ring = "#a21caf")
+  html <- as.character(glassSelect("f", choices, theme = theme))
+  expect_match(html, "--ms-focus-ring:#a21caf", fixed = TRUE)
+})
+
 test_that("glassSelect() errors on invalid theme string", {
   expect_error(glassSelect("f", choices, theme = "monokai"), class = "glasstabs_error_bad_theme")
 })

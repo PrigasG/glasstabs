@@ -80,14 +80,25 @@ test_that("glassTabsUI() scoped CSS block contains the widget id", {
   expect_true(grepl("mynav-wrap", html))
 })
 
-test_that("glassTabsUI() injects all eight CSS variables", {
+test_that("glassTabsUI() injects all theme CSS variables", {
   html <- as.character(glassTabsUI("nav",
                                    glassTabPanel("a", "A", selected = TRUE)))
   for (v in c("--gt-tab-text:", "--gt-tab-active-text:", "--gt-halo-bg:",
-              "--gt-halo-border:", "--gt-content-bg:", "--gt-content-border:",
+              "--gt-halo-border:", "--gt-focus-ring:", "--gt-content-bg:",
+              "--gt-content-border:",
               "--gt-card-bg:", "--gt-card-text:")) {
     expect_true(grepl(v, html, fixed = TRUE), info = v)
   }
+})
+
+test_that("glassTabsUI() custom focus ring appears in scoped CSS", {
+  theme <- glass_tab_theme(focus_ring = "#f97316")
+  html <- as.character(glassTabsUI(
+    "nav",
+    glassTabPanel("a", "A", selected = TRUE),
+    theme = theme
+  ))
+  expect_match(html, "--gt-focus-ring:#f97316", fixed = TRUE)
 })
 
 test_that("glassTabsUI() custom halo_bg appears in scoped CSS", {

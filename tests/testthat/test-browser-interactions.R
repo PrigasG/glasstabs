@@ -141,6 +141,11 @@ test_that("browser: tabs keep focus, scroll, menu state, and dynamic tabs in syn
   on.exit(app$stop(), add = TRUE)
   app$wait_for_idle()
 
+  expect_true(app$get_js("
+    getComputedStyle(document.querySelector('#mobile_tabs-wrap'))
+      .getPropertyValue('--gt-focus-ring').trim() === '#f97316'
+  "))
+
   app$wait_for_js("
     document.querySelector('#mobile_tabs-tab-activity').getAttribute('aria-disabled') === 'true'
   ")
@@ -277,6 +282,90 @@ test_that("browser: tabs keep focus, scroll, menu state, and dynamic tabs in syn
   expect_equal(app$get_value(input = "special_tabs-active_tab"), 'team"review')
 })
 
+test_that("browser: rapid tab changes settle on one honest state", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-rapid-tabs",
+    height = 1000,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+  app$wait_for_idle()
+
+  expect_true(app$get_js("
+    (function() {
+      var originalMatchMedia = window.matchMedia.bind(window);
+      window.matchMedia = function(query) {
+        if (query === '(prefers-reduced-motion: reduce)') {
+          return {matches:false,media:query,addListener:function(){},removeListener:function(){}};
+        }
+        return originalMatchMedia(query);
+      };
+      document.querySelector('#race_return-tab-b').click();
+      setTimeout(function() {
+        document.querySelector('#race_return-tab-a').click();
+      }, 50);
+      setTimeout(function() { window.__raceReturnDone = true; }, 700);
+      return true;
+    })()
+  "))
+  app$wait_for_js("window.__raceReturnDone === true")
+
+  expect_true(app$get_js("
+    (function() {
+      var widget = document.querySelector('#race_return-wrap');
+      var tab = document.querySelector('#race_return-tab-a');
+      var pane = document.querySelector('#race_return-pane-a');
+      var otherPane = document.querySelector('#race_return-pane-b');
+      var halo = widget.querySelector('.gt-halo').getBoundingClientRect();
+      var rect = tab.getBoundingClientRect();
+      return Shiny.shinyapp.$inputValues['race_return-active_tab'] === 'a' &&
+        widget.querySelectorAll('.gt-tab-link.active').length === 1 &&
+        tab.classList.contains('active') && !pane.hasAttribute('inert') &&
+        otherPane.hasAttribute('inert') &&
+        Math.abs(halo.left - rect.left) < 1 && Math.abs(halo.top - rect.top) < 1 &&
+        Math.abs(halo.width - rect.width) < 1 && Math.abs(halo.height - rect.height) < 1 &&
+        widget.querySelector('.gt-transfer').getAnimations().length === 0 &&
+        widget.querySelector('.gt-halo').style.opacity === '0.92';
+    })()
+  "))
+  expect_equal(app$get_value(output = "race_return_events"), "")
+
+  expect_true(app$get_js("
+    (function() {
+      document.querySelector('#race_forward-tab-b').click();
+      setTimeout(function() {
+        document.querySelector('#race_forward-tab-c').click();
+      }, 50);
+      setTimeout(function() { window.__raceForwardDone = true; }, 700);
+      return true;
+    })()
+  "))
+  app$wait_for_js("window.__raceForwardDone === true")
+
+  expect_true(app$get_js("
+    (function() {
+      var widget = document.querySelector('#race_forward-wrap');
+      var tab = document.querySelector('#race_forward-tab-c');
+      var pane = document.querySelector('#race_forward-pane-c');
+      var halo = widget.querySelector('.gt-halo').getBoundingClientRect();
+      var rect = tab.getBoundingClientRect();
+      return Shiny.shinyapp.$inputValues['race_forward-active_tab'] === 'c' &&
+        widget.querySelectorAll('.gt-tab-link.active').length === 1 &&
+        tab.classList.contains('active') && !pane.hasAttribute('inert') &&
+        document.querySelector('#race_forward-pane-a').hasAttribute('inert') &&
+        document.querySelector('#race_forward-pane-b').hasAttribute('inert') &&
+        Math.abs(halo.left - rect.left) < 1 && Math.abs(halo.top - rect.top) < 1 &&
+        Math.abs(halo.width - rect.width) < 1 && Math.abs(halo.height - rect.height) < 1;
+    })()
+  "))
+  expect_equal(app$get_value(output = "race_forward_events"), "c")
+})
+
 test_that("browser: select options support arrow keys and Enter", {
   skip_on_covr()
   skip_if_not_installed("shinytest2")
@@ -293,6 +382,16 @@ test_that("browser: select options support arrow keys and Enter", {
 
   app$click(selector = "#fruit-trigger")
   app$wait_for_js("document.querySelector('#fruit-dropdown.open') !== null")
+  app$wait_for_js("document.activeElement.closest('.gt-gs-search') !== null")
+  expect_true(app$get_js("
+    (function() {
+      var dropdown = document.querySelector('#fruit-dropdown');
+      var search = dropdown.querySelector('.gt-gs-search');
+      return dropdown.parentElement === document.body &&
+        getComputedStyle(dropdown).getPropertyValue('--ms-focus-ring').trim() === '#a21caf' &&
+        getComputedStyle(search).outlineColor === 'rgb(162, 28, 175)';
+    })()
+  "))
   expect_true(app$get_js("
     (function() {
       var search = document.querySelector('#fruit-dropdown input[type=text]');

@@ -10,6 +10,12 @@
   menu mode provides a compact native chooser.
 * Tabs now use roving keyboard focus, Home/End navigation, and explicit ARIA
   relationships between each tab and its panel.
+* Rapid tab changes now settle as one consistent state across the active link,
+  content pane, halo, compact menu, and Shiny input. Interrupted destinations
+  do not trigger transient server work.
+* `glass_tab_theme()` and `glass_select_theme()` gain a `focus_ring` colour.
+  Tabs, select triggers, and search fields share a deliberate focus treatment,
+  including search fields inside teleported dropdowns.
 * `glassPage()` is an experimental, lightweight wrapper around
   `bslib::page_fillable()` that loads the glasstabs dependency automatically.
   It exposes the page language through `lang`, which defaults to `"en"`.

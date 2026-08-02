@@ -109,7 +109,9 @@ panel without an animation delay.
 
 Windows forced-colors mode uses system colors and visible focus outlines. When
 backdrop blur is unsupported, the controls use solid surfaces instead of
-losing contrast.
+losing contrast. Custom themes can set `focus_ring` in `glass_tab_theme()` and
+`glass_select_theme()`; the colour follows select dropdowns when they move to
+the document body, so search focus remains visible.
 
 ## Experimental fillable page
 

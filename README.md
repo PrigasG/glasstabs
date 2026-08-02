@@ -211,16 +211,25 @@ glassTabsUI(
   glassTabPanel("b", "B", p("More content")),
   theme = glass_tab_theme(
     halo_bg = "rgba(37, 99, 235, 0.16)",
-    halo_border = "#2563eb"
+    halo_border = "#2563eb",
+    focus_ring = "#1d4ed8"
   )
 )
 
 glassSelect(
   "region",
   choices,
-  theme = glass_select_theme(mode = "light", accent_color = "#2563eb")
+  theme = glass_select_theme(
+    mode = "light",
+    accent_color = "#2563eb",
+    focus_ring = "#1d4ed8"
+  )
 )
 ```
+
+`focus_ring` keeps the keyboard indicator in the same colour family as the
+rest of an app while remaining separate from its decorative accent. Tabs,
+select triggers, and search fields all use it.
 
 Inside a `bs4Dash` card, `compact = TRUE` reduces spacing and `wrap = FALSE` lets the card provide the outer container.
 

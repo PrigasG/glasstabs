@@ -61,12 +61,13 @@
 .gt_tab_theme_css <- function(theme, scope_id, selector = NULL) {
   scope <- if (is.null(selector)) paste0("#", scope_id) else paste0(selector, " #", scope_id)
   sprintf(
-    "%s{--gt-tab-text:%s;--gt-tab-active-text:%s;--gt-halo-bg:%s;--gt-halo-border:%s;--gt-halo-shadow:%s;--gt-content-bg:%s;--gt-content-border:%s;--gt-card-bg:%s;--gt-card-text:%s;}",
+    "%s{--gt-tab-text:%s;--gt-tab-active-text:%s;--gt-halo-bg:%s;--gt-halo-border:%s;--gt-focus-ring:%s;--gt-halo-shadow:%s;--gt-content-bg:%s;--gt-content-border:%s;--gt-card-bg:%s;--gt-card-text:%s;}",
     scope,
     theme$tab_text,
     theme$tab_active_text,
     theme$halo_bg,
     theme$halo_border,
+    theme$focus_ring,
     theme$halo_shadow,
     theme$content_bg,
     theme$content_border,

@@ -8,6 +8,7 @@ DOM
 Dropdown
 HSL
 JS
+Multiline
 README
 RTL
 Shiny's
@@ -50,6 +51,7 @@ initialised
 initialises
 lifecycle
 listbox
+multiline
 morphism
 namespaced
 namespacing
