@@ -15,7 +15,8 @@
 <link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="glasstabs - Animated Shiny Widgets">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><link href="extra.css" rel="stylesheet">
+<meta property="og:title" content="glasstabs - Animated Shiny Widgets">
 <meta name="description" content="Animated glass-morphism tabs, single-select, and multi-select widgets for R Shiny.
 ">
 <meta property="og:description" content="Animated glass-morphism tabs, single-select, and multi-select widgets for R Shiny.
@@ -30,7 +31,7 @@
 
     <a class="navbar-brand me-2" href="index.html">glasstabs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.4.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,6 +51,7 @@
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Widgets</h6></li>
     <li><a class="dropdown-item" href="articles/tabs.html">Animated Tabs with glasstabs</a></li>
+    <li><a class="dropdown-item" href="articles/responsive-accessibility.html">Responsive and Accessible Tabs</a></li>
     <li><a class="dropdown-item" href="articles/indicators.html">Indicator Styles, Vertical Tabs, and Auto Theming</a></li>
     <li><a class="dropdown-item" href="articles/glassSelect.html">Single-Select Dropdown with glasstabs</a></li>
     <li><a class="dropdown-item" href="articles/multiselect.html">Multi-Select Filter with glasstabs</a></li>
@@ -79,6 +81,7 @@
 </blockquote>
 <!-- badges: start -->
 
+<!-- badges: end -->
 <p>glasstabs gives Shiny apps polished navigation and filtering without asking you to write custom JavaScript or CSS. The package includes:</p>
 <ul>
 <li>
@@ -95,9 +98,11 @@
 <p>Install the CRAN release:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"glasstabs"</span><span class="op">)</span></span></code></pre></div>
-<p>Or install the development version from GitHub:</p>
+<p>The GitHub build is the development version, currently <code>0.3.4.9000</code> on the way to 0.4.0. It includes features that are not part of the CRAN release:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"prigasG/glasstabs"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"PrigasG/glasstabs@main"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"glasstabs"</span><span class="op">)</span></span></code></pre></div>
+<p>Installing from GitHub replaces the installed copy on your machine and gives you access to current features before CRAN release.</p>
 </div>
 <div class="section level2">
 <h2 id="a-complete-app">A complete app<a class="anchor" aria-label="anchor" href="#a-complete-app"></a>
@@ -198,27 +203,66 @@
 <span>  <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"approve"</span>, <span class="st">"Approve"</span>, <span class="va">approve_ui</span><span class="op">)</span>,</span>
 <span>  orientation <span class="op">=</span> <span class="st">"vertical"</span>,</span>
 <span>  indicator <span class="op">=</span> <span class="st">"solid"</span>,</span>
-<span>  tab_align <span class="op">=</span> <span class="st">"left"</span></span>
+<span>  tab_align <span class="op">=</span> <span class="st">"left"</span>,</span>
+<span>  text_align <span class="op">=</span> <span class="st">"left"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><code>tab_align</code> places the tab group at the left, center, or right of the available navigation area in either layout. <code>text_align</code> separately aligns labels and icons inside each tab button. For visible left or right alignment in a horizontal bar, the buttons share the width of the widest label.</p>
+</div>
+<div class="section level2">
+<h2 id="tabs-that-fit-the-screen">Tabs that fit the screen<a class="anchor" aria-label="anchor" href="#tabs-that-fit-the-screen"></a>
+</h2>
+<p>Long tab bars stay on one line and scroll on smaller screens. The active tab comes back into view after a click, keyboard change, swipe, or server update.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
+<span>  <span class="st">"reports"</span>,</span>
+<span>  <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"summary"</span>, <span class="st">"Summary"</span>, selected <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">summary_ui</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"activity"</span>, <span class="st">"Recent activity"</span>, <span class="va">activity_ui</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"quality"</span>, <span class="st">"Data quality"</span>, <span class="va">quality_ui</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"settings"</span>, <span class="st">"Team settings"</span>, <span class="va">settings_ui</span><span class="op">)</span>,</span>
+<span>  overflow <span class="op">=</span> <span class="st">"scroll"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><code>overflow = "multiline"</code> keeps every label visible on as many rows as needed. For horizontal tabs, <code>overflow = "menu"</code> replaces the strip with a compact native chooser. Vertical tabs already use a rail, so menu mode is not available there. Touch swipes are available with <code>swipe = TRUE</code>; they start only on ordinary panel content, leaving inputs, plots, maps, and horizontally scrolling tables alone.</p>
+<p>Keyboard focus follows the selected tab. Arrow keys move between available tabs, while Home and End jump to the first and last. Motion is shortened when the device asks for reduced motion, and solid colors take over when glass blur is unavailable.</p>
+</div>
+<div class="section level2">
+<h2 id="an-experimental-fillable-page">An experimental fillable page<a class="anchor" aria-label="anchor" href="#an-experimental-fillable-page"></a>
+</h2>
+<p><code><a href="reference/glassPage.html">glassPage()</a></code> is a small wrapper around <code><a href="https://rstudio.github.io/bslib/reference/page_fillable.html" class="external-link">bslib::page_fillable()</a></code>. It loads the package assets automatically and starts with Bootstrap 5. The wrapper is experimental during the 0.4.x cycle; regular Shiny and bslib pages remain fully supported.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/glassPage.html">glassPage</a></span><span class="op">(</span></span>
+<span>  title <span class="op">=</span> <span class="st">"Team review"</span>,</span>
+<span>  <span class="fu"><a href="reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
+<span>    <span class="st">"review"</span>,</span>
+<span>    <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"queue"</span>, <span class="st">"Queue"</span>, <span class="va">queue_ui</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"done"</span>, <span class="st">"Done"</span>, <span class="va">done_ui</span><span class="op">)</span>,</span>
+<span>    theme <span class="op">=</span> <span class="st">"auto"</span></span>
+<span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>For a custom accent, change only the fields your app needs:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
 <span>  <span class="st">"nav"</span>,</span>
 <span>  <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"A"</span>, selected <span class="op">=</span> <span class="cn">TRUE</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"Content"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"b"</span>, <span class="st">"B"</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"More content"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  theme <span class="op">=</span> <span class="fu"><a href="reference/glass_tab_theme.html">glass_tab_theme</a></span><span class="op">(</span></span>
 <span>    halo_bg <span class="op">=</span> <span class="st">"rgba(37, 99, 235, 0.16)"</span>,</span>
-<span>    halo_border <span class="op">=</span> <span class="st">"#2563eb"</span></span>
+<span>    halo_border <span class="op">=</span> <span class="st">"#2563eb"</span>,</span>
+<span>    focus_ring <span class="op">=</span> <span class="st">"#1d4ed8"</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="reference/glassSelect.html">glassSelect</a></span><span class="op">(</span></span>
 <span>  <span class="st">"region"</span>,</span>
 <span>  <span class="va">choices</span>,</span>
-<span>  theme <span class="op">=</span> <span class="fu"><a href="reference/glass_select_theme.html">glass_select_theme</a></span><span class="op">(</span>mode <span class="op">=</span> <span class="st">"light"</span>, accent_color <span class="op">=</span> <span class="st">"#2563eb"</span><span class="op">)</span></span>
+<span>  theme <span class="op">=</span> <span class="fu"><a href="reference/glass_select_theme.html">glass_select_theme</a></span><span class="op">(</span></span>
+<span>    mode <span class="op">=</span> <span class="st">"light"</span>,</span>
+<span>    accent_color <span class="op">=</span> <span class="st">"#2563eb"</span>,</span>
+<span>    focus_ring <span class="op">=</span> <span class="st">"#1d4ed8"</span></span>
+<span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
+<p><code>focus_ring</code> keeps the keyboard indicator in the same colour family as the rest of an app while remaining separate from its decorative accent. Tabs, select triggers, and search fields all use it.</p>
 <p>Inside a <code>bs4Dash</code> card, <code>compact = TRUE</code> reduces spacing and <code>wrap = FALSE</code> lets the card provide the outer container.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">bs4Dash</span><span class="fu">::</span><span class="fu"><a href="https://bs4dash.rinterface.com/reference/box.html" class="external-link">box</a></span><span class="op">(</span></span>
 <span>  width <span class="op">=</span> <span class="fl">12</span>,</span>
 <span>  <span class="fu">glasstabs</span><span class="fu">::</span><span class="fu"><a href="reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
@@ -262,7 +306,7 @@
 </tbody>
 </table>
 <p>Server helpers cover common programmatic changes:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/observeEvent.html" class="external-link">observeEvent</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">next_step</span>, <span class="op">{</span></span>
 <span>    <span class="fu"><a href="reference/updateGlassTabsUI.html">updateGlassTabsUI</a></span><span class="op">(</span><span class="va">session</span>, <span class="st">"workflow"</span>, selected <span class="op">=</span> <span class="st">"review"</span><span class="op">)</span></span>
@@ -275,7 +319,7 @@
 <span>  <span class="op">}</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <p>Use <code><a href="reference/glassTabCondition.html">glassTabCondition()</a></code> when a regular <code><a href="https://rdrr.io/pkg/shiny/man/conditionalPanel.html" class="external-link">conditionalPanel()</a></code> should follow the active glass tab:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/conditionalPanel.html" class="external-link">conditionalPanel</a></span><span class="op">(</span></span>
 <span>  condition <span class="op">=</span> <span class="fu"><a href="reference/glassTabCondition.html">glassTabCondition</a></span><span class="op">(</span><span class="st">"main"</span>, <span class="st">"details"</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"This appears while the Details tab is active."</span><span class="op">)</span></span>
@@ -285,7 +329,7 @@
 <h2 id="large-choice-sets">Large choice sets<a class="anchor" aria-label="anchor" href="#large-choice-sets"></a>
 </h2>
 <p>For hundreds or thousands of choices, keep the full vector on the server and send a small page of matches to the browser.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">many_choices</span> <span class="op">&lt;-</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"value-%04d"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">2000</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Choice %04d"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">2000</span><span class="op">)</span></span>
@@ -323,6 +367,10 @@
 <td>Inject package CSS and JavaScript—call once in the UI</td>
 </tr>
 <tr>
+<td><code>glassPage(...)</code></td>
+<td>Experimental fillable Bootstrap 5 page with glasstabs already loaded</td>
+</tr>
+<tr>
 <td><code>runGlassExample(example)</code></td>
 <td>Launch a built-in example app (<code><a href="reference/runGlassExample.html">runGlassExample()</a></code> lists all available apps)</td>
 </tr>
@@ -332,7 +380,7 @@
 </tr>
 </tbody>
 </table>
-<p>Built-in examples include <code>basic</code>, <code>bs4dash</code>, <code>bslib</code>, <code>connect-workflow</code>, <code>dashboard</code>, <code>indicators</code>, <code>server-select</code>, <code>smoke-test</code>, and <code>square-corners</code>.</p>
+<p>Built-in examples include <code>basic</code>, <code>bs4dash</code>, <code>bslib</code>, <code>connect-workflow</code>, <code>dashboard</code>, <code>indicators</code>, <code>server-select</code>, <code>smoke-test</code>, and <code>square-corners</code>. The Connect workflow doubles as a v0.4.0 test lab, with the responsive, keyboard, touch, dynamic-tab, badge, theme, and page-wrapper checks collected in one app.</p>
 </div>
 <div class="section level3">
 <h3 id="tab-widget">Tab widget<a class="anchor" aria-label="anchor" href="#tab-widget"></a>
@@ -348,8 +396,8 @@
 </tr></thead>
 <tbody>
 <tr>
-<td><code>glassTabsUI(id, ..., selected, wrap, compact, shape, indicator, orientation, tab_align, extra_ui, theme)</code></td>
-<td>Animated tab bar with content area; use <code>compact = TRUE</code> for dashboard cards</td>
+<td><code>glassTabsUI(id, ..., selected, wrap, compact, shape, indicator, orientation, tab_align, text_align, overflow, swipe, extra_ui, theme)</code></td>
+<td>Animated tab bar with responsive overflow and optional touch swipes</td>
 </tr>
 <tr>
 <td><code>glassTabPanel(value, label, ..., icon, selected)</code></td>

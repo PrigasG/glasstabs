@@ -13,6 +13,7 @@ glass_select_theme(
   border_color = NULL,
   text_color = NULL,
   accent_color = NULL,
+  focus_ring = NULL,
   label_color = NULL
 )
 ```
@@ -38,8 +39,12 @@ glass_select_theme(
 
 - accent_color:
 
-  Highlight color for checkmarks, badges, and selected states. Also used
-  for the focus ring.
+  Highlight color for checkmarks, badges, and selected states.
+
+- focus_ring:
+
+  Keyboard focus indicator color. Choose a color with at least 3:1
+  contrast against the trigger and dropdown surfaces.
 
 - label_color:
 

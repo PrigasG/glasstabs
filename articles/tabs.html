@@ -15,7 +15,8 @@
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Animated Tabs with glasstabs">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
+<meta property="og:title" content="Animated Tabs with glasstabs">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -25,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">glasstabs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.4.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,6 +46,7 @@
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Widgets</h6></li>
     <li><a class="dropdown-item" href="../articles/tabs.html">Animated Tabs with glasstabs</a></li>
+    <li><a class="dropdown-item" href="../articles/responsive-accessibility.html">Responsive and Accessible Tabs</a></li>
     <li><a class="dropdown-item" href="../articles/indicators.html">Indicator Styles, Vertical Tabs, and Auto Theming</a></li>
     <li><a class="dropdown-item" href="../articles/glassSelect.html">Single-Select Dropdown with glasstabs</a></li>
     <li><a class="dropdown-item" href="../articles/multiselect.html">Multi-Select Filter with glasstabs</a></li>
@@ -72,7 +74,7 @@
       <img src="../logo.svg" class="logo" alt=""><h1>Animated Tabs with glasstabs</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/PrigasG/glasstabs/blob/v0.3.4/vignettes/tabs.Rmd" class="external-link"><code>vignettes/tabs.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/PrigasG/glasstabs/blob/main/vignettes/tabs.Rmd" class="external-link"><code>vignettes/tabs.Rmd</code></a></small>
       <div class="d-none name"><code>tabs.Rmd</code></div>
     </div>
 
@@ -148,8 +150,53 @@ via <code>Shiny.setInputValue</code>. Access it as
 <div class="section level2">
 <h2 id="keyboard-navigation">Keyboard navigation<a class="anchor" aria-label="anchor" href="#keyboard-navigation"></a>
 </h2>
-<p>Arrow keys move between tabs when focus is inside the widget — no
-extra code needed.</p>
+<p>Only the selected tab sits in the regular Tab-key order. Left and
+Right move through a horizontal strip; Up and Down do the same in a
+vertical rail. Home and End reach the first and last available tabs.
+Hidden and disabled tabs are left out of that path.</p>
+<p>Each tab names its panel through <code>aria-controls</code>, and each
+panel points back with <code>aria-labelledby</code>. Those relationships
+stay in place when tabs are added or removed from the server.</p>
+</div>
+<div class="section level2">
+<h2 id="narrow-screens-and-touch">Narrow screens and touch<a class="anchor" aria-label="anchor" href="#narrow-screens-and-touch"></a>
+</h2>
+<p>Scroll mode works well for most apps with several tabs:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
+<span>  <span class="st">"reports"</span>,</span>
+<span>  <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"summary"</span>, <span class="st">"Summary"</span>, selected <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">summary_ui</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"activity"</span>, <span class="st">"Recent activity"</span>, <span class="va">activity_ui</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"quality"</span>, <span class="st">"Data quality"</span>, <span class="va">quality_ui</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"settings"</span>, <span class="st">"Team settings"</span>, <span class="va">settings_ui</span><span class="op">)</span>,</span>
+<span>  overflow <span class="op">=</span> <span class="st">"scroll"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>The strip accepts touch scrolling and brings the selected tab into
+view. Use <code>overflow = "multiline"</code> when two or more rows suit
+the layout. In a horizontal layout, menu mode keeps the same tab content
+behind a compact native chooser:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
+<span>  <span class="st">"compact_nav"</span>,</span>
+<span>  <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"queue"</span>, <span class="st">"Queue"</span>, selected <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">queue_ui</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"review"</span>, <span class="st">"In review"</span>, <span class="va">review_ui</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"complete"</span>, <span class="st">"Complete"</span>, <span class="va">complete_ui</span><span class="op">)</span>,</span>
+<span>  overflow <span class="op">=</span> <span class="st">"menu"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>Swipe navigation is deliberately opt-in:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
+<span>  <span class="st">"story"</span>,</span>
+<span>  <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"today"</span>, <span class="st">"Today"</span>, selected <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">today_ui</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"week"</span>, <span class="st">"This week"</span>, <span class="va">week_ui</span><span class="op">)</span>,</span>
+<span>  swipe <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>Swipes that begin on an input, link, button, Shiny output, HTML
+widget, or horizontally scrolling element are ignored. A component can
+opt out directly with <code>data-gt-no-swipe</code> as well.</p>
+<p>The widget follows <code>prefers-reduced-motion</code> automatically.
+In that mode the panel changes immediately and the transfer trace and
+badge pulse stay quiet.</p>
 </div>
 <div class="section level2">
 <h2 id="indicator-styles">Indicator styles<a class="anchor" aria-label="anchor" href="#indicator-styles"></a>
@@ -167,7 +214,7 @@ dashboards.</li>
 <code>indicator = "underline"</code> uses a slim sliding bar and
 removes the tab pill background.</li>
 </ul>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span><span class="st">"nav"</span>,</span>
 <span>  <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"overview"</span>, <span class="st">"Overview"</span>, selected <span class="op">=</span> <span class="cn">TRUE</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"Overview"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"data"</span>, <span class="st">"Data"</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"Data"</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -176,7 +223,7 @@ removes the tab pill background.</li>
 <span><span class="op">)</span></span></code></pre></div>
 <p>The same tabs can be rendered in all three styles without changing
 their content or server logic:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">make_tabs</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">id</span>, <span class="va">indicator</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="../reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
 <span>    <span class="va">id</span>,</span>
@@ -200,7 +247,7 @@ their content or server logic:</p>
 left-hand rail beside the content pane. In vertical mode, Up/Down arrow
 keys move between tabs and <code>indicator = "underline"</code> becomes
 a side bar adjacent to the content.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span><span class="st">"side"</span>,</span>
 <span>  <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"inbox"</span>, <span class="st">"Inbox"</span>, selected <span class="op">=</span> <span class="cn">TRUE</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"Inbox"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"sent"</span>, <span class="st">"Sent"</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"Sent"</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -209,15 +256,18 @@ a side bar adjacent to the content.</p>
 <span>  indicator <span class="op">=</span> <span class="st">"underline"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Use <code>tab_align = "left"</code>, <code>"center"</code>, or
-<code>"right"</code> to control how labels and icons sit inside each tab
-button:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code>"right"</code> to place the tab group in the available navigation
+area. This works in horizontal and vertical layouts. Use
+<code>text_align</code> when the labels and icons inside the buttons
+should have a different alignment:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span><span class="st">"aligned"</span>,</span>
 <span>  <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"drafts"</span>, <span class="st">"Drafts"</span>, selected <span class="op">=</span> <span class="cn">TRUE</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"Draft queue"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"review"</span>, <span class="st">"Review"</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"Review queue"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"done"</span>, <span class="st">"Done"</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"Completed queue"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  orientation <span class="op">=</span> <span class="st">"vertical"</span>,</span>
 <span>  tab_align <span class="op">=</span> <span class="st">"right"</span>,</span>
+<span>  text_align <span class="op">=</span> <span class="st">"left"</span>,</span>
 <span>  indicator <span class="op">=</span> <span class="st">"solid"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -227,7 +277,7 @@ button:</p>
 <p>Pass any UI element to <code>extra_ui</code> to place it to the right
 of the tab bar. The most common use is a <code><a href="../reference/glassMultiSelect.html">glassMultiSelect()</a></code>
 filter:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">choices</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Alpha <span class="op">=</span> <span class="st">"alpha"</span>, Beta <span class="op">=</span> <span class="st">"beta"</span>, Gamma <span class="op">=</span> <span class="st">"gamma"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span>
@@ -251,7 +301,7 @@ filter:</p>
 <div class="section level3">
 <h3 id="built-in-presets">Built-in presets<a class="anchor" aria-label="anchor" href="#built-in-presets"></a>
 </h3>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Dark (default)</span></span>
 <span><span class="fu"><a href="../reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span><span class="st">"nav"</span>, theme <span class="op">=</span> <span class="st">"dark"</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
@@ -266,7 +316,7 @@ filter:</p>
 </h3>
 <p>Supply only the values you want to change — everything else falls
 back to the dark preset:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Change only the halo colour</span></span>
 <span><span class="fu"><a href="../reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span><span class="st">"nav"</span>,</span>
 <span>  theme <span class="op">=</span> <span class="fu"><a href="../reference/glass_tab_theme.html">glass_tab_theme</a></span><span class="op">(</span></span>
@@ -276,7 +326,7 @@ back to the dark preset:</p>
 <span>  <span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"Tab"</span>, selected <span class="op">=</span> <span class="cn">TRUE</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"Content"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>All eight handles available in <code><a href="../reference/glass_tab_theme.html">glass_tab_theme()</a></code>:</p>
+<p>All nine handles available in <code><a href="../reference/glass_tab_theme.html">glass_tab_theme()</a></code>:</p>
 <table class="table">
 <thead><tr class="header">
 <th>Argument</th>
@@ -300,18 +350,22 @@ back to the dark preset:</p>
 <td>Sliding glass halo border</td>
 </tr>
 <tr class="odd">
+<td><code>focus_ring</code></td>
+<td>Keyboard focus indicator</td>
+</tr>
+<tr class="even">
 <td><code>content_bg</code></td>
 <td>Tab content panel background</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>content_border</code></td>
 <td>Tab content panel border</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>card_bg</code></td>
 <td>Inner card background</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>card_text</code></td>
 <td>Inner card text colour</td>
 </tr>
@@ -326,7 +380,7 @@ back to the dark preset:</p>
 <code>bs4Card</code> or <code>bs4Box</code> — the card body already
 provides a constrained container. Pair with <code>theme = "light"</code>
 to match the card’s white background:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RinteRface/bs4Dash" class="external-link">bs4Dash</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/PrigasG/glasstabs" class="external-link">glasstabs</a></span><span class="op">)</span></span>
 <span></span>
@@ -354,7 +408,7 @@ to match the card’s white background:</p>
 </h2>
 <p>Each <code><a href="../reference/glassTabsUI.html">glassTabsUI()</a></code> instance is scoped to its own
 <code>id</code>, so multiple widgets work fully independently:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="../reference/useGlassTabs.html">useGlassTabs</a></span><span class="op">(</span><span class="op">)</span>,    <span class="co"># only needed once per page</span></span>
 <span>  <span class="fu"><a href="../reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span><span class="st">"widget1"</span>,</span>

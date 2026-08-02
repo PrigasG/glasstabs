@@ -172,7 +172,11 @@ removes the transfer trace and badge pulse, shortens CSS transitions,
 and shows the next panel without an animation delay.</p>
 <p>Windows forced-colors mode uses system colors and visible focus
 outlines. When backdrop blur is unsupported, the controls use solid
-surfaces instead of losing contrast.</p>
+surfaces instead of losing contrast. Custom themes can set
+<code>focus_ring</code> in <code><a href="../reference/glass_tab_theme.html">glass_tab_theme()</a></code> and
+<code><a href="../reference/glass_select_theme.html">glass_select_theme()</a></code>; the colour follows select dropdowns
+when they move to the document body, so search focus remains
+visible.</p>
 </div>
 <div class="section level2">
 <h2 id="experimental-fillable-page">Experimental fillable page<a class="anchor" aria-label="anchor" href="#experimental-fillable-page"></a>

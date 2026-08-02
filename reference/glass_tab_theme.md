@@ -13,6 +13,7 @@ glass_tab_theme(
   tab_active_text = NULL,
   halo_bg = NULL,
   halo_border = NULL,
+  focus_ring = NULL,
   content_bg = NULL,
   content_border = NULL,
   card_bg = NULL,
@@ -37,6 +38,11 @@ glass_tab_theme(
 - halo_border:
 
   Border color of the glass halo.
+
+- focus_ring:
+
+  Keyboard focus indicator color. Choose a color with at least 3:1
+  contrast against the tab surface.
 
 - content_bg:
 

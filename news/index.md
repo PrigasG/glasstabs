@@ -1,5 +1,57 @@
 # Changelog
 
+## glasstabs 0.3.4.9000
+
+### Responsive and accessible navigation
+
+- Development toward 0.4.0 now focuses on dependable tabs on small
+  screens, complete keyboard and screen-reader behavior, reduced-motion
+  support, and solid fallbacks when glass effects are unavailable.
+- [`glassTabsUI()`](https://prigasg.github.io/glasstabs/reference/glassTabsUI.md)
+  gains `overflow` and opt-in `swipe` controls. The selected tab stays
+  visible in a scrolling strip, multiline tabs remain available, and
+  menu mode provides a compact native chooser.
+- Tabs now use roving keyboard focus, Home/End navigation, and explicit
+  ARIA relationships between each tab and its panel.
+- Rapid tab changes now settle as one consistent state across the active
+  link, content pane, halo, compact menu, and Shiny input. Interrupted
+  destinations do not trigger transient server work.
+- [`glass_tab_theme()`](https://prigasg.github.io/glasstabs/reference/glass_tab_theme.md)
+  and
+  [`glass_select_theme()`](https://prigasg.github.io/glasstabs/reference/glass_select_theme.md)
+  gain a `focus_ring` colour. Tabs, select triggers, and search fields
+  share a deliberate focus treatment, including search fields inside
+  teleported dropdowns.
+- [`glassPage()`](https://prigasg.github.io/glasstabs/reference/glassPage.md)
+  is an experimental, lightweight wrapper around
+  [`bslib::page_fillable()`](https://rstudio.github.io/bslib/reference/page_fillable.html)
+  that loads the glasstabs dependency automatically. It exposes the page
+  language through `lang`, which defaults to `"en"`.
+- Missing optional packages now report the documented
+  `glasstabs_error_missing_package` condition class.
+- The Posit Connect workflow example is now a v0.4.0 test lab for
+  responsive overflow, swipes, keyboard behavior, dynamic tabs, badges,
+  theming, and the experimental page wrapper. Its in-app checklist keeps
+  repeat testing clear.
+- Tab clicks and keyboard activation no longer pass through a second
+  fallback initialization, so the glass halo keeps its full movement in
+  vertical and horizontal layouts. The arrival pulse also preserves the
+  halo’s settled alignment with the active tab in both orientations.
+- Compact-menu options now use an explicit native dark or light colour
+  scheme, keeping option text readable when the operating system opens
+  the select menu.
+- `tab_align` now places the tab group in both orientations. The new
+  `text_align` argument independently aligns labels and icons inside tab
+  buttons, keeping layout and text choices separate. Non-centered
+  horizontal labels use equal button widths so their alignment remains
+  visible.
+- Compact menu overflow is now documented and validated as a
+  horizontal-only layout. A vertical tab rail paired with
+  `overflow = "menu"` gets a clear error instead of silently ignoring
+  the setting.
+- Coverage uploads now use the authenticated Codecov action, and browser
+  checks respect the runner’s reduced-motion preference.
+
 ## glasstabs 0.3.4
 
 CRAN release: 2026-07-31

@@ -68,8 +68,66 @@ server <- function(input, output, session) {
 
 ## Keyboard navigation
 
-Arrow keys move between tabs when focus is inside the widget — no extra
-code needed.
+Only the selected tab sits in the regular Tab-key order. Left and Right
+move through a horizontal strip; Up and Down do the same in a vertical
+rail. Home and End reach the first and last available tabs. Hidden and
+disabled tabs are left out of that path.
+
+Each tab names its panel through `aria-controls`, and each panel points
+back with `aria-labelledby`. Those relationships stay in place when tabs
+are added or removed from the server.
+
+## Narrow screens and touch
+
+Scroll mode works well for most apps with several tabs:
+
+``` r
+
+glassTabsUI(
+  "reports",
+  glassTabPanel("summary", "Summary", selected = TRUE, summary_ui),
+  glassTabPanel("activity", "Recent activity", activity_ui),
+  glassTabPanel("quality", "Data quality", quality_ui),
+  glassTabPanel("settings", "Team settings", settings_ui),
+  overflow = "scroll"
+)
+```
+
+The strip accepts touch scrolling and brings the selected tab into view.
+Use `overflow = "multiline"` when two or more rows suit the layout. In a
+horizontal layout, menu mode keeps the same tab content behind a compact
+native chooser:
+
+``` r
+
+glassTabsUI(
+  "compact_nav",
+  glassTabPanel("queue", "Queue", selected = TRUE, queue_ui),
+  glassTabPanel("review", "In review", review_ui),
+  glassTabPanel("complete", "Complete", complete_ui),
+  overflow = "menu"
+)
+```
+
+Swipe navigation is deliberately opt-in:
+
+``` r
+
+glassTabsUI(
+  "story",
+  glassTabPanel("today", "Today", selected = TRUE, today_ui),
+  glassTabPanel("week", "This week", week_ui),
+  swipe = TRUE
+)
+```
+
+Swipes that begin on an input, link, button, Shiny output, HTML widget,
+or horizontally scrolling element are ignored. A component can opt out
+directly with `data-gt-no-swipe` as well.
+
+The widget follows `prefers-reduced-motion` automatically. In that mode
+the panel changes immediately and the transfer trace and badge pulse
+stay quiet.
 
 ## Indicator styles
 
@@ -132,8 +190,10 @@ glassTabsUI("side",
 )
 ```
 
-Use `tab_align = "left"`, `"center"`, or `"right"` to control how labels
-and icons sit inside each tab button:
+Use `tab_align = "left"`, `"center"`, or `"right"` to place the tab
+group in the available navigation area. This works in horizontal and
+vertical layouts. Use `text_align` when the labels and icons inside the
+buttons should have a different alignment:
 
 ``` r
 
@@ -143,6 +203,7 @@ glassTabsUI("aligned",
   glassTabPanel("done", "Done", p("Completed queue")),
   orientation = "vertical",
   tab_align = "right",
+  text_align = "left",
   indicator = "solid"
 )
 ```
@@ -208,7 +269,7 @@ glassTabsUI("nav",
 )
 ```
 
-All eight handles available in
+All nine handles available in
 [`glass_tab_theme()`](https://prigasg.github.io/glasstabs/reference/glass_tab_theme.md):
 
 | Argument          | What it controls             |
@@ -217,6 +278,7 @@ All eight handles available in
 | `tab_active_text` | Active tab label colour      |
 | `halo_bg`         | Sliding glass halo fill      |
 | `halo_border`     | Sliding glass halo border    |
+| `focus_ring`      | Keyboard focus indicator     |
 | `content_bg`      | Tab content panel background |
 | `content_border`  | Tab content panel border     |
 | `card_bg`         | Inner card background        |
