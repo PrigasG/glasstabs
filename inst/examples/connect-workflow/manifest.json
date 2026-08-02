@@ -398,18 +398,18 @@
         "RemoteHost": "api.github.com",
         "RemoteRepo": "glasstabs",
         "RemoteUsername": "PrigasG",
-        "RemotePkgRef": "PrigasG/glasstabs@db21f7f",
-        "RemoteRef": "db21f7f",
-        "RemoteSha": "db21f7f01c690aa041133aa8fdf216f14fca80c7",
+        "RemotePkgRef": "PrigasG/glasstabs@c35143b",
+        "RemoteRef": "c35143b",
+        "RemoteSha": "c35143b6297887048e82a193add82cbf84671812",
         "GithubRepo": "glasstabs",
         "GithubUsername": "PrigasG",
-        "GithubRef": "db21f7f",
-        "GithubSHA1": "db21f7f01c690aa041133aa8fdf216f14fca80c7",
+        "GithubRef": "c35143b",
+        "GithubSHA1": "c35143b6297887048e82a193add82cbf84671812",
         "NeedsCompilation": "no",
-        "Packaged": "2026-08-01 21:44:16 UTC; priga",
+        "Packaged": "2026-08-02 00:23:13 UTC; priga",
         "Author": "George Arthur [aut, cre]",
         "Maintainer": "George Arthur <prigasgenthian48@gmail.com>",
-        "Built": "R 4.5.1; ; 2026-08-01 21:44:18 UTC; windows"
+        "Built": "R 4.5.1; ; 2026-08-02 00:23:15 UTC; windows"
       }
     },
     "glue": {
