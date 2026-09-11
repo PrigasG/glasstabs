@@ -22,6 +22,17 @@ ui <- fluidPage(
 )
 ```
 
+\`glassPage()\` is the experimental exception. It is a thin wrapper around \`bslib::page_fillable()\` and loads the dependency itself.
+
+```{r}
+ui <- glassPage(
+  title = "Review",
+  lang = "en",
+  theme = bslib::bs_theme(version = 5),
+  h2("Review queue")
+)
+```
+
 ## Tabs: basic pattern
 
 ```{r}

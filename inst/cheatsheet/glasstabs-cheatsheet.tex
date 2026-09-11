@@ -1,5 +1,5 @@
-% glasstabs cheatsheet  v0.3.1
-% Compile with: pdflatex glasstabs-cheatsheet.tex
+% glasstabs cheatsheet v0.4.0
+% Compile with: pdflatex -interaction=nonstopmode -halt-on-error glasstabs-cheatsheet.tex
 \documentclass[9pt,a4paper]{article}
 
 \usepackage[a4paper,margin=0.9cm,landscape]{geometry}
@@ -14,23 +14,20 @@
 \usepackage{booktabs}
 \usepackage{array}
 
-% ── Colours ──────────────────────────────────────────────────────────────────
 \definecolor{gtblue}{RGB}{30,64,175}
-\definecolor{gtaccent}{RGB}{126,195,247}
-\definecolor{gtgray}{RGB}{100,116,139}
-\definecolor{gtgreen}{RGB}{22,163,74}
-\definecolor{gtyellow}{RGB}{180,120,0}
+\definecolor{gtaccent}{RGB}{37,99,235}
+\definecolor{gtgray}{RGB}{71,85,105}
+\definecolor{gtgreen}{RGB}{21,128,61}
+\definecolor{gtyellow}{RGB}{161,98,7}
 \definecolor{codebg}{RGB}{241,245,249}
 \definecolor{codefg}{RGB}{15,23,42}
-\definecolor{codecomment}{RGB}{100,116,139}
+\definecolor{codecomment}{RGB}{71,85,105}
 \definecolor{codestring}{RGB}{21,128,61}
 \definecolor{codekw}{RGB}{30,64,175}
 \definecolor{sectionbg}{RGB}{30,64,175}
 
-% ── Fonts ────────────────────────────────────────────────────────────────────
 \renewcommand{\familydefault}{\sfdefault}
 
-% ── Listings (R code blocks) ─────────────────────────────────────────────────
 \lstdefinestyle{Rstyle}{
   language=R,
   basicstyle=\ttfamily\tiny,
@@ -51,15 +48,12 @@
 }
 \lstset{style=Rstyle}
 
-% ── Inline helpers ───────────────────────────────────────────────────────────
 \newcommand{\code}[1]{\texttt{\footnotesize\color{codefg}#1}}
 \newcommand{\gtfn}[1]{\texttt{\footnotesize\color{codekw}#1()}}
 \newcommand{\gtarg}[1]{\texttt{\footnotesize\color{gtgreen}#1}}
 \newcommand{\gtval}[1]{\texttt{\footnotesize\color{gtyellow}#1}}
-
-% ── Section header (no titlesec — avoids # conflicts) ────────────────────────
 \newcommand{\mysection}[1]{%
-  \vspace{4pt}%
+  \vspace{3pt}%
   \noindent\colorbox{sectionbg}{%
     \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
       \strut\textbf{\small\color{white}#1}\strut%
@@ -67,389 +61,516 @@
   }%
   \vspace{2pt}\par%
 }
+\newcommand{\sheetheader}[2]{%
+  {\large\bfseries\color{gtblue}glasstabs}%
+  \hfill{\tiny\color{gtgray}v0.4.0}\\[1pt]
+  {\footnotesize\color{gtgray}#1}%
+  \hfill{\tiny\color{gtgray}#2}\\[-3pt]
+  \rule{\linewidth}{0.6pt}
+}
 
-% ── List tweaks ───────────────────────────────────────────────────────────────
 \setlist[itemize]{
   noitemsep, topsep=1pt, leftmargin=*,
   label=\textcolor{gtaccent}{\textbullet}
 }
-
-% ── Page layout ──────────────────────────────────────────────────────────────
-\setlength{\columnseprule}{0.4pt}
+\setlength{\columnseprule}{0.35pt}
 \setlength{\columnsep}{8pt}
 \setlength{\parskip}{2pt}
 \setlength{\parindent}{0pt}
 \pagestyle{empty}
 \hypersetup{hidelinks}
 
-% ─────────────────────────────────────────────────────────────────────────────
 \begin{document}
-\begin{multicols}{4}
+\begin{multicols*}{4}
+\raggedcolumns
+\sheetheader{tabs and layout}{page 1 of 2}
 
-% ── Header ───────────────────────────────────────────────────────────────────
-{\large\bfseries\color{gtblue}glasstabs}%
-\hfill{\footnotesize\color{gtgray}v0.3.1}\\[1pt]
-{\footnotesize\color{gtgray}Glass-morphism Shiny widgets}\\[-3pt]
-\rule{\linewidth}{0.6pt}
-
-% ══════════════════════════════════════════════════════
 \mysection{Setup}
 
-Call once in every UI:
+Load the dependency once in the UI:
 \begin{lstlisting}
+library(shiny)
 library(glasstabs)
+
 ui <- fluidPage(
   useGlassTabs(),
-  # widgets go here
+  # glasstabs widgets
 )
 \end{lstlisting}
 
-Run a built-in demo:
+Explore package examples and release notes:
 \begin{lstlisting}
-runGlassExample()       # list all
-runGlassExample("smoke-test")
-runGlassExample("basic")
-runGlassExample("bs4dash")
-\end{lstlisting}
-
-View changelog in console:
-\begin{lstlisting}
+runGlassExample()        # list apps
+runGlassExample("connect-workflow")
 glasstabs_news()
 \end{lstlisting}
 
-% ══════════════════════════════════════════════════════
-\mysection{Tab widget --- UI}
+\mysection{Experimental page wrapper}
+
+\gtfn{glassPage} is a thin optional wrapper around
+\code{bslib::page\_fillable()} and loads \gtfn{useGlassTabs}.
+\begin{lstlisting}
+ui <- glassPage(
+  title = "Review",
+  lang = "en",
+  theme = bslib::bs_theme(version = 5),
+  padding = "1rem",
+  gap = "1rem",
+  fillable_mobile = FALSE,
+  h2("Review queue")
+)
+\end{lstlisting}
+Requires the suggested \code{bslib} package.
+
+\mysection{Tab widget -- UI}
 
 \begin{lstlisting}
 glassTabsUI(
-  id,              # module id
-  ...,             # glassTabPanel()s
-  selected = NULL, # initial tab value
-  wrap     = TRUE,
-  compact  = FALSE,# reduced spacing
-  extra_ui = NULL, # right-side widget
-  theme    = "dark"# or "light"
+  id, ...,
+  selected = NULL,
+  wrap = TRUE,
+  compact = FALSE,
+  shape = c("rounded", "square"),
+  indicator = c("glass", "solid",
+                "underline"),
+  orientation = c("horizontal",
+                  "vertical"),
+  tab_align = c("center","left","right"),
+  text_align = c("center","left","right"),
+  overflow = c("scroll","multiline","menu"),
+  swipe = FALSE,
+  extra_ui = NULL,
+  theme = NULL,
+  dark_selector = NULL
 )
 
 glassTabPanel(
-  value,          # unique tab id
-  label,          # button text
-  ...,            # pane content
-  icon = NULL,    # shiny::icon() etc.
+  value, label, ...,
+  icon = NULL,
   selected = FALSE
 )
 \end{lstlisting}
 
-\textbf{Example:}
+\columnbreak
+\textbf{Small complete pattern:}
 \begin{lstlisting}
 glassTabsUI(
   "main",
-  glassTabPanel("a", "Alpha",
-    selected = TRUE,
-    p("Alpha content")),
-  glassTabPanel("b", "Beta",
-    icon = icon("star"),
-    p("Beta content"))
+  glassTabPanel("queue", "Queue",
+    selected = TRUE, p("Open work")),
+  glassTabPanel("done", "Done",
+    icon = icon("check"), p("Finished")),
+  selected = "queue",
+  overflow = "scroll",
+  theme = "auto"
 )
 \end{lstlisting}
 
-% ══════════════════════════════════════════════════════
-\mysection{Tab widget --- server}
+\mysection{Layout and responsive choices}
+
+\begin{itemize}
+  \item \gtarg{orientation}: horizontal row or vertical rail.
+  \item \gtarg{tab\_align}: places the tab group.
+  \item \gtarg{text\_align}: aligns labels inside buttons.
+  \item \gtarg{indicator}: glass halo, solid fill, or underline.
+  \item \gtarg{shape}: rounded or square tabs.
+  \item \gtarg{overflow = "scroll"}: one horizontal row; selected tab stays visible.
+  \item \gtarg{overflow = "multiline"}: tabs wrap onto rows.
+  \item \gtarg{overflow = "menu"}: native compact menu; horizontal only.
+  \item \gtarg{swipe = TRUE}: guarded horizontal pane gestures.
+  \item \gtarg{compact = TRUE}: tighter dashboard-card spacing.
+\end{itemize}
+
+\begin{lstlisting}
+glassTabsUI(
+  "mobile", ...,
+  overflow = "menu",
+  swipe = TRUE,
+  text_align = "left"
+)
+\end{lstlisting}
+
+\columnbreak
+\mysection{Keyboard and accessibility}
+
+Built in:
+\begin{itemize}
+  \item Arrow keys move through tabs; orientation chooses the axis.
+  \item Home and End move to the first and last available tab.
+  \item Enter or Space activates the focused tab.
+  \item Disabled tabs remain discoverable but cannot activate.
+  \item Inactive panes are inert and outside the focus order.
+  \item Reduced-motion and forced-colour preferences are respected.
+\end{itemize}
+
+\mysection{Read the active tab}
 
 \begin{lstlisting}
 server <- function(input, output, session) {
-  # Reactive active tab value
-  active <- glassTabsServer("main")
-  # With bookmarking (default TRUE)
-  active <- glassTabsServer("main",
-              bookmark = TRUE)
+  active <- glassTabsServer(
+    "main",
+    bookmark = TRUE
+  )
   observe(print(active()))
+
+  # Same underlying value:
+  input[["main-active_tab"]]
 }
 \end{lstlisting}
 
-\textbf{Module pattern:}\\
-UI:~\code{glassTabsUI(\textbf{ns("tabs")}, ...)}\\
-Server:~\code{glassTabsServer(\textbf{"tabs"})}\\
-{\tiny\color{gtgray}Pass bare id to server --- not \code{ns("tabs")}.}
+\textbf{Modules:} use \code{ns("tabs")} in the UI and bare
+\code{"tabs"} in \gtfn{glassTabsServer}.
 
-% ══════════════════════════════════════════════════════
 \mysection{Tab server actions}
 
 \begin{lstlisting}
-# Switch active tab
-updateGlassTabsUI(session, "main", "b")
+updateGlassTabsUI(session, "main", "done")
 
-# Show / hide
 showGlassTab(session, "main", "admin")
 hideGlassTab(session, "main", "admin")
 
-# Disable / enable (stays visible)
-disableGlassTab(session, "main", "b")
-enableGlassTab(session,  "main", "b")
+disableGlassTab(session, "main", "done")
+enableGlassTab(session, "main", "done")
 
-# Badge counts  (0 or NA = hide)
-updateGlassTabBadge(session, "main",
-  "inbox", count = 5L)
-updateGlassTabBadge(session, "main",
-  "inbox", count = 0L)
+updateGlassTabBadge(
+  session, "main", "queue", count = 5L
+) # count 0 hides the badge
 
-# Add / remove at runtime
-appendGlassTab(session, "main",
+appendGlassTab(
+  session, "main",
   glassTabPanel("new", "New", p("...")),
-  select = TRUE)
+  select = TRUE
+)
 removeGlassTab(session, "main", "new")
 \end{lstlisting}
 
-% ══════════════════════════════════════════════════════
-\mysection{conditionalPanel helper}
-
-\gtfn{glassTabCondition} builds the JS condition string:
-\begin{lstlisting}
-# Instead of:
-# "input['main-active_tab'] === 'b'"
-conditionalPanel(
-  condition =
-    glassTabCondition("main", "b"),
-  p("Only on tab b")
-)
-
-# Inside a module (same id as UI):
-glassTabCondition(ns("tabs"), "b")
-\end{lstlisting}
-
-% ══════════════════════════════════════════════════════
+\columnbreak
 \mysection{Dynamic tabs}
 
 \begin{lstlisting}
-# UI placeholder
-glassTabsOutput("dyn_tabs")
+# UI
+glassTabsOutput("dynamic")
 
-# Server render
-output$dyn_tabs <- renderGlassTabs({
-  panels <- lapply(my_data(),
-    function(r)
-      glassTabPanel(r$id, r$label,
-        p(r$id)))
-  do.call(glassTabsUI,
-    c(list("dyn"), panels))
+# Server
+output$dynamic <- renderGlassTabs({
+  glassTabsUI(
+    "generated",
+    glassTabPanel("a", "A", p("A")),
+    glassTabPanel("b", "B", p("B"))
+  )
 })
 \end{lstlisting}
-{\tiny\color{gtgray}JS re-initialises automatically after each render.}
+Browser behavior reinitialises after each render.
 
-% ══════════════════════════════════════════════════════
-\mysection{Bookmarking}
+\mysection{Conditional content}
 
-Enable on the app, \gtfn{glassTabsServer} handles save/restore:
 \begin{lstlisting}
-shinyApp(ui, server,
-  enableBookmarking = "url")
+conditionalPanel(
+  condition =
+    glassTabCondition("main", "done"),
+  p("Visible on Done")
+)
+
+# In a module, use the UI id:
+glassTabCondition(ns("tabs"), "done")
 \end{lstlisting}
 
-Opt out per widget:
+\mysection{URL bookmarking}
+
 \begin{lstlisting}
-glassTabsServer("tabs",
-  bookmark = FALSE)
+shinyApp(
+  ui, server,
+  enableBookmarking = "url"
+)
+
+# Opt one widget out:
+glassTabsServer("main", bookmark = FALSE)
 \end{lstlisting}
 
-% ══════════════════════════════════════════════════════
-\mysection{Tab theming}
+\mysection{Tab themes}
 
+Presets are \gtval{"dark"}, \gtval{"light"}, and
+\gtval{"auto"}. Auto follows Bootstrap 5 colour mode.
 \begin{lstlisting}
-# String preset
-glassTabsUI("t", ..., theme = "light")
-glassTabsUI("t", ..., theme = "dark")
-
-# Custom object
-glassTabsUI("t", ...,
+glassTabsUI(
+  "main", ...,
   theme = glass_tab_theme(
-    halo_bg = "rgba(251,191,36,.15)",
-    tab_active_text = "#fef3c7"
+    halo_bg = "rgba(37,99,235,.14)",
+    tab_active_text = "#1d4ed8",
+    focus_ring = "#1d4ed8"
   )
 )
 \end{lstlisting}
 
-\gtfn{glass\_tab\_theme} args:
+\gtfn{glass\_tab\_theme} handles:
 \begin{itemize}
   \item \gtarg{tab\_text}, \gtarg{tab\_active\_text}
-  \item \gtarg{halo\_bg}, \gtarg{halo\_border}
+  \item \gtarg{halo\_bg}, \gtarg{halo\_border}, \gtarg{focus\_ring}
   \item \gtarg{content\_bg}, \gtarg{content\_border}
   \item \gtarg{card\_bg}, \gtarg{card\_text}
-\end{itemize}
-
-% ══════════════════════════════════════════════════════
-\mysection{Multi-select --- UI}
-
-\begin{lstlisting}
-choices <- c(Revenue = "rev",
-             Orders  = "ord")
-
-glassMultiSelect(
-  inputId,
-  choices,
-  selected          = NULL,
-  label             = NULL,
-  placeholder       = "Select...",
-  all_label         = "All",
-  check_style       = "checkbox",
-  show_style_switcher = FALSE,
-  show_select_all   = TRUE,
-  show_clear_all    = TRUE,
-  searchable        = TRUE,
-  theme             = "dark"
-)
-\end{lstlisting}
-
-% ══════════════════════════════════════════════════════
-\mysection{Multi-select --- server}
-
-\begin{lstlisting}
-# Reactive: selected() and style()
-vals <- glassMultiSelectValue(input, "m")
-vals$selected()
-vals$style() # "checkbox"|"filled"|"dot"
-
-# Update
-updateGlassMultiSelect(session, "m",
-  selected    = c("rev", "ord"),
-  check_style = "filled")
-
-# Clear all
-updateGlassMultiSelect(session, "m",
-  selected = character(0))
-
-# Filter-tag display (in UI)
-glassFilterTags("m")
-\end{lstlisting}
-
-% ══════════════════════════════════════════════════════
-\mysection{Single-select --- UI}
-
-\begin{lstlisting}
-regions <- c("All" = "all",
-             North = "n")
-
-glassSelect(
-  inputId,
-  choices,
-  selected    = NULL,
-  label       = NULL,
-  placeholder = "Pick one...",
-  searchable  = FALSE,
-  clearable   = FALSE,
-  include_all = FALSE,
-  check_style = "checkbox",
-  theme       = "dark"
-)
-\end{lstlisting}
-
-% ══════════════════════════════════════════════════════
-\mysection{Single-select --- server}
-
-\begin{lstlisting}
-# Reactive value
-region <- glassSelectValue(input, "r")
-region()
-
-# Update from server
-updateGlassSelect(session, "r",
-  selected = "south")
-
-# Clear
-updateGlassSelect(session, "r",
-  selected = character(0))
-\end{lstlisting}
-
-% ══════════════════════════════════════════════════════
-\mysection{Select theming}
-
-\begin{lstlisting}
-glassMultiSelect("m", choices,
-  theme = glass_select_theme(
-    mode         = "dark",
-    accent_color = "#38bdf8",
-    bg_color     = "rgba(9,20,42,.97)",
-    text_color   = "#cfe6ff"
-  )
-)
-\end{lstlisting}
-
-\gtfn{glass\_select\_theme} args:
-\begin{itemize}
-  \item \gtarg{mode}: \gtval{"dark"} or \gtval{"light"}
-  \item \gtarg{bg\_color}, \gtarg{border\_color}
-  \item \gtarg{text\_color}, \gtarg{accent\_color}
-  \item \gtarg{label\_color}
-\end{itemize}
-
-% ══════════════════════════════════════════════════════
-\mysection{Input values}
-
-{\footnotesize
-\begin{tabular}{@{}p{1.6cm}p{3.1cm}@{}}
-\toprule
-\textbf{Widget} & \textbf{Input key} \\
-\midrule
-tabs         & \code{\tiny input[["id-active\_tab"]]} \\
-multi-select & \code{input\$inputId} \\
-multi style  & \code{\tiny input\$inputId\_style} \\
-single       & \code{input\$inputId} \\
-\bottomrule
-\end{tabular}
-}
-
-\vspace{3pt}
-Reactive helpers:
-\begin{itemize}
-  \item \gtfn{glassTabsServer} $\to$ \code{active()}
-  \item \gtfn{glassMultiSelectValue} $\to$ \code{vals\$selected()}
-  \item \gtfn{glassSelectValue} $\to$ \code{region()}
-\end{itemize}
-
-% ══════════════════════════════════════════════════════
-\mysection{bs4Dash integration}
-
-\begin{lstlisting}
-library(bs4Dash)
-ui <- bs4DashPage(
-  header  = bs4DashNavbar(),
-  sidebar = bs4DashSidebar(...),
-  body    = bs4DashBody(
-    useGlassTabs(), # place once here
-    bs4TabItems(
-      bs4TabItem("explorer",
-        bs4Card(width = 12,
-          glassTabsUI("tabs",
-            glassTabPanel("a","A",...),
-            glassTabPanel("b","B",...))
-        )
-      )
-    )
-  )
-)
-server <- function(input, output, session) {
-  active <- glassTabsServer("tabs")
-}
-\end{lstlisting}
-
-% ══════════════════════════════════════════════════════
-\mysection{Common gotchas}
-
-\begin{itemize}
-  \item \gtfn{useGlassTabs} once in UI.
-  \item Modules: \code{ns("tabs")} in UI, bare \code{"tabs"} in server.
-  \item Duplicate \code{glassTabPanel()} values $\to$ error.
-  \item \gtarg{selected} = tab \textbf{value}, not label.
-  \item \gtfn{glassSelectValue} returns reactive, not list.
-  \item \gtfn{glassMultiSelectValue} returns
-        \code{list(selected(), style())}.
-  \item Multi-select \gtarg{selected} uses values, not labels.
-  \item After \code{load\_all()}, reload browser to pick up JS changes.
 \end{itemize}
 
 \vfill
 {\tiny\color{gtgray}
 \href{https://prigasg.github.io/glasstabs/}{prigasg.github.io/glasstabs}
-\hfill MIT \copyright\ glasstabs authors}
+\hfill Page 1}
+\end{multicols*}
 
-\end{multicols}
+\newpage
+\begin{multicols*}{4}
+\raggedcolumns
+\sheetheader{selects and reference}{page 2 of 2}
+
+\mysection{Multi-select -- UI}
+
+\begin{lstlisting}
+glassMultiSelect(
+  inputId, choices,
+  selected = NULL,
+  label = NULL,
+  placeholder = "Filter by Category",
+  all_label = "All categories",
+  check_style = c("checkbox",
+                  "check-only","filled"),
+  show_style_switcher = TRUE,
+  show_select_all = TRUE,
+  show_clear_all = TRUE,
+  theme = "dark",
+  shape = c("rounded","square"),
+  width = NULL,
+  disabled = FALSE,
+  disabled_choices = NULL,
+  hues = NULL,
+  dark_selector = NULL,
+  server = FALSE,
+  server_limit = 50L,
+  server_min_chars = 0L
+)
+\end{lstlisting}
+
+\begin{lstlisting}
+metrics <- c(
+  Revenue = "rev",
+  Orders = "ord",
+  Returns = "ret"
+)
+
+glassMultiSelect(
+  "metric", metrics,
+  selected = "rev",
+  label = "Metrics",
+  theme = "auto"
+)
+glassFilterTags("metric")
+\end{lstlisting}
+
+\mysection{Single-select -- UI}
+
+\begin{lstlisting}
+glassSelect(
+  inputId, choices,
+  selected = NULL,
+  label = NULL,
+  placeholder = "Select an option",
+  searchable = TRUE,
+  clearable = FALSE,
+  include_all = FALSE,
+  all_choice_label = "All categories",
+  all_choice_value = "__all__",
+  check_style = c("checkbox",
+                  "check-only","filled"),
+  theme = "dark",
+  shape = c("rounded","square"),
+  width = NULL,
+  disabled = FALSE,
+  disabled_choices = NULL,
+  server = FALSE,
+  server_limit = 50L,
+  server_min_chars = 0L
+)
+\end{lstlisting}
+
+\begin{lstlisting}
+glassSelect(
+  "region",
+  c(North = "n", South = "s"),
+  selected = "n",
+  clearable = TRUE,
+  shape = "square"
+)
+\end{lstlisting}
+
+\columnbreak
+\mysection{Server-side search}
+
+Use for large choice collections. The UI and server IDs match.
+\begin{lstlisting}
+# UI
+glassMultiSelect(
+  "people", character(),
+  server = TRUE,
+  server_limit = 40L,
+  server_min_chars = 2L
+)
+glassSelect(
+  "city", character(),
+  server = TRUE
+)
+
+# Server
+glassMultiSelectServer(
+  "people", people_choices,
+  session = session,
+  limit = 40L,
+  ignore_case = TRUE
+)
+glassSelectServer(
+  "city", city_choices,
+  session = session
+)
+\end{lstlisting}
+
+\mysection{Read select values}
+
+\begin{lstlisting}
+multi <- glassMultiSelectValue(
+  input, "metric"
+)
+multi$selected()
+multi$style()
+
+single <- glassSelectValue(
+  input, "region"
+)
+single()
+\end{lstlisting}
+
+\begin{tabular}{@{}p{1.7cm}p{3.0cm}@{}}
+\toprule
+\textbf{State} & \textbf{Shiny input} \\
+\midrule
+tab value & \code{\tiny input[["id-active\_tab"]]} \\
+multi values & \code{input\$metric} \\
+multi style & \code{input\$metric\_style} \\
+single value & \code{input\$region} \\
+open state & \code{\tiny input\$metric\_open} / \code{\tiny input\$region\_open} \\
+\bottomrule
+\end{tabular}
+
+\mysection{Update select widgets}
+
+\begin{lstlisting}
+updateGlassMultiSelect(
+  session, "metric",
+  choices = metrics,
+  selected = c("rev", "ord"),
+  check_style = "filled",
+  shape = "square",
+  disabled = FALSE,
+  disabled_choices = "ret"
+)
+
+updateGlassSelect(
+  session, "region",
+  choices = c(North="n", South="s"),
+  selected = "s",
+  check_style = "check-only",
+  shape = "rounded",
+  disabled = FALSE,
+  disabled_choices = "n"
+)
+\end{lstlisting}
+
+\columnbreak
+\mysection{Close dropdowns}
+
+\begin{lstlisting}
+closeGlassSelect(session, "region")
+closeGlassMultiSelect(session, "metric")
+closeAllGlassSelects(session)
+\end{lstlisting}
+All default to the current reactive domain when
+\code{session} is omitted.
+
+\mysection{Select themes}
+
+\begin{lstlisting}
+theme <- glass_select_theme(
+  mode = "dark",
+  bg_color = "rgba(9,20,42,.97)",
+  border_color = "rgba(255,255,255,.1)",
+  text_color = "#cfe6ff",
+  accent_color = "#38bdf8",
+  focus_ring = "#7dd3fc",
+  label_color = "#cfe6ff"
+)
+
+glassSelect("region", choices,
+  theme = theme)
+\end{lstlisting}
+Both select widgets accept \gtval{"dark"}, \gtval{"light"},
+\gtval{"auto"}, or a custom theme object.
+
+\mysection{Function map -- all exports}
+
+All 32 exported functions, grouped by job:
+\begin{lstlisting}
+# Setup / page
+useGlassTabs  glassPage
+runGlassExample  glasstabs_news
+
+# Tab construction / state
+glassTabsUI  glassTabPanel
+glassTabsServer  glassTabCondition
+glassTabsOutput  renderGlassTabs
+
+# Tab updates
+updateGlassTabsUI  updateGlassTabBadge
+showGlassTab  hideGlassTab
+disableGlassTab  enableGlassTab
+appendGlassTab  removeGlassTab
+
+# Multi-select
+glassMultiSelect  glassMultiSelectServer
+updateGlassMultiSelect
+glassMultiSelectValue  glassFilterTags
+closeGlassMultiSelect
+
+# Single-select
+glassSelect  glassSelectServer
+updateGlassSelect  glassSelectValue
+closeGlassSelect  closeAllGlassSelects
+
+# Themes
+glass_tab_theme  glass_select_theme
+\end{lstlisting}
+
+\columnbreak
+\mysection{Common gotchas}
+
+\begin{itemize}
+  \item Call \gtfn{useGlassTabs} once unless using \gtfn{glassPage}.
+  \item Panel \gtarg{value}s must be unique; \gtarg{selected} uses values, not labels.
+  \item Modules use \code{ns("tabs")} in UI and bare \code{"tabs"} in server.
+  \item \gtarg{overflow = "menu"} supports horizontal tabs only.
+  \item Swipe ignores interactive and scrollable content.
+  \item \gtfn{glassSelectValue} returns one reactive function.
+  \item \gtfn{glassMultiSelectValue} returns \code{selected()} and
+        \code{style()} reactives.
+  \item Server-side choice functions belong in the server.
+\end{itemize}
+
+\mysection{Useful links}
+
+\begin{itemize}
+  \item \href{https://prigasg.github.io/glasstabs/}{Documentation and articles}
+  \item \href{https://prigas89-glasstabs.share.connect.posit.cloud}{Live Posit Connect app}
+  \item \href{https://github.com/PrigasG/glasstabs}{Source and issue tracker}
+\end{itemize}
+
+\vfill
+{\tiny\color{gtgray}
+\href{https://prigasg.github.io/glasstabs/}{prigasg.github.io/glasstabs}
+\hfill MIT \copyright\ glasstabs authors -- Page 2}
+\end{multicols*}
 \end{document}

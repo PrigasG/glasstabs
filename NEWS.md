@@ -1,10 +1,9 @@
-# glasstabs 0.3.4.9000
+# glasstabs 0.4.0
 
 ## Responsive and accessible navigation
 
-* Development toward 0.4.0 now focuses on dependable tabs on small screens,
-  complete keyboard and screen-reader behavior, reduced-motion support, and
-  solid fallbacks when glass effects are unavailable.
+* This release makes tabs more dependable on small screens and for people who
+  use a keyboard, screen reader, reduced-motion setting, or high-contrast mode.
 * `glassTabsUI()` gains `overflow` and opt-in `swipe` controls. The selected
   tab stays visible in a scrolling strip, multiline tabs remain available, and
   menu mode provides a compact native chooser.
@@ -13,17 +12,13 @@
 * Rapid tab changes now settle as one consistent state across the active link,
   content pane, halo, compact menu, and Shiny input. Interrupted destinations
   do not trigger transient server work.
-* `glass_tab_theme()` and `glass_select_theme()` gain a `focus_ring` colour.
+* `glass_tab_theme()` and `glass_select_theme()` gain a `focus_ring` color.
   Tabs, select triggers, and search fields share a deliberate focus treatment,
   including search fields inside teleported dropdowns.
 * `glassPage()` is an experimental, lightweight wrapper around
   `bslib::page_fillable()` that loads the glasstabs dependency automatically.
-  It exposes the page language through `lang`, which defaults to `"en"`.
 * Missing optional packages now report the documented
   `glasstabs_error_missing_package` condition class.
-* The Posit Connect workflow example is now a v0.4.0 test lab for responsive
-  overflow, swipes, keyboard behavior, dynamic tabs, badges, theming, and the
-  experimental page wrapper. Its in-app checklist keeps repeat testing clear.
 * Tab clicks and keyboard activation no longer pass through a second fallback
   initialization, so the glass halo keeps its full movement in vertical and
   horizontal layouts. The arrival pulse also preserves the halo's settled
@@ -37,8 +32,16 @@
 * Compact menu overflow is now documented and validated as a horizontal-only
   layout. A vertical tab rail paired with `overflow = "menu"` gets a clear
   error instead of silently ignoring the setting.
-* Coverage uploads now use the authenticated Codecov action, and browser checks
-  respect the runner's reduced-motion preference.
+* `glassSelect()` and `glassMultiSelect()` dropdowns now close reliably on an
+  immediate outside press, including when a loading veil or overlay stops
+  bubbling events. Closing during the opening frame also cancels pending
+  positioning and focus work, preventing a dropdown from reappearing after it
+  has closed. Programmatically opened Bootstrap modals and offcanvas panels
+  also close any open dropdown before the new layer appears.
+* Dynamically rendered tab widgets now release their timers, browser listeners,
+  observers, and animations when Shiny removes them from the page.
+* `glassPage()` now declares and checks its minimum supported `bslib` version,
+  so an older optional dependency produces a useful update message.
 
 # glasstabs 0.3.4
 

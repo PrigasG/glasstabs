@@ -47,10 +47,10 @@ button.
 
 ## Experimental: `glassPage()`
 
-`glassPage()` will be a small optional wrapper around `bslib`. It should load
-the glasstabs dependency, create a fillable page, and leave normal `bslib`
-page features available. It is experimental during the 0.4.x cycle so its API
-can settle before becoming a stable part of the package.
+`glassPage()` is a small optional wrapper around `bslib`. It loads the
+glasstabs dependency, creates a fillable page, and leaves normal `bslib` page
+features available. It is experimental during the 0.4.x cycle so its API can
+settle before becoming a stable part of the package.
 
 The wrapper will not replace `fluidPage()`, `bslib::page_fillable()`, or
 dashboard layouts. Existing widgets remain usable in all of them.
@@ -78,6 +78,7 @@ These remain worthwhile, but they are outside the focused 0.4.0 release:
 
 | Version | Highlights |
 |---|---|
+| 0.4.0 | Responsive overflow, optional swipe gestures, accessible tab semantics, reduced-motion and contrast fallbacks, independent tab and text alignment, themeable focus rings, and experimental `glassPage()` |
 | 0.3.4 | Indicator styles, vertical tabs, automatic bslib theming, square controls, server-side select search, dynamic tab management, close helpers, improved diagnostics, and broader accessibility fallbacks |
 | 0.3.1 | `glassTabCondition()`, `glasstabs_news()`, clearer errors, and container/theme fixes |
 | 0.3.0 | Icons, badges, disable/enable, URL bookmarking, reactive rendering, and compact layouts |
@@ -99,9 +100,9 @@ These remain worthwhile, but they are outside the focused 0.4.0 release:
   pkgdown reference, and added a responsive-accessibility vignette.
 - 2026-07-31: verified the pkgdown article at desktop and phone widths; the
   narrow layout has no page-level overflow or browser errors.
-- 2026-07-31: built the source package and ran `R CMD check --as-cran` with
-  no errors or warnings. The only note is expected while the package uses the
-  development version `0.3.4.9000`; release builds will use `0.4.0`.
+- 2026-07-31: built the development source package and ran
+  `R CMD check --as-cran` with no errors or warnings before release
+  preparation.
 - 2026-08-01: separated tab-group and tab-content alignment, documented the
   horizontal-only compact menu, and made browser CI respect reduced motion.
 - 2026-08-01: made inactive panels inert, centralized halo realignment during
@@ -114,3 +115,17 @@ These remain worthwhile, but they are outside the focused 0.4.0 release:
 - 2026-08-01: made rapid tab changes transactional, suppressed abandoned
   intermediate server values, and added consistent themeable focus rings for
   tabs, select triggers, and teleported select search fields.
+- 2026-08-01: prepared the local 0.4.0 release candidate, rebuilt the pkgdown
+  site, passed all 748 package tests and both linters, and completed
+  `R CMD check --as-cran` with no errors or warnings. The sole incoming NOTE
+  records that the previous CRAN update was one day earlier.
+- 2026-08-01: rebuilt the PDF and HTML cheatsheets for the complete 0.4.0 API,
+  with all exported functions and the responsive and accessibility behavior in
+  one release reference.
+- 2026-09-09: hardened teleported select dropdowns against immediate outside
+  presses, event-blocking overlays, and programmatically opened Bootstrap
+  modals or offcanvas panels; added browser regressions and Connect test-lab
+  checks for the complete lifecycle.
+- 2026-09-09: completed the pre-release cleanup by releasing browser resources
+  when dynamic tab widgets are removed, hardening filter-tag selectors, and
+  declaring the minimum `bslib` version used by `glassPage()`.

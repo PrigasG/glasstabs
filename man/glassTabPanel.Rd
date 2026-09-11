@@ -42,7 +42,7 @@ data_tab <- glassTabPanel("data", "Data",
 
 }
 \seealso{
-Other glass tabs:
+Other glass tabs: 
 \code{\link{appendGlassTab}()},
 \code{\link{disableGlassTab}()},
 \code{\link{glassTabCondition}()},

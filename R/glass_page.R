@@ -53,6 +53,20 @@ glassPage <- function(..., title = NULL, lang = "en", theme = NULL, padding = NU
     )
   }
 
+  bslib_version <- utils::packageVersion("bslib")
+  if (bslib_version < "0.5.0") {
+    .gt_abort(
+      paste0(
+        "glassPage() needs bslib 0.5.0 or later.",
+        "\nUpdate it with: install.packages(\"bslib\")"
+      ),
+      class = "glasstabs_error_missing_package",
+      argument = "bslib",
+      value = as.character(bslib_version),
+      expected = "bslib 0.5.0 or later"
+    )
+  }
+
   if (!is.null(title)) {
     .gt_check_string(
       title,

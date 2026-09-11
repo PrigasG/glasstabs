@@ -48,7 +48,7 @@ if (interactive()) {
 }
 }
 \seealso{
-Other glass tabs:
+Other glass tabs: 
 \code{\link{appendGlassTab}()},
 \code{\link{glassTabCondition}()},
 \code{\link{glassTabPanel}()},

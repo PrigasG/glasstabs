@@ -353,6 +353,46 @@
     closeDropdownWrap(document.querySelector(selector + attrEquals('data-input-id', inputId)));
   }
 
+  /** Release all listeners, observers, timers, and animations owned by a tab bar. */
+  function destroyTabs(navbar) {
+    if (!navbar) return;
+
+    if (navbar._gtTabTimers) {
+      navbar._gtTabTimers.forEach(function (id) { clearTimeout(id); });
+    }
+    if (navbar._gtClickHandler) navbar.removeEventListener('click', navbar._gtClickHandler);
+    if (navbar._gtKeyHandler) document.removeEventListener('keydown', navbar._gtKeyHandler);
+    if (navbar._gtResizeHandler) window.removeEventListener('resize', navbar._gtResizeHandler);
+    if (navbar._gtScrollHandler && navbar._gtViewport) {
+      navbar._gtViewport.removeEventListener('scroll', navbar._gtScrollHandler);
+    }
+    if (navbar._gtMenuHandler && navbar._gtMenuSelect) {
+      navbar._gtMenuSelect.removeEventListener('change', navbar._gtMenuHandler);
+    }
+    if (navbar._gtSwipeStart && navbar._gtPaneWrap) {
+      navbar._gtPaneWrap.removeEventListener('touchstart', navbar._gtSwipeStart);
+      navbar._gtPaneWrap.removeEventListener('touchend', navbar._gtSwipeEnd);
+      navbar._gtPaneWrap.removeEventListener('touchcancel', navbar._gtSwipeCancel);
+    }
+    if (navbar._gtResizeObserver) navbar._gtResizeObserver.disconnect();
+
+    [navbar._gtHalo, navbar._gtTransfer].forEach(function (element) {
+      if (element && typeof element.getAnimations === 'function') {
+        element.getAnimations().forEach(function (animation) { animation.cancel(); });
+      }
+    });
+
+    navbar._gtTabTimers = [];
+    navbar._gtClickHandler = navbar._gtKeyHandler = navbar._gtResizeHandler = null;
+    navbar._gtScrollHandler = navbar._gtMenuHandler = navbar._gtRefresh = null;
+    navbar._gtActivate = navbar._gtSwipeStart = navbar._gtSwipeEnd = null;
+    navbar._gtSwipeCancel = navbar._gtResizeObserver = null;
+    navbar._gtViewport = navbar._gtMenuSelect = navbar._gtPaneWrap = null;
+    navbar._gtHalo = navbar._gtTransfer = navbar._gtHaloTarget = null;
+    navbar._gtAnimationUntil = 0;
+    navbar._gtTabsInit = false;
+  }
+
   /* TAB ENGINE */
   function initTabs(navbar) {
     function clearTabTimers() {
@@ -362,33 +402,8 @@
       navbar._gtTabTimers = [];
     }
 
-    /* Clean up previous init so dynamic tabs can safely re-initialize */
-    if (navbar._gtTabsInit) {
-      clearTabTimers();
-      if (navbar._gtClickHandler)  navbar.removeEventListener('click',   navbar._gtClickHandler);
-      if (navbar._gtKeyHandler)    document.removeEventListener('keydown', navbar._gtKeyHandler);
-      if (navbar._gtResizeHandler) window.removeEventListener('resize',  navbar._gtResizeHandler);
-      if (navbar._gtScrollHandler && navbar._gtViewport) {
-        navbar._gtViewport.removeEventListener('scroll', navbar._gtScrollHandler);
-      }
-      if (navbar._gtMenuHandler && navbar._gtMenuSelect) {
-        navbar._gtMenuSelect.removeEventListener('change', navbar._gtMenuHandler);
-      }
-      if (navbar._gtSwipeStart && navbar._gtPaneWrap) {
-        navbar._gtPaneWrap.removeEventListener('touchstart', navbar._gtSwipeStart);
-        navbar._gtPaneWrap.removeEventListener('touchend', navbar._gtSwipeEnd);
-        navbar._gtPaneWrap.removeEventListener('touchcancel', navbar._gtSwipeCancel);
-      }
-      if (navbar._gtResizeObserver) navbar._gtResizeObserver.disconnect();
-      navbar._gtClickHandler = navbar._gtKeyHandler = navbar._gtResizeHandler = navbar._gtActivate = null;
-      navbar._gtScrollHandler = navbar._gtMenuHandler = navbar._gtRefresh = null;
-      navbar._gtSwipeStart = navbar._gtSwipeEnd = navbar._gtSwipeCancel = null;
-      navbar._gtViewport = navbar._gtMenuSelect = navbar._gtPaneWrap = null;
-      navbar._gtResizeObserver = null;
-      navbar._gtHaloTarget = null;
-      navbar._gtAnimationUntil = 0;
-    }
-    navbar._gtTabsInit = true;
+    /* Clean up previous init so dynamic tabs can safely re-initialize. */
+    if (navbar._gtTabsInit) destroyTabs(navbar);
     navbar._gtTabTimers = navbar._gtTabTimers || [];
 
     var ns = navbar.getAttribute('data-ns');
@@ -411,6 +426,10 @@
     var activeEl = links.find(function (l) { return l.classList.contains('active'); }) || links[0];
 
     if (!halo || !trf || links.length === 0 || !activeEl) return;
+
+    navbar._gtTabsInit = true;
+    navbar._gtHalo = halo;
+    navbar._gtTransfer = trf;
 
     var active = activeEl.getAttribute('data-value');
     var pending = null;
@@ -1311,6 +1330,8 @@
     }
 
     var openedAt = 0;
+    var openFrame = null;
+    var focusTimer = null;
 
     /* Open / Close */
     function open() {
@@ -1319,7 +1340,9 @@
       teleportOpen(wrap, dropdown);
       /* rAF ensures the browser has laid out the element in body before we
          read offsetHeight (needed for the upward-flip calculation) */
-      requestAnimationFrame(function () {
+      openFrame = requestAnimationFrame(function () {
+        openFrame = null;
+        if (!wrap.classList.contains('gt-layer-active')) return;
         positionDropdown();
         dropdown.classList.add('open');
         trigger.classList.add('open');
@@ -1328,13 +1351,23 @@
       setDropdownOpenState(wrap, inputId, true);
       openedAt = Date.now();
       /* Delay focus so synthetic-click re-fires from AdminLTE don't close us */
-      setTimeout(function () {
+      focusTimer = setTimeout(function () {
+        focusTimer = null;
+        if (!wrap.classList.contains('gt-layer-active')) return;
         optionNav.move('current');
         if (searchIn) searchIn.focus();
       }, 100);
     }
 
     function close() {
+      if (openFrame !== null) {
+        cancelAnimationFrame(openFrame);
+        openFrame = null;
+      }
+      if (focusTimer !== null) {
+        clearTimeout(focusTimer);
+        focusTimer = null;
+      }
       wrap.classList.remove('gt-layer-active');
       dropdown.classList.remove('open');
       trigger.classList.remove('open');
@@ -1403,12 +1436,6 @@
       }
     });
 
-    wrap._gtDocClickHandler = function (e) {
-      if (Date.now() - openedAt < 500) return;
-      if (!wrap.contains(e.target) && !dropdown.contains(e.target)) close();
-    };
-    document.addEventListener('pointerdown', wrap._gtDocClickHandler);
-
     /* Reposition on scroll/resize while open */
     wrap._gtScrollHandler = function (e) {
       if (!dropdown.classList.contains('open')) return;
@@ -1431,10 +1458,6 @@
 
     /* Destroy (lifecycle teardown) */
     function destroy() {
-      if (wrap._gtDocClickHandler) {
-        document.removeEventListener('pointerdown', wrap._gtDocClickHandler);
-        wrap._gtDocClickHandler = null;
-      }
       if (wrap._gtScrollHandler) {
         window.removeEventListener('scroll', wrap._gtScrollHandler, true);
         window.removeEventListener('resize', wrap._gtScrollHandler);
@@ -1736,7 +1759,7 @@
 
     /* renderTags: reads from state, not DOM */
     function renderTags() {
-      var tagPanes = document.querySelectorAll('[data-tags-for="' + inputId + '"]');
+      var tagPanes = document.querySelectorAll(attrEquals('data-tags-for', inputId));
       if (tagPanes.length === 0) return;
 
       tagPanes.forEach(function (pane) {
@@ -1955,13 +1978,17 @@
     }
 
     var openedAt = 0;
+    var openFrame = null;
+    var focusTimer = null;
 
     /* Open / Close */
     function open() {
       closeAllDropdowns(wrap);
       wrap.classList.add('gt-layer-active');
       teleportOpen(wrap, dropdown);
-      requestAnimationFrame(function () {
+      openFrame = requestAnimationFrame(function () {
+        openFrame = null;
+        if (!wrap.classList.contains('gt-layer-active')) return;
         positionDropdown();
         dropdown.classList.add('open');
         trigger.classList.add('open');
@@ -1970,13 +1997,23 @@
       setDropdownOpenState(wrap, inputId, true);
       openedAt = Date.now();
       /* Delay focus so synthetic-click re-fires from AdminLTE don't close us */
-      setTimeout(function () {
+      focusTimer = setTimeout(function () {
+        focusTimer = null;
+        if (!wrap.classList.contains('gt-layer-active')) return;
         optionNav.move('current');
         if (searchIn) searchIn.focus();
       }, 100);
     }
 
     function close() {
+      if (openFrame !== null) {
+        cancelAnimationFrame(openFrame);
+        openFrame = null;
+      }
+      if (focusTimer !== null) {
+        clearTimeout(focusTimer);
+        focusTimer = null;
+      }
       wrap.classList.remove('gt-layer-active');
       dropdown.classList.remove('open');
       trigger.classList.remove('open');
@@ -2043,12 +2080,6 @@
       }
     });
 
-    wrap._gtDocClickHandler = function (e) {
-      if (Date.now() - openedAt < 500) return;
-      if (!wrap.contains(e.target) && !dropdown.contains(e.target)) close();
-    };
-    document.addEventListener('pointerdown', wrap._gtDocClickHandler);
-
     /* Reposition on scroll/resize while open */
     wrap._gtScrollHandler = function (e) {
       if (!dropdown.classList.contains('open')) return;
@@ -2109,10 +2140,6 @@
 
     /* Destroy (lifecycle teardown) */
     function destroy() {
-      if (wrap._gtDocClickHandler) {
-        document.removeEventListener('pointerdown', wrap._gtDocClickHandler);
-        wrap._gtDocClickHandler = null;
-      }
       if (wrap._gtScrollHandler) {
         window.removeEventListener('scroll', wrap._gtScrollHandler, true);
         window.removeEventListener('resize', wrap._gtScrollHandler);
@@ -2232,6 +2259,7 @@
       },
       unsubscribe: function (el) {
         $(el).off('.glasstabs');
+        destroyTabs(el);
       }
     });
     Shiny.inputBindings.register(glassTabsBinding, 'glasstabs.glassTabs');
@@ -2436,21 +2464,45 @@
     if (registerDropdownLifecycleHandlers._done) return;
     registerDropdownLifecycleHandlers._done = true;
 
+    /* Capture outside presses before overlays or other UI frameworks can stop
+       propagation. Dropdowns are teleported to <body>, so check the composed
+       event path rather than relying only on widget ancestry. */
+    document.addEventListener('pointerdown', function (e) {
+      var path = typeof e.composedPath === 'function' ? e.composedPath() : null;
+      document.querySelectorAll('.gt-gs-wrap.gt-layer-active, .gt-ms-wrap.gt-layer-active').forEach(function (w) {
+        var dd = w._gtDropdown || w.querySelector('.gt-gs-dropdown, .gt-ms-dropdown');
+        var insideWrap = path ? path.indexOf(w) !== -1 : w.contains(e.target);
+        var insideDropdown = dd && (path ? path.indexOf(dd) !== -1 : dd.contains(e.target));
+        if (!insideWrap && !insideDropdown) closeDropdownWrap(w);
+      });
+    }, true);
+
     window.addEventListener('resize', function () {
       closeAllDropdowns();
     });
 
-    document.addEventListener('hide.bs.tab', function () {
+    var bootstrapCloseEvents = [
+      'hide.bs.tab',
+      'hidden.bs.modal',
+      'hidden.bs.collapse',
+      'show.bs.modal',
+      'show.bs.offcanvas'
+    ];
+    var closeForBootstrapLayer = function () {
       closeAllDropdowns();
-    });
+    };
 
-    document.addEventListener('hidden.bs.modal', function () {
-      closeAllDropdowns();
+    /* Bootstrap 5 dispatches native events. Bootstrap 3 and 4 use jQuery
+       events, so register through both paths to cover the Shiny ecosystem. */
+    bootstrapCloseEvents.forEach(function (eventName) {
+      document.addEventListener(eventName, closeForBootstrapLayer);
     });
-
-    document.addEventListener('hidden.bs.collapse', function () {
-      closeAllDropdowns();
-    });
+    if (window.jQuery) {
+      window.jQuery(document).on(
+        bootstrapCloseEvents.join(' '),
+        closeForBootstrapLayer
+      );
+    }
 
     document.addEventListener('transitionstart', function (e) {
       var t = e.target;

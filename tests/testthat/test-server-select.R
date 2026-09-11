@@ -32,13 +32,10 @@ test_that("bslib example app exists, parses, and demonstrates square selects", {
 
 test_that("connect workflow example exists, parses, and demonstrates workflow features", {
   app <- system.file("examples", "connect-workflow", "app.R", package = "glasstabs")
-  manifest <- system.file("examples", "connect-workflow", "manifest.json", package = "glasstabs")
   expect_true(nzchar(app) && file.exists(app))
-  expect_true(nzchar(manifest) && file.exists(manifest))
   expect_no_error(parse(app))
 
   app_src <- paste(readLines(app, warn = FALSE), collapse = "\n")
-  manifest_src <- paste(readLines(manifest, warn = FALSE), collapse = "\n")
   expect_match(app_src, "Posit Connect", fixed = TRUE)
   expect_match(app_src, '"Horizontal" = "horizontal"', fixed = TRUE)
   expect_match(app_src, '"Vertical" = "vertical"', fixed = TRUE)
@@ -65,10 +62,17 @@ test_that("connect workflow example exists, parses, and demonstrates workflow fe
   expect_match(app_src, "disableGlassTab", fixed = TRUE)
   expect_match(app_src, "enableGlassTab", fixed = TRUE)
   expect_match(app_src, "What this app is testing", fixed = TRUE)
-  expect_match(manifest_src, '"appmode"\\s*:\\s*"shiny"')
-  expect_match(manifest_src, '"app.R"', fixed = TRUE)
-  expect_match(manifest_src, '"Source"\\s*:\\s*"github"')
-  expect_match(manifest_src, '"RemoteType"\\s*:\\s*"github"')
+
+  # The deployment lock stays in the repository but is intentionally omitted
+  # from CRAN builds so it cannot pin installed users to an older release.
+  manifest <- test_path("..", "..", "inst", "examples", "connect-workflow", "manifest.json")
+  if (file.exists(manifest)) {
+    manifest_src <- paste(readLines(manifest, warn = FALSE), collapse = "\n")
+    expect_match(manifest_src, '"appmode"\\s*:\\s*"shiny"')
+    expect_match(manifest_src, '"app.R"', fixed = TRUE)
+    expect_match(manifest_src, '"Source"\\s*:\\s*"github"')
+    expect_match(manifest_src, '"RemoteType"\\s*:\\s*"github"')
+  }
 })
 
 test_that("pkgdown reference includes server select helpers", {

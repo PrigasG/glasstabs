@@ -1,6 +1,6 @@
 # glasstabs example: indicator styles, vertical orientation, auto theming
 #
-# Demonstrates the features added in the development version:
+# Demonstrates indicator, orientation, and automatic-theme features:
 #   - indicator = "glass" / "solid" / "underline"
 #   - orientation = "vertical" (with underline side-bar + Up/Down keys)
 #   - theme = "auto" (follows Bootstrap 5 / bslib data-bs-theme live)

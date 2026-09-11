@@ -52,6 +52,7 @@ initialises
 lifecycle
 listbox
 multiline
+teleported
 morphism
 namespaced
 namespacing

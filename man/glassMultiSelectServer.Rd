@@ -56,7 +56,7 @@ if (interactive()) {
 
 }
 \seealso{
-Other glass select widgets:
+Other glass select widgets: 
 \code{\link{glassMultiSelect}()},
 \code{\link{glassMultiSelectValue}()},
 \code{\link{glassSelect}()},

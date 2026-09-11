@@ -1,6 +1,6 @@
 Package: glasstabs
 Title: Animated Glass-Style Tabs and Select Inputs for 'Shiny'
-Version: 0.3.4.9000
+Version: 0.4.0
 Authors@R:
     person("George", "Arthur", , "prigasgenthian48@gmail.com", role = c("aut", "cre"))
 Description: Tools for creating animated glassmorphism-style tab
@@ -32,7 +32,7 @@ Imports:
     shiny (>= 1.7.0)
 Suggests:
     bs4Dash,
-    bslib,
+    bslib (>= 0.5.0),
     covr,
     knitr,
     lintr,

@@ -63,7 +63,7 @@ When \code{choices} is supplied and \code{selected} is not, the browser side
 keeps the current selection if it is still present in the new choices.
 }
 \seealso{
-Other glass select widgets:
+Other glass select widgets: 
 \code{\link{glassMultiSelect}()},
 \code{\link{glassMultiSelectServer}()},
 \code{\link{glassMultiSelectValue}()},

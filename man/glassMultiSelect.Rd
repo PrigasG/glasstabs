@@ -130,7 +130,7 @@ light_filter <- glassMultiSelect("f", fruits, theme = "light")
 
 }
 \seealso{
-Other glass select widgets:
+Other glass select widgets: 
 \code{\link{glassMultiSelectServer}()},
 \code{\link{glassMultiSelectValue}()},
 \code{\link{glassSelect}()},

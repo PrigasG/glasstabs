@@ -121,7 +121,8 @@ ui <- fluidPage(
         tab_align = "center"
       )
     ),
-    actionButton("append_tab", "Append tab")
+    actionButton("append_tab", "Append tab"),
+    actionButton("show_test_modal", "Show test modal")
   )
 )
 
@@ -161,6 +162,14 @@ server <- function(input, output, session) {
       select = TRUE
     )
   }, once = TRUE)
+
+  observeEvent(input$show_test_modal, {
+    showModal(modalDialog(
+      title = "Lifecycle test modal",
+      "An open glasstabs dropdown should close before this modal appears.",
+      easyClose = TRUE
+    ))
+  })
 }
 
 shinyApp(ui, server)

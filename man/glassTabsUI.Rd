@@ -101,7 +101,7 @@ An \code{htmltools::tagList} ready to use in a Shiny UI.
 Animated glass-style tab navigation UI
 }
 \seealso{
-Other glass tabs:
+Other glass tabs: 
 \code{\link{appendGlassTab}()},
 \code{\link{disableGlassTab}()},
 \code{\link{glassTabCondition}()},

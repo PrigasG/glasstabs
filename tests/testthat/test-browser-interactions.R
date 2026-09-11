@@ -127,6 +127,194 @@ test_that("browser: controller close closes an open dropdown and updates open st
   expect_equal(app$get_value(output = "fruit_open_state"), "closed")
 })
 
+test_that("browser: immediate outside presses close teleported dropdowns", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-immediate-outside-close",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+
+  expect_true(app$get_js("
+    (function() {
+      document.querySelector('#fruit-trigger').click();
+      document.body.dispatchEvent(new PointerEvent('pointerdown', {
+        bubbles: true,
+        composed: true
+      }));
+      setTimeout(function() {
+        document.body.setAttribute('data-gt-close-settled', 'true');
+      }, 150);
+      return true;
+    })()
+  "))
+  app$wait_for_js("document.body.getAttribute('data-gt-close-settled') === 'true'")
+
+  expect_true(app$get_js("
+    (function() {
+      var wrap = document.querySelector('#fruit-wrap');
+      var dropdown = document.querySelector('#fruit-dropdown');
+      return !wrap.classList.contains('gt-layer-active') &&
+        !dropdown.classList.contains('open') &&
+        dropdown.parentElement === wrap &&
+        document.activeElement !== dropdown.querySelector('input');
+    })()
+  "))
+  app$wait_for_idle()
+  expect_equal(app$get_value(output = "fruit_open_state"), "closed")
+})
+
+test_that("browser: overlay event interception cannot strand dropdowns", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-overlay-dropdown-close",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+
+  expect_true(app$get_js("
+    (function() {
+      var overlay = document.createElement('div');
+      overlay.id = 'test-loading-overlay';
+      overlay.addEventListener('pointerdown', function(e) {
+        e.stopPropagation();
+      });
+      document.body.appendChild(overlay);
+
+      document.querySelector('#cats-trigger').click();
+      overlay.dispatchEvent(new PointerEvent('pointerdown', {
+        bubbles: true,
+        composed: true
+      }));
+      setTimeout(function() {
+        document.body.setAttribute('data-gt-overlay-close-settled', 'true');
+      }, 150);
+      return true;
+    })()
+  "))
+  app$wait_for_js("document.body.getAttribute('data-gt-overlay-close-settled') === 'true'")
+
+  expect_true(app$get_js("
+    (function() {
+      var wrap = document.querySelector('#cats-wrap');
+      var dropdown = document.querySelector('#cats-dropdown');
+      var overlay = document.querySelector('#test-loading-overlay');
+      if (overlay) overlay.remove();
+      return !wrap.classList.contains('gt-layer-active') &&
+        !dropdown.classList.contains('open') &&
+        dropdown.parentElement === wrap &&
+        document.activeElement !== dropdown.querySelector('input');
+    })()
+  "))
+})
+
+test_that("browser: presses inside a teleported dropdown keep it open", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-inside-dropdown-press",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+  app$click(selector = "#cats-trigger")
+  app$wait_for_js("document.querySelector('#cats-dropdown.open') !== null")
+
+  expect_true(app$get_js("
+    (function() {
+      var option = document.querySelector('#cats-dropdown .gt-ms-option');
+      option.dispatchEvent(new PointerEvent('pointerdown', {
+        bubbles: true,
+        composed: true
+      }));
+      return document.querySelector('#cats-dropdown.open') !== null &&
+        document.querySelector('#cats-wrap').classList.contains('gt-layer-active');
+    })()
+  "))
+})
+
+test_that("browser: a programmatically opened Bootstrap modal closes dropdowns", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-modal-dropdown-close",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+  app$click(selector = "#cats-trigger")
+  app$wait_for_js("document.querySelector('#cats-dropdown.open') !== null")
+
+  # Drive the input over Shiny's connection instead of clicking the button.
+  # No outside pointer press occurs, so the modal lifecycle event owns close.
+  app$set_inputs(show_test_modal = "click")
+  app$wait_for_js("document.querySelector('.modal.in, .modal.show') !== null")
+  expect_true(app$get_js("
+    (function() {
+      var wrap = document.querySelector('#cats-wrap');
+      var dropdown = document.querySelector('#cats-dropdown');
+      return !dropdown.classList.contains('open') &&
+        !wrap.classList.contains('gt-layer-active') &&
+        dropdown.parentElement === wrap;
+    })()
+  "))
+})
+
+test_that("browser: unbinding a tab widget releases its browser resources", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-tab-cleanup",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+  app$wait_for_js("document.querySelector('#mobile_tabs-navbar')._gtTabsInit === true")
+
+  expect_true(app$get_js("
+    (function() {
+      var wrap = document.querySelector('#mobile_tabs-wrap');
+      var navbar = document.querySelector('#mobile_tabs-navbar');
+      Shiny.unbindAll(wrap);
+      return navbar._gtTabsInit === false &&
+        navbar._gtClickHandler === null &&
+        navbar._gtKeyHandler === null &&
+        navbar._gtResizeObserver === null &&
+        navbar._gtHalo === null &&
+        navbar._gtTransfer === null;
+    })()
+  "))
+})
+
 test_that("browser: tabs keep focus, scroll, menu state, and dynamic tabs in sync", {
   skip_on_covr()
   skip_if_not_installed("shinytest2")
