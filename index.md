@@ -26,9 +26,8 @@ Install the CRAN release:
 install.packages("glasstabs")
 ```
 
-The GitHub build is the development version, currently `0.3.4.9000` on
-the way to 0.4.0. It includes features that are not part of the CRAN
-release:
+Install the development version from GitHub when you want changes that
+are not yet available in the CRAN release:
 
 ``` r
 
@@ -36,8 +35,8 @@ pak::pak("PrigasG/glasstabs@main")
 packageVersion("glasstabs")
 ```
 
-Installing from GitHub replaces the installed copy on your machine and
-gives you access to current features before CRAN release.
+Installing from GitHub replaces the installed copy on your machine. For
+most people, the CRAN installation above is the simpler choice.
 
 ## A complete app
 
@@ -259,7 +258,6 @@ glassSelect(
 
 `focus_ring` keeps the keyboard indicator in the same colour family as
 the rest of an app while remaining separate from its decorative accent.
-Tabs, select triggers, and search fields all use it.
 
 Inside a `bs4Dash` card, `compact = TRUE` reduces spacing and
 `wrap = FALSE` lets the card provide the outer container.
@@ -366,7 +364,7 @@ badge, theme, and page-wrapper checks collected in one app.
 
 | Function | Description |
 |----|----|
-| `glassTabsUI(id, ..., selected, wrap, compact, shape, indicator, orientation, tab_align, text_align, overflow, swipe, extra_ui, theme)` | Animated tab bar with responsive overflow and optional touch swipes |
+| `glassTabsUI(id, ..., selected, wrap, compact, shape, indicator, orientation, tab_align, text_align, overflow, swipe, extra_ui, theme, dark_selector)` | Animated tab bar with responsive overflow and optional touch swipes |
 | `glassTabPanel(value, label, ..., icon, selected)` | Define one tab and its content; `icon` accepts [`shiny::icon()`](https://rdrr.io/pkg/shiny/man/icon.html) |
 | `glassTabsServer(id, bookmark)` | Reactive returning the active tab; can bookmark the active tab in the URL |
 | `glassTabsOutput(outputId)` | UI placeholder for a server-rendered tab widget |
@@ -413,9 +411,10 @@ badge, theme, and page-wrapper checks collected in one app.
 ## Documentation and support
 
 The [glasstabs website](https://prigasg.github.io/glasstabs/) includes
-focused articles and a searchable function reference. Release notes are
-available in [`NEWS.md`](https://prigasg.github.io/glasstabs/NEWS.md) or
-from R with
+focused articles, a searchable function reference, and the [v0.4.0
+cheatsheet](https://prigasg.github.io/glasstabs/articles/cheatsheet.html).
+Release notes are available in
+[`NEWS.md`](https://prigasg.github.io/glasstabs/NEWS.md) or from R with
 [`glasstabs_news()`](https://prigasg.github.io/glasstabs/reference/glasstabs_news.md).
 
 If a widget does not fit naturally into your app, please open a [GitHub

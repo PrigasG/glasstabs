@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="index.html">glasstabs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.4.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -101,7 +101,7 @@
 <div class="section level2">
 <h2 id="experimental-glasspage">Experimental: <code>glassPage()</code>
 <a class="anchor" aria-label="anchor" href="#experimental-glasspage"></a></h2>
-<p><code><a href="reference/glassPage.html">glassPage()</a></code> will be a small optional wrapper around <code>bslib</code>. It should load the glasstabs dependency, create a fillable page, and leave normal <code>bslib</code> page features available. It is experimental during the 0.4.x cycle so its API can settle before becoming a stable part of the package.</p>
+<p><code><a href="reference/glassPage.html">glassPage()</a></code> is a small optional wrapper around <code>bslib</code>. It loads the glasstabs dependency, creates a fillable page, and leaves normal <code>bslib</code> page features available. It is experimental during the 0.4.x cycle so its API can settle before becoming a stable part of the package.</p>
 <p>The wrapper will not replace <code>fluidPage()</code>, <code><a href="https://rstudio.github.io/bslib/reference/page_fillable.html" class="external-link">bslib::page_fillable()</a></code>, or dashboard layouts. Existing widgets remain usable in all of them.</p>
 </div>
 <div class="section level2">
@@ -123,7 +123,10 @@
 <h2 id="shipped-foundations">Shipped foundations<a class="anchor" aria-label="anchor" href="#shipped-foundations"></a></h2>
 <table class="table"><colgroup><col width="50%"><col width="50%"></colgroup><thead><tr><th>Version</th>
 <th>Highlights</th>
-</tr></thead><tbody><tr><td>0.3.4</td>
+</tr></thead><tbody><tr><td>0.4.0</td>
+<td>Responsive overflow, optional swipe gestures, accessible tab semantics, reduced-motion and contrast fallbacks, independent tab and text alignment, themeable focus rings, and experimental <code><a href="reference/glassPage.html">glassPage()</a></code>
+</td>
+</tr><tr><td>0.3.4</td>
 <td>Indicator styles, vertical tabs, automatic bslib theming, square controls, server-side select search, dynamic tab management, close helpers, improved diagnostics, and broader accessibility fallbacks</td>
 </tr><tr><td>0.3.1</td>
 <td>
@@ -142,11 +145,15 @@
 <li>2026-07-31: added the experimental <code><a href="reference/glassPage.html">glassPage()</a></code> wrapper with classed, user-facing errors and optional <code>bslib</code> integration.</li>
 <li>2026-07-31: added unit and real-browser coverage, refreshed the README and pkgdown reference, and added a responsive-accessibility vignette.</li>
 <li>2026-07-31: verified the pkgdown article at desktop and phone widths; the narrow layout has no page-level overflow or browser errors.</li>
-<li>2026-07-31: built the source package and ran <code>R CMD check --as-cran</code> with no errors or warnings. The only note is expected while the package uses the development version <code>0.3.4.9000</code>; release builds will use <code>0.4.0</code>.</li>
+<li>2026-07-31: built the development source package and ran <code>R CMD check --as-cran</code> with no errors or warnings before release preparation.</li>
 <li>2026-08-01: separated tab-group and tab-content alignment, documented the horizontal-only compact menu, and made browser CI respect reduced motion.</li>
 <li>2026-08-01: made inactive panels inert, centralized halo realignment during scrolling and resizing, and kept disabled tabs discoverable by keyboard without allowing activation.</li>
 <li>2026-08-01: renamed the developmental multiline overflow mode to avoid confusing it with the existing <code>wrap</code> container argument, exposed the page language in <code><a href="reference/glassPage.html">glassPage()</a></code>, hardened tab-value selectors and widget scoping, and added JavaScript linting plus browser regression coverage.</li>
 <li>2026-08-01: made rapid tab changes transactional, suppressed abandoned intermediate server values, and added consistent themeable focus rings for tabs, select triggers, and teleported select search fields.</li>
+<li>2026-08-01: prepared the local 0.4.0 release candidate, rebuilt the pkgdown site, passed all 748 package tests and both linters, and completed <code>R CMD check --as-cran</code> with no errors or warnings. The sole incoming NOTE records that the previous CRAN update was one day earlier.</li>
+<li>2026-08-01: rebuilt the PDF and HTML cheatsheets for the complete 0.4.0 API, with all exported functions and the responsive and accessibility behavior in one release reference.</li>
+<li>2026-09-09: hardened teleported select dropdowns against immediate outside presses, event-blocking overlays, and programmatically opened Bootstrap modals or offcanvas panels; added browser regressions and Connect test-lab checks for the complete lifecycle.</li>
+<li>2026-09-09: completed the pre-release cleanup by releasing browser resources when dynamic tab widgets are removed, hardening filter-tag selectors, and declaring the minimum <code>bslib</code> version used by <code><a href="reference/glassPage.html">glassPage()</a></code>.</li>
 </ul></div>
 </div>
 

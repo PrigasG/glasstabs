@@ -31,7 +31,7 @@
 
     <a class="navbar-brand me-2" href="index.html">glasstabs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.4.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -98,11 +98,11 @@
 <p>Install the CRAN release:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"glasstabs"</span><span class="op">)</span></span></code></pre></div>
-<p>The GitHub build is the development version, currently <code>0.3.4.9000</code> on the way to 0.4.0. It includes features that are not part of the CRAN release:</p>
+<p>Install the development version from GitHub when you want changes that are not yet available in the CRAN release:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"PrigasG/glasstabs@main"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"glasstabs"</span><span class="op">)</span></span></code></pre></div>
-<p>Installing from GitHub replaces the installed copy on your machine and gives you access to current features before CRAN release.</p>
+<p>Installing from GitHub replaces the installed copy on your machine. For most people, the CRAN installation above is the simpler choice.</p>
 </div>
 <div class="section level2">
 <h2 id="a-complete-app">A complete app<a class="anchor" aria-label="anchor" href="#a-complete-app"></a>
@@ -260,7 +260,7 @@
 <span>    focus_ring <span class="op">=</span> <span class="st">"#1d4ed8"</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><code>focus_ring</code> keeps the keyboard indicator in the same colour family as the rest of an app while remaining separate from its decorative accent. Tabs, select triggers, and search fields all use it.</p>
+<p><code>focus_ring</code> keeps the keyboard indicator in the same colour family as the rest of an app while remaining separate from its decorative accent.</p>
 <p>Inside a <code>bs4Dash</code> card, <code>compact = TRUE</code> reduces spacing and <code>wrap = FALSE</code> lets the card provide the outer container.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">bs4Dash</span><span class="fu">::</span><span class="fu"><a href="https://bs4dash.rinterface.com/reference/box.html" class="external-link">box</a></span><span class="op">(</span></span>
@@ -396,7 +396,7 @@
 </tr></thead>
 <tbody>
 <tr>
-<td><code>glassTabsUI(id, ..., selected, wrap, compact, shape, indicator, orientation, tab_align, text_align, overflow, swipe, extra_ui, theme)</code></td>
+<td><code>glassTabsUI(id, ..., selected, wrap, compact, shape, indicator, orientation, tab_align, text_align, overflow, swipe, extra_ui, theme, dark_selector)</code></td>
 <td>Animated tab bar with responsive overflow and optional touch swipes</td>
 </tr>
 <tr>
@@ -583,7 +583,7 @@
 <div class="section level2">
 <h2 id="documentation-and-support">Documentation and support<a class="anchor" aria-label="anchor" href="#documentation-and-support"></a>
 </h2>
-<p>The <a href="https://prigasg.github.io/glasstabs/">glasstabs website</a> includes focused articles and a searchable function reference. Release notes are available in <a href="NEWS.html"><code>NEWS.md</code></a> or from R with <code><a href="reference/glasstabs_news.html">glasstabs_news()</a></code>.</p>
+<p>The <a href="https://prigasg.github.io/glasstabs/">glasstabs website</a> includes focused articles, a searchable function reference, and the <a href="https://prigasg.github.io/glasstabs/articles/cheatsheet.html">v0.4.0 cheatsheet</a>. Release notes are available in <a href="NEWS.html"><code>NEWS.md</code></a> or from R with <code><a href="reference/glasstabs_news.html">glasstabs_news()</a></code>.</p>
 <p>If a widget does not fit naturally into your app, please open a <a href="https://github.com/PrigasG/glasstabs/issues" class="external-link">GitHub issue</a> with a small Shiny example. Questions, bug reports, and ideas for making the package easier to use are all welcome.</p>
 </div>
 </div>
