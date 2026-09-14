@@ -7,7 +7,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/PrigasG/glasstabs/blob/main/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/PrigasG/glasstabs/blob/v0.4.0/DESCRIPTION)
 
 Arthur G (2026). *glasstabs: Animated Glass-Style Tabs and Select Inputs
 for 'Shiny'*. R package version 0.4.0,

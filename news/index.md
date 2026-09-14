@@ -2,6 +2,8 @@
 
 ## glasstabs 0.4.0
 
+CRAN release: 2026-09-11
+
 ### Responsive and accessible navigation
 
 - This release makes tabs more dependable on small screens and for
