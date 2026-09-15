@@ -144,3 +144,6 @@ These remain worthwhile, but they are outside the focused 0.4.0 release:
   resources when dynamic tab widgets are removed, hardening filter-tag
   selectors, and declaring the minimum `bslib` version used by
   [`glassPage()`](https://prigasg.github.io/glasstabs/reference/glassPage.md).
+- 2026-09-14: aligned single- and multi-select dropdown panels with
+  their rendered trigger width and added real-browser coverage for
+  narrow fields.

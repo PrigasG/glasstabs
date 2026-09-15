@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">glasstabs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -74,7 +74,7 @@
       <img src="../logo.svg" class="logo" alt=""><h1>Multi-Select Filter with glasstabs</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/PrigasG/glasstabs/blob/v0.4.0/vignettes/multiselect.Rmd" class="external-link"><code>vignettes/multiselect.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/PrigasG/glasstabs/blob/main/vignettes/multiselect.Rmd" class="external-link"><code>vignettes/multiselect.Rmd</code></a></small>
       <div class="d-none name"><code>multiselect.Rmd</code></div>
     </div>
 
@@ -242,6 +242,9 @@ This complete layout places it beside a native multiple select:</p>
 <p>Like native <code><a href="https://rdrr.io/pkg/shiny/man/selectInput.html" class="external-link">selectizeInput()</a></code>,
 <code><a href="../reference/glassMultiSelect.html">glassMultiSelect()</a></code> accepts a <code>width</code>, grouped
 choices as a named list, and disabled state:</p>
+<p>The open dropdown follows the trigger width. Longer labels wrap
+within that space rather than making a short field unexpectedly
+wider.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Fixed / fluid width</span></span>
 <span><span class="fu"><a href="../reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span><span class="st">"filters_w"</span>, <span class="va">fruits</span>, width <span class="op">=</span> <span class="st">"100%"</span><span class="op">)</span></span>

@@ -132,6 +132,9 @@ For parity with native
 [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md)
 accepts a `width`, grouped choices as a named list, and disabled state:
 
+The open dropdown follows the trigger width. Longer labels wrap within
+that space rather than making a short field unexpectedly wider.
+
 ``` r
 
 # Fixed / fluid width

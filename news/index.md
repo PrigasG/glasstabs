@@ -1,5 +1,19 @@
 # Changelog
 
+## glasstabs 0.4.1
+
+### Select dropdown sizing
+
+- [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md)
+  and
+  [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md)
+  dropdown panels now follow their trigger width. Short option lists
+  stay aligned with the field instead of opening a wider fixed panel,
+  while the viewport cap still protects narrow screens.
+- Long option labels, group headings, and unbroken identifiers now wrap
+  inside the panel instead of being clipped or creating horizontal
+  overflow.
+
 ## glasstabs 0.4.0
 
 CRAN release: 2026-09-11

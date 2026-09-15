@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">glasstabs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -74,7 +74,7 @@
       <img src="../logo.svg" class="logo" alt=""><h1>Single-Select Dropdown with glasstabs</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/PrigasG/glasstabs/blob/v0.4.0/vignettes/glassSelect.Rmd" class="external-link"><code>vignettes/glassSelect.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/PrigasG/glasstabs/blob/main/vignettes/glassSelect.Rmd" class="external-link"><code>vignettes/glassSelect.Rmd</code></a></small>
       <div class="d-none name"><code>glassSelect.Rmd</code></div>
     </div>
 
@@ -203,6 +203,9 @@ control:</p>
 <p>For parity with native <code><a href="https://rdrr.io/pkg/shiny/man/selectInput.html" class="external-link">selectizeInput()</a></code>,
 <code><a href="../reference/glassSelect.html">glassSelect()</a></code> accepts a <code>width</code>, grouped choices
 as a named list, and disabled state:</p>
+<p>The open dropdown follows the trigger width. Longer labels wrap
+within that space rather than making a short field unexpectedly
+wider.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Fixed / fluid width</span></span>
 <span><span class="fu"><a href="../reference/glassSelect.html">glassSelect</a></span><span class="op">(</span><span class="st">"region_w"</span>, <span class="va">fruits</span>, width <span class="op">=</span> <span class="st">"240px"</span><span class="op">)</span></span>
