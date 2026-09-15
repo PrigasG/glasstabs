@@ -117,6 +117,10 @@ glassMultiSelect(
 glassFilterTags("status")
 ```
 
+Select dropdowns follow the width of their trigger, so short option lists stay
+visually aligned with the field instead of opening an unnecessarily wide panel.
+Long labels and unbroken identifiers wrap within the available space.
+
 ## Match the surrounding app
 
 Use `theme = "auto"` in Bootstrap 5 or `bslib` apps so the widgets follow the page's light and dark modes. Use `shape = "square"` when the controls sit next to native Shiny inputs.

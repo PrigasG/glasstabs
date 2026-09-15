@@ -196,7 +196,7 @@
 
 /* Dropdown panel */
 .gt-ms-dropdown{
-  position:fixed;min-width:232px;
+  position:fixed;min-width:160px;
   border-radius:14px;
   background:var(--ms-bg);
   border:1px solid var(--ms-border);
@@ -270,6 +270,13 @@
 }
 .gt-ms-option:hover{background:var(--ms-tx-06);}
 .gt-ms-option.hidden{display:none;}
+
+.gt-ms-option > span:last-child,
+.gt-ms-all > span:last-child{
+  min-width:0;
+  overflow-wrap:anywhere;
+  word-break:break-word;
+}
 
 /* Checkbox container (shared) */
 .gt-ms-check{
@@ -485,7 +492,7 @@
 /* Dropdown panel */
 .gt-gs-dropdown{
   position:fixed;
-  min-width:232px;
+  min-width:160px;
   border-radius:14px;
   background:var(--ms-bg);
   border:1px solid var(--ms-border);
@@ -571,6 +578,12 @@
 
 .gt-gs-option.hidden{
   display:none;
+}
+
+.gt-gs-option > span:last-child{
+  min-width:0;
+  overflow-wrap:anywhere;
+  word-break:break-word;
 }
 
 /* Check container */
@@ -849,6 +862,8 @@
   cursor:default;
   user-select:none;
   pointer-events:none;
+  overflow-wrap:anywhere;
+  word-break:break-word;
 }
 .gt-gs-optgroup.hidden,
 .gt-ms-optgroup.hidden{

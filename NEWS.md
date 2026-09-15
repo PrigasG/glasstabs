@@ -1,3 +1,14 @@
+# glasstabs 0.4.1
+
+## Select dropdown sizing
+
+* `glassSelect()` and `glassMultiSelect()` dropdown panels now follow their
+  trigger width. Short option lists stay aligned with the field instead of
+  opening a wider fixed panel, while the viewport cap still protects narrow
+  screens.
+* Long option labels, group headings, and unbroken identifiers now wrap inside
+  the panel instead of being clipped or creating horizontal overflow.
+
 # glasstabs 0.4.0
 
 ## Responsive and accessible navigation

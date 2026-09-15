@@ -129,3 +129,5 @@ These remain worthwhile, but they are outside the focused 0.4.0 release:
 - 2026-09-09: completed the pre-release cleanup by releasing browser resources
   when dynamic tab widgets are removed, hardening filter-tag selectors, and
   declaring the minimum `bslib` version used by `glassPage()`.
+- 2026-09-14: aligned single- and multi-select dropdown panels with their
+  rendered trigger width and added real-browser coverage for narrow fields.

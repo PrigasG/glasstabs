@@ -12,6 +12,11 @@ if (file.exists(file.path(pkg_root, "DESCRIPTION")) &&
 }
 
 choices <- c(Apple = "apple", Banana = "banana", Cherry = "cherry")
+short_field_choices <- c(
+  One = "one",
+  "A longer option label that should wrap cleanly" = "long_words",
+  "FacilityIdentifierWithoutNaturalBreakPoints123456789" = "long_token"
+)
 
 ui <- fluidPage(
   useGlassTabs(),
@@ -37,6 +42,24 @@ ui <- fluidPage(
       selected = "apple",
       show_style_switcher = FALSE,
       shape = "rounded"
+    ),
+    tags$div(
+      style = "width:176px",
+      glassSelect(
+        "short_single",
+        short_field_choices,
+        selected = "one",
+        searchable = FALSE
+      )
+    ),
+    tags$div(
+      style = "width:176px",
+      glassMultiSelect(
+        "short_multi",
+        short_field_choices,
+        selected = "one",
+        show_style_switcher = FALSE
+      )
     ),
     radioButtons(
       "shape",

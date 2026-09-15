@@ -56,6 +56,106 @@ test_that("browser: glassMultiSelect toggles choices and updates input", {
   expect_equal(app$get_value(input = "cats"), c("apple", "cherry"))
 })
 
+test_that("browser: narrow select dropdowns resize and wrap long labels", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-select-trigger-width",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+  app$click(selector = "#short_single-trigger")
+  app$wait_for_js("document.querySelector('#short_single-dropdown.open') !== null")
+  expect_true(app$get_js("
+    (function() {
+      var trigger = document.querySelector('#short_single-trigger');
+      var dropdown = document.querySelector('#short_single-dropdown');
+      return Math.abs(trigger.offsetWidth - dropdown.offsetWidth) <= 1;
+    })()
+  "))
+  expect_true(app$get_js("
+    (function() {
+      var words = document.querySelector(
+        '#short_single-dropdown [data-value=long_words] > span:last-child'
+      );
+      var token = document.querySelector(
+        '#short_single-dropdown [data-value=long_token] > span:last-child'
+      );
+      return words.offsetHeight > 20 && token.scrollWidth <= token.clientWidth + 1;
+    })()
+  "))
+
+  expect_true(app$get_js("
+    (function() {
+      var field = document.querySelector('#short_single-field');
+      field.style.width = '220px';
+      window.dispatchEvent(new Event('resize'));
+      return true;
+    })()
+  "))
+  app$wait_for_js("
+    !document.querySelector('#short_single-dropdown').classList.contains('open') &&
+    document.querySelector('#short_single-dropdown').parentElement ===
+      document.querySelector('#short_single-wrap')
+  ")
+  app$click(selector = "#short_single-trigger")
+  app$wait_for_js("
+    document.querySelector('#short_single-dropdown.open') !== null &&
+    Math.abs(
+      document.querySelector('#short_single-trigger').offsetWidth -
+      document.querySelector('#short_single-dropdown').offsetWidth
+    ) <= 1 && document.querySelector('#short_single-dropdown').offsetWidth >= 219
+  ")
+
+  expect_true(app$get_js("
+    (function() {
+      var field = document.querySelector('#short_single-field');
+      field.style.position = 'fixed';
+      field.style.right = '0';
+      field.style.top = '20px';
+      window.dispatchEvent(new Event('resize'));
+      return true;
+    })()
+  "))
+  app$wait_for_js("document.querySelector('#short_single-dropdown.open') === null")
+  app$click(selector = "#short_single-trigger")
+  app$wait_for_js("
+    (function() {
+      var dropdown = document.querySelector('#short_single-dropdown.open');
+      if (!dropdown) return false;
+      var rect = dropdown.getBoundingClientRect();
+      return rect.left >= 7 && rect.right <= window.innerWidth - 7;
+    })()
+  ")
+
+  app$click(selector = "#short_multi-trigger")
+  app$wait_for_js("document.querySelector('#short_multi-dropdown.open') !== null")
+  expect_true(app$get_js("
+    (function() {
+      var trigger = document.querySelector('#short_multi-trigger');
+      var dropdown = document.querySelector('#short_multi-dropdown');
+      return Math.abs(trigger.offsetWidth - dropdown.offsetWidth) <= 1;
+    })()
+  "))
+  expect_true(app$get_js("
+    (function() {
+      var words = document.querySelector(
+        '#short_multi-dropdown [data-value=long_words] > span:last-child'
+      );
+      var token = document.querySelector(
+        '#short_multi-dropdown [data-value=long_token] > span:last-child'
+      );
+      return words.offsetHeight > 20 && token.scrollWidth <= token.clientWidth + 1;
+    })()
+  "))
+})
+
 test_that("browser: runtime setShape reaches wrapper and teleported dropdown", {
   skip_on_covr()
   skip_if_not_installed("shinytest2")

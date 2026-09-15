@@ -283,8 +283,10 @@
     var vh = window.innerHeight;
     var margin = 8;
     var maxWidth = Math.max(160, vw - margin * 2);
+    var dropdownWidth = Math.min(rect.width || 160, maxWidth);
     dropdown.style.maxWidth = maxWidth + 'px';
-    dropdown.style.minWidth = Math.min(232, maxWidth) + 'px';
+    dropdown.style.width = dropdownWidth + 'px';
+    dropdown.style.minWidth = dropdownWidth + 'px';
 
     var ddHeight = dropdown.offsetHeight || 0;
     var ddWidth = Math.min(dropdown.offsetWidth || rect.width, maxWidth);
@@ -312,6 +314,7 @@
     dropdown.style.removeProperty('top');
     dropdown.style.removeProperty('right');
     dropdown.style.removeProperty('left');
+    dropdown.style.removeProperty('width');
     dropdown.style.removeProperty('max-width');
     dropdown.style.removeProperty('min-width');
     TELEPORT_CLASSES.forEach(function (cls) { dropdown.classList.remove(cls); });
