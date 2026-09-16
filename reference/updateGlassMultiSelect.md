@@ -15,7 +15,15 @@ updateGlassMultiSelect(
   check_style = NULL,
   shape = NULL,
   disabled = NULL,
-  disabled_choices = NULL
+  disabled_choices = NULL,
+  preserve_selection = TRUE,
+  drop_invalid = TRUE,
+  notify = c("changed", "always", "never"),
+  searchable = NULL,
+  search_threshold = NULL,
+  selection_display = NULL,
+  selection_max_items = NULL,
+  dropdown_max_height = NULL
 )
 ```
 
@@ -58,6 +66,44 @@ updateGlassMultiSelect(
 
   Optional character vector of choice values to render as disabled.
   Defaults to `NULL`, which leaves disabled choices unchanged.
+
+- preserve_selection:
+
+  Keep the current selection when choices change. Default `TRUE`.
+  Ignored when `selected` is supplied.
+
+- drop_invalid:
+
+  Drop selected values that are absent from new choices. Default `TRUE`.
+  Set to `FALSE` for server-backed or staged choice updates where
+  selected values may be temporarily absent.
+
+- notify:
+
+  When to notify Shiny after the transaction: `"changed"` (default),
+  `"always"`, or `"never"`.
+
+- searchable:
+
+  Optional new search visibility: `TRUE`, `FALSE`, or `"auto"`. `NULL`
+  keeps the current setting.
+
+- search_threshold:
+
+  Optional new threshold used by automatic search.
+
+- selection_display:
+
+  Optional new trigger summary mode.
+
+- selection_max_items:
+
+  Optional new summary label limit.
+
+- dropdown_max_height:
+
+  Optional new option-area maximum height as a CSS unit. `NULL` keeps
+  the current height.
 
 ## Value
 

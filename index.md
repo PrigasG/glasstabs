@@ -141,6 +141,42 @@ lists stay visually aligned with the field instead of opening an
 unnecessarily wide panel. Long labels and unbroken identifiers wrap
 within the available space.
 
+For a short list, the search box can stay out of the way. With
+`searchable = "auto"`, it appears only when the list reaches the chosen
+threshold. The trigger can also show a compact summary instead of the
+generic “Multiple selection” label.
+
+``` r
+
+glassMultiSelect(
+  "facility",
+  facility_choices,
+  searchable = "auto",
+  search_threshold = 12,
+  selection_display = "summary",
+  selection_max_items = 2,
+  dropdown_max_height = "18rem"
+)
+```
+
+Choice updates are handled as one transaction. Existing selections are
+kept when they still exist, and Shiny is notified only when the
+effective value changes. `notify = "never"` is useful when several
+linked filters are settling and the final update should be the only one
+that reaches the server.
+
+``` r
+
+updateGlassMultiSelect(
+  session,
+  "facility",
+  choices = facilities_for_region,
+  preserve_selection = TRUE,
+  drop_invalid = TRUE,
+  notify = "changed"
+)
+```
+
 ## Match the surrounding app
 
 Use `theme = "auto"` in Bootstrap 5 or `bslib` apps so the widgets
@@ -392,7 +428,7 @@ badge, theme, and page-wrapper checks collected in one app.
 | `glassMultiSelect(inputId, choices, ...)` | Multi-select dropdown widget |
 | `glassMultiSelectServer(inputId, choices, ...)` | Server-side search for large multi-select choice sets |
 | `updateGlassMultiSelect(session, inputId, ...)` | Update multi-select choices, selection, or style |
-| `glassMultiSelectValue(input, inputId)` | Reactive helpers for multi-select value and style |
+| `glassMultiSelectValue(input, inputId, ...)` | Raw and resolved multi-select values, empty state, and style |
 | `glassSelect(inputId, choices, ...)` | Single-select dropdown widget |
 | `glassSelectServer(inputId, choices, ...)` | Server-side search for large single-select choice sets |
 | `updateGlassSelect(session, inputId, ...)` | Update single-select choices, selection, or style |

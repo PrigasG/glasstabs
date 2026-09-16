@@ -193,7 +193,8 @@ updateGlassMultiSelect(
   session,
   "metric",
   selected = c("revenue", "orders"),
-  check_style = "filled"
+  check_style = "filled",
+  notify = "changed"
 )
 
 # Clear selection
@@ -215,8 +216,25 @@ glassMultiSelect(
   show_style_switcher = TRUE,
   show_select_all = TRUE,
   show_clear_all = TRUE,
+  searchable = "auto",
+  search_threshold = 12,
+  selection_display = "summary",
+  selection_max_items = 2,
+  dropdown_max_height = "18rem",
   theme = "dark"
 )
+```
+
+``` r
+
+# Let an empty UI selection mean every choice in filtering code.
+metric <- glassMultiSelectValue(
+  input,
+  "metric",
+  choices = choices,
+  empty_behavior = "all"
+)
+metric$resolved()
 ```
 
 ## Single-select: basic pattern
@@ -353,6 +371,7 @@ glassMultiSelect(
 |----|----|
 | `glassTabsUI("main", ...)` | `input[["main-active_tab"]]` or `glassTabsServer("main")()` |
 | `glassMultiSelect("metric", ...)` | `input$metric` or `glassMultiSelectValue(input, "metric")$selected()` |
+| resolved multi-select value | `glassMultiSelectValue(..., empty_behavior = "all")$resolved()` |
 | multi-select style | `input$metric_style` or `glassMultiSelectValue(input, "metric")$style()` |
 | select open state | `input$metric_open` / `input$region_open` |
 | `glassSelect("region", ...)` | `input$region` or `glassSelectValue(input, "region")()` |
@@ -404,7 +423,8 @@ glasstabs_news()      # prints changelog to the console
 - [`glassSelectValue()`](https://prigasg.github.io/glasstabs/reference/glassSelectValue.md)
   returns a reactive function, not a list.
 - [`glassMultiSelectValue()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelectValue.md)
-  returns a list with `selected()` and `style()`.
+  returns raw `selected()`, `resolved()`, `is_empty()`, and `style()`
+  reactives.
 - For
   [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md),
   `selected` should use choice values, not labels.

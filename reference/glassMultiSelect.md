@@ -27,7 +27,12 @@ glassMultiSelect(
   dark_selector = NULL,
   server = FALSE,
   server_limit = 50L,
-  server_min_chars = 0L
+  server_min_chars = 0L,
+  searchable = TRUE,
+  search_threshold = 15L,
+  selection_display = c("auto", "count", "summary", "labels"),
+  selection_max_items = 2L,
+  dropdown_max_height = "260px"
 )
 ```
 
@@ -134,6 +139,32 @@ glassMultiSelect(
 
   Minimum search characters required before server-side matching filters
   choices. Default `0`.
+
+- searchable:
+
+  Search visibility. Use `TRUE` (default) to always show search, `FALSE`
+  to hide it, or `"auto"` to show it only when the choice count reaches
+  `search_threshold`.
+
+- search_threshold:
+
+  Choice count at which `searchable = "auto"` shows the search field.
+  Default `15`.
+
+- selection_display:
+
+  How partial selections are summarized in the trigger: `"auto"` (the
+  existing behavior), `"count"`, `"summary"`, or `"labels"`.
+
+- selection_max_items:
+
+  Number of labels shown by `selection_display = "summary"` before the
+  remaining count is shown.
+
+- dropdown_max_height:
+
+  Maximum height of the scrolling option area as a CSS unit, such as
+  `"18rem"` or `"320px"`. The default is `"260px"`.
 
 ## Value
 

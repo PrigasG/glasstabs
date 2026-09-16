@@ -63,7 +63,15 @@ glassMultiSelect() input."><meta property="og:image" content="https://prigasg.gi
 <span>  check_style <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  shape <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  disabled <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  disabled_choices <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  disabled_choices <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  preserve_selection <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  drop_invalid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  notify <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"changed"</span>, <span class="st">"always"</span>, <span class="st">"never"</span><span class="op">)</span>,</span>
+<span>  searchable <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  search_threshold <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  selection_display <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  selection_max_items <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  dropdown_max_height <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -110,6 +118,44 @@ unchanged.</p></dd>
 <dd><p>Optional character vector of choice values to render
 as disabled. Defaults to <code>NULL</code>, which leaves disabled choices
 unchanged.</p></dd>
+
+
+<dt id="arg-preserve-selection">preserve_selection<a class="anchor" aria-label="anchor" href="#arg-preserve-selection"></a></dt>
+<dd><p>Keep the current selection when choices change.
+Default <code>TRUE</code>. Ignored when <code>selected</code> is supplied.</p></dd>
+
+
+<dt id="arg-drop-invalid">drop_invalid<a class="anchor" aria-label="anchor" href="#arg-drop-invalid"></a></dt>
+<dd><p>Drop selected values that are absent from new choices.
+Default <code>TRUE</code>. Set to <code>FALSE</code> for server-backed or staged
+choice updates where selected values may be temporarily absent.</p></dd>
+
+
+<dt id="arg-notify">notify<a class="anchor" aria-label="anchor" href="#arg-notify"></a></dt>
+<dd><p>When to notify Shiny after the transaction: <code>"changed"</code>
+(default), <code>"always"</code>, or <code>"never"</code>.</p></dd>
+
+
+<dt id="arg-searchable">searchable<a class="anchor" aria-label="anchor" href="#arg-searchable"></a></dt>
+<dd><p>Optional new search visibility: <code>TRUE</code>, <code>FALSE</code>,
+or <code>"auto"</code>. <code>NULL</code> keeps the current setting.</p></dd>
+
+
+<dt id="arg-search-threshold">search_threshold<a class="anchor" aria-label="anchor" href="#arg-search-threshold"></a></dt>
+<dd><p>Optional new threshold used by automatic search.</p></dd>
+
+
+<dt id="arg-selection-display">selection_display<a class="anchor" aria-label="anchor" href="#arg-selection-display"></a></dt>
+<dd><p>Optional new trigger summary mode.</p></dd>
+
+
+<dt id="arg-selection-max-items">selection_max_items<a class="anchor" aria-label="anchor" href="#arg-selection-max-items"></a></dt>
+<dd><p>Optional new summary label limit.</p></dd>
+
+
+<dt id="arg-dropdown-max-height">dropdown_max_height<a class="anchor" aria-label="anchor" href="#arg-dropdown-max-height"></a></dt>
+<dd><p>Optional new option-area maximum height as a CSS
+unit. <code>NULL</code> keeps the current height.</p></dd>
 
 </dl></div>
     <div class="section level2">

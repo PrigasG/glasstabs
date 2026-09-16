@@ -331,6 +331,49 @@ and the style from <code>input$&lt;inputId&gt;_style</code>:</p>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"Style: "</span>, <span class="va">ms</span><span class="op">$</span><span class="fu">style</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="op">}</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
+<p>The raw value remains available as <code>selected()</code>. When an
+empty filter should mean “use every choice”, ask for a separate resolved
+value. This keeps the actual Shiny input honest while making filtering
+code pleasant to read.</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">ms</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/glassMultiSelectValue.html">glassMultiSelectValue</a></span><span class="op">(</span></span>
+<span>    <span class="va">input</span>,</span>
+<span>    <span class="st">"pick"</span>,</span>
+<span>    choices <span class="op">=</span> <span class="va">fruits</span>,</span>
+<span>    empty_behavior <span class="op">=</span> <span class="st">"all"</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span>  <span class="va">filtered</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/reactive.html" class="external-link">reactive</a></span><span class="op">(</span><span class="op">{</span></span>
+<span>    <span class="va">rows</span><span class="op">[</span><span class="va">rows</span><span class="op">$</span><span class="va">fruit</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">ms</span><span class="op">$</span><span class="fu">resolved</span><span class="op">(</span><span class="op">)</span>, , drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p>Use <code>empty_behavior = "none"</code> for
+<code>character(0)</code> (the default), or <code>"null"</code> when
+downstream code expects <code>NULL</code>. <code>is_empty()</code> is
+also available for UI messages or validation.</p>
+</div>
+<div class="section level2">
+<h2 id="search-and-selection-summaries">Search and selection summaries<a class="anchor" aria-label="anchor" href="#search-and-selection-summaries"></a>
+</h2>
+<p>Search is shown by default. It can be hidden for a small fixed list,
+or made automatic when a filter grows and shrinks with the rest of the
+app.</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span></span>
+<span>  <span class="st">"pick"</span>,</span>
+<span>  <span class="va">fruits</span>,</span>
+<span>  searchable <span class="op">=</span> <span class="st">"auto"</span>,</span>
+<span>  search_threshold <span class="op">=</span> <span class="fl">12</span>,</span>
+<span>  selection_display <span class="op">=</span> <span class="st">"summary"</span>,</span>
+<span>  selection_max_items <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  dropdown_max_height <span class="op">=</span> <span class="st">"18rem"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><code>selection_display = "count"</code> shows “3 selected”,
+<code>"labels"</code> shows every selected label, and
+<code>"summary"</code> shows the first labels followed by
+<code>+N</code>. <code>"auto"</code> keeps the familiar single-label /
+“Multiple selection” behavior.</p>
 </div>
 <div class="section level2">
 <h2 id="server-side-search-for-large-choice-sets">Server-side search for large choice sets<a class="anchor" aria-label="anchor" href="#server-side-search-for-large-choice-sets"></a>
@@ -339,7 +382,7 @@ and the style from <code>input$&lt;inputId&gt;_style</code>:</p>
 register <code><a href="../reference/glassMultiSelectServer.html">glassMultiSelectServer()</a></code> in the server function.
 The control keeps the selected values on the client while rendering only
 the current page of matching choices.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">many_choices</span> <span class="op">&lt;-</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"value-%04d"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">2000</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Choice %04d"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">2000</span><span class="op">)</span></span>
@@ -372,7 +415,8 @@ will receive search results through Shiny.</p>
 <h2 id="updating-choices-and-selection-from-the-server">Updating choices and selection from the server<a class="anchor" aria-label="anchor" href="#updating-choices-and-selection-from-the-server"></a>
 </h2>
 <p><code><a href="../reference/updateGlassMultiSelect.html">updateGlassMultiSelect()</a></code> can update: - available choices
-- current selection - active style</p>
+- current selection - active style - search visibility and threshold -
+selection summary and dropdown height</p>
 <p>It follows Shiny-style update semantics:</p>
 <ul>
 <li>
@@ -382,7 +426,7 @@ will receive search results through Shiny.</p>
 <li>
 <code>selected = character(0)</code> clears the selection</li>
 </ul>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="../reference/useGlassTabs.html">useGlassTabs</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/actionButton.html" class="external-link">actionButton</a></span><span class="op">(</span><span class="st">"subset"</span>, <span class="st">"Keep first 3 fruits"</span><span class="op">)</span>,</span>
@@ -433,6 +477,25 @@ will receive search results through Shiny.</p>
 <p>When <code>choices</code> is updated without <code>selected</code>,
 the widget keeps the intersection of the current selection and the new
 choice set.</p>
+<p>Updates are applied as one transaction. By default,
+<code>notify = "changed"</code> avoids rerunning observers when the
+effective selection and style did not change. Use
+<code>notify = "always"</code> to force an event or
+<code>notify = "never"</code> for a quiet intermediate update.</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/updateGlassMultiSelect.html">updateGlassMultiSelect</a></span><span class="op">(</span></span>
+<span>  <span class="va">session</span>,</span>
+<span>  <span class="st">"pick"</span>,</span>
+<span>  choices <span class="op">=</span> <span class="fu">choices_for_current_region</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  preserve_selection <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  drop_invalid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  searchable <span class="op">=</span> <span class="st">"auto"</span>,</span>
+<span>  notify <span class="op">=</span> <span class="st">"changed"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>Set <code>drop_invalid = FALSE</code> when selected values may be
+absent temporarily, such as a paged server search. Set
+<code>preserve_selection = FALSE</code> when a new choice set should
+begin empty (unless <code>selected</code> is supplied explicitly).</p>
 </div>
 <div class="section level2">
 <h2 id="theming">Theming<a class="anchor" aria-label="anchor" href="#theming"></a>
@@ -440,7 +503,7 @@ choice set.</p>
 <div class="section level3">
 <h3 id="built-in-presets">Built-in presets<a class="anchor" aria-label="anchor" href="#built-in-presets"></a>
 </h3>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span><span class="st">"f"</span>, <span class="va">fruits</span>, theme <span class="op">=</span> <span class="st">"dark"</span><span class="op">)</span>   <span class="co"># default</span></span>
 <span><span class="fu"><a href="../reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span><span class="st">"f"</span>, <span class="va">fruits</span>, theme <span class="op">=</span> <span class="st">"light"</span><span class="op">)</span>  <span class="co"># white panel, dark text</span></span>
 <span><span class="fu"><a href="../reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span><span class="st">"f"</span>, <span class="va">fruits</span>, theme <span class="op">=</span> <span class="st">"auto"</span><span class="op">)</span>   <span class="co"># follows Bootstrap/bslib color mode</span></span></code></pre></div>
@@ -452,7 +515,7 @@ code.</p>
 <h3 id="custom-theme-with-glass_select_theme">Custom theme with <code>glass_select_theme()</code><a class="anchor" aria-label="anchor" href="#custom-theme-with-glass_select_theme"></a>
 </h3>
 <p>Supply only the colors you want to change:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># One field — accent colour only</span></span>
 <span><span class="fu"><a href="../reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span><span class="st">"f"</span>, <span class="va">fruits</span>,</span>
 <span>  theme <span class="op">=</span> <span class="fu"><a href="../reference/glass_select_theme.html">glass_select_theme</a></span><span class="op">(</span>accent_color <span class="op">=</span> <span class="st">"#f59e0b"</span><span class="op">)</span></span>
@@ -511,7 +574,7 @@ code.</p>
 <p><code><a href="../reference/glassMultiSelect.html">glassMultiSelect()</a></code> is fully independent of the tab
 widget. You only need <code><a href="../reference/useGlassTabs.html">useGlassTabs()</a></code> for the CSS and
 JS:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny.posit.co/" class="external-link">shiny</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/PrigasG/glasstabs" class="external-link">glasstabs</a></span><span class="op">)</span></span>
 <span></span>
@@ -550,7 +613,7 @@ JS:</p>
 <p>Each <code><a href="../reference/glassMultiSelect.html">glassMultiSelect()</a></code> is scoped to its own
 <code>inputId</code> and works independently. When one dropdown is open
 it automatically floats above all others:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="../reference/useGlassTabs.html">useGlassTabs</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="../reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>X <span class="op">=</span> <span class="st">"x"</span>, Y <span class="op">=</span> <span class="st">"y"</span>, Z <span class="op">=</span> <span class="st">"z"</span><span class="op">)</span><span class="op">)</span>,</span>

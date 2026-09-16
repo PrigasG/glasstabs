@@ -6,7 +6,12 @@ style from Shiny's `input` object without using modules.
 ## Usage
 
 ``` r
-glassMultiSelectValue(input, inputId)
+glassMultiSelectValue(
+  input,
+  inputId,
+  choices = NULL,
+  empty_behavior = c("none", "all", "null")
+)
 ```
 
 ## Arguments
@@ -20,13 +25,33 @@ glassMultiSelectValue(input, inputId)
   Input id used in
   [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md).
 
+- choices:
+
+  Optional choices used to resolve an empty selection when
+  `empty_behavior = "all"`. This may be a static choice object or a
+  zero-argument reactive/function that returns choices.
+
+- empty_behavior:
+
+  Meaning of an empty selection for `resolved`: `"none"` keeps
+  `character(0)`, `"all"` returns every choice value, and `"null"`
+  returns `NULL`. The raw `selected` reactive is never changed.
+
 ## Value
 
-A named list with two reactives:
+A named list with four reactives:
 
 - `selected`:
 
   Reactive character vector of selected values
+
+- `resolved`:
+
+  Reactive value after applying empty behavior
+
+- `is_empty`:
+
+  Reactive logical indicating an empty selection
 
 - `style`:
 

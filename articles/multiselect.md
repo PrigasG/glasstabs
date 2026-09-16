@@ -261,6 +261,54 @@ server <- function(input, output, session) {
 }
 ```
 
+The raw value remains available as `selected()`. When an empty filter
+should mean “use every choice”, ask for a separate resolved value. This
+keeps the actual Shiny input honest while making filtering code pleasant
+to read.
+
+``` r
+
+server <- function(input, output, session) {
+  ms <- glassMultiSelectValue(
+    input,
+    "pick",
+    choices = fruits,
+    empty_behavior = "all"
+  )
+
+  filtered <- reactive({
+    rows[rows$fruit %in% ms$resolved(), , drop = FALSE]
+  })
+}
+```
+
+Use `empty_behavior = "none"` for `character(0)` (the default), or
+`"null"` when downstream code expects `NULL`. `is_empty()` is also
+available for UI messages or validation.
+
+## Search and selection summaries
+
+Search is shown by default. It can be hidden for a small fixed list, or
+made automatic when a filter grows and shrinks with the rest of the app.
+
+``` r
+
+glassMultiSelect(
+  "pick",
+  fruits,
+  searchable = "auto",
+  search_threshold = 12,
+  selection_display = "summary",
+  selection_max_items = 2,
+  dropdown_max_height = "18rem"
+)
+```
+
+`selection_display = "count"` shows “3 selected”, `"labels"` shows every
+selected label, and `"summary"` shows the first labels followed by `+N`.
+`"auto"` keeps the familiar single-label / “Multiple selection”
+behavior.
+
 ## Server-side search for large choice sets
 
 For large filters, set `server = TRUE` in the UI and register
@@ -304,7 +352,8 @@ search results through Shiny.
 ## Updating choices and selection from the server
 
 [`updateGlassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassMultiSelect.md)
-can update: - available choices - current selection - active style
+can update: - available choices - current selection - active style -
+search visibility and threshold - selection summary and dropdown height
 
 It follows Shiny-style update semantics:
 
@@ -365,6 +414,29 @@ if (interactive()) shinyApp(ui, server)
 
 When `choices` is updated without `selected`, the widget keeps the
 intersection of the current selection and the new choice set.
+
+Updates are applied as one transaction. By default, `notify = "changed"`
+avoids rerunning observers when the effective selection and style did
+not change. Use `notify = "always"` to force an event or
+`notify = "never"` for a quiet intermediate update.
+
+``` r
+
+updateGlassMultiSelect(
+  session,
+  "pick",
+  choices = choices_for_current_region(),
+  preserve_selection = TRUE,
+  drop_invalid = TRUE,
+  searchable = "auto",
+  notify = "changed"
+)
+```
+
+Set `drop_invalid = FALSE` when selected values may be absent
+temporarily, such as a paged server search. Set
+`preserve_selection = FALSE` when a new choice set should begin empty
+(unless `selected` is supplied explicitly).
 
 ## Theming
 

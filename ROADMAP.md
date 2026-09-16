@@ -147,3 +147,7 @@ These remain worthwhile, but they are outside the focused 0.4.0 release:
 - 2026-09-14: aligned single- and multi-select dropdown panels with
   their rendered trigger width and added real-browser coverage for
   narrow fields.
+- 2026-09-16: completed the 0.4.1 multi-select refinement set with
+  adaptive search, compact selection summaries, configurable list
+  height, explicit empty-value resolution, and transactional server
+  updates that avoid unnecessary reactive work.
