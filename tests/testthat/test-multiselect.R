@@ -82,6 +82,59 @@ test_that("glassMultiSelect() respects custom all_label", {
   expect_match(html, 'data-all-label="Everything"', fixed = TRUE)
 })
 
+test_that("glassMultiSelect() supports configurable search visibility", {
+  hidden <- as.character(glassMultiSelect("f", choices, searchable = FALSE))
+  automatic <- as.character(glassMultiSelect(
+    "f", choices, searchable = "auto", search_threshold = 4
+  ))
+  shown <- as.character(glassMultiSelect(
+    "f", choices, searchable = "auto", search_threshold = 3
+  ))
+
+  expect_match(hidden, 'data-searchable="never"', fixed = TRUE)
+  expect_match(hidden, 'class="gt-ms-search hidden"', fixed = TRUE)
+  expect_match(automatic, 'class="gt-ms-search hidden"', fixed = TRUE)
+  expect_match(shown, 'class="gt-ms-search"', fixed = TRUE)
+})
+
+test_that("glassMultiSelect() validates search settings", {
+  expect_error(
+    glassMultiSelect("f", choices, searchable = "sometimes"),
+    class = "glasstabs_error_bad_argument"
+  )
+  expect_error(
+    glassMultiSelect("f", choices, search_threshold = 0),
+    class = "glasstabs_error_bad_argument"
+  )
+})
+
+test_that("glassMultiSelect() renders each selection display", {
+  selected <- c("apple", "banana")
+  count <- as.character(glassMultiSelect(
+    "f", choices, selected = selected, selection_display = "count"
+  ))
+  summary <- as.character(glassMultiSelect(
+    "f", choices, selected = selected, selection_display = "summary",
+    selection_max_items = 1
+  ))
+  labels <- as.character(glassMultiSelect(
+    "f", choices, selected = selected, selection_display = "labels"
+  ))
+
+  expect_match(count, ">2 selected<", fixed = TRUE)
+  expect_match(summary, ">Apple +1<", fixed = TRUE)
+  expect_match(labels, ">Apple, Banana<", fixed = TRUE)
+})
+
+test_that("glassMultiSelect() validates and emits dropdown height", {
+  html <- as.character(glassMultiSelect("f", choices, dropdown_max_height = "18rem"))
+  expect_match(html, "--ms-dropdown-max-height:18rem", fixed = TRUE)
+  expect_error(
+    glassMultiSelect("f", choices, dropdown_max_height = "quite tall"),
+    class = "glasstabs_error_bad_argument"
+  )
+})
+
 
 test_that("glassMultiSelect() check_style = 'checkbox' adds correct class", {
   html <- as.character(glassMultiSelect("f", choices, check_style = "checkbox"))
@@ -266,6 +319,23 @@ test_that("glassMultiSelectValue() falls back to empty selection and checkbox st
   expect_equal(shiny::isolate(helper$style()), "checkbox")
 })
 
+test_that("glassMultiSelectValue() resolves explicit empty behavior", {
+  input <- shiny::reactiveValues(pick = character(0))
+
+  none <- glassMultiSelectValue(input, "pick")
+  all <- glassMultiSelectValue(input, "pick", choices, empty_behavior = "all")
+  null <- glassMultiSelectValue(input, "pick", empty_behavior = "null")
+
+  expect_equal(shiny::isolate(none$resolved()), character(0))
+  expect_equal(shiny::isolate(all$resolved()), unname(choices))
+  expect_null(shiny::isolate(null$resolved()))
+  expect_true(shiny::isolate(none$is_empty()))
+  expect_error(
+    glassMultiSelectValue(input, "pick", empty_behavior = "all"),
+    class = "glasstabs_error_bad_argument"
+  )
+})
+
 test_that("updateGlassMultiSelect() sends normalized choices", {
   send_mock <- mockery::mock()
   fake_session <- list(sendInputMessage = send_mock)
@@ -279,6 +349,37 @@ test_that("updateGlassMultiSelect() sends normalized choices", {
   expect_true(is.list(args[[2]]$choices))
   expect_equal(args[[2]]$choices[[1]]$label, "Apple")
   expect_equal(args[[2]]$choices[[1]]$value, "apple")
+  expect_true(args[[2]]$preserve_selection)
+  expect_true(args[[2]]$drop_invalid)
+  expect_equal(args[[2]]$notify, "changed")
+})
+
+test_that("updateGlassMultiSelect() sends transaction and display settings", {
+  send_mock <- mockery::mock()
+  fake_session <- list(sendInputMessage = send_mock)
+
+  updateGlassMultiSelect(
+    fake_session,
+    "pick",
+    preserve_selection = FALSE,
+    drop_invalid = FALSE,
+    notify = "never",
+    searchable = "auto",
+    search_threshold = 20,
+    selection_display = "summary",
+    selection_max_items = 3,
+    dropdown_max_height = "20rem"
+  )
+
+  data <- mockery::mock_args(send_mock)[[1]][[2]]
+  expect_false(data$preserve_selection)
+  expect_false(data$drop_invalid)
+  expect_equal(data$notify, "never")
+  expect_equal(data$searchable, "auto")
+  expect_equal(data$search_threshold, 20L)
+  expect_equal(data$selection_display, "summary")
+  expect_equal(data$selection_max_items, 3L)
+  expect_equal(data$dropdown_max_height, "20rem")
 })
 
 test_that("updateGlassMultiSelect() sends selected values unchanged", {
@@ -385,7 +486,7 @@ test_that("updateGlassMultiSelect() rejects invalid style", {
   )
 })
 
-test_that("updateGlassMultiSelect() sends empty message when no updates supplied", {
+test_that("updateGlassMultiSelect() sends transaction defaults when no fields change", {
   send_mock <- mockery::mock()
   fake_session <- list(sendInputMessage = send_mock)
 
@@ -393,7 +494,10 @@ test_that("updateGlassMultiSelect() sends empty message when no updates supplied
 
   args <- mockery::mock_args(send_mock)[[1]]
   expect_equal(args[[1]], "pick")
-  expect_equal(args[[2]], list())
+  expect_equal(
+    args[[2]],
+    list(preserve_selection = TRUE, drop_invalid = TRUE, notify = "changed")
+  )
 })
 
 

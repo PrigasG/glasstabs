@@ -741,7 +741,7 @@
  */
 .gt-gs-options-scroll,
 .gt-ms-options-scroll{
-  max-height:260px;
+  max-height:var(--ms-dropdown-max-height,260px);
   overflow-y:auto;
   overflow-x:hidden;
   overscroll-behavior:contain;
@@ -865,6 +865,7 @@
   overflow-wrap:anywhere;
   word-break:break-word;
 }
+.gt-ms-search.hidden{display:none;}
 .gt-gs-optgroup.hidden,
 .gt-ms-optgroup.hidden{
   display:none;

@@ -12,7 +12,15 @@ updateGlassMultiSelect(
   check_style = NULL,
   shape = NULL,
   disabled = NULL,
-  disabled_choices = NULL
+  disabled_choices = NULL,
+  preserve_selection = TRUE,
+  drop_invalid = TRUE,
+  notify = c("changed", "always", "never"),
+  searchable = NULL,
+  search_threshold = NULL,
+  selection_display = NULL,
+  selection_max_items = NULL,
+  dropdown_max_height = NULL
 )
 }
 \arguments{
@@ -40,6 +48,28 @@ unchanged.}
 \item{disabled_choices}{Optional character vector of choice values to render
 as disabled. Defaults to \code{NULL}, which leaves disabled choices
 unchanged.}
+
+\item{preserve_selection}{Keep the current selection when choices change.
+Default \code{TRUE}. Ignored when \code{selected} is supplied.}
+
+\item{drop_invalid}{Drop selected values that are absent from new choices.
+Default \code{TRUE}. Set to \code{FALSE} for server-backed or staged
+choice updates where selected values may be temporarily absent.}
+
+\item{notify}{When to notify Shiny after the transaction: \code{"changed"}
+(default), \code{"always"}, or \code{"never"}.}
+
+\item{searchable}{Optional new search visibility: \code{TRUE}, \code{FALSE},
+or \code{"auto"}. \code{NULL} keeps the current setting.}
+
+\item{search_threshold}{Optional new threshold used by automatic search.}
+
+\item{selection_display}{Optional new trigger summary mode.}
+
+\item{selection_max_items}{Optional new summary label limit.}
+
+\item{dropdown_max_height}{Optional new option-area maximum height as a CSS
+unit. \code{NULL} keeps the current height.}
 }
 \value{
 No return value. Called for its side effect of updating the

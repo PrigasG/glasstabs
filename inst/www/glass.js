@@ -236,6 +236,7 @@
 
   var MS_VARS = [
     '--ms-bg','--ms-border','--ms-text','--ms-accent','--ms-focus-ring','--ms-label',
+    '--ms-dropdown-max-height',
     '--ms-ac-12','--ms-ac-16','--ms-ac-18','--ms-ac-22','--ms-ac-28',
     '--ms-ac-32','--ms-ac-40','--ms-ac-55','--ms-ac-60','--ms-ac-75',
     '--ms-tx-03','--ms-tx-04','--ms-tx-05','--ms-tx-06','--ms-tx-08',
@@ -255,10 +256,12 @@
     var fallbacks = isLight
       ? { '--ms-bg': 'rgba(255,255,255,0.98)', '--ms-border': 'rgba(0,0,0,0.12)',
           '--ms-text': '#111111', '--ms-accent': '#2563eb',
-          '--ms-focus-ring': '#1d4ed8', '--ms-label': '#111111' }
+          '--ms-focus-ring': '#1d4ed8', '--ms-label': '#111111',
+          '--ms-dropdown-max-height': '260px' }
       : { '--ms-bg': 'rgba(9,20,42,0.97)', '--ms-border': 'rgba(255,255,255,0.10)',
           '--ms-text': '#cfe6ff', '--ms-accent': '#7ec3f7',
-          '--ms-focus-ring': '#7ec3f7', '--ms-label': '#cfe6ff' };
+          '--ms-focus-ring': '#7ec3f7', '--ms-label': '#cfe6ff',
+          '--ms-dropdown-max-height': '260px' };
     MS_VARS.forEach(function (v) {
       var val = cs.getPropertyValue(v).trim();
       if (val) dropdown.style.setProperty(v, val);
@@ -1549,6 +1552,10 @@
     var allLabel = wrap.getAttribute('data-all-label') || 'All categories';
     var serverMode = parseBoolAttr(wrap, 'data-server');
     var serverMinChars = parseIntAttr(wrap, 'data-server-min-chars', 0);
+    var searchMode = wrap.getAttribute('data-searchable') || 'always';
+    var searchThreshold = parseIntAttr(wrap, 'data-search-threshold', 15);
+    var selectionDisplay = wrap.getAttribute('data-selection-display') || 'auto';
+    var selectionMaxItems = parseIntAttr(wrap, 'data-selection-max-items', 2);
 
     /* DOM refs */
     var trigger = wrap.querySelector('.gt-ms-trigger');
@@ -1559,6 +1566,7 @@
     var countEl = wrap.querySelector('.gt-ms-count');
     var clearBtn = wrap.querySelector('.gt-ms-clear');
     var searchIn = wrap.querySelector('input[type="text"]');
+    var searchWrap = wrap.querySelector('.gt-ms-search');
     var styleBtns = Array.from(wrap.querySelectorAll('.gt-style-btn'));
     var optionsBox = wrap.querySelector('[id$="-options"]') || wrap;
 
@@ -1622,7 +1630,7 @@
     var optionNav = createOptionNavigator(
       dropdown,
       '.gt-ms-option',
-      function () { return searchIn || trigger; },
+      function () { return searchEnabled() && searchIn ? searchIn : trigger; },
       inputId + '-option'
     );
 
@@ -1653,6 +1661,55 @@
         if (!ch.hidden && state.selected.has(ch.value)) n++;
       });
       return n;
+    }
+
+    function searchEnabled() {
+      var total = state.total === null ? state.choices.length : state.total;
+      return searchMode === 'always' || (searchMode === 'auto' && total >= searchThreshold);
+    }
+
+    function syncSearchVisibility() {
+      var enabled = searchEnabled();
+      if (searchWrap) searchWrap.classList.toggle('hidden', !enabled);
+      if (searchIn) {
+        searchIn.disabled = !enabled;
+        searchIn.setAttribute('aria-hidden', enabled ? 'false' : 'true');
+      }
+      if (!enabled && state.query) {
+        state.query = '';
+        if (searchIn) searchIn.value = '';
+        state.choices.forEach(function (ch) { ch.hidden = false; });
+        patchVisibility();
+        optionNav.prepare();
+      }
+    }
+
+    function selectedLabels() {
+      var out = [];
+      state.choices.forEach(function (ch) {
+        if (state.selected.has(ch.value)) out.push(ch.label);
+      });
+      return out;
+    }
+
+    function selectionLabel(total) {
+      var n = state.selected.size;
+      if (n === 0) return placeholder;
+      if (total > 0 && n === total) return allLabel;
+      if (selectionDisplay === 'count') return n + ' selected';
+
+      var labels = selectedLabels();
+      if (selectionDisplay === 'labels') {
+        return labels.length === n ? labels.join(', ') : n + ' selected';
+      }
+      if (selectionDisplay === 'summary') {
+        var shown = labels.slice(0, selectionMaxItems);
+        var extra = n - shown.length;
+        if (!shown.length) return n + ' selected';
+        return shown.join(', ') + (extra > 0 ? ' +' + extra : '');
+      }
+      if (n === 1) return labels.length ? labels[0] : '1 selected';
+      return 'Multiple selection';
     }
 
     function setStatus(text, active, loading) {
@@ -1726,27 +1783,10 @@
         countEl.textContent = selCount + ' / ' + total + ' selected';
       }
 
-      /* Label */
-      if (labelEl) {
-        if (selCount === 0) {
-          labelEl.textContent = placeholder;
-        } else if (total > 0 && selCount === total) {
-          labelEl.textContent = allLabel;
-        } else if (selCount === 1) {
-          var first = null;
-          for (var i = 0; i < state.choices.length; i++) {
-            if (state.selected.has(state.choices[i].value)) {
-              first = state.choices[i];
-              break;
-            }
-          }
-          labelEl.textContent = first ? first.label : '1 selected';
-        } else {
-          labelEl.textContent = 'Multiple selection';
-        }
-      }
+      if (labelEl) labelEl.textContent = selectionLabel(total);
 
       patchOptionClasses();
+      syncSearchVisibility();
       updateStatus();
       renderTags();
     }
@@ -1916,6 +1956,7 @@
       optionsBox.appendChild(frag);
       optionsBox.appendChild(statusRow);
       optionNav.prepare();
+      syncSearchVisibility();
 
       /* Re-apply search if active */
       if (!serverMode && state.query) {
@@ -2004,7 +2045,7 @@
         focusTimer = null;
         if (!wrap.classList.contains('gt-layer-active')) return;
         optionNav.move('current');
-        if (searchIn) searchIn.focus();
+        if (searchEnabled() && searchIn) searchIn.focus();
       }, 100);
     }
 
@@ -2223,6 +2264,23 @@
           else trigger.removeAttribute('aria-disabled');
         }
       },
+      setSearch: function (mode, threshold) {
+        if (mode) searchMode = mode;
+        if (typeof threshold === 'number') searchThreshold = threshold;
+        syncSearchVisibility();
+        syncUI();
+      },
+      setSelectionDisplay: function (mode, maxItems) {
+        if (mode) selectionDisplay = mode;
+        if (typeof maxItems === 'number') selectionMaxItems = maxItems;
+        syncUI();
+      },
+      setDropdownMaxHeight: function (value) {
+        if (!value) return;
+        var field = wrap.closest ? wrap.closest('.gt-ms-field') : null;
+        (field || wrap).style.setProperty('--ms-dropdown-max-height', value);
+        dropdown.style.setProperty('--ms-dropdown-max-height', value);
+      },
       clear: function (opts) {
         setValue([], opts);
       },
@@ -2231,6 +2289,61 @@
       /* Expose for binding - stable reference, not the closure var */
       commitSelection: commitSelection
     };
+  }
+
+  function multiSelectSignature(ctrl) {
+    return JSON.stringify({ value: ctrl.getValue(), style: ctrl.getStyle() });
+  }
+
+  function applyMultiSelectData(ctrl, data) {
+    var before = multiSelectSignature(ctrl);
+    var affectsValue = false;
+
+    if (hasOwn(data, 'choices')) {
+      ctrl.setChoices(data.choices || [], {
+        notify: false,
+        preserveSelection: data.preserve_selection !== false,
+        preserveMissingSelection: data.drop_invalid === false
+      });
+      affectsValue = true;
+    }
+    if (hasOwn(data, 'selected')) {
+      ctrl.setValue(asValueArray(data.selected), { notify: false });
+      affectsValue = true;
+    }
+    if (hasOwn(data, 'style')) {
+      ctrl.setStyle(data.style, { notify: false });
+      affectsValue = true;
+    }
+    if (hasOwn(data, 'shape') && typeof ctrl.setShape === 'function') {
+      ctrl.setShape(data.shape);
+    }
+    if (hasOwn(data, 'disabled') && typeof ctrl.setDisabled === 'function') {
+      ctrl.setDisabled(data.disabled);
+    }
+    if (hasOwn(data, 'disabled_choices') && typeof ctrl.setDisabledChoices === 'function') {
+      ctrl.setDisabledChoices(data.disabled_choices);
+    }
+    if ((hasOwn(data, 'searchable') || hasOwn(data, 'search_threshold')) &&
+        typeof ctrl.setSearch === 'function') {
+      ctrl.setSearch(data.searchable, data.search_threshold);
+    }
+    if ((hasOwn(data, 'selection_display') || hasOwn(data, 'selection_max_items')) &&
+        typeof ctrl.setSelectionDisplay === 'function') {
+      ctrl.setSelectionDisplay(data.selection_display, data.selection_max_items);
+    }
+    if (hasOwn(data, 'dropdown_max_height') && typeof ctrl.setDropdownMaxHeight === 'function') {
+      ctrl.setDropdownMaxHeight(data.dropdown_max_height);
+    }
+    if (hasOwn(data, 'close') && data.close && typeof ctrl.close === 'function') {
+      ctrl.close();
+    }
+
+    var notify = data.notify || 'always';
+    var changed = before !== multiSelectSignature(ctrl);
+    if (affectsValue && notify !== 'never' && (notify === 'always' || changed)) {
+      ctrl.commitSelection();
+    }
   }
 
   /* SHINY INPUT BINDINGS */
@@ -2366,42 +2479,7 @@
       receiveMessage: function (el, data) {
         var ctrl = ensureInit(el);
         if (!ctrl) return;
-        var shouldCommit = false;
-
-        if (hasOwn(data, 'choices')) {
-          ctrl.setChoices(data.choices || [], { notify: false });
-          shouldCommit = true;
-        }
-
-        if (hasOwn(data, 'selected')) {
-          ctrl.setValue(asValueArray(data.selected), { notify: false });
-          shouldCommit = true;
-        }
-
-        if (hasOwn(data, 'style')) {
-          ctrl.setStyle(data.style, { notify: false });
-          shouldCommit = true;
-        }
-
-        if (hasOwn(data, 'shape') && typeof ctrl.setShape === 'function') {
-          ctrl.setShape(data.shape);
-        }
-
-        if (hasOwn(data, 'disabled') && typeof ctrl.setDisabled === 'function') {
-          ctrl.setDisabled(data.disabled);
-        }
-
-        if (hasOwn(data, 'disabled_choices') && typeof ctrl.setDisabledChoices === 'function') {
-          ctrl.setDisabledChoices(data.disabled_choices);
-        }
-
-        if (hasOwn(data, 'close') && data.close && typeof ctrl.close === 'function') {
-          ctrl.close();
-        }
-
-        /* Single commit after all fields are set */
-        if (shouldCommit && ctrl.commitSelection) ctrl.commitSelection();
-        if (shouldCommit) triggerShinyChange(el);
+        applyMultiSelectData(ctrl, data || {});
       }
     });
     Shiny.inputBindings.register(glassMultiSelectBinding, 'glasstabs.glassMultiSelect');
@@ -2615,30 +2693,7 @@
         return;
       }
 
-      var data = msg.data || {};
-      var shouldCommit = false;
-      if (hasOwn(data, 'choices')) {
-        ctrl.setChoices(data.choices || [], { notify: false });
-        shouldCommit = true;
-      }
-      if (hasOwn(data, 'selected')) {
-        ctrl.setValue(asValueArray(data.selected), { notify: false });
-        shouldCommit = true;
-      }
-      if (hasOwn(data, 'style')) {
-        ctrl.setStyle(data.style, { notify: false });
-        shouldCommit = true;
-      }
-      if (hasOwn(data, 'shape') && typeof ctrl.setShape === 'function') {
-        ctrl.setShape(data.shape);
-      }
-      if (hasOwn(data, 'disabled') && typeof ctrl.setDisabled === 'function') {
-        ctrl.setDisabled(data.disabled);
-      }
-      if (hasOwn(data, 'disabled_choices') && typeof ctrl.setDisabledChoices === 'function') {
-        ctrl.setDisabledChoices(data.disabled_choices);
-      }
-      if (shouldCommit && ctrl.commitSelection) ctrl.commitSelection();
+      applyMultiSelectData(ctrl, msg.data || {});
     }
 
     Shiny.addCustomMessageHandler('glasstabs_reinit', function (msg) {

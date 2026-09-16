@@ -4,17 +4,33 @@
 \alias{glassMultiSelectValue}
 \title{Reactive helpers for glassMultiSelect values}
 \usage{
-glassMultiSelectValue(input, inputId)
+glassMultiSelectValue(
+  input,
+  inputId,
+  choices = NULL,
+  empty_behavior = c("none", "all", "null")
+)
 }
 \arguments{
 \item{input}{Shiny \code{input} object.}
 
 \item{inputId}{Input id used in \code{\link[=glassMultiSelect]{glassMultiSelect()}}.}
+
+\item{choices}{Optional choices used to resolve an empty selection when
+\code{empty_behavior = "all"}. This may be a static choice object or a
+zero-argument reactive/function that returns choices.}
+
+\item{empty_behavior}{Meaning of an empty selection for \code{resolved}:
+\code{"none"} keeps \code{character(0)}, \code{"all"} returns every
+choice value, and \code{"null"} returns \code{NULL}. The raw
+\code{selected} reactive is never changed.}
 }
 \value{
-A named list with two reactives:
+A named list with four reactives:
 \describe{
 \item{\code{selected}}{Reactive character vector of selected values}
+\item{\code{resolved}}{Reactive value after applying empty behavior}
+\item{\code{is_empty}}{Reactive logical indicating an empty selection}
 \item{\code{style}}{Reactive string for the active style}
 }
 }

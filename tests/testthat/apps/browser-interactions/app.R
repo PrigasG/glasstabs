@@ -43,6 +43,19 @@ ui <- fluidPage(
       show_style_switcher = FALSE,
       shape = "rounded"
     ),
+    glassMultiSelect(
+      "adaptive",
+      choices,
+      selected = c("apple", "banana"),
+      searchable = "auto",
+      search_threshold = 4,
+      selection_display = "summary",
+      selection_max_items = 1,
+      dropdown_max_height = "120px",
+      show_style_switcher = FALSE
+    ),
+    actionButton("adaptive_expand", "Expand adaptive choices"),
+    actionButton("adaptive_silent", "Silently select cherry"),
     tags$div(
       style = "width:176px",
       glassSelect(
@@ -126,7 +139,8 @@ ui <- fluidPage(
     tags$div(
       style = "display:none",
       textOutput("race_return_events"),
-      textOutput("race_forward_events")
+      textOutput("race_forward_events"),
+      textOutput("adaptive_events")
     ),
     tags$div(
       class = "alignment-frame",
@@ -161,6 +175,34 @@ server <- function(input, output, session) {
 
   output$fruit_open_state <- renderText({
     if (isTRUE(input$fruit_open)) "open" else "closed"
+  })
+
+  adaptive_events <- reactiveVal(0L)
+  observeEvent(input$adaptive, {
+    adaptive_events(adaptive_events() + 1L)
+  }, ignoreInit = TRUE)
+  output$adaptive_events <- renderText(as.character(adaptive_events()))
+  outputOptions(output, "adaptive_events", suspendWhenHidden = FALSE)
+
+  observeEvent(input$adaptive_expand, {
+    updateGlassMultiSelect(
+      session,
+      "adaptive",
+      choices = c(
+        Apple = "apple", Banana = "banana", Cherry = "cherry",
+        Date = "date", Elderberry = "elderberry"
+      ),
+      notify = "changed"
+    )
+  })
+
+  observeEvent(input$adaptive_silent, {
+    updateGlassMultiSelect(
+      session,
+      "adaptive",
+      selected = "cherry",
+      notify = "never"
+    )
   })
 
   race_return_events <- reactiveVal(character())

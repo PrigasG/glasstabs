@@ -8,6 +8,14 @@
   screens.
 * Long option labels, group headings, and unbroken identifiers now wrap inside
   the panel instead of being clipped or creating horizontal overflow.
+* `glassMultiSelect()` gains configurable and automatic search visibility,
+  compact count or label summaries, and a configurable option-list height.
+* `updateGlassMultiSelect()` now applies linked changes as one transaction,
+  preserves or drops selections explicitly, and can notify Shiny only when the
+  effective value changes, always, or never.
+* `glassMultiSelectValue()` now keeps the raw selection while offering a
+  separate resolved value for apps where an empty filter means none, all, or
+  `NULL`.
 
 # glasstabs 0.4.0
 

@@ -69,16 +69,6 @@ test_that("client controllers expose runtime setShape and route the message", {
   expect_true(grepl("hasOwn(data, 'shape')", js, fixed = TRUE))
 })
 
-test_that("shape-only updates do not commit selection changes", {
-  js <- paste(
-    readLines(system.file("www", "glass.js", package = "glasstabs"), warn = FALSE),
-    collapse = "\n"
-  )
-
-  expect_gte(lengths(regmatches(js, gregexpr("var shouldCommit = false;", js, fixed = TRUE))), 3L)
-  expect_false(grepl("hasOwn\\(data, 'shape'\\)[\\s\\S]{0,140}shouldCommit = true", js, perl = TRUE))
-})
-
 test_that("server choice refreshes do not commit current selections", {
   js <- paste(
     readLines(system.file("www", "glass.js", package = "glasstabs"), warn = FALSE),

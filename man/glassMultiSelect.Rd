@@ -24,7 +24,12 @@ glassMultiSelect(
   dark_selector = NULL,
   server = FALSE,
   server_limit = 50L,
-  server_min_chars = 0L
+  server_min_chars = 0L,
+  searchable = TRUE,
+  search_threshold = 15L,
+  selection_display = c("auto", "count", "summary", "labels"),
+  selection_max_items = 2L,
+  dropdown_max_height = "260px"
 )
 }
 \arguments{
@@ -88,6 +93,24 @@ for each server-side search. Default \code{50}.}
 
 \item{server_min_chars}{Minimum search characters required before server-side
 matching filters choices. Default \code{0}.}
+
+\item{searchable}{Search visibility. Use \code{TRUE} (default) to always
+show search, \code{FALSE} to hide it, or \code{"auto"} to show it only
+when the choice count reaches \code{search_threshold}.}
+
+\item{search_threshold}{Choice count at which \code{searchable = "auto"}
+shows the search field. Default \code{15}.}
+
+\item{selection_display}{How partial selections are summarized in the
+trigger: \code{"auto"} (the existing behavior), \code{"count"},
+\code{"summary"}, or \code{"labels"}.}
+
+\item{selection_max_items}{Number of labels shown by
+\code{selection_display = "summary"} before the remaining count is shown.}
+
+\item{dropdown_max_height}{Maximum height of the scrolling option area as a
+CSS unit, such as \code{"18rem"} or \code{"320px"}. The default is
+\code{"260px"}.}
 }
 \value{
 An \code{htmltools::tagList} containing the trigger button, dropdown

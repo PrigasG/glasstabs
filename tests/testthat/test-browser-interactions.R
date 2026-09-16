@@ -156,6 +156,49 @@ test_that("browser: narrow select dropdowns resize and wrap long labels", {
   "))
 })
 
+test_that("browser: multiselect refinements update as one transaction", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-multiselect-refinements",
+    height = 900,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+  expect_equal(app$get_value(input = "adaptive"), c("apple", "banana"))
+  expect_equal(app$get_value(output = "adaptive_events"), "0")
+  expect_true(app$get_js("
+    document.querySelector('#adaptive-wrap .gt-ms-search').classList.contains('hidden') &&
+    document.querySelector('#adaptive-label').textContent === 'Apple +1'
+  "))
+
+  app$set_inputs(adaptive_expand = "click")
+  app$wait_for_js("
+    !document.querySelector('#adaptive-wrap .gt-ms-search').classList.contains('hidden') &&
+    document.querySelectorAll('#adaptive-wrap .gt-ms-option').length === 5
+  ")
+  app$wait_for_idle()
+  expect_equal(app$get_value(input = "adaptive"), c("apple", "banana"))
+  expect_equal(app$get_value(output = "adaptive_events"), "0")
+
+  app$click(selector = "#adaptive-trigger")
+  app$wait_for_js("document.querySelector('#adaptive-dropdown.open') !== null")
+  expect_true(app$get_js("
+    getComputedStyle(document.querySelector('#adaptive-options')).maxHeight === '120px'
+  "))
+
+  app$set_inputs(adaptive_silent = "click")
+  app$wait_for_js("document.querySelector('#adaptive-label').textContent === 'Cherry'")
+  app$wait_for_idle()
+  expect_equal(app$get_value(input = "adaptive"), c("apple", "banana"))
+  expect_equal(app$get_value(output = "adaptive_events"), "0")
+})
+
 test_that("browser: runtime setShape reaches wrapper and teleported dropdown", {
   skip_on_covr()
   skip_if_not_installed("shinytest2")

@@ -1,4 +1,4 @@
-% glasstabs cheatsheet v0.4.0
+% glasstabs cheatsheet v0.4.1
 % Compile with: pdflatex -interaction=nonstopmode -halt-on-error glasstabs-cheatsheet.tex
 \documentclass[9pt,a4paper]{article}
 
@@ -63,7 +63,7 @@
 }
 \newcommand{\sheetheader}[2]{%
   {\large\bfseries\color{gtblue}glasstabs}%
-  \hfill{\tiny\color{gtgray}v0.4.0}\\[1pt]
+  \hfill{\tiny\color{gtgray}v0.4.1}\\[1pt]
   {\footnotesize\color{gtgray}#1}%
   \hfill{\tiny\color{gtgray}#2}\\[-3pt]
   \rule{\linewidth}{0.6pt}
@@ -319,6 +319,7 @@ glassTabsUI(
 \newpage
 \begin{multicols*}{4}
 \raggedcolumns
+\footnotesize
 \sheetheader{selects and reference}{page 2 of 2}
 
 \mysection{Multi-select -- UI}
@@ -344,7 +345,13 @@ glassMultiSelect(
   dark_selector = NULL,
   server = FALSE,
   server_limit = 50L,
-  server_min_chars = 0L
+  server_min_chars = 0L,
+  searchable = TRUE,
+  search_threshold = 15L,
+  selection_display = c("auto","count",
+                        "summary","labels"),
+  selection_max_items = 2L,
+  dropdown_max_height = "260px"
 )
 \end{lstlisting}
 
@@ -359,6 +366,8 @@ glassMultiSelect(
   "metric", metrics,
   selected = "rev",
   label = "Metrics",
+  searchable = "auto",
+  selection_display = "summary",
   theme = "auto"
 )
 glassFilterTags("metric")
@@ -434,9 +443,13 @@ glassSelectServer(
 
 \begin{lstlisting}
 multi <- glassMultiSelectValue(
-  input, "metric"
+  input, "metric",
+  choices = metrics,
+  empty_behavior = "all"
 )
 multi$selected()
+multi$resolved()
+multi$is_empty()
 multi$style()
 
 single <- glassSelectValue(
@@ -467,7 +480,13 @@ updateGlassMultiSelect(
   check_style = "filled",
   shape = "square",
   disabled = FALSE,
-  disabled_choices = "ret"
+  disabled_choices = "ret",
+  preserve_selection = TRUE,
+  drop_invalid = TRUE,
+  notify = "changed",
+  searchable = "auto",
+  selection_display = "summary",
+  dropdown_max_height = "18rem"
 )
 
 updateGlassSelect(
@@ -555,8 +574,8 @@ glass_tab_theme  glass_select_theme
   \item \gtarg{overflow = "menu"} supports horizontal tabs only.
   \item Swipe ignores interactive and scrollable content.
   \item \gtfn{glassSelectValue} returns one reactive function.
-  \item \gtfn{glassMultiSelectValue} returns \code{selected()} and
-        \code{style()} reactives.
+  \item \gtfn{glassMultiSelectValue} returns raw \code{selected()}, resolved
+        values, empty state, and \code{style()} reactives.
   \item Server-side choice functions belong in the server.
 \end{itemize}
 
