@@ -52,7 +52,7 @@
     # Clamp out-of-range components (e.g. rgb(300, -5, 0)) the way browsers
     # do, instead of emitting invalid CSS.
     return(list(
-      r = min(255, max(0, nums[[1]]),
+      r = min(255, max(0, nums[[1]])),
       g = min(255, max(0, nums[[2]])),
       b = min(255, max(0, nums[[3]])),
       a = min(1, max(0, alpha))
