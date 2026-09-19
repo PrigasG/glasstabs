@@ -8,6 +8,18 @@ local_browser_pkg_root <- function() {
       Sys.setenv(GLASSTABS_TEST_PKG_ROOT = old)
     }
   }, testthat::teardown_env())
+  # Chrome leaves `com.google.Chrome.*` lock dirs in tempdir() behind even
+  # after the browser is stopped; remove them so R CMD check does not flag
+  # them as detritus in the temp directory.
+  withr::defer({
+    leftovers <- list.files(
+      tempdir(),
+      pattern = "^com\\.google\\.Chrome",
+      full.names = TRUE,
+      all.files = TRUE
+    )
+    unlink(leftovers, recursive = TRUE, force = TRUE)
+  }, testthat::teardown_env())
 }
 
 test_that("browser: glassSelect opens and clicking an option updates input", {
@@ -99,12 +111,9 @@ test_that("browser: narrow select dropdowns resize and wrap long labels", {
       return true;
     })()
   "))
-  app$wait_for_js("
-    !document.querySelector('#short_single-dropdown').classList.contains('open') &&
-    document.querySelector('#short_single-dropdown').parentElement ===
-      document.querySelector('#short_single-wrap')
-  ")
-  app$click(selector = "#short_single-trigger")
+  # Resize repositions the open dropdown to follow the trigger instead of
+  # closing it (mobile URL-bar and on-screen keyboard resizes must not strand
+  # the user mid-task), so it stays open and tracks the new trigger width.
   app$wait_for_js("
     document.querySelector('#short_single-dropdown.open') !== null &&
     Math.abs(
@@ -123,8 +132,7 @@ test_that("browser: narrow select dropdowns resize and wrap long labels", {
       return true;
     })()
   "))
-  app$wait_for_js("document.querySelector('#short_single-dropdown.open') === null")
-  app$click(selector = "#short_single-trigger")
+  # The open dropdown follows the trigger and stays inside the viewport.
   app$wait_for_js("
     (function() {
       var dropdown = document.querySelector('#short_single-dropdown.open');

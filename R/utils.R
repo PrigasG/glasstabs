@@ -8,6 +8,7 @@
 #' @param a Value to use when it is not `NULL` and not length-zero.
 #' @param b Fallback value.
 #' @return `a` if it is non-`NULL` and non-empty, otherwise `b`.
+#' @name op-null-default
 #' @export
 `%||%` <- function(a, b) {
   # Unlike rlang's operator, length-zero values intentionally fall back. This

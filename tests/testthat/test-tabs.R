@@ -131,7 +131,7 @@ test_that("glassTabsUI() dark_selector uses dark content colors", {
   ))
 
   expect_true(grepl("body.dark-mode #nav-wrap", html, fixed = TRUE))
-  expect_true(grepl("--gt-content-bg:transparent", html, fixed = TRUE))
+  expect_true(grepl("--gt-content-bg:rgba(255,255,255,0.03)", html, fixed = TRUE))
   expect_true(grepl("--gt-card-bg:transparent", html, fixed = TRUE))
   expect_true(grepl("--gt-card-text:#cfe6ff", html, fixed = TRUE))
 })

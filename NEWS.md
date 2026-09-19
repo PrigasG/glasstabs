@@ -2,6 +2,16 @@
 
 ## Fixes
 
+* The `%||%` documentation topic is now named `op-null-default` (with
+  `%||%` kept as an alias) so `R CMD check` no longer warns about `|` in the
+  `\name` field. `?"%||%"` keeps working as before.
+* Browser-test and stylesheet tests updated to match intended behavior: open
+  dropdowns reposition (not close) on window resize, and `color-mix()` in
+  `glass.css` is used only where unsupported browsers degrade gracefully.
+* The spelling wordlist now covers package vocabulary (`mojibake`, `rlang`,
+  `shinytest`, `ungrouped`), and browser tests clean up Chrome's temp
+  directories so `R CMD check` reports no detritus.
+
 * `%||%` is now exported, so example apps and vignette snippets that rely on
   it (e.g. the dashboard and smoke-test examples) run without attaching
   internals.
