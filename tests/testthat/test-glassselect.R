@@ -359,3 +359,18 @@ test_that("glassSelect(shape = 'rounded') is the explicit default", {
 test_that("glassSelect() rejects an invalid shape", {
   expect_error(glassSelect("f", choices, shape = "circle"), class = "glasstabs_error_bad_argument")
 })
+
+
+test_that("glassSelect() rejects duplicate choice values", {
+  expect_error(
+    glassSelect("f", c(a = "x", b = "x")),
+    class = "glasstabs_error_bad_choice"
+  )
+})
+
+test_that("glassMultiSelect() rejects duplicate choice values", {
+  expect_error(
+    glassMultiSelect("f", c(a = "x", b = "x")),
+    class = "glasstabs_error_bad_choice"
+  )
+})

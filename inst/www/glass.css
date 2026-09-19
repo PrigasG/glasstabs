@@ -1072,9 +1072,13 @@
 .gt-compact .gt-card{padding:10px;}
 .gt-compact .gt-halo{border-radius:10px;}
 
-/* Dropdowns use position:fixed so they escape overflow:hidden parents
-   (e.g. bs4Dash card bodies). z-index is set directly on the dropdown
-   element in its base rule above. */
+/* Teleported dropdowns use position:absolute (set by glass.js in
+   teleportOpen()) so they escape overflow:hidden parents such as bs4Dash
+   card bodies. Absolute - not fixed - positioning is deliberate: fixed
+   positioning breaks inside AdminLTE's scroll contexts, and the JS
+   positionTeleportedDropdown() helper computes document-space coordinates
+   to match. z-index is set directly on the dropdown element in its base
+   rule above. */
 
 /*
    TELEPORTED DROPDOWN STYLES

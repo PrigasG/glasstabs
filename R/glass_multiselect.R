@@ -15,7 +15,10 @@
 #' This preserves the existing package behavior.
 #'
 #' @param inputId Shiny input id.
-#' @param choices Named or unnamed character vector of choices.
+#' @param choices Named or unnamed character vector of choices, or a named
+#'   list for grouped choices (selectInput()-style). A one-element named list
+#'   such as `list(Group = "x")` is treated as a flat, ungrouped choice,
+#'   mirroring [shiny::selectInput()].
 #' @param selected Initially selected values. Defaults to all choices when
 #'   \code{NULL}.
 #' @param label Optional field label shown above the widget.
@@ -52,7 +55,9 @@
 #'   choices and use [glassMultiSelectServer()] to search the full choice set
 #'   from the Shiny server. Default \code{FALSE}.
 #' @param server_limit Maximum number of choices rendered initially and returned
-#'   for each server-side search. Default \code{50}.
+#'   for each server-side search. Default \code{50}. An explicitly selected
+#'   value that falls outside the initial slice is still rendered as an extra
+#'   row so it stays visible and checked.
 #' @param server_min_chars Minimum search characters required before server-side
 #'   matching filters choices. Default \code{0}.
 #' @param searchable Search visibility. Use \code{TRUE} (default) to always
@@ -396,14 +401,17 @@ glassMultiSelect <- function(
     }
   )
 
-  wrap_cls <- paste(
-    "gt-ms-wrap",
-    paste0("style-", check_style),
-    if (identical(shape, "square")) "shape-square" else NULL,
-    if (disabled) "gt-disabled" else NULL,
-    if (is_auto) "theme-auto" else NULL,
-    if (.is_light_theme(theme)) "theme-light" else NULL
-  )
+  wrap_cls <- trimws(gsub(
+    "[ ]+", " ",
+    paste(
+      "gt-ms-wrap",
+      paste0("style-", check_style),
+      if (identical(shape, "square")) "shape-square" else NULL,
+      if (disabled) "gt-disabled" else NULL,
+      if (is_auto) "theme-auto" else NULL,
+      if (.is_light_theme(theme)) "theme-light" else NULL
+    )
+  ))
 
   htmltools::tagList(
     .make_style_tag(theme_css),
@@ -802,7 +810,10 @@ glassMultiSelectValue <- function(
 #' bounded list of matching choices.
 #'
 #' @param inputId Input id used in [glassMultiSelect()].
-#' @param choices Named or unnamed character vector of choices.
+#' @param choices Named or unnamed character vector of choices, or a named
+#'   list for grouped choices (selectInput()-style). A one-element named list
+#'   such as `list(Group = "x")` is treated as a flat, ungrouped choice,
+#'   mirroring [shiny::selectInput()].
 #' @param session Shiny session. Defaults to the current reactive domain.
 #' @param limit Maximum number of matching choices returned per search.
 #'   Default \code{50}.
@@ -918,6 +929,8 @@ glassMultiSelectServer <- function(
       }
     }
 
+    .gt_check_unique_values(values)
+
     return(list(
       values = values,
       labels = labels,
@@ -934,11 +947,34 @@ glassMultiSelectServer <- function(
     labels <- orig_names
   }
 
+  .gt_check_unique_values(values)
+
   list(
     values = values,
     labels = labels,
     groups = rep("", length(values))
   )
+}
+
+#' @noRd
+.gt_check_unique_values <- function(values) {
+  dup <- unique(values[duplicated(values)])
+  if (length(dup)) {
+    .gt_abort(
+      sprintf(
+        paste0(
+          "`choices` contains duplicate values: %s.\n",
+          "Choice values must be unique - duplicates produce ambiguous selections."
+        ),
+        paste0('"', dup, '"', collapse = ", ")
+      ),
+      class = "glasstabs_error_bad_choice",
+      argument = "choices",
+      value = dup,
+      expected = "unique choice values"
+    )
+  }
+  invisible(values)
 }
 
 #' @noRd

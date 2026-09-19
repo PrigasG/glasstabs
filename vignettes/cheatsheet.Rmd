@@ -22,7 +22,7 @@ ui <- fluidPage(
 )
 ```
 
-\`glassPage()\` is the experimental exception. It is a thin wrapper around \`bslib::page_fillable()\` and loads the dependency itself.
+`glassPage()` is the experimental exception. It is a thin wrapper around `bslib::page_fillable()` and loads the dependency itself.
 
 ```{r}
 ui <- glassPage(

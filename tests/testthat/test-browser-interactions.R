@@ -847,3 +847,66 @@ test_that("browser: horizontal tab alignment moves the whole tab group", {
     })()
   "))
 })
+
+test_that("browser: unrelated Shiny output updates keep select dropdowns open", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-select-unrelated-update",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+  app$click(selector = "#fruit-trigger")
+  app$wait_for_js("document.querySelector('#fruit-dropdown.open') !== null")
+
+  # Fire a shiny:value on an output that has nothing to do with the dropdown.
+  app$click(selector = "#ping_output")
+  app$wait_for_js("document.querySelector('#ping_text').textContent.indexOf('ping 1') !== -1")
+  app$wait_for_idle()
+
+  expect_true(app$get_js(
+    "document.querySelector('#fruit-dropdown.open') !== null"
+  ))
+})
+
+test_that("browser: window resize keeps select dropdowns open and repositions them", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-select-resize",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+  app$click(selector = "#fruit-trigger")
+  app$wait_for_js("document.querySelector('#fruit-dropdown.open') !== null")
+
+  app$get_js("window.dispatchEvent(new Event('resize')); 'dispatched'")
+  app$wait_for_idle()
+
+  expect_true(app$get_js(
+    "document.querySelector('#fruit-dropdown.open') !== null"
+  ))
+  # The teleported panel still tracks the trigger after the resize.
+  expect_true(app$get_js("
+    (function() {
+      var trigger = document.querySelector('#fruit-trigger');
+      var dropdown = document.querySelector('#fruit-dropdown');
+      var tr = trigger.getBoundingClientRect();
+      var dr = dropdown.getBoundingClientRect();
+      return Math.abs(dr.left - (tr.right - dr.width)) <= 2 &&
+        dr.top >= tr.bottom;
+    })()
+  "))
+})

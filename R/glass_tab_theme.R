@@ -20,6 +20,10 @@
 #' @param content_border Tab content area border.
 #' @param card_bg    Inner `.gt-card` background.
 #' @param card_text  Inner `.gt-card` text color.
+#' @param mode       Base preset that unset fields inherit from. One of
+#'   `"dark"` (default) or `"light"`. Use `"light"` when building a
+#'   light-mode theme so unset fields fall back to the light defaults and the
+#'   tab container receives the structural `theme-light` class.
 #'
 #' @return A named list of class `"glass_tab_theme"` for passing to
 #'   the `theme` argument of [glassTabsUI()].
@@ -57,8 +61,10 @@ glass_tab_theme <- function(
     content_bg = NULL,
     content_border = NULL,
     card_bg = NULL,
-    card_text = NULL
+    card_text = NULL,
+    mode = c("dark", "light")
 ) {
+  mode <- .gt_match_arg(mode, c("dark", "light"), "mode")
   structure(
     list(
       tab_text = tab_text,
@@ -69,7 +75,8 @@ glass_tab_theme <- function(
       content_bg = content_bg,
       content_border = content_border,
       card_bg = card_bg,
-      card_text = card_text
+      card_text = card_text,
+      mode = mode
     ),
     class = "glass_tab_theme"
   )
@@ -112,14 +119,14 @@ glass_tab_theme <- function(
         sprintf(
           paste0(
             "glassTabsUI(): `theme = \"%s\"` is not a valid preset.\n",
-            "Use theme = \"dark\", \"light\", \"auto\", or a glass_tab_theme() object."
+            "Use theme = \"dark\", \"light\", or a glass_tab_theme() object."
           ),
           theme
         ),
         class = "glasstabs_error_bad_theme",
         argument = "theme",
         value = theme,
-        expected = c("dark", "light", "auto", "glass_tab_theme")
+        expected = c("dark", "light", "glass_tab_theme")
       )
     }
     return(if (theme == "light") light_defaults else dark_defaults)
@@ -127,7 +134,11 @@ glass_tab_theme <- function(
 
   if (inherits(theme, "glass_tab_theme")) {
     overrides <- Filter(Negate(is.null), unclass(theme))
-    return(utils::modifyList(dark_defaults, overrides))
+    # `mode` selects the base preset; it is not a CSS value.
+    base_mode <- overrides$mode %||% "dark"
+    overrides$mode <- NULL
+    base <- if (identical(base_mode, "light")) light_defaults else dark_defaults
+    return(utils::modifyList(base, overrides))
   }
 
   .gt_abort(
@@ -141,6 +152,6 @@ glass_tab_theme <- function(
     class = "glasstabs_error_bad_theme",
     argument = "theme",
     value = theme,
-    expected = c("dark", "light", "auto", "glass_tab_theme")
+    expected = c("dark", "light", "glass_tab_theme")
   )
 }

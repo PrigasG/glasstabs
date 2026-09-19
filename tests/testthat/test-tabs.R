@@ -500,3 +500,27 @@ test_that("removeGlassTab() namespaces via session$ns", {
   removeGlassTab(fake_session, "tabs", "old")
   expect_equal(msgs[[1]]$message$ns, "mod-tabs")
 })
+
+
+test_that("glassTabPanel() rejects non-string value", {
+  expect_error(
+    glassTabPanel(123, "Label"),
+    class = "glasstabs_error_bad_argument"
+  )
+  expect_error(
+    glassTabPanel(c("a", "b"), "Label"),
+    class = "glasstabs_error_bad_argument"
+  )
+})
+
+test_that("glassTabPanel() rejects non-string label", {
+  expect_error(
+    glassTabPanel("a", 123),
+    class = "glasstabs_error_bad_argument"
+  )
+})
+
+test_that("glassTabPanel() allows empty label for icon-only tabs", {
+  p <- glassTabPanel("a", "")
+  expect_equal(p$label, "")
+})

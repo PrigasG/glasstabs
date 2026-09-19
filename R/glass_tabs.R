@@ -30,6 +30,20 @@
 #' @family glass tabs
 #' @export
 glassTabPanel <- function(value, label, ..., icon = NULL, selected = FALSE) {
+  .gt_check_string(
+    value, "value",
+    "glassTabPanel(): `value` must be a single non-empty string."
+  )
+  # `label` may be "" for icon-only tabs, but must still be a single string.
+  if (!is.character(label) || length(label) != 1L || is.na(label)) {
+    .gt_abort(
+      "glassTabPanel(): `label` must be a single string.",
+      class = "glasstabs_error_bad_argument",
+      argument = "label",
+      value = label,
+      expected = "a single character string"
+    )
+  }
   structure(
     list(
       value    = value,
@@ -303,7 +317,7 @@ glassTabsUI <- function(
   )
 
   is_light <- identical(theme, "light") ||
-    (inherits(theme, "glass_tab_theme") && isTRUE(attr(theme, "mode") == "light"))
+    (inherits(theme, "glass_tab_theme") && isTRUE(theme$mode == "light"))
 
   container_cls <- trimws(paste(
     c(if (isTRUE(wrap))    "gt-container",
@@ -378,7 +392,8 @@ updateGlassTabsUI <- function(session, id, selected) {
 #' @param id      Module id matching the `id` passed to [glassTabsUI()].
 #' @param value   Value of the tab to update.
 #' @param count   Integer count to display. Values above 99 are shown as
-#'   `"99+"`. `0` or `NA` hides the badge.
+#'   `"99+"`. `0`, `NA`, or `NULL` hides the badge. Fractional values are
+#'   truncated toward zero.
 #'
 #' @return Called for its side effect; returns \code{NULL} invisibly.
 #'
@@ -406,12 +421,35 @@ updateGlassTabsUI <- function(session, id, selected) {
 #' @family glass tabs
 #' @export
 updateGlassTabBadge <- function(session, id, value, count) {
-  count <- if (is.na(count)) 0L else as.integer(count)
+  count <- .gt_badge_count(count)
   session$sendCustomMessage(
     "glasstabs_tab_badge",
     list(ns = session$ns(id), value = value, count = count)
   )
   invisible(NULL)
+}
+
+#' @noRd
+.gt_badge_count <- function(count) {
+  # NULL (or an empty vector) means "no count": hide the badge, mirroring
+  # the documented NA behavior. This previously crashed in is.na().
+  if (is.null(count) || length(count) == 0L || isTRUE(is.na(count))) {
+    return(0L)
+  }
+  if (!is.numeric(count) || length(count) != 1L ||
+      !is.finite(count) || count < 0) {
+    .gt_abort(
+      paste0(
+        "`count` must be a single non-negative number. ",
+        "`0`, `NA`, or `NULL` hides the badge."
+      ),
+      class = "glasstabs_error_bad_argument",
+      argument = "count",
+      value = count,
+      expected = "a single non-negative number"
+    )
+  }
+  as.integer(count)
 }
 
 #' Show or hide a glass tab

@@ -353,12 +353,6 @@
     });
   }
 
-  function closeDropdownById(inputId, type) {
-    if (!inputId) return;
-    var selector = type === 'multi' ? '.gt-ms-wrap' : '.gt-gs-wrap';
-    closeDropdownWrap(document.querySelector(selector + attrEquals('data-input-id', inputId)));
-  }
-
   /** Release all listeners, observers, timers, and animations owned by a tab bar. */
   function destroyTabs(navbar) {
     if (!navbar) return;
@@ -557,7 +551,10 @@
       var h = r.h * s;
       var x = r.x + (r.w - w) / 2;
       var y = r.y + (r.h - h) / 2;
-      var br = parseFloat(getComputedStyle(el).borderRadius) || 12;
+      /* borderRadius can be a percentage ("50%") or a multi-value shorthand;
+         only honor plain pixel values, otherwise fall back to the halo default. */
+      var brRaw = (getComputedStyle(el).borderRadius || "").trim();
+      var br = /^\d+(\.\d+)?px$/.test(brRaw) ? parseFloat(brRaw) : 12;
 
       /* indicator = "underline": slim bar flush with the tab's bottom edge.
          In vertical orientation it becomes a side bar on the edge adjacent
@@ -1442,11 +1439,20 @@
       }
     });
 
-    /* Reposition on scroll/resize while open */
+    /* Reposition on scroll/resize while open. Resize follows the trigger
+       instead of closing: mobile URL-bar show/hide and the on-screen
+       keyboard both fire resize, and closing there strands the user mid-task.
+       Only close when the trigger is detached or has no layout box. */
     wrap._gtScrollHandler = function (e) {
       if (!dropdown.classList.contains('open')) return;
-      if (e && e.type === 'resize') close();
-      else positionDropdown();
+      if (e && e.type === 'resize') {
+        var r = trigger.getBoundingClientRect();
+        if (!document.contains(trigger) || (r.width === 0 && r.height === 0)) {
+          close();
+          return;
+        }
+      }
+      positionDropdown();
     };
     window.addEventListener('scroll', wrap._gtScrollHandler, true);
     window.addEventListener('resize', wrap._gtScrollHandler);
@@ -2124,11 +2130,20 @@
       }
     });
 
-    /* Reposition on scroll/resize while open */
+    /* Reposition on scroll/resize while open. Resize follows the trigger
+       instead of closing: mobile URL-bar show/hide and the on-screen
+       keyboard both fire resize, and closing there strands the user mid-task.
+       Only close when the trigger is detached or has no layout box. */
     wrap._gtScrollHandler = function (e) {
       if (!dropdown.classList.contains('open')) return;
-      if (e && e.type === 'resize') close();
-      else positionDropdown();
+      if (e && e.type === 'resize') {
+        var r = trigger.getBoundingClientRect();
+        if (!document.contains(trigger) || (r.width === 0 && r.height === 0)) {
+          close();
+          return;
+        }
+      }
+      positionDropdown();
     };
     window.addEventListener('scroll', wrap._gtScrollHandler, true);
     window.addEventListener('resize', wrap._gtScrollHandler);
@@ -2558,9 +2573,8 @@
       });
     }, true);
 
-    window.addEventListener('resize', function () {
-      closeAllDropdowns();
-    });
+    /* Resize is handled per widget: open dropdowns reposition to follow
+       their trigger (see wrap._gtScrollHandler) instead of closing. */
 
     var bootstrapCloseEvents = [
       'hide.bs.tab',
@@ -2592,8 +2606,19 @@
       }
     });
 
-    document.addEventListener('shiny:value', function () {
-      closeAllDropdowns();
+    /* A Shiny output updating should only disturb dropdowns anchored inside
+       the updated output (e.g. a renderUI replacing the widget itself).
+       Closing every dropdown on any output update made dropdowns unusable
+       next to live outputs such as timers or previews. */
+    document.addEventListener('shiny:value', function (e) {
+      var el = e.target || (e.binding && e.binding.el);
+      if (!el || !el.contains) return;
+      document.querySelectorAll('.gt-gs-wrap.gt-layer-active, .gt-ms-wrap.gt-layer-active').forEach(function (w) {
+        var dd = w._gtDropdown || w.querySelector('.gt-gs-dropdown, .gt-ms-dropdown');
+        var anchorInside = el === w || el.contains(w);
+        var panelInside = !!dd && (el === dd || el.contains(dd));
+        if (anchorInside || panelInside) closeDropdownWrap(w);
+      });
     });
 
     document.addEventListener('shiny:disconnected', function () {
@@ -2702,11 +2727,6 @@
 
     Shiny.addCustomMessageHandler('glasstabs_update_multiselect', function (msg) {
       setTimeout(function () { applyMultiSelectUpdate(msg, 0); }, 50);
-    });
-
-    Shiny.addCustomMessageHandler('glasstabs_close_select', function (msg) {
-      if (!msg || !msg.inputId) return;
-      closeDropdownById(msg.inputId, msg.type);
     });
 
     Shiny.addCustomMessageHandler('glasstabs_close_selects', function (msg) {

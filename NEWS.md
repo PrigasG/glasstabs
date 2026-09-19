@@ -1,5 +1,56 @@
 # glasstabs 0.4.1
 
+## Fixes
+
+* `%||%` is now exported, so example apps and vignette snippets that rely on
+  it (e.g. the dashboard and smoke-test examples) run without attaching
+  internals.
+* `updateGlassTabBadge()` no longer crashes on `count = NULL`; `NULL` and
+  empty vectors hide the badge like `NA` does. Non-numeric, multi-length,
+  negative, or infinite counts now raise a clear `glasstabs_error_bad_argument`
+  error instead of producing corrupt messages.
+* `glassTabPanel()` validates that `value` and `label` are single strings,
+  replacing cryptic downstream errors (empty labels remain allowed for
+  icon-only tabs).
+* `glass_tab_theme()` gains a `mode` argument (`"dark"`/`"light"`). Unset
+  fields now inherit from the mode's base preset, and light-mode custom themes
+  receive the structural `theme-light` class in `glassTabsUI()` (previously a
+  dead branch).
+* Invalid tab theme presets no longer list `"auto"` as valid; `"auto"` is
+  resolved by `glassTabsUI()` before theme resolution runs.
+* `glassSelect()` and `glassMultiSelect()` reject duplicate choice values
+  with a clear error instead of rendering ambiguous duplicate options.
+* Out-of-range `rgb()`/`rgba()` components are clamped the way browsers do,
+  and malformed components yield a clean fallback instead of invalid CSS.
+* Server-mode `server_limit` docs now explain that an explicitly selected
+  value outside the initial slice is still rendered as an extra row.
+* Grouped-`choices` docs now note that a one-element named list is treated as
+  a flat choice, mirroring `shiny::selectInput()`.
+* Vignettes now document the `input$<id>_ready` signal emitted once a select
+  widget finishes initializing.
+* Removed the dead `glasstabs_close_select` custom message handler and its
+  orphaned `closeDropdownById()` helper from `glass.js`; single-widget closes
+  travel through the widget controllers via input messages.
+* Corrected a stale CSS comment that claimed teleported dropdowns use
+  `position:fixed` (they deliberately use `position:absolute`).
+* Open select dropdowns no longer slam shut when an unrelated Shiny output
+  updates. Only dropdowns anchored inside the updated output are closed, so
+  dropdowns stay usable next to live outputs like timers and previews.
+* Window resizes (mobile URL-bar show/hide, the on-screen keyboard) now keep
+  open select dropdowns glued to their trigger via repositioning instead of
+  closing them. Dropdowns still close when their trigger is detached or has
+  no layout box.
+
+## Docs and examples
+
+* Fixed stale `v0.4.0` references, a placeholder GitHub username in the
+  getting-started vignette, mojibake em dashes in the dashboard/bs4dash
+  examples, and a wrong input id in the basic example's narrative.
+* The pkgdown reference now indexes `closeGlassMultiSelect`,
+  `closeAllGlassSelects`, and the newly exported `%||%`.
+* CI now installs stable Chrome so the shinytest2 browser suite actually runs
+  instead of failing on a missing browser.
+
 ## Select dropdown sizing
 
 * `glassSelect()` and `glassMultiSelect()` dropdown panels now follow their

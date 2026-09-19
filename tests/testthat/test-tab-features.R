@@ -187,8 +187,34 @@ test_that("updateGlassTabBadge() sends 0 to clear badge", {
   expect_equal(sess$msgs()[[1]]$message$count, 0L)
 })
 
+test_that("updateGlassTabBadge() treats NULL count as hidden", {
+  sess <- make_session()
+  updateGlassTabBadge(sess, "tabs", "a", count = NULL)
+  expect_equal(sess$msgs()[[1]]$message$count, 0L)
+})
 
-test_that("glassTabsServer() accepts bookmark = TRUE without error", {
+test_that("updateGlassTabBadge() rejects invalid counts", {
+  sess <- make_session()
+  expect_error(
+    updateGlassTabBadge(sess, "tabs", "a", count = c(1, 2)),
+    class = "glasstabs_error_bad_argument"
+  )
+  expect_error(
+    updateGlassTabBadge(sess, "tabs", "a", count = -1),
+    class = "glasstabs_error_bad_argument"
+  )
+  expect_error(
+    updateGlassTabBadge(sess, "tabs", "a", count = Inf),
+    class = "glasstabs_error_bad_argument"
+  )
+  expect_error(
+    updateGlassTabBadge(sess, "tabs", "a", count = "five"),
+    class = "glasstabs_error_bad_argument"
+  )
+})
+
+
+test_that("glassTabsServer() defaults bookmark to TRUE", {
   expect_true(is.function(glassTabsServer))
   fmls <- formals(glassTabsServer)
   expect_true("bookmark" %in% names(fmls))

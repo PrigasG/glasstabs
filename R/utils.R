@@ -1,4 +1,14 @@
-#' @noRd
+#' Null-or-empty coalescing operator
+#'
+#' Returns `a` unless it is `NULL` or length-zero, in which case `b` is
+#' returned. Unlike the rlang operator of the same name, length-zero values
+#' (e.g. `character(0)`) intentionally fall back, which the `update*()`
+#' helpers rely on to mean "clear".
+#'
+#' @param a Value to use when it is not `NULL` and not length-zero.
+#' @param b Fallback value.
+#' @return `a` if it is non-`NULL` and non-empty, otherwise `b`.
+#' @export
 `%||%` <- function(a, b) {
   # Unlike rlang's operator, length-zero values intentionally fall back. This
   # is load-bearing for update helpers where character(0) means "clear".
@@ -28,11 +38,24 @@
   )
   rgba_parts <- regmatches(color, rgba_match)[[1]]
   if (length(rgba_parts) > 0) {
+    nums <- suppressWarnings(as.numeric(rgba_parts[2:4]))
+    alpha <- if (length(rgba_parts) >= 5L && nzchar(rgba_parts[[5]])) {
+      suppressWarnings(as.numeric(rgba_parts[[5]]))
+    } else {
+      1
+    }
+    # Malformed components such as "1.2.3" parse to NA: treat the color as
+    # unparseable so callers fall back to the original string.
+    if (any(is.na(c(nums, alpha)))) {
+      return(NULL)
+    }
+    # Clamp out-of-range components (e.g. rgb(300, -5, 0)) the way browsers
+    # do, instead of emitting invalid CSS.
     return(list(
-      r = as.numeric(rgba_parts[[2]]),
-      g = as.numeric(rgba_parts[[3]]),
-      b = as.numeric(rgba_parts[[4]]),
-      a = if (length(rgba_parts) >= 5L && nzchar(rgba_parts[[5]])) as.numeric(rgba_parts[[5]]) else 1
+      r = min(255, max(0, nums[[1]]),
+      g = min(255, max(0, nums[[2]])),
+      b = min(255, max(0, nums[[3]])),
+      a = min(1, max(0, alpha))
     ))
   }
 

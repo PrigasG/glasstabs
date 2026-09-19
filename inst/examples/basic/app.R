@@ -39,7 +39,7 @@ ui <- fluidPage(
     ),
     glassTabPanel("D", "Final",
       shiny::h2("Final"),
-      shiny::p("input$category and input$main_active available in server."),
+      shiny::p("input$category and input[[\"main-active_tab\"]] available in server."),
       shiny::p("Active filters:"),
       glassFilterTags("category")
     )

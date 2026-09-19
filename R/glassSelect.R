@@ -169,14 +169,17 @@ glassSelect <- function(
     NULL
   }
 
-  wrap_cls <- paste(
-    "gt-gs-wrap",
-    paste0("style-", check_style),
-    if (identical(shape, "square")) "shape-square" else NULL,
-    if (disabled) "gt-disabled" else NULL,
-    if (is_auto) "theme-auto" else NULL,
-    if (.is_light_theme(theme)) "theme-light" else NULL
-  )
+  wrap_cls <- trimws(gsub(
+    "[ ]+", " ",
+    paste(
+      "gt-gs-wrap",
+      paste0("style-", check_style),
+      if (identical(shape, "square")) "shape-square" else NULL,
+      if (disabled) "gt-disabled" else NULL,
+      if (is_auto) "theme-auto" else NULL,
+      if (.is_light_theme(theme)) "theme-light" else NULL
+    )
+  ))
 
   check_svg <- shiny::tags$svg(
     width = "10",

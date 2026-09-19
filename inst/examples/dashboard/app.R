@@ -19,8 +19,8 @@ store_stats <- list(
 
 trend_notes <- c(
   all   = "All regions trending +4.2% vs last quarter.",
-  north = "North up +6.1% â€” strongest performer this quarter.",
-  south = "South down -1.3% â€” review Q3 promo strategy.",
+  north = "North up +6.1% — strongest performer this quarter.",
+  south = "South down -1.3% — review Q3 promo strategy.",
   east  = "East steady at +3.8%, new location opening next month.",
   west  = "West recovering after supply disruption, up +2.1%."
 )
