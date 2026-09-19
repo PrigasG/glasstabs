@@ -7,6 +7,8 @@ test_that("glass.css uses color-mix only as progressive enhancement", {
   }
 
   css <- paste(readLines(css_path, warn = FALSE), collapse = "\n")
+  # Ignore comments: only real declarations count.
+  css <- gsub("(?s)/\\*.*?\\*/", "", css, perl = TRUE)
   # color-mix() is allowed only where an unsupported browser degrades
   # gracefully: the active-tab inner edge light (the whole box-shadow
   # declaration is dropped, leaving no shadow) and the tab-wrap top border

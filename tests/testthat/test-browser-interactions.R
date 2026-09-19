@@ -8,18 +8,6 @@ local_browser_pkg_root <- function() {
       Sys.setenv(GLASSTABS_TEST_PKG_ROOT = old)
     }
   }, testthat::teardown_env())
-  # Chrome leaves `com.google.Chrome.*` lock dirs in tempdir() behind even
-  # after the browser is stopped; remove them so R CMD check does not flag
-  # them as detritus in the temp directory.
-  withr::defer({
-    leftovers <- list.files(
-      tempdir(),
-      pattern = "^com\\.google\\.Chrome",
-      full.names = TRUE,
-      all.files = TRUE
-    )
-    unlink(leftovers, recursive = TRUE, force = TRUE)
-  }, testthat::teardown_env())
 }
 
 test_that("browser: glassSelect opens and clicking an option updates input", {
