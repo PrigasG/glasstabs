@@ -41,6 +41,12 @@ jobs:
           extra-packages: any::rcmdcheck
           needs: check
 
+      # Browser tests (shinytest2/chromote) need a real Chrome; without it
+      # they would fail instead of exercising the widget JavaScript.
+      - uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
