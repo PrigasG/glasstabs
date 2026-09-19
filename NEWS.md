@@ -55,6 +55,11 @@
   (22px instead of 44px) and the tab bar sits slightly closer to the content.
 * `glassTabsUI()` gains `content_min_height` (default `"120px"`, was a fixed
   200px) to control the content area's minimum height; use `"0"` for none.
+* Tabs feel connected to their content: the active tab now shows a subtle
+  inner light on its content-facing edge (bottom for horizontal tabs, side
+  for a vertical rail, RTL-aware) in the halo color, and the content box's
+  top edge picks up the same halo color to bridge the gap. The underline
+  indicator keeps its own connection cue.
 * Server-side choice search now normalizes the choice set once per widget
   instead of on every keystroke, making search over large choice sets
   noticeably snappier.

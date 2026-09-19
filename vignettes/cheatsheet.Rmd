@@ -162,6 +162,15 @@ bs4Card(
 )
 ```
 
+## Tabs: connected styling
+
+The active tab and its content are visually linked automatically: the active
+tab carries a subtle inner light on its content-facing edge (bottom for
+horizontal tabs, the rail side for vertical, RTL-aware) in the halo color,
+and the content box's top edge picks up the same color to bridge the gap.
+The `underline` indicator keeps its own connection cue instead. No parameters
+needed - to restyle the link, theme `halo_border` via `glass_tab_theme()`.
+
 ## Multi-select: basic pattern
 
 ```{r}

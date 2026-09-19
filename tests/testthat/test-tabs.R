@@ -551,3 +551,20 @@ test_that("glassTabsUI() rejects an invalid content_min_height", {
     class = "glasstabs_error_bad_argument"
   )
 })
+
+test_that("stylesheet wires the active-tab dock cue and content halo spill", {
+  css <- paste(
+    readLines(system.file("www", "glass.css", package = "glasstabs"), warn = FALSE),
+    collapse = "\n"
+  )
+
+  # Active tab presses toward its pane with an inner halo-colored edge light
+  expect_true(grepl("inset 0 -2px 0 0 color-mix", css, fixed = TRUE))
+  # Vertical rail docks toward the side content (RTL-aware)
+  expect_true(grepl("inset -2px 0 0 0 color-mix", css, fixed = TRUE))
+  expect_true(grepl("inset 2px 0 0 0 color-mix", css, fixed = TRUE))
+  # Content box top edge picks up the halo color to bridge the gap
+  expect_true(grepl("border-top-color:color-mix", css, fixed = TRUE))
+  # The underline indicator keeps its own connection cue
+  expect_true(grepl(".indicator-underline .gt-tab-link.active", css, fixed = TRUE))
+})

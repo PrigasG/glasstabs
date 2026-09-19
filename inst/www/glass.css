@@ -60,7 +60,18 @@
 .gt-align-center:not(.gt-vertical) .gt-navbar{justify-content:center;}
 .gt-align-right:not(.gt-vertical) .gt-navbar{justify-content:flex-end;}
 .gt-tab-link:hover{background:rgba(255,255,255,0.04);}
-.gt-tab-link.active{color:var(--gt-tab-active-text,#ffffff);}
+.gt-tab-link.active{
+  color:var(--gt-tab-active-text,#ffffff);
+  /* Docked cue: inner light on the content-facing edge, in the halo color,
+     so the active tab visibly "presses toward" its pane. Decorative only -
+     the sliding halo keeps doing the heavy lifting. */
+  box-shadow:inset 0 -2px 0 0 color-mix(in srgb,var(--gt-halo-border,rgba(126,195,247,0.38)) 80%,transparent);
+}
+/* The underline indicator already draws its own connection - don't double up. */
+.indicator-underline .gt-tab-link.active{box-shadow:none;}
+/* Vertical rail: content sits to the side, so the dock light moves with it. */
+.gt-vertical .gt-tab-link.active{box-shadow:inset -2px 0 0 0 color-mix(in srgb,var(--gt-halo-border,rgba(126,195,247,0.38)) 80%,transparent);}
+[dir="rtl"] .gt-vertical .gt-tab-link.active{box-shadow:inset 2px 0 0 0 color-mix(in srgb,var(--gt-halo-border,rgba(126,195,247,0.38)) 80%,transparent);}
 .gt-tab-link.gt-tab-hidden{display:none;}
 .gt-tab-link:focus-visible{
   outline:3px solid var(--gt-focus-ring,#1683ff);outline-offset:3px;
@@ -107,6 +118,10 @@
   position:relative;overflow:hidden;border-radius:14px;padding:0;
   background:var(--gt-content-bg,transparent);
   border:1px solid var(--gt-content-border,transparent);
+  /* Halo spill: the top edge picks up the active tab's halo color, bridging
+     the gap between the tab bar and the content with light. Degrades to the
+     plain content border where color-mix() is unsupported. */
+  border-top-color:color-mix(in srgb,var(--gt-halo-border,rgba(126,195,247,0.38)) 55%,var(--gt-content-border,transparent));
   box-shadow:var(--gt-content-shadow,none);min-height:var(--gt-content-min-height,120px);z-index:5;
 }
 .gt-tab-pane{
@@ -895,6 +910,9 @@
 @media(max-width:760px){
   .gt-vertical{flex-direction:column;}
   .gt-vertical > .gt-topbar{min-width:0;width:100%;}
+  /* Rail stacks above the content again, so the dock light moves back down. */
+  .gt-vertical .gt-tab-link.active,
+  [dir="rtl"] .gt-vertical .gt-tab-link.active{box-shadow:inset 0 -2px 0 0 color-mix(in srgb,var(--gt-halo-border,rgba(126,195,247,0.38)) 80%,transparent);}
 }
 
 /*
