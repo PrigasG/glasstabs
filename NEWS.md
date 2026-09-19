@@ -40,6 +40,9 @@
   open select dropdowns glued to their trigger via repositioning instead of
   closing them. Dropdowns still close when their trigger is detached or has
   no layout box.
+* Open select dropdowns are now dismissed when a full-screen overlay appears
+  (loading screens, waiter veils, custom overlays), instead of floating above
+  or lingering beneath it. Smaller floating panels do not trigger this.
 
 ## Docs and examples
 

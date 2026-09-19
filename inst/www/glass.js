@@ -2624,6 +2624,75 @@
     document.addEventListener('shiny:disconnected', function () {
       closeAllDropdowns();
     });
+
+    /* Dismiss open dropdowns when a full-screen overlay appears (loading
+       screens, waiter veils, custom overlays). The dropdown would otherwise
+       float above the veil or linger beneath it. Only elements that actually
+       cover the open dropdown trigger a close. */
+    function overlayZ(el) {
+      var z = parseInt(window.getComputedStyle(el).zIndex, 10);
+      return isNaN(z) ? null : z;
+    }
+    function looksLikeScreenOverlay(el) {
+      if (!el || el.nodeType !== 1 || !el.getBoundingClientRect) return false;
+      if (el.closest && el.closest('.gt-gs-wrap, .gt-ms-wrap')) return false;
+      var cs = window.getComputedStyle(el);
+      if (cs.display === 'none' || cs.visibility === 'hidden') return false;
+      var op = parseFloat(cs.opacity);
+      if (!isNaN(op) && op === 0) return false;
+      if (cs.position !== 'fixed' && cs.position !== 'absolute') return false;
+      var r = el.getBoundingClientRect();
+      var vw = window.innerWidth, vh = window.innerHeight;
+      if (!vw || !vh) return false;
+      if (r.width < vw * 0.85 || r.height < vh * 0.85) return false;
+      if (r.left > vw * 0.1 || r.top > vh * 0.1) return false;
+      return true;
+    }
+    function overlayCoversDropdown(overlay) {
+      /* Teleported panels live on document.body; non-teleported ones sit in
+         the wrap. Either way compare against the visible panel. */
+      var dd = document.querySelector('.gt-gs-dropdown.open, .gt-ms-dropdown.open');
+      if (!dd) {
+        dd = document.querySelector(
+          '.gt-gs-wrap.gt-layer-active, .gt-ms-wrap.gt-layer-active'
+        );
+      }
+      if (!dd) return true;
+      var oz = overlayZ(overlay), dz = overlayZ(dd);
+      if (oz === null || dz === null) return true;
+      return oz >= dz;
+    }
+    if (typeof MutationObserver !== 'undefined' && document.body) {
+      var overlayObserver = new MutationObserver(function (mutations) {
+        var open = document.querySelector(
+          '.gt-gs-wrap.gt-layer-active, .gt-ms-wrap.gt-layer-active'
+        );
+        if (!open) return;
+        for (var i = 0; i < mutations.length; i++) {
+          var m = mutations[i];
+          if (m.type === 'childList') {
+            for (var j = 0; j < m.addedNodes.length; j++) {
+              var n = m.addedNodes[j];
+              if (looksLikeScreenOverlay(n) && overlayCoversDropdown(n)) {
+                closeAllDropdowns();
+                return;
+              }
+            }
+          } else if (m.type === 'attributes') {
+            if (looksLikeScreenOverlay(m.target) && overlayCoversDropdown(m.target)) {
+              closeAllDropdowns();
+              return;
+            }
+          }
+        }
+      });
+      overlayObserver.observe(document.body, {
+        childList: true,
+        attributes: true,
+        attributeFilter: ['style', 'class'],
+        subtree: false
+      });
+    }
   }
 
   document.addEventListener('click', function (e) {

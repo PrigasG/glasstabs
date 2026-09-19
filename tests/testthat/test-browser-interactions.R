@@ -910,3 +910,49 @@ test_that("browser: window resize keeps select dropdowns open and repositions th
     })()
   "))
 })
+
+test_that("browser: a full-screen overlay dismisses open select dropdowns", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-select-overlay",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+  app$click(selector = "#fruit-trigger")
+  app$wait_for_js("document.querySelector('#fruit-dropdown.open') !== null")
+
+  # A small floating panel is not a screen overlay: the dropdown stays open.
+  app$get_js("
+    (function() {
+      var d = document.createElement('div');
+      d.id = 'test-small-veil';
+      d.style.cssText = 'position:fixed;top:10px;left:10px;width:200px;height:100px;z-index:99999;background:red;';
+      document.body.appendChild(d);
+      return 'added';
+    })()
+  ")
+  Sys.sleep(0.5)
+  expect_true(app$get_js("document.querySelector('#fruit-dropdown.open') !== null"))
+  app$get_js("document.querySelector('#test-small-veil').remove(); 'removed'")
+
+  # A full-screen loading veil above the dropdown dismisses it.
+  app$get_js("
+    (function() {
+      var d = document.createElement('div');
+      d.id = 'test-screen-veil';
+      d.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.5);';
+      document.body.appendChild(d);
+      return 'added';
+    })()
+  ")
+  app$wait_for_js("document.querySelector('#fruit-dropdown.open') === null")
+  expect_true(app$get_js("document.querySelector('#fruit-dropdown.open') === null"))
+  app$get_js("document.querySelector('#test-screen-veil').remove(); 'removed'")
+})
