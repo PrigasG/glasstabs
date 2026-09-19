@@ -60,6 +60,12 @@
   for a vertical rail, RTL-aware) in the halo color, and the content box's
   top edge picks up the same halo color to bridge the gap. The underline
   indicator keeps its own connection cue.
+* `glassTabsUI()` gains `style = "attached"`, which docks the tab bar
+  directly onto the content box so they share one border and read as a
+  single unified card (`"floating"` keeps the default two-piece look).
+* `glassTabsUI()` gains `transition = "slide"`, sliding panes horizontally
+  in the direction of travel following tab order (`"fade"` keeps the default
+  fade-and-rise).
 * Server-side choice search now normalizes the choice set once per widget
   instead of on every keystroke, making search over large choice sets
   noticeably snappier.

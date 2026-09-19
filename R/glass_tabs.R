@@ -69,6 +69,13 @@ glassTabPanel <- function(value, label, ..., icon = NULL, selected = FALSE) {
 #' @param content_min_height Minimum height of the tab content area as a CSS
 #'   length, e.g. `"120px"` (the default). Stabilizes the layout when tabs
 #'   hold different amounts of content. Use `"0"` for no minimum.
+#' @param style Visual relationship between the tab bar and the content box.
+#'   `"floating"` (default) renders them as two separate floating pieces.
+#'   `"attached"` docks the tab bar directly onto the content box: they share
+#'   one border and read as a single unified card.
+#' @param transition How panes animate when switching tabs. `"fade"`
+#'   (default) fades and rises the incoming pane. `"slide"` slides panes
+#'   horizontally in the direction of travel, following tab order.
 #' @param shape Corner style for the tab bar and content. One of `"rounded"`
 #'   (default) for the signature glass look, or `"square"` for crisp,
 #'   selectize-style corners that match [glassSelect()] and
@@ -126,6 +133,8 @@ glassTabsUI <- function(
     wrap = TRUE,
     compact = FALSE,
     content_min_height = "120px",
+    style = c("floating", "attached"),
+    transition = c("fade", "slide"),
     shape = c("rounded", "square"),
     indicator = c("glass", "solid", "underline"),
     orientation = c("horizontal", "vertical"),
@@ -169,6 +178,8 @@ glassTabsUI <- function(
     )
   }
   content_min_height <- .gt_css_unit(content_min_height, "content_min_height")
+  style      <- .gt_match_arg(style, c("floating", "attached"), "style")
+  transition <- .gt_match_arg(transition, c("fade", "slide"), "transition")
 
   ## theme = "auto": bridge to Bootstrap 5 / bslib color modes. Base vars are
   ## the light preset; dark vars are scoped under [data-bs-theme="dark"] via
@@ -334,6 +345,8 @@ glassTabsUI <- function(
       if (isTRUE(compact)) "gt-compact",
       if (identical(shape, "square")) "shape-square",
       if (!identical(indicator, "glass")) paste0("indicator-", indicator),
+      if (!identical(style, "floating")) paste0("style-", style),
+      if (!identical(transition, "fade")) paste0("transition-", transition),
       if (identical(orientation, "vertical")) "gt-vertical",
       paste0("gt-overflow-", overflow),
       paste0("gt-align-", tab_align),

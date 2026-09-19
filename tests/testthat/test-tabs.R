@@ -568,3 +568,53 @@ test_that("stylesheet wires the active-tab dock cue and content halo spill", {
   # The underline indicator keeps its own connection cue
   expect_true(grepl(".indicator-underline .gt-tab-link.active", css, fixed = TRUE))
 })
+
+test_that("glassTabsUI() supports style and transition options", {
+  ui <- glassTabsUI(
+    "nav",
+    glassTabPanel("a", "A"),
+    style = "attached",
+    transition = "slide"
+  )
+  html <- as.character(ui)
+
+  expect_true(grepl("style-attached", html, fixed = TRUE))
+  expect_true(grepl("transition-slide", html, fixed = TRUE))
+})
+
+test_that("glassTabsUI() defaults to floating style and fade transition", {
+  html <- as.character(glassTabsUI("nav", glassTabPanel("a", "A")))
+
+  expect_false(grepl("style-attached", html, fixed = TRUE))
+  expect_false(grepl("transition-slide", html, fixed = TRUE))
+})
+
+test_that("glassTabsUI() rejects invalid style and transition values", {
+  expect_error(
+    glassTabsUI("nav", glassTabPanel("a", "A"), style = "glued"),
+    class = "glasstabs_error_bad_argument"
+  )
+  expect_error(
+    glassTabsUI("nav", glassTabPanel("a", "A"), transition = "zoom"),
+    class = "glasstabs_error_bad_argument"
+  )
+})
+
+test_that("stylesheet and JS wire attached style and directional slide", {
+  css <- paste(
+    readLines(system.file("www", "glass.css", package = "glasstabs"), warn = FALSE),
+    collapse = "\n"
+  )
+  js <- paste(
+    readLines(system.file("www", "glass.js", package = "glasstabs"), warn = FALSE),
+    collapse = "\n"
+  )
+
+  expect_true(grepl(".style-attached .gt-topbar", css, fixed = TRUE))
+  expect_true(grepl(".style-attached .gt-tab-wrap", css, fixed = TRUE))
+  expect_true(grepl(".transition-slide.gt-slide-fwd", css, fixed = TRUE))
+  expect_true(grepl(".gt-pane-exit", css, fixed = TRUE))
+  # JS records travel direction and marks the outgoing pane
+  expect_true(grepl("gt-slide-fwd", js, fixed = TRUE))
+  expect_true(grepl("gt-pane-exit", js, fixed = TRUE))
+})

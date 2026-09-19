@@ -171,6 +171,22 @@ and the content box's top edge picks up the same color to bridge the gap.
 The `underline` indicator keeps its own connection cue instead. No parameters
 needed - to restyle the link, theme `halo_border` via `glass_tab_theme()`.
 
+## Tabs: attached style and slide transition
+
+Use `style = "attached"` for a single unified card where the tab bar docks
+onto the content box, and `transition = "slide"` for directional pane
+movement that follows tab order.
+
+```{r}
+glassTabsUI(
+  "main",
+  glassTabPanel("a", "A", selected = TRUE, p("A")),
+  glassTabPanel("b", "B", p("B")),
+  style = "attached",      # tab bar shares one border with the content box
+  transition = "slide"     # panes slide in the direction of travel
+)
+```
+
 ## Multi-select: basic pattern
 
 ```{r}

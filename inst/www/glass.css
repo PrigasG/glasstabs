@@ -132,6 +132,21 @@
 }
 .gt-tab-pane.active{opacity:1;transform:translateY(0) scale(1);position:relative;pointer-events:auto;}
 
+/* Directional slide transition: panes travel horizontally following tab
+   order. JS sets .gt-slide-fwd/.gt-slide-back on the widget root and
+   .gt-pane-exit on the outgoing pane so it keeps traveling outward instead
+   of sliding back. */
+.transition-slide.gt-slide-fwd .gt-tab-pane:not(.active){transform:translateX(34px) scale(.995);}
+.transition-slide.gt-slide-back .gt-tab-pane:not(.active){transform:translateX(-34px) scale(.995);}
+.transition-slide .gt-tab-pane.active{transform:translateX(0) scale(1);}
+.transition-slide.gt-slide-fwd .gt-tab-pane.gt-pane-exit{transform:translateX(-34px) scale(.995);}
+.transition-slide.gt-slide-back .gt-tab-pane.gt-pane-exit{transform:translateX(34px) scale(.995);}
+/* RTL mirrors the travel direction. */
+[dir="rtl"] .transition-slide.gt-slide-fwd .gt-tab-pane:not(.active){transform:translateX(-34px) scale(.995);}
+[dir="rtl"] .transition-slide.gt-slide-back .gt-tab-pane:not(.active){transform:translateX(34px) scale(.995);}
+[dir="rtl"] .transition-slide.gt-slide-fwd .gt-tab-pane.gt-pane-exit{transform:translateX(34px) scale(.995);}
+[dir="rtl"] .transition-slide.gt-slide-back .gt-tab-pane.gt-pane-exit{transform:translateX(-34px) scale(.995);}
+
 /* Card */
 .gt-card{
   border-radius:10px;padding:18px;
@@ -1090,6 +1105,61 @@
 .gt-compact .gt-card{padding:10px;}
 .gt-compact .gt-halo{border-radius:10px;}
 
+/* Attached style: the tab bar docks directly onto the content box and they
+   share one border, reading as a single unified card instead of two floating
+   pieces. The topbar becomes the tab tray; the content box loses its top
+   border and top corners. */
+.style-attached .gt-topbar{
+  margin-bottom:0;
+  background:var(--gt-content-bg,transparent);
+  border:1px solid var(--gt-content-border,transparent);
+  border-bottom:none;
+  border-radius:14px 14px 0 0;
+  padding:10px 14px 0;
+}
+.style-attached .gt-tab-wrap{
+  border-top:none;
+  border-radius:0 0 14px 14px;
+}
+/* Vertical rail: the tray docks onto the content's side instead. */
+.style-attached.gt-vertical{gap:0;}
+.style-attached.gt-vertical > .gt-topbar{
+  background:var(--gt-content-bg,transparent);
+  border:1px solid var(--gt-content-border,transparent);
+  border-right:none;
+  border-radius:14px 0 0 14px;
+  padding:14px 0 14px 14px;
+}
+.style-attached.gt-vertical > .gt-tab-wrap{
+  border-left:none;
+  border-radius:0 14px 14px 0;
+}
+[dir="rtl"] .style-attached.gt-vertical > .gt-topbar{
+  border-right:1px solid var(--gt-content-border,transparent);
+  border-left:none;
+  border-radius:0 14px 14px 0;
+  padding:14px 14px 14px 0;
+}
+[dir="rtl"] .style-attached.gt-vertical > .gt-tab-wrap{
+  border-left:1px solid var(--gt-content-border,transparent);
+  border-right:none;
+  border-radius:14px 0 0 14px;
+}
+@media(max-width:760px){
+  /* Narrow screens stack the rail above the content again. */
+  .style-attached.gt-vertical > .gt-topbar{
+    border:1px solid var(--gt-content-border,transparent);
+    border-bottom:none;
+    border-radius:14px 14px 0 0;
+    padding:10px 14px 0;
+  }
+  .style-attached.gt-vertical > .gt-tab-wrap{
+    border:1px solid var(--gt-content-border,transparent);
+    border-top:none;
+    border-radius:0 0 14px 14px;
+  }
+}
+
 /* Teleported dropdowns use position:absolute (set by glass.js in
    teleportOpen()) so they escape overflow:hidden parents such as bs4Dash
    card bodies. Absolute - not fixed - positioning is deliberate: fixed
@@ -1266,5 +1336,6 @@
   }
   .gt-transfer{display:none !important;}
   .gt-tab-pane{transform:none;}
+  .transition-slide .gt-tab-pane{transform:none !important;}
   .gt-arrival-pulse,.gt-tab-badge.gt-badge-updated{animation:none !important;}
 }

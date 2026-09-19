@@ -718,7 +718,10 @@
         link.classList.toggle('active', selected);
         link.setAttribute('aria-selected', selected ? 'true' : 'false');
         var value = link.getAttribute('data-value');
-        setPaneActive(document.getElementById(ns + '-pane-' + value), selected);
+        var pane = document.getElementById(ns + '-pane-' + value);
+        setPaneActive(pane, selected);
+        /* A pane that becomes active must not keep a stale exit offset. */
+        if (pane && selected) pane.classList.remove('gt-pane-exit');
       });
 
       active = target;
@@ -778,6 +781,24 @@
       toEl.setAttribute('aria-selected', 'true');
       toEl.setAttribute('tabindex', '0');
       syncMenu();
+
+      /* Directional slide: record travel direction for the stylesheet so the
+         incoming pane enters from the side being moved toward. The outgoing
+         pane keeps a marker so it exits outward instead of sliding back. */
+      if (fromEl && fromEl !== toEl) {
+        var order = availableLinks();
+        var dir = order.indexOf(toEl) > order.indexOf(fromEl)
+          ? 'gt-slide-fwd' : 'gt-slide-back';
+        container.classList.remove('gt-slide-fwd', 'gt-slide-back');
+        container.classList.add(dir);
+        Array.from(container.querySelectorAll('.gt-tab-pane.gt-pane-exit'))
+          .forEach(function (p) { p.classList.remove('gt-pane-exit'); });
+        var fromPane = document.getElementById(
+          ns + '-pane-' + fromEl.getAttribute('data-value')
+        );
+        if (fromPane) fromPane.classList.add('gt-pane-exit');
+      }
+
       ensureTabVisible(toEl, true);
       if (moveFocus) toEl.focus();
 
