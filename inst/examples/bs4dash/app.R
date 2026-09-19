@@ -15,7 +15,7 @@ ui <- bs4DashPage(
 
     bs4Card(
       title = "Animated Tabs", width = 12,
-      # wrap = FALSE â€” the card-body is the positioning container
+      # wrap = FALSE — the card-body is the positioning container
       glassTabsUI(
         id            = "dash",
         wrap          = FALSE,

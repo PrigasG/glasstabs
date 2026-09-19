@@ -14,7 +14,8 @@ updateGlassTabBadge(session, id, value, count)
 \item{value}{Value of the tab to update.}
 
 \item{count}{Integer count to display. Values above 99 are shown as
-\code{"99+"}. \code{0} or \code{NA} hides the badge.}
+\code{"99+"}. \code{0}, \code{NA}, or \code{NULL} hides the badge. Fractional values are
+truncated toward zero.}
 }
 \value{
 Called for its side effect; returns \code{NULL} invisibly.

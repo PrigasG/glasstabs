@@ -353,12 +353,6 @@
     });
   }
 
-  function closeDropdownById(inputId, type) {
-    if (!inputId) return;
-    var selector = type === 'multi' ? '.gt-ms-wrap' : '.gt-gs-wrap';
-    closeDropdownWrap(document.querySelector(selector + attrEquals('data-input-id', inputId)));
-  }
-
   /** Release all listeners, observers, timers, and animations owned by a tab bar. */
   function destroyTabs(navbar) {
     if (!navbar) return;
@@ -557,7 +551,10 @@
       var h = r.h * s;
       var x = r.x + (r.w - w) / 2;
       var y = r.y + (r.h - h) / 2;
-      var br = parseFloat(getComputedStyle(el).borderRadius) || 12;
+      /* borderRadius can be a percentage ("50%") or a multi-value shorthand;
+         only honor plain pixel values, otherwise fall back to the halo default. */
+      var brRaw = (getComputedStyle(el).borderRadius || "").trim();
+      var br = /^\d+(\.\d+)?px$/.test(brRaw) ? parseFloat(brRaw) : 12;
 
       /* indicator = "underline": slim bar flush with the tab's bottom edge.
          In vertical orientation it becomes a side bar on the edge adjacent
@@ -721,7 +718,10 @@
         link.classList.toggle('active', selected);
         link.setAttribute('aria-selected', selected ? 'true' : 'false');
         var value = link.getAttribute('data-value');
-        setPaneActive(document.getElementById(ns + '-pane-' + value), selected);
+        var pane = document.getElementById(ns + '-pane-' + value);
+        setPaneActive(pane, selected);
+        /* A pane that becomes active must not keep a stale exit offset. */
+        if (pane && selected) pane.classList.remove('gt-pane-exit');
       });
 
       active = target;
@@ -781,6 +781,24 @@
       toEl.setAttribute('aria-selected', 'true');
       toEl.setAttribute('tabindex', '0');
       syncMenu();
+
+      /* Directional slide: record travel direction for the stylesheet so the
+         incoming pane enters from the side being moved toward. The outgoing
+         pane keeps a marker so it exits outward instead of sliding back. */
+      if (fromEl && fromEl !== toEl) {
+        var order = availableLinks();
+        var dir = order.indexOf(toEl) > order.indexOf(fromEl)
+          ? 'gt-slide-fwd' : 'gt-slide-back';
+        container.classList.remove('gt-slide-fwd', 'gt-slide-back');
+        container.classList.add(dir);
+        Array.from(container.querySelectorAll('.gt-tab-pane.gt-pane-exit'))
+          .forEach(function (p) { p.classList.remove('gt-pane-exit'); });
+        var fromPane = document.getElementById(
+          ns + '-pane-' + fromEl.getAttribute('data-value')
+        );
+        if (fromPane) fromPane.classList.add('gt-pane-exit');
+      }
+
       ensureTabVisible(toEl, true);
       if (moveFocus) toEl.focus();
 
@@ -1027,6 +1045,9 @@
 
     var inputId = wrap.getAttribute('data-input-id');
     var placeholder = wrap.getAttribute('data-placeholder') || 'Select an option';
+    var noMatchesText = wrap.hasAttribute('data-no-matches-text')
+      ? wrap.getAttribute('data-no-matches-text')
+      : 'No matches';
     var serverMode = parseBoolAttr(wrap, 'data-server');
     var serverMinChars = parseIntAttr(wrap, 'data-server-min-chars', 0);
 
@@ -1130,7 +1151,7 @@
       if (state.loading) {
         setStatus('Searching...', true, true);
       } else if (visibleChoiceCount() === 0) {
-        setStatus('No matches', true, false);
+        setStatus(noMatchesText, true, false);
       } else {
         setStatus('', false, false);
       }
@@ -1442,11 +1463,20 @@
       }
     });
 
-    /* Reposition on scroll/resize while open */
+    /* Reposition on scroll/resize while open. Resize follows the trigger
+       instead of closing: mobile URL-bar show/hide and the on-screen
+       keyboard both fire resize, and closing there strands the user mid-task.
+       Only close when the trigger is detached or has no layout box. */
     wrap._gtScrollHandler = function (e) {
       if (!dropdown.classList.contains('open')) return;
-      if (e && e.type === 'resize') close();
-      else positionDropdown();
+      if (e && e.type === 'resize') {
+        var r = trigger.getBoundingClientRect();
+        if (!document.contains(trigger) || (r.width === 0 && r.height === 0)) {
+          close();
+          return;
+        }
+      }
+      positionDropdown();
     };
     window.addEventListener('scroll', wrap._gtScrollHandler, true);
     window.addEventListener('resize', wrap._gtScrollHandler);
@@ -1550,6 +1580,9 @@
     var inputId = wrap.getAttribute('data-input-id');
     var placeholder = wrap.getAttribute('data-placeholder') || 'Filter by Category';
     var allLabel = wrap.getAttribute('data-all-label') || 'All categories';
+    var noMatchesText = wrap.hasAttribute('data-no-matches-text')
+      ? wrap.getAttribute('data-no-matches-text')
+      : 'No matches';
     var serverMode = parseBoolAttr(wrap, 'data-server');
     var serverMinChars = parseIntAttr(wrap, 'data-server-min-chars', 0);
     var searchMode = wrap.getAttribute('data-searchable') || 'always';
@@ -1725,7 +1758,7 @@
       if (state.loading) {
         setStatus('Searching...', true, true);
       } else if (visibleChoices().length === 0) {
-        setStatus('No matches', true, false);
+        setStatus(noMatchesText, true, false);
       } else {
         setStatus('', false, false);
       }
@@ -2124,11 +2157,20 @@
       }
     });
 
-    /* Reposition on scroll/resize while open */
+    /* Reposition on scroll/resize while open. Resize follows the trigger
+       instead of closing: mobile URL-bar show/hide and the on-screen
+       keyboard both fire resize, and closing there strands the user mid-task.
+       Only close when the trigger is detached or has no layout box. */
     wrap._gtScrollHandler = function (e) {
       if (!dropdown.classList.contains('open')) return;
-      if (e && e.type === 'resize') close();
-      else positionDropdown();
+      if (e && e.type === 'resize') {
+        var r = trigger.getBoundingClientRect();
+        if (!document.contains(trigger) || (r.width === 0 && r.height === 0)) {
+          close();
+          return;
+        }
+      }
+      positionDropdown();
     };
     window.addEventListener('scroll', wrap._gtScrollHandler, true);
     window.addEventListener('resize', wrap._gtScrollHandler);
@@ -2558,9 +2600,8 @@
       });
     }, true);
 
-    window.addEventListener('resize', function () {
-      closeAllDropdowns();
-    });
+    /* Resize is handled per widget: open dropdowns reposition to follow
+       their trigger (see wrap._gtScrollHandler) instead of closing. */
 
     var bootstrapCloseEvents = [
       'hide.bs.tab',
@@ -2592,13 +2633,93 @@
       }
     });
 
-    document.addEventListener('shiny:value', function () {
-      closeAllDropdowns();
+    /* A Shiny output updating should only disturb dropdowns anchored inside
+       the updated output (e.g. a renderUI replacing the widget itself).
+       Closing every dropdown on any output update made dropdowns unusable
+       next to live outputs such as timers or previews. */
+    document.addEventListener('shiny:value', function (e) {
+      var el = e.target || (e.binding && e.binding.el);
+      if (!el || !el.contains) return;
+      document.querySelectorAll('.gt-gs-wrap.gt-layer-active, .gt-ms-wrap.gt-layer-active').forEach(function (w) {
+        var dd = w._gtDropdown || w.querySelector('.gt-gs-dropdown, .gt-ms-dropdown');
+        var anchorInside = el === w || el.contains(w);
+        var panelInside = !!dd && (el === dd || el.contains(dd));
+        if (anchorInside || panelInside) closeDropdownWrap(w);
+      });
     });
 
     document.addEventListener('shiny:disconnected', function () {
       closeAllDropdowns();
     });
+
+    /* Dismiss open dropdowns when a full-screen overlay appears (loading
+       screens, waiter veils, custom overlays). The dropdown would otherwise
+       float above the veil or linger beneath it. Only elements that actually
+       cover the open dropdown trigger a close. */
+    function overlayZ(el) {
+      var z = parseInt(window.getComputedStyle(el).zIndex, 10);
+      return isNaN(z) ? null : z;
+    }
+    function looksLikeScreenOverlay(el) {
+      if (!el || el.nodeType !== 1 || !el.getBoundingClientRect) return false;
+      if (el.closest && el.closest('.gt-gs-wrap, .gt-ms-wrap')) return false;
+      var cs = window.getComputedStyle(el);
+      if (cs.display === 'none' || cs.visibility === 'hidden') return false;
+      var op = parseFloat(cs.opacity);
+      if (!isNaN(op) && op === 0) return false;
+      if (cs.position !== 'fixed' && cs.position !== 'absolute') return false;
+      var r = el.getBoundingClientRect();
+      var vw = window.innerWidth, vh = window.innerHeight;
+      if (!vw || !vh) return false;
+      if (r.width < vw * 0.85 || r.height < vh * 0.85) return false;
+      if (r.left > vw * 0.1 || r.top > vh * 0.1) return false;
+      return true;
+    }
+    function overlayCoversDropdown(overlay) {
+      /* Teleported panels live on document.body; non-teleported ones sit in
+         the wrap. Either way compare against the visible panel. */
+      var dd = document.querySelector('.gt-gs-dropdown.open, .gt-ms-dropdown.open');
+      if (!dd) {
+        dd = document.querySelector(
+          '.gt-gs-wrap.gt-layer-active, .gt-ms-wrap.gt-layer-active'
+        );
+      }
+      if (!dd) return true;
+      var oz = overlayZ(overlay), dz = overlayZ(dd);
+      if (oz === null || dz === null) return true;
+      return oz >= dz;
+    }
+    if (typeof MutationObserver !== 'undefined' && document.body) {
+      var overlayObserver = new MutationObserver(function (mutations) {
+        var open = document.querySelector(
+          '.gt-gs-wrap.gt-layer-active, .gt-ms-wrap.gt-layer-active'
+        );
+        if (!open) return;
+        for (var i = 0; i < mutations.length; i++) {
+          var m = mutations[i];
+          if (m.type === 'childList') {
+            for (var j = 0; j < m.addedNodes.length; j++) {
+              var n = m.addedNodes[j];
+              if (looksLikeScreenOverlay(n) && overlayCoversDropdown(n)) {
+                closeAllDropdowns();
+                return;
+              }
+            }
+          } else if (m.type === 'attributes') {
+            if (looksLikeScreenOverlay(m.target) && overlayCoversDropdown(m.target)) {
+              closeAllDropdowns();
+              return;
+            }
+          }
+        }
+      });
+      overlayObserver.observe(document.body, {
+        childList: true,
+        attributes: true,
+        attributeFilter: ['style', 'class'],
+        subtree: false
+      });
+    }
   }
 
   document.addEventListener('click', function (e) {
@@ -2702,11 +2823,6 @@
 
     Shiny.addCustomMessageHandler('glasstabs_update_multiselect', function (msg) {
       setTimeout(function () { applyMultiSelectUpdate(msg, 0); }, 50);
-    });
-
-    Shiny.addCustomMessageHandler('glasstabs_close_select', function (msg) {
-      if (!msg || !msg.inputId) return;
-      closeDropdownById(msg.inputId, msg.type);
     });
 
     Shiny.addCustomMessageHandler('glasstabs_close_selects', function (msg) {

@@ -20,7 +20,7 @@
       
       TABS: dark rounded 
       <div class="gt-container gt-overflow-scroll gt-align-center gt-text-align-center" id="tabs-wrap" data-swipe="false">
-        <style>#tabs-wrap{--gt-tab-text:rgba(207,230,255,0.78);--gt-tab-active-text:#ffffff;--gt-halo-bg:rgba(126,195,247,0.16);--gt-halo-border:rgba(126,195,247,0.38);--gt-focus-ring:#7ec3f7;--gt-halo-shadow:inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(255,255,255,.06),0 6px 20px rgba(0,0,0,.38),0 0 0 1px rgba(255,255,255,.03);--gt-content-bg:transparent;--gt-content-border:transparent;--gt-card-bg:transparent;--gt-card-text:#cfe6ff;}</style>
+        <style>#tabs-wrap{--gt-tab-text:rgba(207,230,255,0.78);--gt-tab-active-text:#ffffff;--gt-halo-bg:rgba(126,195,247,0.16);--gt-halo-border:rgba(126,195,247,0.38);--gt-focus-ring:#7ec3f7;--gt-halo-shadow:inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(255,255,255,.06),0 6px 20px rgba(0,0,0,.38),0 0 0 1px rgba(255,255,255,.03);--gt-content-bg:rgba(255,255,255,0.03);--gt-content-border:rgba(255,255,255,0.08);--gt-card-bg:transparent;--gt-card-text:#cfe6ff;}</style>
         <div class="gt-topbar">
           <div class="gt-tab-viewport">
             <div class="gt-navbar" id="tabs-navbar" data-ns="tabs" role="tablist" aria-orientation="horizontal">
@@ -39,7 +39,7 @@
           </div>
           <select class="gt-tab-menu-select" id="tabs-menu" aria-label="Choose a tab"></select>
         </div>
-        <div class="gt-tab-wrap">
+        <div class="gt-tab-wrap" style="--gt-content-min-height:120px;">
           <div class="gt-tab-pane active" id="tabs-pane-one" role="tabpanel" aria-labelledby="tabs-tab-one" aria-hidden="false" tabindex="0">
             <div class="gt-card">
               <p>First</p>
@@ -55,7 +55,7 @@
       MULTISELECT: dark rounded 
       <style>#multi-field{--ms-bg:rgba(9,20,42,0.97);--ms-border:rgba(255,255,255,0.10);--ms-text:#cfe6ff;--ms-accent:#7ec3f7;--ms-focus-ring:#7ec3f7;--ms-label:#cfe6ff;--ms-dropdown-max-height:260px;--ms-ac-12:rgba(126,195,247,0.120);--ms-ac-16:rgba(126,195,247,0.160);--ms-ac-18:rgba(126,195,247,0.180);--ms-ac-22:rgba(126,195,247,0.220);--ms-ac-28:rgba(126,195,247,0.280);--ms-ac-32:rgba(126,195,247,0.320);--ms-ac-40:rgba(126,195,247,0.400);--ms-ac-55:rgba(126,195,247,0.550);--ms-ac-60:rgba(126,195,247,0.600);--ms-ac-75:rgba(126,195,247,0.750);--ms-tx-03:rgba(207,230,255,0.030);--ms-tx-04:rgba(207,230,255,0.040);--ms-tx-05:rgba(207,230,255,0.050);--ms-tx-06:rgba(207,230,255,0.060);--ms-tx-08:rgba(207,230,255,0.080);--ms-tx-35:rgba(207,230,255,0.350);--ms-tx-45:rgba(207,230,255,0.450);--ms-tx-50:rgba(207,230,255,0.500);--ms-tx-80:rgba(207,230,255,0.800);--ms-ac-tx-75:rgba(146,204,249,1.000);}</style>
       <div class="gt-ms-field" id="multi-field">
-        <div class="gt-ms-wrap style-checkbox    " id="multi-wrap" data-input-id="multi" data-placeholder="Filter by Category" data-all-label="All categories" data-server="false" data-server-total="2" data-server-min-chars="0" data-searchable="always" data-search-threshold="15" data-selection-display="auto" data-selection-max-items="2" data-selected-values="[&quot;apple&quot;]">
+        <div class="gt-ms-wrap style-checkbox" id="multi-wrap" data-input-id="multi" data-placeholder="Filter by Category" data-no-matches-text="No matches" data-all-label="All categories" data-server="false" data-server-total="2" data-server-min-chars="0" data-searchable="always" data-search-threshold="15" data-selection-display="auto" data-selection-max-items="2" data-selected-values="[&quot;apple&quot;]">
           <div class="gt-ms-trigger" id="multi-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="multi-dropdown">
             <span id="multi-label">Apple</span>
             <div style="display:flex;align-items:center;gap:6px;">
@@ -130,7 +130,7 @@
       SELECT: dark rounded 
       <style>#single-field{--ms-bg:rgba(9,20,42,0.97);--ms-border:rgba(255,255,255,0.10);--ms-text:#cfe6ff;--ms-accent:#7ec3f7;--ms-focus-ring:#7ec3f7;--ms-label:#cfe6ff;--ms-ac-12:rgba(126,195,247,0.120);--ms-ac-16:rgba(126,195,247,0.160);--ms-ac-18:rgba(126,195,247,0.180);--ms-ac-22:rgba(126,195,247,0.220);--ms-ac-28:rgba(126,195,247,0.280);--ms-ac-32:rgba(126,195,247,0.320);--ms-ac-40:rgba(126,195,247,0.400);--ms-ac-55:rgba(126,195,247,0.550);--ms-ac-60:rgba(126,195,247,0.600);--ms-ac-75:rgba(126,195,247,0.750);--ms-tx-03:rgba(207,230,255,0.030);--ms-tx-04:rgba(207,230,255,0.040);--ms-tx-05:rgba(207,230,255,0.050);--ms-tx-06:rgba(207,230,255,0.060);--ms-tx-08:rgba(207,230,255,0.080);--ms-tx-35:rgba(207,230,255,0.350);--ms-tx-45:rgba(207,230,255,0.450);--ms-tx-50:rgba(207,230,255,0.500);--ms-tx-80:rgba(207,230,255,0.800);--ms-ac-tx-75:rgba(146,204,249,1.000);}</style>
       <div class="gt-gs-field" id="single-field">
-        <div class="gt-gs-wrap style-checkbox    " id="single-wrap" data-input-id="single" data-placeholder="Select an option" data-searchable="true" data-clearable="false" data-all-choice-label="All categories" data-all-choice-value="__all__" data-server="false" data-server-total="2" data-server-min-chars="0">
+        <div class="gt-gs-wrap style-checkbox" id="single-wrap" data-input-id="single" data-placeholder="Select an option" data-no-matches-text="No matches" data-searchable="true" data-clearable="false" data-all-choice-label="All categories" data-all-choice-value="__all__" data-server="false" data-server-total="2" data-server-min-chars="0">
           <div class="gt-gs-trigger" id="single-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="single-dropdown">
             <span id="single-label">Banana</span>
             <div style="display:flex;align-items:center;gap:6px;">
@@ -172,7 +172,7 @@
       
       TABS: light rounded 
       <div class="gt-container gt-overflow-scroll gt-align-center gt-text-align-center theme-light" id="tabs-wrap" data-swipe="false">
-        <style>#tabs-wrap{--gt-tab-text:#374151;--gt-tab-active-text:#1d4ed8;--gt-halo-bg:rgba(37,99,235,0.12);--gt-halo-border:rgba(37,99,235,0.60);--gt-focus-ring:#1d4ed8;--gt-halo-shadow:inset 0 1px 0 rgba(255,255,255,.80),0 4px 16px rgba(37,99,235,.20),0 0 0 1px rgba(37,99,235,.12);--gt-content-bg:transparent;--gt-content-border:transparent;--gt-card-bg:transparent;--gt-card-text:#1e293b;}</style>
+        <style>#tabs-wrap{--gt-tab-text:#374151;--gt-tab-active-text:#1d4ed8;--gt-halo-bg:rgba(37,99,235,0.12);--gt-halo-border:rgba(37,99,235,0.60);--gt-focus-ring:#1d4ed8;--gt-halo-shadow:inset 0 1px 0 rgba(255,255,255,.80),0 4px 16px rgba(37,99,235,.20),0 0 0 1px rgba(37,99,235,.12);--gt-content-bg:rgba(15,23,42,0.03);--gt-content-border:rgba(15,23,42,0.10);--gt-card-bg:transparent;--gt-card-text:#1e293b;}</style>
         <div class="gt-topbar">
           <div class="gt-tab-viewport">
             <div class="gt-navbar" id="tabs-navbar" data-ns="tabs" role="tablist" aria-orientation="horizontal">
@@ -191,7 +191,7 @@
           </div>
           <select class="gt-tab-menu-select" id="tabs-menu" aria-label="Choose a tab"></select>
         </div>
-        <div class="gt-tab-wrap">
+        <div class="gt-tab-wrap" style="--gt-content-min-height:120px;">
           <div class="gt-tab-pane active" id="tabs-pane-one" role="tabpanel" aria-labelledby="tabs-tab-one" aria-hidden="false" tabindex="0">
             <div class="gt-card">
               <p>First</p>
@@ -207,7 +207,7 @@
       MULTISELECT: light rounded 
       <style>#multi-field{--ms-bg:rgba(255,255,255,0.98);--ms-border:rgba(0,0,0,0.12);--ms-text:#111111;--ms-accent:#2563eb;--ms-focus-ring:#1d4ed8;--ms-label:#111111;--ms-dropdown-max-height:260px;--ms-ac-12:rgba(37,99,235,0.120);--ms-ac-16:rgba(37,99,235,0.160);--ms-ac-18:rgba(37,99,235,0.180);--ms-ac-22:rgba(37,99,235,0.220);--ms-ac-28:rgba(37,99,235,0.280);--ms-ac-32:rgba(37,99,235,0.320);--ms-ac-40:rgba(37,99,235,0.400);--ms-ac-55:rgba(37,99,235,0.550);--ms-ac-60:rgba(37,99,235,0.600);--ms-ac-75:rgba(37,99,235,0.750);--ms-tx-03:rgba(17,17,17,0.030);--ms-tx-04:rgba(17,17,17,0.040);--ms-tx-05:rgba(17,17,17,0.050);--ms-tx-06:rgba(17,17,17,0.060);--ms-tx-08:rgba(17,17,17,0.080);--ms-tx-35:rgba(17,17,17,0.350);--ms-tx-45:rgba(17,17,17,0.450);--ms-tx-50:rgba(17,17,17,0.500);--ms-tx-80:rgba(17,17,17,0.800);--ms-ac-tx-75:rgba(32,78,180,1.000);}</style>
       <div class="gt-ms-field" id="multi-field">
-        <div class="gt-ms-wrap style-checkbox    theme-light" id="multi-wrap" data-input-id="multi" data-placeholder="Filter by Category" data-all-label="All categories" data-server="false" data-server-total="2" data-server-min-chars="0" data-searchable="always" data-search-threshold="15" data-selection-display="auto" data-selection-max-items="2" data-selected-values="[&quot;apple&quot;]">
+        <div class="gt-ms-wrap style-checkbox theme-light" id="multi-wrap" data-input-id="multi" data-placeholder="Filter by Category" data-no-matches-text="No matches" data-all-label="All categories" data-server="false" data-server-total="2" data-server-min-chars="0" data-searchable="always" data-search-threshold="15" data-selection-display="auto" data-selection-max-items="2" data-selected-values="[&quot;apple&quot;]">
           <div class="gt-ms-trigger" id="multi-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="multi-dropdown">
             <span id="multi-label">Apple</span>
             <div style="display:flex;align-items:center;gap:6px;">
@@ -282,7 +282,7 @@
       SELECT: light rounded 
       <style>#single-field{--ms-bg:rgba(255,255,255,0.98);--ms-border:rgba(0,0,0,0.12);--ms-text:#111111;--ms-accent:#2563eb;--ms-focus-ring:#1d4ed8;--ms-label:#111111;--ms-ac-12:rgba(37,99,235,0.120);--ms-ac-16:rgba(37,99,235,0.160);--ms-ac-18:rgba(37,99,235,0.180);--ms-ac-22:rgba(37,99,235,0.220);--ms-ac-28:rgba(37,99,235,0.280);--ms-ac-32:rgba(37,99,235,0.320);--ms-ac-40:rgba(37,99,235,0.400);--ms-ac-55:rgba(37,99,235,0.550);--ms-ac-60:rgba(37,99,235,0.600);--ms-ac-75:rgba(37,99,235,0.750);--ms-tx-03:rgba(17,17,17,0.030);--ms-tx-04:rgba(17,17,17,0.040);--ms-tx-05:rgba(17,17,17,0.050);--ms-tx-06:rgba(17,17,17,0.060);--ms-tx-08:rgba(17,17,17,0.080);--ms-tx-35:rgba(17,17,17,0.350);--ms-tx-45:rgba(17,17,17,0.450);--ms-tx-50:rgba(17,17,17,0.500);--ms-tx-80:rgba(17,17,17,0.800);--ms-ac-tx-75:rgba(32,78,180,1.000);}</style>
       <div class="gt-gs-field" id="single-field">
-        <div class="gt-gs-wrap style-checkbox    theme-light" id="single-wrap" data-input-id="single" data-placeholder="Select an option" data-searchable="true" data-clearable="false" data-all-choice-label="All categories" data-all-choice-value="__all__" data-server="false" data-server-total="2" data-server-min-chars="0">
+        <div class="gt-gs-wrap style-checkbox theme-light" id="single-wrap" data-input-id="single" data-placeholder="Select an option" data-no-matches-text="No matches" data-searchable="true" data-clearable="false" data-all-choice-label="All categories" data-all-choice-value="__all__" data-server="false" data-server-total="2" data-server-min-chars="0">
           <div class="gt-gs-trigger" id="single-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="single-dropdown">
             <span id="single-label">Banana</span>
             <div style="display:flex;align-items:center;gap:6px;">
@@ -324,8 +324,8 @@
       
       TABS: auto rounded 
       <div class="gt-container gt-overflow-scroll gt-align-center gt-text-align-center theme-auto theme-light" id="tabs-wrap" data-swipe="false">
-        <style>#tabs-wrap{--gt-tab-text:#374151;--gt-tab-active-text:#1d4ed8;--gt-halo-bg:rgba(37,99,235,0.12);--gt-halo-border:rgba(37,99,235,0.60);--gt-focus-ring:#1d4ed8;--gt-halo-shadow:inset 0 1px 0 rgba(255,255,255,.80),0 4px 16px rgba(37,99,235,.20),0 0 0 1px rgba(37,99,235,.12);--gt-content-bg:transparent;--gt-content-border:transparent;--gt-card-bg:transparent;--gt-card-text:#1e293b;}</style>
-        <style>[data-bs-theme="dark"] #tabs-wrap{--gt-tab-text:rgba(207,230,255,0.78);--gt-tab-active-text:#ffffff;--gt-halo-bg:rgba(126,195,247,0.16);--gt-halo-border:rgba(126,195,247,0.38);--gt-focus-ring:#7ec3f7;--gt-halo-shadow:inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(255,255,255,.06),0 6px 20px rgba(0,0,0,.38),0 0 0 1px rgba(255,255,255,.03);--gt-content-bg:transparent;--gt-content-border:transparent;--gt-card-bg:transparent;--gt-card-text:#cfe6ff;}</style>
+        <style>#tabs-wrap{--gt-tab-text:#374151;--gt-tab-active-text:#1d4ed8;--gt-halo-bg:rgba(37,99,235,0.12);--gt-halo-border:rgba(37,99,235,0.60);--gt-focus-ring:#1d4ed8;--gt-halo-shadow:inset 0 1px 0 rgba(255,255,255,.80),0 4px 16px rgba(37,99,235,.20),0 0 0 1px rgba(37,99,235,.12);--gt-content-bg:rgba(15,23,42,0.03);--gt-content-border:rgba(15,23,42,0.10);--gt-card-bg:transparent;--gt-card-text:#1e293b;}</style>
+        <style>[data-bs-theme="dark"] #tabs-wrap{--gt-tab-text:rgba(207,230,255,0.78);--gt-tab-active-text:#ffffff;--gt-halo-bg:rgba(126,195,247,0.16);--gt-halo-border:rgba(126,195,247,0.38);--gt-focus-ring:#7ec3f7;--gt-halo-shadow:inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(255,255,255,.06),0 6px 20px rgba(0,0,0,.38),0 0 0 1px rgba(255,255,255,.03);--gt-content-bg:rgba(255,255,255,0.03);--gt-content-border:rgba(255,255,255,0.08);--gt-card-bg:transparent;--gt-card-text:#cfe6ff;}</style>
         <div class="gt-topbar">
           <div class="gt-tab-viewport">
             <div class="gt-navbar" id="tabs-navbar" data-ns="tabs" role="tablist" aria-orientation="horizontal">
@@ -344,7 +344,7 @@
           </div>
           <select class="gt-tab-menu-select" id="tabs-menu" aria-label="Choose a tab"></select>
         </div>
-        <div class="gt-tab-wrap">
+        <div class="gt-tab-wrap" style="--gt-content-min-height:120px;">
           <div class="gt-tab-pane active" id="tabs-pane-one" role="tabpanel" aria-labelledby="tabs-tab-one" aria-hidden="false" tabindex="0">
             <div class="gt-card">
               <p>First</p>
@@ -361,7 +361,7 @@
       <style>#multi-field{--ms-bg:rgba(255,255,255,0.98);--ms-border:rgba(0,0,0,0.12);--ms-text:#111111;--ms-accent:#2563eb;--ms-focus-ring:#1d4ed8;--ms-label:#111111;--ms-dropdown-max-height:260px;--ms-ac-12:rgba(37,99,235,0.120);--ms-ac-16:rgba(37,99,235,0.160);--ms-ac-18:rgba(37,99,235,0.180);--ms-ac-22:rgba(37,99,235,0.220);--ms-ac-28:rgba(37,99,235,0.280);--ms-ac-32:rgba(37,99,235,0.320);--ms-ac-40:rgba(37,99,235,0.400);--ms-ac-55:rgba(37,99,235,0.550);--ms-ac-60:rgba(37,99,235,0.600);--ms-ac-75:rgba(37,99,235,0.750);--ms-tx-03:rgba(17,17,17,0.030);--ms-tx-04:rgba(17,17,17,0.040);--ms-tx-05:rgba(17,17,17,0.050);--ms-tx-06:rgba(17,17,17,0.060);--ms-tx-08:rgba(17,17,17,0.080);--ms-tx-35:rgba(17,17,17,0.350);--ms-tx-45:rgba(17,17,17,0.450);--ms-tx-50:rgba(17,17,17,0.500);--ms-tx-80:rgba(17,17,17,0.800);--ms-ac-tx-75:rgba(32,78,180,1.000);}</style>
       <style>[data-bs-theme="dark"] #multi-field{--ms-bg:rgba(9,20,42,0.97);--ms-border:rgba(255,255,255,0.10);--ms-text:#cfe6ff;--ms-accent:#7ec3f7;--ms-focus-ring:#7ec3f7;--ms-label:#cfe6ff;--ms-ac-12:rgba(126,195,247,0.120);--ms-ac-16:rgba(126,195,247,0.160);--ms-ac-18:rgba(126,195,247,0.180);--ms-ac-22:rgba(126,195,247,0.220);--ms-ac-28:rgba(126,195,247,0.280);--ms-ac-32:rgba(126,195,247,0.320);--ms-ac-40:rgba(126,195,247,0.400);--ms-ac-55:rgba(126,195,247,0.550);--ms-ac-60:rgba(126,195,247,0.600);--ms-ac-75:rgba(126,195,247,0.750);--ms-tx-03:rgba(207,230,255,0.030);--ms-tx-04:rgba(207,230,255,0.040);--ms-tx-05:rgba(207,230,255,0.050);--ms-tx-06:rgba(207,230,255,0.060);--ms-tx-08:rgba(207,230,255,0.080);--ms-tx-35:rgba(207,230,255,0.350);--ms-tx-45:rgba(207,230,255,0.450);--ms-tx-50:rgba(207,230,255,0.500);--ms-tx-80:rgba(207,230,255,0.800);--ms-ac-tx-75:rgba(146,204,249,1.000);}</style>
       <div class="gt-ms-field" id="multi-field">
-        <div class="gt-ms-wrap style-checkbox   theme-auto theme-light" id="multi-wrap" data-input-id="multi" data-placeholder="Filter by Category" data-all-label="All categories" data-server="false" data-server-total="2" data-server-min-chars="0" data-searchable="always" data-search-threshold="15" data-selection-display="auto" data-selection-max-items="2" data-selected-values="[&quot;apple&quot;]">
+        <div class="gt-ms-wrap style-checkbox theme-auto theme-light" id="multi-wrap" data-input-id="multi" data-placeholder="Filter by Category" data-no-matches-text="No matches" data-all-label="All categories" data-server="false" data-server-total="2" data-server-min-chars="0" data-searchable="always" data-search-threshold="15" data-selection-display="auto" data-selection-max-items="2" data-selected-values="[&quot;apple&quot;]">
           <div class="gt-ms-trigger" id="multi-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="multi-dropdown">
             <span id="multi-label">Apple</span>
             <div style="display:flex;align-items:center;gap:6px;">
@@ -437,7 +437,7 @@
       <style>#single-field{--ms-bg:rgba(255,255,255,0.98);--ms-border:rgba(0,0,0,0.12);--ms-text:#111111;--ms-accent:#2563eb;--ms-focus-ring:#1d4ed8;--ms-label:#111111;--ms-ac-12:rgba(37,99,235,0.120);--ms-ac-16:rgba(37,99,235,0.160);--ms-ac-18:rgba(37,99,235,0.180);--ms-ac-22:rgba(37,99,235,0.220);--ms-ac-28:rgba(37,99,235,0.280);--ms-ac-32:rgba(37,99,235,0.320);--ms-ac-40:rgba(37,99,235,0.400);--ms-ac-55:rgba(37,99,235,0.550);--ms-ac-60:rgba(37,99,235,0.600);--ms-ac-75:rgba(37,99,235,0.750);--ms-tx-03:rgba(17,17,17,0.030);--ms-tx-04:rgba(17,17,17,0.040);--ms-tx-05:rgba(17,17,17,0.050);--ms-tx-06:rgba(17,17,17,0.060);--ms-tx-08:rgba(17,17,17,0.080);--ms-tx-35:rgba(17,17,17,0.350);--ms-tx-45:rgba(17,17,17,0.450);--ms-tx-50:rgba(17,17,17,0.500);--ms-tx-80:rgba(17,17,17,0.800);--ms-ac-tx-75:rgba(32,78,180,1.000);}</style>
       <style>[data-bs-theme="dark"] #single-field{--ms-bg:rgba(9,20,42,0.97);--ms-border:rgba(255,255,255,0.10);--ms-text:#cfe6ff;--ms-accent:#7ec3f7;--ms-focus-ring:#7ec3f7;--ms-label:#cfe6ff;--ms-ac-12:rgba(126,195,247,0.120);--ms-ac-16:rgba(126,195,247,0.160);--ms-ac-18:rgba(126,195,247,0.180);--ms-ac-22:rgba(126,195,247,0.220);--ms-ac-28:rgba(126,195,247,0.280);--ms-ac-32:rgba(126,195,247,0.320);--ms-ac-40:rgba(126,195,247,0.400);--ms-ac-55:rgba(126,195,247,0.550);--ms-ac-60:rgba(126,195,247,0.600);--ms-ac-75:rgba(126,195,247,0.750);--ms-tx-03:rgba(207,230,255,0.030);--ms-tx-04:rgba(207,230,255,0.040);--ms-tx-05:rgba(207,230,255,0.050);--ms-tx-06:rgba(207,230,255,0.060);--ms-tx-08:rgba(207,230,255,0.080);--ms-tx-35:rgba(207,230,255,0.350);--ms-tx-45:rgba(207,230,255,0.450);--ms-tx-50:rgba(207,230,255,0.500);--ms-tx-80:rgba(207,230,255,0.800);--ms-ac-tx-75:rgba(146,204,249,1.000);}</style>
       <div class="gt-gs-field" id="single-field">
-        <div class="gt-gs-wrap style-checkbox   theme-auto theme-light" id="single-wrap" data-input-id="single" data-placeholder="Select an option" data-searchable="true" data-clearable="false" data-all-choice-label="All categories" data-all-choice-value="__all__" data-server="false" data-server-total="2" data-server-min-chars="0">
+        <div class="gt-gs-wrap style-checkbox theme-auto theme-light" id="single-wrap" data-input-id="single" data-placeholder="Select an option" data-no-matches-text="No matches" data-searchable="true" data-clearable="false" data-all-choice-label="All categories" data-all-choice-value="__all__" data-server="false" data-server-total="2" data-server-min-chars="0">
           <div class="gt-gs-trigger" id="single-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="single-dropdown">
             <span id="single-label">Banana</span>
             <div style="display:flex;align-items:center;gap:6px;">
@@ -479,7 +479,7 @@
       
       TABS: dark square 
       <div class="gt-container shape-square gt-overflow-scroll gt-align-center gt-text-align-center" id="tabs-wrap" data-swipe="false">
-        <style>#tabs-wrap{--gt-tab-text:rgba(207,230,255,0.78);--gt-tab-active-text:#ffffff;--gt-halo-bg:rgba(126,195,247,0.16);--gt-halo-border:rgba(126,195,247,0.38);--gt-focus-ring:#7ec3f7;--gt-halo-shadow:inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(255,255,255,.06),0 6px 20px rgba(0,0,0,.38),0 0 0 1px rgba(255,255,255,.03);--gt-content-bg:transparent;--gt-content-border:transparent;--gt-card-bg:transparent;--gt-card-text:#cfe6ff;}</style>
+        <style>#tabs-wrap{--gt-tab-text:rgba(207,230,255,0.78);--gt-tab-active-text:#ffffff;--gt-halo-bg:rgba(126,195,247,0.16);--gt-halo-border:rgba(126,195,247,0.38);--gt-focus-ring:#7ec3f7;--gt-halo-shadow:inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(255,255,255,.06),0 6px 20px rgba(0,0,0,.38),0 0 0 1px rgba(255,255,255,.03);--gt-content-bg:rgba(255,255,255,0.03);--gt-content-border:rgba(255,255,255,0.08);--gt-card-bg:transparent;--gt-card-text:#cfe6ff;}</style>
         <div class="gt-topbar">
           <div class="gt-tab-viewport">
             <div class="gt-navbar" id="tabs-navbar" data-ns="tabs" role="tablist" aria-orientation="horizontal">
@@ -498,7 +498,7 @@
           </div>
           <select class="gt-tab-menu-select" id="tabs-menu" aria-label="Choose a tab"></select>
         </div>
-        <div class="gt-tab-wrap">
+        <div class="gt-tab-wrap" style="--gt-content-min-height:120px;">
           <div class="gt-tab-pane active" id="tabs-pane-one" role="tabpanel" aria-labelledby="tabs-tab-one" aria-hidden="false" tabindex="0">
             <div class="gt-card">
               <p>First</p>
@@ -514,7 +514,7 @@
       MULTISELECT: dark square 
       <style>#multi-field{--ms-bg:rgba(9,20,42,0.97);--ms-border:rgba(255,255,255,0.10);--ms-text:#cfe6ff;--ms-accent:#7ec3f7;--ms-focus-ring:#7ec3f7;--ms-label:#cfe6ff;--ms-dropdown-max-height:260px;--ms-ac-12:rgba(126,195,247,0.120);--ms-ac-16:rgba(126,195,247,0.160);--ms-ac-18:rgba(126,195,247,0.180);--ms-ac-22:rgba(126,195,247,0.220);--ms-ac-28:rgba(126,195,247,0.280);--ms-ac-32:rgba(126,195,247,0.320);--ms-ac-40:rgba(126,195,247,0.400);--ms-ac-55:rgba(126,195,247,0.550);--ms-ac-60:rgba(126,195,247,0.600);--ms-ac-75:rgba(126,195,247,0.750);--ms-tx-03:rgba(207,230,255,0.030);--ms-tx-04:rgba(207,230,255,0.040);--ms-tx-05:rgba(207,230,255,0.050);--ms-tx-06:rgba(207,230,255,0.060);--ms-tx-08:rgba(207,230,255,0.080);--ms-tx-35:rgba(207,230,255,0.350);--ms-tx-45:rgba(207,230,255,0.450);--ms-tx-50:rgba(207,230,255,0.500);--ms-tx-80:rgba(207,230,255,0.800);--ms-ac-tx-75:rgba(146,204,249,1.000);}</style>
       <div class="gt-ms-field" id="multi-field">
-        <div class="gt-ms-wrap style-checkbox shape-square   " id="multi-wrap" data-input-id="multi" data-placeholder="Filter by Category" data-all-label="All categories" data-server="false" data-server-total="2" data-server-min-chars="0" data-searchable="always" data-search-threshold="15" data-selection-display="auto" data-selection-max-items="2" data-selected-values="[&quot;apple&quot;]">
+        <div class="gt-ms-wrap style-checkbox shape-square" id="multi-wrap" data-input-id="multi" data-placeholder="Filter by Category" data-no-matches-text="No matches" data-all-label="All categories" data-server="false" data-server-total="2" data-server-min-chars="0" data-searchable="always" data-search-threshold="15" data-selection-display="auto" data-selection-max-items="2" data-selected-values="[&quot;apple&quot;]">
           <div class="gt-ms-trigger" id="multi-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="multi-dropdown">
             <span id="multi-label">Apple</span>
             <div style="display:flex;align-items:center;gap:6px;">
@@ -589,7 +589,7 @@
       SELECT: dark square 
       <style>#single-field{--ms-bg:rgba(9,20,42,0.97);--ms-border:rgba(255,255,255,0.10);--ms-text:#cfe6ff;--ms-accent:#7ec3f7;--ms-focus-ring:#7ec3f7;--ms-label:#cfe6ff;--ms-ac-12:rgba(126,195,247,0.120);--ms-ac-16:rgba(126,195,247,0.160);--ms-ac-18:rgba(126,195,247,0.180);--ms-ac-22:rgba(126,195,247,0.220);--ms-ac-28:rgba(126,195,247,0.280);--ms-ac-32:rgba(126,195,247,0.320);--ms-ac-40:rgba(126,195,247,0.400);--ms-ac-55:rgba(126,195,247,0.550);--ms-ac-60:rgba(126,195,247,0.600);--ms-ac-75:rgba(126,195,247,0.750);--ms-tx-03:rgba(207,230,255,0.030);--ms-tx-04:rgba(207,230,255,0.040);--ms-tx-05:rgba(207,230,255,0.050);--ms-tx-06:rgba(207,230,255,0.060);--ms-tx-08:rgba(207,230,255,0.080);--ms-tx-35:rgba(207,230,255,0.350);--ms-tx-45:rgba(207,230,255,0.450);--ms-tx-50:rgba(207,230,255,0.500);--ms-tx-80:rgba(207,230,255,0.800);--ms-ac-tx-75:rgba(146,204,249,1.000);}</style>
       <div class="gt-gs-field" id="single-field">
-        <div class="gt-gs-wrap style-checkbox shape-square   " id="single-wrap" data-input-id="single" data-placeholder="Select an option" data-searchable="true" data-clearable="false" data-all-choice-label="All categories" data-all-choice-value="__all__" data-server="false" data-server-total="2" data-server-min-chars="0">
+        <div class="gt-gs-wrap style-checkbox shape-square" id="single-wrap" data-input-id="single" data-placeholder="Select an option" data-no-matches-text="No matches" data-searchable="true" data-clearable="false" data-all-choice-label="All categories" data-all-choice-value="__all__" data-server="false" data-server-total="2" data-server-min-chars="0">
           <div class="gt-gs-trigger" id="single-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="single-dropdown">
             <span id="single-label">Banana</span>
             <div style="display:flex;align-items:center;gap:6px;">
@@ -631,7 +631,7 @@
       
       TABS: light square 
       <div class="gt-container shape-square gt-overflow-scroll gt-align-center gt-text-align-center theme-light" id="tabs-wrap" data-swipe="false">
-        <style>#tabs-wrap{--gt-tab-text:#374151;--gt-tab-active-text:#1d4ed8;--gt-halo-bg:rgba(37,99,235,0.12);--gt-halo-border:rgba(37,99,235,0.60);--gt-focus-ring:#1d4ed8;--gt-halo-shadow:inset 0 1px 0 rgba(255,255,255,.80),0 4px 16px rgba(37,99,235,.20),0 0 0 1px rgba(37,99,235,.12);--gt-content-bg:transparent;--gt-content-border:transparent;--gt-card-bg:transparent;--gt-card-text:#1e293b;}</style>
+        <style>#tabs-wrap{--gt-tab-text:#374151;--gt-tab-active-text:#1d4ed8;--gt-halo-bg:rgba(37,99,235,0.12);--gt-halo-border:rgba(37,99,235,0.60);--gt-focus-ring:#1d4ed8;--gt-halo-shadow:inset 0 1px 0 rgba(255,255,255,.80),0 4px 16px rgba(37,99,235,.20),0 0 0 1px rgba(37,99,235,.12);--gt-content-bg:rgba(15,23,42,0.03);--gt-content-border:rgba(15,23,42,0.10);--gt-card-bg:transparent;--gt-card-text:#1e293b;}</style>
         <div class="gt-topbar">
           <div class="gt-tab-viewport">
             <div class="gt-navbar" id="tabs-navbar" data-ns="tabs" role="tablist" aria-orientation="horizontal">
@@ -650,7 +650,7 @@
           </div>
           <select class="gt-tab-menu-select" id="tabs-menu" aria-label="Choose a tab"></select>
         </div>
-        <div class="gt-tab-wrap">
+        <div class="gt-tab-wrap" style="--gt-content-min-height:120px;">
           <div class="gt-tab-pane active" id="tabs-pane-one" role="tabpanel" aria-labelledby="tabs-tab-one" aria-hidden="false" tabindex="0">
             <div class="gt-card">
               <p>First</p>
@@ -666,7 +666,7 @@
       MULTISELECT: light square 
       <style>#multi-field{--ms-bg:rgba(255,255,255,0.98);--ms-border:rgba(0,0,0,0.12);--ms-text:#111111;--ms-accent:#2563eb;--ms-focus-ring:#1d4ed8;--ms-label:#111111;--ms-dropdown-max-height:260px;--ms-ac-12:rgba(37,99,235,0.120);--ms-ac-16:rgba(37,99,235,0.160);--ms-ac-18:rgba(37,99,235,0.180);--ms-ac-22:rgba(37,99,235,0.220);--ms-ac-28:rgba(37,99,235,0.280);--ms-ac-32:rgba(37,99,235,0.320);--ms-ac-40:rgba(37,99,235,0.400);--ms-ac-55:rgba(37,99,235,0.550);--ms-ac-60:rgba(37,99,235,0.600);--ms-ac-75:rgba(37,99,235,0.750);--ms-tx-03:rgba(17,17,17,0.030);--ms-tx-04:rgba(17,17,17,0.040);--ms-tx-05:rgba(17,17,17,0.050);--ms-tx-06:rgba(17,17,17,0.060);--ms-tx-08:rgba(17,17,17,0.080);--ms-tx-35:rgba(17,17,17,0.350);--ms-tx-45:rgba(17,17,17,0.450);--ms-tx-50:rgba(17,17,17,0.500);--ms-tx-80:rgba(17,17,17,0.800);--ms-ac-tx-75:rgba(32,78,180,1.000);}</style>
       <div class="gt-ms-field" id="multi-field">
-        <div class="gt-ms-wrap style-checkbox shape-square   theme-light" id="multi-wrap" data-input-id="multi" data-placeholder="Filter by Category" data-all-label="All categories" data-server="false" data-server-total="2" data-server-min-chars="0" data-searchable="always" data-search-threshold="15" data-selection-display="auto" data-selection-max-items="2" data-selected-values="[&quot;apple&quot;]">
+        <div class="gt-ms-wrap style-checkbox shape-square theme-light" id="multi-wrap" data-input-id="multi" data-placeholder="Filter by Category" data-no-matches-text="No matches" data-all-label="All categories" data-server="false" data-server-total="2" data-server-min-chars="0" data-searchable="always" data-search-threshold="15" data-selection-display="auto" data-selection-max-items="2" data-selected-values="[&quot;apple&quot;]">
           <div class="gt-ms-trigger" id="multi-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="multi-dropdown">
             <span id="multi-label">Apple</span>
             <div style="display:flex;align-items:center;gap:6px;">
@@ -741,7 +741,7 @@
       SELECT: light square 
       <style>#single-field{--ms-bg:rgba(255,255,255,0.98);--ms-border:rgba(0,0,0,0.12);--ms-text:#111111;--ms-accent:#2563eb;--ms-focus-ring:#1d4ed8;--ms-label:#111111;--ms-ac-12:rgba(37,99,235,0.120);--ms-ac-16:rgba(37,99,235,0.160);--ms-ac-18:rgba(37,99,235,0.180);--ms-ac-22:rgba(37,99,235,0.220);--ms-ac-28:rgba(37,99,235,0.280);--ms-ac-32:rgba(37,99,235,0.320);--ms-ac-40:rgba(37,99,235,0.400);--ms-ac-55:rgba(37,99,235,0.550);--ms-ac-60:rgba(37,99,235,0.600);--ms-ac-75:rgba(37,99,235,0.750);--ms-tx-03:rgba(17,17,17,0.030);--ms-tx-04:rgba(17,17,17,0.040);--ms-tx-05:rgba(17,17,17,0.050);--ms-tx-06:rgba(17,17,17,0.060);--ms-tx-08:rgba(17,17,17,0.080);--ms-tx-35:rgba(17,17,17,0.350);--ms-tx-45:rgba(17,17,17,0.450);--ms-tx-50:rgba(17,17,17,0.500);--ms-tx-80:rgba(17,17,17,0.800);--ms-ac-tx-75:rgba(32,78,180,1.000);}</style>
       <div class="gt-gs-field" id="single-field">
-        <div class="gt-gs-wrap style-checkbox shape-square   theme-light" id="single-wrap" data-input-id="single" data-placeholder="Select an option" data-searchable="true" data-clearable="false" data-all-choice-label="All categories" data-all-choice-value="__all__" data-server="false" data-server-total="2" data-server-min-chars="0">
+        <div class="gt-gs-wrap style-checkbox shape-square theme-light" id="single-wrap" data-input-id="single" data-placeholder="Select an option" data-no-matches-text="No matches" data-searchable="true" data-clearable="false" data-all-choice-label="All categories" data-all-choice-value="__all__" data-server="false" data-server-total="2" data-server-min-chars="0">
           <div class="gt-gs-trigger" id="single-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="single-dropdown">
             <span id="single-label">Banana</span>
             <div style="display:flex;align-items:center;gap:6px;">
@@ -783,8 +783,8 @@
       
       TABS: auto square 
       <div class="gt-container shape-square gt-overflow-scroll gt-align-center gt-text-align-center theme-auto theme-light" id="tabs-wrap" data-swipe="false">
-        <style>#tabs-wrap{--gt-tab-text:#374151;--gt-tab-active-text:#1d4ed8;--gt-halo-bg:rgba(37,99,235,0.12);--gt-halo-border:rgba(37,99,235,0.60);--gt-focus-ring:#1d4ed8;--gt-halo-shadow:inset 0 1px 0 rgba(255,255,255,.80),0 4px 16px rgba(37,99,235,.20),0 0 0 1px rgba(37,99,235,.12);--gt-content-bg:transparent;--gt-content-border:transparent;--gt-card-bg:transparent;--gt-card-text:#1e293b;}</style>
-        <style>[data-bs-theme="dark"] #tabs-wrap{--gt-tab-text:rgba(207,230,255,0.78);--gt-tab-active-text:#ffffff;--gt-halo-bg:rgba(126,195,247,0.16);--gt-halo-border:rgba(126,195,247,0.38);--gt-focus-ring:#7ec3f7;--gt-halo-shadow:inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(255,255,255,.06),0 6px 20px rgba(0,0,0,.38),0 0 0 1px rgba(255,255,255,.03);--gt-content-bg:transparent;--gt-content-border:transparent;--gt-card-bg:transparent;--gt-card-text:#cfe6ff;}</style>
+        <style>#tabs-wrap{--gt-tab-text:#374151;--gt-tab-active-text:#1d4ed8;--gt-halo-bg:rgba(37,99,235,0.12);--gt-halo-border:rgba(37,99,235,0.60);--gt-focus-ring:#1d4ed8;--gt-halo-shadow:inset 0 1px 0 rgba(255,255,255,.80),0 4px 16px rgba(37,99,235,.20),0 0 0 1px rgba(37,99,235,.12);--gt-content-bg:rgba(15,23,42,0.03);--gt-content-border:rgba(15,23,42,0.10);--gt-card-bg:transparent;--gt-card-text:#1e293b;}</style>
+        <style>[data-bs-theme="dark"] #tabs-wrap{--gt-tab-text:rgba(207,230,255,0.78);--gt-tab-active-text:#ffffff;--gt-halo-bg:rgba(126,195,247,0.16);--gt-halo-border:rgba(126,195,247,0.38);--gt-focus-ring:#7ec3f7;--gt-halo-shadow:inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(255,255,255,.06),0 6px 20px rgba(0,0,0,.38),0 0 0 1px rgba(255,255,255,.03);--gt-content-bg:rgba(255,255,255,0.03);--gt-content-border:rgba(255,255,255,0.08);--gt-card-bg:transparent;--gt-card-text:#cfe6ff;}</style>
         <div class="gt-topbar">
           <div class="gt-tab-viewport">
             <div class="gt-navbar" id="tabs-navbar" data-ns="tabs" role="tablist" aria-orientation="horizontal">
@@ -803,7 +803,7 @@
           </div>
           <select class="gt-tab-menu-select" id="tabs-menu" aria-label="Choose a tab"></select>
         </div>
-        <div class="gt-tab-wrap">
+        <div class="gt-tab-wrap" style="--gt-content-min-height:120px;">
           <div class="gt-tab-pane active" id="tabs-pane-one" role="tabpanel" aria-labelledby="tabs-tab-one" aria-hidden="false" tabindex="0">
             <div class="gt-card">
               <p>First</p>
@@ -820,7 +820,7 @@
       <style>#multi-field{--ms-bg:rgba(255,255,255,0.98);--ms-border:rgba(0,0,0,0.12);--ms-text:#111111;--ms-accent:#2563eb;--ms-focus-ring:#1d4ed8;--ms-label:#111111;--ms-dropdown-max-height:260px;--ms-ac-12:rgba(37,99,235,0.120);--ms-ac-16:rgba(37,99,235,0.160);--ms-ac-18:rgba(37,99,235,0.180);--ms-ac-22:rgba(37,99,235,0.220);--ms-ac-28:rgba(37,99,235,0.280);--ms-ac-32:rgba(37,99,235,0.320);--ms-ac-40:rgba(37,99,235,0.400);--ms-ac-55:rgba(37,99,235,0.550);--ms-ac-60:rgba(37,99,235,0.600);--ms-ac-75:rgba(37,99,235,0.750);--ms-tx-03:rgba(17,17,17,0.030);--ms-tx-04:rgba(17,17,17,0.040);--ms-tx-05:rgba(17,17,17,0.050);--ms-tx-06:rgba(17,17,17,0.060);--ms-tx-08:rgba(17,17,17,0.080);--ms-tx-35:rgba(17,17,17,0.350);--ms-tx-45:rgba(17,17,17,0.450);--ms-tx-50:rgba(17,17,17,0.500);--ms-tx-80:rgba(17,17,17,0.800);--ms-ac-tx-75:rgba(32,78,180,1.000);}</style>
       <style>[data-bs-theme="dark"] #multi-field{--ms-bg:rgba(9,20,42,0.97);--ms-border:rgba(255,255,255,0.10);--ms-text:#cfe6ff;--ms-accent:#7ec3f7;--ms-focus-ring:#7ec3f7;--ms-label:#cfe6ff;--ms-ac-12:rgba(126,195,247,0.120);--ms-ac-16:rgba(126,195,247,0.160);--ms-ac-18:rgba(126,195,247,0.180);--ms-ac-22:rgba(126,195,247,0.220);--ms-ac-28:rgba(126,195,247,0.280);--ms-ac-32:rgba(126,195,247,0.320);--ms-ac-40:rgba(126,195,247,0.400);--ms-ac-55:rgba(126,195,247,0.550);--ms-ac-60:rgba(126,195,247,0.600);--ms-ac-75:rgba(126,195,247,0.750);--ms-tx-03:rgba(207,230,255,0.030);--ms-tx-04:rgba(207,230,255,0.040);--ms-tx-05:rgba(207,230,255,0.050);--ms-tx-06:rgba(207,230,255,0.060);--ms-tx-08:rgba(207,230,255,0.080);--ms-tx-35:rgba(207,230,255,0.350);--ms-tx-45:rgba(207,230,255,0.450);--ms-tx-50:rgba(207,230,255,0.500);--ms-tx-80:rgba(207,230,255,0.800);--ms-ac-tx-75:rgba(146,204,249,1.000);}</style>
       <div class="gt-ms-field" id="multi-field">
-        <div class="gt-ms-wrap style-checkbox shape-square  theme-auto theme-light" id="multi-wrap" data-input-id="multi" data-placeholder="Filter by Category" data-all-label="All categories" data-server="false" data-server-total="2" data-server-min-chars="0" data-searchable="always" data-search-threshold="15" data-selection-display="auto" data-selection-max-items="2" data-selected-values="[&quot;apple&quot;]">
+        <div class="gt-ms-wrap style-checkbox shape-square theme-auto theme-light" id="multi-wrap" data-input-id="multi" data-placeholder="Filter by Category" data-no-matches-text="No matches" data-all-label="All categories" data-server="false" data-server-total="2" data-server-min-chars="0" data-searchable="always" data-search-threshold="15" data-selection-display="auto" data-selection-max-items="2" data-selected-values="[&quot;apple&quot;]">
           <div class="gt-ms-trigger" id="multi-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="multi-dropdown">
             <span id="multi-label">Apple</span>
             <div style="display:flex;align-items:center;gap:6px;">
@@ -896,7 +896,7 @@
       <style>#single-field{--ms-bg:rgba(255,255,255,0.98);--ms-border:rgba(0,0,0,0.12);--ms-text:#111111;--ms-accent:#2563eb;--ms-focus-ring:#1d4ed8;--ms-label:#111111;--ms-ac-12:rgba(37,99,235,0.120);--ms-ac-16:rgba(37,99,235,0.160);--ms-ac-18:rgba(37,99,235,0.180);--ms-ac-22:rgba(37,99,235,0.220);--ms-ac-28:rgba(37,99,235,0.280);--ms-ac-32:rgba(37,99,235,0.320);--ms-ac-40:rgba(37,99,235,0.400);--ms-ac-55:rgba(37,99,235,0.550);--ms-ac-60:rgba(37,99,235,0.600);--ms-ac-75:rgba(37,99,235,0.750);--ms-tx-03:rgba(17,17,17,0.030);--ms-tx-04:rgba(17,17,17,0.040);--ms-tx-05:rgba(17,17,17,0.050);--ms-tx-06:rgba(17,17,17,0.060);--ms-tx-08:rgba(17,17,17,0.080);--ms-tx-35:rgba(17,17,17,0.350);--ms-tx-45:rgba(17,17,17,0.450);--ms-tx-50:rgba(17,17,17,0.500);--ms-tx-80:rgba(17,17,17,0.800);--ms-ac-tx-75:rgba(32,78,180,1.000);}</style>
       <style>[data-bs-theme="dark"] #single-field{--ms-bg:rgba(9,20,42,0.97);--ms-border:rgba(255,255,255,0.10);--ms-text:#cfe6ff;--ms-accent:#7ec3f7;--ms-focus-ring:#7ec3f7;--ms-label:#cfe6ff;--ms-ac-12:rgba(126,195,247,0.120);--ms-ac-16:rgba(126,195,247,0.160);--ms-ac-18:rgba(126,195,247,0.180);--ms-ac-22:rgba(126,195,247,0.220);--ms-ac-28:rgba(126,195,247,0.280);--ms-ac-32:rgba(126,195,247,0.320);--ms-ac-40:rgba(126,195,247,0.400);--ms-ac-55:rgba(126,195,247,0.550);--ms-ac-60:rgba(126,195,247,0.600);--ms-ac-75:rgba(126,195,247,0.750);--ms-tx-03:rgba(207,230,255,0.030);--ms-tx-04:rgba(207,230,255,0.040);--ms-tx-05:rgba(207,230,255,0.050);--ms-tx-06:rgba(207,230,255,0.060);--ms-tx-08:rgba(207,230,255,0.080);--ms-tx-35:rgba(207,230,255,0.350);--ms-tx-45:rgba(207,230,255,0.450);--ms-tx-50:rgba(207,230,255,0.500);--ms-tx-80:rgba(207,230,255,0.800);--ms-ac-tx-75:rgba(146,204,249,1.000);}</style>
       <div class="gt-gs-field" id="single-field">
-        <div class="gt-gs-wrap style-checkbox shape-square  theme-auto theme-light" id="single-wrap" data-input-id="single" data-placeholder="Select an option" data-searchable="true" data-clearable="false" data-all-choice-label="All categories" data-all-choice-value="__all__" data-server="false" data-server-total="2" data-server-min-chars="0">
+        <div class="gt-gs-wrap style-checkbox shape-square theme-auto theme-light" id="single-wrap" data-input-id="single" data-placeholder="Select an option" data-no-matches-text="No matches" data-searchable="true" data-clearable="false" data-all-choice-label="All categories" data-all-choice-value="__all__" data-server="false" data-server-total="2" data-server-min-chars="0">
           <div class="gt-gs-trigger" id="single-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="single-dropdown">
             <span id="single-label">Banana</span>
             <div style="display:flex;align-items:center;gap:6px;">

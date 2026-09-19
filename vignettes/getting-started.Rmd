@@ -34,7 +34,7 @@ together or independently.
 install.packages("glasstabs")
 
 # From GitHub
-pak::pak("YOUR_GITHUB_USERNAME/glasstabs")
+pak::pak("PrigasG/glasstabs")
 
 # From source
 devtools::install_local("path/to/glasstabs")

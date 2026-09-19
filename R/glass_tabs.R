@@ -30,6 +30,20 @@
 #' @family glass tabs
 #' @export
 glassTabPanel <- function(value, label, ..., icon = NULL, selected = FALSE) {
+  .gt_check_string(
+    value, "value",
+    "glassTabPanel(): `value` must be a single non-empty string."
+  )
+  # `label` may be "" for icon-only tabs, but must still be a single string.
+  if (!is.character(label) || length(label) != 1L || is.na(label)) {
+    .gt_abort(
+      "glassTabPanel(): `label` must be a single string.",
+      class = "glasstabs_error_bad_argument",
+      argument = "label",
+      value = label,
+      expected = "a single character string"
+    )
+  }
   structure(
     list(
       value    = value,
@@ -52,6 +66,16 @@ glassTabPanel <- function(value, label, ..., icon = NULL, selected = FALSE) {
 #' @param compact Logical. When `TRUE` applies reduced padding and spacing via
 #'   the `.gt-compact` CSS modifier - useful inside dashboard cards or tight
 #'   layouts (e.g. bs4Dash).
+#' @param content_min_height Minimum height of the tab content area as a CSS
+#'   length, e.g. `"120px"` (the default). Stabilizes the layout when tabs
+#'   hold different amounts of content. Use `"0"` for no minimum.
+#' @param style Visual relationship between the tab bar and the content box.
+#'   `"floating"` (default) renders them as two separate floating pieces.
+#'   `"attached"` docks the tab bar directly onto the content box: they share
+#'   one border and read as a single unified card.
+#' @param transition How panes animate when switching tabs. `"fade"`
+#'   (default) fades and rises the incoming pane. `"slide"` slides panes
+#'   horizontally in the direction of travel, following tab order.
 #' @param shape Corner style for the tab bar and content. One of `"rounded"`
 #'   (default) for the signature glass look, or `"square"` for crisp,
 #'   selectize-style corners that match [glassSelect()] and
@@ -108,6 +132,9 @@ glassTabsUI <- function(
     selected = NULL,
     wrap = TRUE,
     compact = FALSE,
+    content_min_height = "120px",
+    style = c("floating", "attached"),
+    transition = c("fade", "slide"),
     shape = c("rounded", "square"),
     indicator = c("glass", "solid", "underline"),
     orientation = c("horizontal", "vertical"),
@@ -150,6 +177,9 @@ glassTabsUI <- function(
       expected = "TRUE or FALSE"
     )
   }
+  content_min_height <- .gt_css_unit(content_min_height, "content_min_height")
+  style      <- .gt_match_arg(style, c("floating", "attached"), "style")
+  transition <- .gt_match_arg(transition, c("fade", "slide"), "transition")
 
   ## theme = "auto": bridge to Bootstrap 5 / bslib color modes. Base vars are
   ## the light preset; dark vars are scoped under [data-bs-theme="dark"] via
@@ -299,11 +329,15 @@ glassTabsUI <- function(
     .make_style_tag(theme_css),
     dark_override_style,
     topbar,
-    shiny::div(class = "gt-tab-wrap", panes)
+    shiny::div(
+      class = "gt-tab-wrap",
+      style = sprintf("--gt-content-min-height:%s;", content_min_height),
+      panes
+    )
   )
 
   is_light <- identical(theme, "light") ||
-    (inherits(theme, "glass_tab_theme") && isTRUE(attr(theme, "mode") == "light"))
+    (inherits(theme, "glass_tab_theme") && isTRUE(theme$mode == "light"))
 
   container_cls <- trimws(paste(
     c(if (isTRUE(wrap))    "gt-container",
@@ -311,6 +345,8 @@ glassTabsUI <- function(
       if (isTRUE(compact)) "gt-compact",
       if (identical(shape, "square")) "shape-square",
       if (!identical(indicator, "glass")) paste0("indicator-", indicator),
+      if (!identical(style, "floating")) paste0("style-", style),
+      if (!identical(transition, "fade")) paste0("transition-", transition),
       if (identical(orientation, "vertical")) "gt-vertical",
       paste0("gt-overflow-", overflow),
       paste0("gt-align-", tab_align),
@@ -378,7 +414,8 @@ updateGlassTabsUI <- function(session, id, selected) {
 #' @param id      Module id matching the `id` passed to [glassTabsUI()].
 #' @param value   Value of the tab to update.
 #' @param count   Integer count to display. Values above 99 are shown as
-#'   `"99+"`. `0` or `NA` hides the badge.
+#'   `"99+"`. `0`, `NA`, or `NULL` hides the badge. Fractional values are
+#'   truncated toward zero.
 #'
 #' @return Called for its side effect; returns \code{NULL} invisibly.
 #'
@@ -406,12 +443,35 @@ updateGlassTabsUI <- function(session, id, selected) {
 #' @family glass tabs
 #' @export
 updateGlassTabBadge <- function(session, id, value, count) {
-  count <- if (is.na(count)) 0L else as.integer(count)
+  count <- .gt_badge_count(count)
   session$sendCustomMessage(
     "glasstabs_tab_badge",
     list(ns = session$ns(id), value = value, count = count)
   )
   invisible(NULL)
+}
+
+#' @noRd
+.gt_badge_count <- function(count) {
+  # NULL (or an empty vector) means "no count": hide the badge, mirroring
+  # the documented NA behavior. This previously crashed in is.na().
+  if (is.null(count) || length(count) == 0L || isTRUE(is.na(count))) {
+    return(0L)
+  }
+  if (!is.numeric(count) || length(count) != 1L ||
+      !is.finite(count) || count < 0) {
+    .gt_abort(
+      paste0(
+        "`count` must be a single non-negative number. ",
+        "`0`, `NA`, or `NULL` hides the badge."
+      ),
+      class = "glasstabs_error_bad_argument",
+      argument = "count",
+      value = count,
+      expected = "a single non-negative number"
+    )
+  }
+  as.integer(count)
 }
 
 #' Show or hide a glass tab

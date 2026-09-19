@@ -7,7 +7,7 @@
 .gt-wrap-shell{width:100%;position:relative;}
 
 /* Top bar */
-.gt-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:12px;flex-wrap:wrap;min-width:0;}
+.gt-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:12px;flex-wrap:wrap;min-width:0;}
 .gt-tab-viewport{position:relative;flex:1 1 auto;min-width:0;max-width:100%;}
 .gt-navbar{display:flex;gap:12px;position:relative;z-index:6;align-items:center;}
 .gt-tab-menu-select{display:none;max-width:100%;min-width:180px;}
@@ -60,7 +60,18 @@
 .gt-align-center:not(.gt-vertical) .gt-navbar{justify-content:center;}
 .gt-align-right:not(.gt-vertical) .gt-navbar{justify-content:flex-end;}
 .gt-tab-link:hover{background:rgba(255,255,255,0.04);}
-.gt-tab-link.active{color:var(--gt-tab-active-text,#ffffff);}
+.gt-tab-link.active{
+  color:var(--gt-tab-active-text,#ffffff);
+  /* Docked cue: inner light on the content-facing edge, in the halo color,
+     so the active tab visibly "presses toward" its pane. Decorative only -
+     the sliding halo keeps doing the heavy lifting. */
+  box-shadow:inset 0 -2px 0 0 color-mix(in srgb,var(--gt-halo-border,rgba(126,195,247,0.38)) 80%,transparent);
+}
+/* The underline indicator already draws its own connection - don't double up. */
+.indicator-underline .gt-tab-link.active{box-shadow:none;}
+/* Vertical rail: content sits to the side, so the dock light moves with it. */
+.gt-vertical .gt-tab-link.active{box-shadow:inset -2px 0 0 0 color-mix(in srgb,var(--gt-halo-border,rgba(126,195,247,0.38)) 80%,transparent);}
+[dir="rtl"] .gt-vertical .gt-tab-link.active{box-shadow:inset 2px 0 0 0 color-mix(in srgb,var(--gt-halo-border,rgba(126,195,247,0.38)) 80%,transparent);}
 .gt-tab-link.gt-tab-hidden{display:none;}
 .gt-tab-link:focus-visible{
   outline:3px solid var(--gt-focus-ring,#1683ff);outline-offset:3px;
@@ -104,10 +115,14 @@
 
 /* Content area */
 .gt-tab-wrap{
-  position:relative;overflow:hidden;border-radius:14px;padding:22px;
+  position:relative;overflow:hidden;border-radius:14px;padding:0;
   background:var(--gt-content-bg,transparent);
   border:1px solid var(--gt-content-border,transparent);
-  box-shadow:var(--gt-content-shadow,none);min-height:200px;z-index:5;
+  /* Halo spill: the top edge picks up the active tab's halo color, bridging
+     the gap between the tab bar and the content with light. Degrades to the
+     plain content border where color-mix() is unsupported. */
+  border-top-color:color-mix(in srgb,var(--gt-halo-border,rgba(126,195,247,0.38)) 55%,var(--gt-content-border,transparent));
+  box-shadow:var(--gt-content-shadow,none);min-height:var(--gt-content-min-height,120px);z-index:5;
 }
 .gt-tab-pane{
   position:absolute;inset:0;padding:22px;opacity:0;
@@ -116,6 +131,21 @@
   pointer-events:none;
 }
 .gt-tab-pane.active{opacity:1;transform:translateY(0) scale(1);position:relative;pointer-events:auto;}
+
+/* Directional slide transition: panes travel horizontally following tab
+   order. JS sets .gt-slide-fwd/.gt-slide-back on the widget root and
+   .gt-pane-exit on the outgoing pane so it keeps traveling outward instead
+   of sliding back. */
+.transition-slide.gt-slide-fwd .gt-tab-pane:not(.active){transform:translateX(34px) scale(.995);}
+.transition-slide.gt-slide-back .gt-tab-pane:not(.active){transform:translateX(-34px) scale(.995);}
+.transition-slide .gt-tab-pane.active{transform:translateX(0) scale(1);}
+.transition-slide.gt-slide-fwd .gt-tab-pane.gt-pane-exit{transform:translateX(-34px) scale(.995);}
+.transition-slide.gt-slide-back .gt-tab-pane.gt-pane-exit{transform:translateX(34px) scale(.995);}
+/* RTL mirrors the travel direction. */
+[dir="rtl"] .transition-slide.gt-slide-fwd .gt-tab-pane:not(.active){transform:translateX(-34px) scale(.995);}
+[dir="rtl"] .transition-slide.gt-slide-back .gt-tab-pane:not(.active){transform:translateX(34px) scale(.995);}
+[dir="rtl"] .transition-slide.gt-slide-fwd .gt-tab-pane.gt-pane-exit{transform:translateX(34px) scale(.995);}
+[dir="rtl"] .transition-slide.gt-slide-back .gt-tab-pane.gt-pane-exit{transform:translateX(-34px) scale(.995);}
 
 /* Card */
 .gt-card{
@@ -895,6 +925,9 @@
 @media(max-width:760px){
   .gt-vertical{flex-direction:column;}
   .gt-vertical > .gt-topbar{min-width:0;width:100%;}
+  /* Rail stacks above the content again, so the dock light moves back down. */
+  .gt-vertical .gt-tab-link.active,
+  [dir="rtl"] .gt-vertical .gt-tab-link.active{box-shadow:inset 0 -2px 0 0 color-mix(in srgb,var(--gt-halo-border,rgba(126,195,247,0.38)) 80%,transparent);}
 }
 
 /*
@@ -1067,14 +1100,73 @@
 .gt-compact .gt-topbar{margin-bottom:6px;}
 .gt-compact .gt-navbar{gap:6px;}
 .gt-compact .gt-tab-link{padding:10px 16px;font-size:15px;border-radius:10px;}
-.gt-compact .gt-tab-wrap{padding:12px;min-height:60px;}
+.gt-compact .gt-tab-wrap{padding:12px;min-height:var(--gt-content-min-height,60px);}
 .gt-compact .gt-tab-pane{padding:12px;}
 .gt-compact .gt-card{padding:10px;}
 .gt-compact .gt-halo{border-radius:10px;}
 
-/* Dropdowns use position:fixed so they escape overflow:hidden parents
-   (e.g. bs4Dash card bodies). z-index is set directly on the dropdown
-   element in its base rule above. */
+/* Attached style: the tab bar docks directly onto the content box and they
+   share one border, reading as a single unified card instead of two floating
+   pieces. The topbar becomes the tab tray; the content box loses its top
+   border and top corners. */
+.style-attached .gt-topbar{
+  margin-bottom:0;
+  background:var(--gt-content-bg,transparent);
+  border:1px solid var(--gt-content-border,transparent);
+  border-bottom:none;
+  border-radius:14px 14px 0 0;
+  padding:10px 14px 0;
+}
+.style-attached .gt-tab-wrap{
+  border-top:none;
+  border-radius:0 0 14px 14px;
+}
+/* Vertical rail: the tray docks onto the content's side instead. */
+.style-attached.gt-vertical{gap:0;}
+.style-attached.gt-vertical > .gt-topbar{
+  background:var(--gt-content-bg,transparent);
+  border:1px solid var(--gt-content-border,transparent);
+  border-right:none;
+  border-radius:14px 0 0 14px;
+  padding:14px 0 14px 14px;
+}
+.style-attached.gt-vertical > .gt-tab-wrap{
+  border-left:none;
+  border-radius:0 14px 14px 0;
+}
+[dir="rtl"] .style-attached.gt-vertical > .gt-topbar{
+  border-right:1px solid var(--gt-content-border,transparent);
+  border-left:none;
+  border-radius:0 14px 14px 0;
+  padding:14px 14px 14px 0;
+}
+[dir="rtl"] .style-attached.gt-vertical > .gt-tab-wrap{
+  border-left:1px solid var(--gt-content-border,transparent);
+  border-right:none;
+  border-radius:14px 0 0 14px;
+}
+@media(max-width:760px){
+  /* Narrow screens stack the rail above the content again. */
+  .style-attached.gt-vertical > .gt-topbar{
+    border:1px solid var(--gt-content-border,transparent);
+    border-bottom:none;
+    border-radius:14px 14px 0 0;
+    padding:10px 14px 0;
+  }
+  .style-attached.gt-vertical > .gt-tab-wrap{
+    border:1px solid var(--gt-content-border,transparent);
+    border-top:none;
+    border-radius:0 0 14px 14px;
+  }
+}
+
+/* Teleported dropdowns use position:absolute (set by glass.js in
+   teleportOpen()) so they escape overflow:hidden parents such as bs4Dash
+   card bodies. Absolute - not fixed - positioning is deliberate: fixed
+   positioning breaks inside AdminLTE's scroll contexts, and the JS
+   positionTeleportedDropdown() helper computes document-space coordinates
+   to match. z-index is set directly on the dropdown element in its base
+   rule above. */
 
 /*
    TELEPORTED DROPDOWN STYLES
@@ -1244,5 +1336,6 @@
   }
   .gt-transfer{display:none !important;}
   .gt-tab-pane{transform:none;}
+  .transition-slide .gt-tab-pane{transform:none !important;}
   .gt-arrival-pulse,.gt-tab-badge.gt-badge-updated{animation:none !important;}
 }
