@@ -211,6 +211,7 @@ glassMultiSelect(
   selection_display = "summary",
   selection_max_items = 2,
   dropdown_max_height = "18rem",
+  no_matches_text = "No matches",
   theme = "dark"
 )
 ```
@@ -263,6 +264,7 @@ glassSelect(
   clearable = TRUE,
   include_all = FALSE,
   check_style = "checkbox",
+  no_matches_text = "No matches",
   theme = "light"
 )
 ```

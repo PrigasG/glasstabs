@@ -22,8 +22,10 @@
   with a clear error instead of rendering ambiguous duplicate options.
 * Out-of-range `rgb()`/`rgba()` components are clamped the way browsers do,
   and malformed components yield a clean fallback instead of invalid CSS.
-* Server-mode `server_limit` docs now explain that an explicitly selected
-  value outside the initial slice is still rendered as an extra row.
+* Server-mode `glassMultiSelect()` now renders every explicitly selected value
+  outside the initial `server_limit` slice as an extra checked row, so
+  pre-selections stay visible (previously only a single out-of-slice value
+  got an extra row). Default selections remain bounded to the slice.
 * Grouped-`choices` docs now note that a one-element named list is treated as
   a flat choice, mirroring `shiny::selectInput()`.
 * Vignettes now document the `input$<id>_ready` signal emitted once a select
@@ -43,6 +45,11 @@
 * Open select dropdowns are now dismissed when a full-screen overlay appears
   (loading screens, waiter veils, custom overlays), instead of floating above
   or lingering beneath it. Smaller floating panels do not trigger this.
+* `glassSelect()` and `glassMultiSelect()` gain a `no_matches_text` argument
+  to customize the "No matches" empty-search message.
+* Server-side choice search now normalizes the choice set once per widget
+  instead of on every keystroke, making search over large choice sets
+  noticeably snappier.
 
 ## Docs and examples
 

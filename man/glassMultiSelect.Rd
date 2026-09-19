@@ -10,6 +10,7 @@ glassMultiSelect(
   selected = NULL,
   label = NULL,
   placeholder = "Filter by Category",
+  no_matches_text = "No matches",
   all_label = "All categories",
   check_style = c("checkbox", "check-only", "filled"),
   show_style_switcher = TRUE,
@@ -46,6 +47,9 @@ mirroring \code{\link[shiny:selectInput]{shiny::selectInput()}}.}
 \item{label}{Optional field label shown above the widget.}
 
 \item{placeholder}{Trigger label when nothing is selected.}
+
+\item{no_matches_text}{Text shown when a search matches no choices.
+Default \code{"No matches"}.}
 
 \item{all_label}{Label shown when all choices are selected.}
 
@@ -92,9 +96,9 @@ choices and use \code{\link[=glassMultiSelectServer]{glassMultiSelectServer()}} 
 from the Shiny server. Default \code{FALSE}.}
 
 \item{server_limit}{Maximum number of choices rendered initially and returned
-for each server-side search. Default \code{50}. An explicitly selected
-value that falls outside the initial slice is still rendered as an extra
-row so it stays visible and checked.}
+for each server-side search. Default \code{50}. Explicitly selected
+values that fall outside the initial slice are still rendered as extra
+rows so they stay visible and checked.}
 
 \item{server_min_chars}{Minimum search characters required before server-side
 matching filters choices. Default \code{0}.}

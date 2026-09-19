@@ -374,3 +374,26 @@ test_that("glassMultiSelect() rejects duplicate choice values", {
     class = "glasstabs_error_bad_choice"
   )
 })
+
+test_that("glassSelect() renders a configurable no-matches text", {
+  html <- as.character(
+    glassSelect("s", c(a = "x", b = "y"), no_matches_text = "Nothing here")
+  )
+  expect_true(grepl('data-no-matches-text="Nothing here"', html, fixed = TRUE))
+})
+
+test_that("glassSelect() defaults no-matches text to 'No matches'", {
+  html <- as.character(glassSelect("s", c(a = "x", b = "y")))
+  expect_true(grepl('data-no-matches-text="No matches"', html, fixed = TRUE))
+})
+
+test_that("glassSelect() rejects a non-string no_matches_text", {
+  expect_error(
+    glassSelect("s", c(a = "x"), no_matches_text = 42),
+    class = "glasstabs_error_bad_argument"
+  )
+  expect_error(
+    glassSelect("s", c(a = "x"), no_matches_text = NA_character_),
+    class = "glasstabs_error_bad_argument"
+  )
+})

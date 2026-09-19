@@ -61,6 +61,7 @@ glassSelect <- function(
     selected = NULL,
     label = NULL,
     placeholder = "Select an option",
+    no_matches_text = "No matches",
     searchable = TRUE,
     clearable = FALSE,
     include_all = FALSE,
@@ -81,6 +82,7 @@ glassSelect <- function(
     "inputId",
     "glassSelect(): `inputId` must be a single non-empty string."
   )
+  .gt_check_text(no_matches_text, "no_matches_text", "glassSelect")
   check_style <- .gt_match_arg(check_style, c("checkbox", "check-only", "filled"), "check_style")
   shape <- .gt_match_arg(shape, c("rounded", "square"), "shape")
   field_width_style <- .gt_field_width_style(width)
@@ -273,6 +275,7 @@ glassSelect <- function(
         style = inner_width_style,
         `data-input-id` = inputId,
         `data-placeholder` = placeholder,
+        `data-no-matches-text` = no_matches_text,
         `data-searchable` = tolower(as.character(searchable)),
         `data-clearable` = tolower(as.character(clearable)),
         `data-all-choice-label` = all_choice_label,

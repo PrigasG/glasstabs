@@ -23,6 +23,8 @@
 #'   \code{NULL}.
 #' @param label Optional field label shown above the widget.
 #' @param placeholder Trigger label when nothing is selected.
+#' @param no_matches_text Text shown when a search matches no choices.
+#'   Default \code{"No matches"}.
 #' @param all_label Label shown when all choices are selected.
 #' @param check_style One of \code{"checkbox"} (default),
 #'   \code{"check-only"}, or \code{"filled"}.
@@ -55,9 +57,9 @@
 #'   choices and use [glassMultiSelectServer()] to search the full choice set
 #'   from the Shiny server. Default \code{FALSE}.
 #' @param server_limit Maximum number of choices rendered initially and returned
-#'   for each server-side search. Default \code{50}. An explicitly selected
-#'   value that falls outside the initial slice is still rendered as an extra
-#'   row so it stays visible and checked.
+#'   for each server-side search. Default \code{50}. Explicitly selected
+#'   values that fall outside the initial slice are still rendered as extra
+#'   rows so they stay visible and checked.
 #' @param server_min_chars Minimum search characters required before server-side
 #'   matching filters choices. Default \code{0}.
 #' @param searchable Search visibility. Use \code{TRUE} (default) to always
@@ -104,6 +106,7 @@ glassMultiSelect <- function(
     selected            = NULL,
     label               = NULL,
     placeholder         = "Filter by Category",
+    no_matches_text     = "No matches",
     all_label           = "All categories",
     check_style         = c("checkbox", "check-only", "filled"),
     show_style_switcher = TRUE,
@@ -130,6 +133,7 @@ glassMultiSelect <- function(
     "inputId",
     "glassMultiSelect(): `inputId` must be a single non-empty string."
   )
+  .gt_check_text(no_matches_text, "no_matches_text", "glassMultiSelect")
   check_style <- .gt_match_arg(check_style, c("checkbox", "check-only", "filled"), "check_style")
   shape <- .gt_match_arg(shape, c("rounded", "square"), "shape")
   field_width_style <- .gt_field_width_style(width)
@@ -193,7 +197,7 @@ glassMultiSelect <- function(
   render_idx <- seq_along(vals)
   if (server) {
     render_idx <- seq_len(min(length(vals), server_limit))
-    if (!selected_is_default && length(selected) == 1L) {
+    if (!selected_is_default && length(selected) > 0L) {
       selected_idx <- match(selected, vals)
       selected_idx <- selected_idx[!is.na(selected_idx)]
       render_idx <- unique(c(render_idx, selected_idx))
@@ -427,6 +431,7 @@ glassMultiSelect <- function(
         style = inner_width_style,
         `data-input-id` = inputId,
         `data-placeholder` = placeholder,
+        `data-no-matches-text` = no_matches_text,
         `data-all-label` = all_label,
         `data-server` = tolower(as.character(server)),
         `data-server-total` = as.character(n_total),
@@ -1146,8 +1151,10 @@ glassMultiSelectServer <- function(
 }
 
 #' @noRd
-.gt_filter_choices <- function(choices, query = "", limit = 50L, ignore_case = TRUE) {
-  normalized <- .gt_normalize_choices(choices)
+.gt_filter_choices <- function(choices, query = "", limit = 50L, ignore_case = TRUE, normalized = NULL) {
+  if (is.null(normalized)) {
+    normalized <- .gt_normalize_choices(choices)
+  }
   limit <- .gt_positive_int(limit, "limit")
   query <- paste(as.character(query %||% ""), collapse = " ")
   query <- trimws(query)
@@ -1218,7 +1225,8 @@ glassMultiSelectServer <- function(
         choices = choices,
         query = query,
         limit = limit,
-        ignore_case = ignore_case
+        ignore_case = ignore_case,
+        normalized = normalized
       )
       payload_hues <- if (is.null(hues)) NULL else hues[filtered$values]
       session$sendCustomMessage(

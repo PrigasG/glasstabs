@@ -1024,6 +1024,9 @@
 
     var inputId = wrap.getAttribute('data-input-id');
     var placeholder = wrap.getAttribute('data-placeholder') || 'Select an option';
+    var noMatchesText = wrap.hasAttribute('data-no-matches-text')
+      ? wrap.getAttribute('data-no-matches-text')
+      : 'No matches';
     var serverMode = parseBoolAttr(wrap, 'data-server');
     var serverMinChars = parseIntAttr(wrap, 'data-server-min-chars', 0);
 
@@ -1127,7 +1130,7 @@
       if (state.loading) {
         setStatus('Searching...', true, true);
       } else if (visibleChoiceCount() === 0) {
-        setStatus('No matches', true, false);
+        setStatus(noMatchesText, true, false);
       } else {
         setStatus('', false, false);
       }
@@ -1556,6 +1559,9 @@
     var inputId = wrap.getAttribute('data-input-id');
     var placeholder = wrap.getAttribute('data-placeholder') || 'Filter by Category';
     var allLabel = wrap.getAttribute('data-all-label') || 'All categories';
+    var noMatchesText = wrap.hasAttribute('data-no-matches-text')
+      ? wrap.getAttribute('data-no-matches-text')
+      : 'No matches';
     var serverMode = parseBoolAttr(wrap, 'data-server');
     var serverMinChars = parseIntAttr(wrap, 'data-server-min-chars', 0);
     var searchMode = wrap.getAttribute('data-searchable') || 'always';
@@ -1731,7 +1737,7 @@
       if (state.loading) {
         setStatus('Searching...', true, true);
       } else if (visibleChoices().length === 0) {
-        setStatus('No matches', true, false);
+        setStatus(noMatchesText, true, false);
       } else {
         setStatus('', false, false);
       }

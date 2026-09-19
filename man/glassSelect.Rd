@@ -10,6 +10,7 @@ glassSelect(
   selected = NULL,
   label = NULL,
   placeholder = "Select an option",
+  no_matches_text = "No matches",
   searchable = TRUE,
   clearable = FALSE,
   include_all = FALSE,
@@ -39,6 +40,9 @@ mirroring \code{\link[shiny:selectInput]{shiny::selectInput()}}.}
 \item{label}{Optional field label shown above the widget.}
 
 \item{placeholder}{Trigger label when nothing is selected.}
+
+\item{no_matches_text}{Text shown when a search matches no choices.
+Default \code{"No matches"}.}
 
 \item{searchable}{Logical. Show search input inside dropdown? Default
 \code{TRUE}.}
