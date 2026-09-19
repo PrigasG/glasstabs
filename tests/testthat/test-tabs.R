@@ -524,3 +524,30 @@ test_that("glassTabPanel() allows empty label for icon-only tabs", {
   p <- glassTabPanel("a", "")
   expect_equal(p$label, "")
 })
+
+test_that("glassTabsUI() sets content min-height from content_min_height", {
+  ui <- glassTabsUI(
+    "nav",
+    glassTabPanel("a", "A"),
+    content_min_height = "300px"
+  )
+
+  expect_true(
+    grepl("--gt-content-min-height:300px;", as.character(ui), fixed = TRUE)
+  )
+})
+
+test_that("glassTabsUI() defaults content_min_height to 120px", {
+  ui <- glassTabsUI("nav", glassTabPanel("a", "A"))
+
+  expect_true(
+    grepl("--gt-content-min-height:120px;", as.character(ui), fixed = TRUE)
+  )
+})
+
+test_that("glassTabsUI() rejects an invalid content_min_height", {
+  expect_error(
+    glassTabsUI("nav", glassTabPanel("a", "A"), content_min_height = "huge"),
+    class = "glasstabs_error_bad_argument"
+  )
+})

@@ -47,6 +47,14 @@
   or lingering beneath it. Smaller floating panels do not trigger this.
 * `glassSelect()` and `glassMultiSelect()` gain a `no_matches_text` argument
   to customize the "No matches" empty-search message.
+* Tab content now sits in a subtle glass container by default (barely-there
+  background and hairline border) instead of an invisible box, so the tab bar
+  and content read as one component. The old invisible look is still
+  available via `glass_tab_theme(content_bg = "transparent", content_border =
+  "transparent")`. Double padding between the tab bar and content is gone
+  (22px instead of 44px) and the tab bar sits slightly closer to the content.
+* `glassTabsUI()` gains `content_min_height` (default `"120px"`, was a fixed
+  200px) to control the content area's minimum height; use `"0"` for none.
 * Server-side choice search now normalizes the choice set once per widget
   instead of on every keystroke, making search over large choice sets
   noticeably snappier.

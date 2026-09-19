@@ -20,7 +20,7 @@
       
       TABS: dark rounded 
       <div class="gt-container gt-overflow-scroll gt-align-center gt-text-align-center" id="tabs-wrap" data-swipe="false">
-        <style>#tabs-wrap{--gt-tab-text:rgba(207,230,255,0.78);--gt-tab-active-text:#ffffff;--gt-halo-bg:rgba(126,195,247,0.16);--gt-halo-border:rgba(126,195,247,0.38);--gt-focus-ring:#7ec3f7;--gt-halo-shadow:inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(255,255,255,.06),0 6px 20px rgba(0,0,0,.38),0 0 0 1px rgba(255,255,255,.03);--gt-content-bg:transparent;--gt-content-border:transparent;--gt-card-bg:transparent;--gt-card-text:#cfe6ff;}</style>
+        <style>#tabs-wrap{--gt-tab-text:rgba(207,230,255,0.78);--gt-tab-active-text:#ffffff;--gt-halo-bg:rgba(126,195,247,0.16);--gt-halo-border:rgba(126,195,247,0.38);--gt-focus-ring:#7ec3f7;--gt-halo-shadow:inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(255,255,255,.06),0 6px 20px rgba(0,0,0,.38),0 0 0 1px rgba(255,255,255,.03);--gt-content-bg:rgba(255,255,255,0.03);--gt-content-border:rgba(255,255,255,0.08);--gt-card-bg:transparent;--gt-card-text:#cfe6ff;}</style>
         <div class="gt-topbar">
           <div class="gt-tab-viewport">
             <div class="gt-navbar" id="tabs-navbar" data-ns="tabs" role="tablist" aria-orientation="horizontal">
@@ -39,7 +39,7 @@
           </div>
           <select class="gt-tab-menu-select" id="tabs-menu" aria-label="Choose a tab"></select>
         </div>
-        <div class="gt-tab-wrap">
+        <div class="gt-tab-wrap" style="--gt-content-min-height:120px;">
           <div class="gt-tab-pane active" id="tabs-pane-one" role="tabpanel" aria-labelledby="tabs-tab-one" aria-hidden="false" tabindex="0">
             <div class="gt-card">
               <p>First</p>
@@ -172,7 +172,7 @@
       
       TABS: light rounded 
       <div class="gt-container gt-overflow-scroll gt-align-center gt-text-align-center theme-light" id="tabs-wrap" data-swipe="false">
-        <style>#tabs-wrap{--gt-tab-text:#374151;--gt-tab-active-text:#1d4ed8;--gt-halo-bg:rgba(37,99,235,0.12);--gt-halo-border:rgba(37,99,235,0.60);--gt-focus-ring:#1d4ed8;--gt-halo-shadow:inset 0 1px 0 rgba(255,255,255,.80),0 4px 16px rgba(37,99,235,.20),0 0 0 1px rgba(37,99,235,.12);--gt-content-bg:transparent;--gt-content-border:transparent;--gt-card-bg:transparent;--gt-card-text:#1e293b;}</style>
+        <style>#tabs-wrap{--gt-tab-text:#374151;--gt-tab-active-text:#1d4ed8;--gt-halo-bg:rgba(37,99,235,0.12);--gt-halo-border:rgba(37,99,235,0.60);--gt-focus-ring:#1d4ed8;--gt-halo-shadow:inset 0 1px 0 rgba(255,255,255,.80),0 4px 16px rgba(37,99,235,.20),0 0 0 1px rgba(37,99,235,.12);--gt-content-bg:rgba(15,23,42,0.03);--gt-content-border:rgba(15,23,42,0.10);--gt-card-bg:transparent;--gt-card-text:#1e293b;}</style>
         <div class="gt-topbar">
           <div class="gt-tab-viewport">
             <div class="gt-navbar" id="tabs-navbar" data-ns="tabs" role="tablist" aria-orientation="horizontal">
@@ -191,7 +191,7 @@
           </div>
           <select class="gt-tab-menu-select" id="tabs-menu" aria-label="Choose a tab"></select>
         </div>
-        <div class="gt-tab-wrap">
+        <div class="gt-tab-wrap" style="--gt-content-min-height:120px;">
           <div class="gt-tab-pane active" id="tabs-pane-one" role="tabpanel" aria-labelledby="tabs-tab-one" aria-hidden="false" tabindex="0">
             <div class="gt-card">
               <p>First</p>
@@ -324,8 +324,8 @@
       
       TABS: auto rounded 
       <div class="gt-container gt-overflow-scroll gt-align-center gt-text-align-center theme-auto theme-light" id="tabs-wrap" data-swipe="false">
-        <style>#tabs-wrap{--gt-tab-text:#374151;--gt-tab-active-text:#1d4ed8;--gt-halo-bg:rgba(37,99,235,0.12);--gt-halo-border:rgba(37,99,235,0.60);--gt-focus-ring:#1d4ed8;--gt-halo-shadow:inset 0 1px 0 rgba(255,255,255,.80),0 4px 16px rgba(37,99,235,.20),0 0 0 1px rgba(37,99,235,.12);--gt-content-bg:transparent;--gt-content-border:transparent;--gt-card-bg:transparent;--gt-card-text:#1e293b;}</style>
-        <style>[data-bs-theme="dark"] #tabs-wrap{--gt-tab-text:rgba(207,230,255,0.78);--gt-tab-active-text:#ffffff;--gt-halo-bg:rgba(126,195,247,0.16);--gt-halo-border:rgba(126,195,247,0.38);--gt-focus-ring:#7ec3f7;--gt-halo-shadow:inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(255,255,255,.06),0 6px 20px rgba(0,0,0,.38),0 0 0 1px rgba(255,255,255,.03);--gt-content-bg:transparent;--gt-content-border:transparent;--gt-card-bg:transparent;--gt-card-text:#cfe6ff;}</style>
+        <style>#tabs-wrap{--gt-tab-text:#374151;--gt-tab-active-text:#1d4ed8;--gt-halo-bg:rgba(37,99,235,0.12);--gt-halo-border:rgba(37,99,235,0.60);--gt-focus-ring:#1d4ed8;--gt-halo-shadow:inset 0 1px 0 rgba(255,255,255,.80),0 4px 16px rgba(37,99,235,.20),0 0 0 1px rgba(37,99,235,.12);--gt-content-bg:rgba(15,23,42,0.03);--gt-content-border:rgba(15,23,42,0.10);--gt-card-bg:transparent;--gt-card-text:#1e293b;}</style>
+        <style>[data-bs-theme="dark"] #tabs-wrap{--gt-tab-text:rgba(207,230,255,0.78);--gt-tab-active-text:#ffffff;--gt-halo-bg:rgba(126,195,247,0.16);--gt-halo-border:rgba(126,195,247,0.38);--gt-focus-ring:#7ec3f7;--gt-halo-shadow:inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(255,255,255,.06),0 6px 20px rgba(0,0,0,.38),0 0 0 1px rgba(255,255,255,.03);--gt-content-bg:rgba(255,255,255,0.03);--gt-content-border:rgba(255,255,255,0.08);--gt-card-bg:transparent;--gt-card-text:#cfe6ff;}</style>
         <div class="gt-topbar">
           <div class="gt-tab-viewport">
             <div class="gt-navbar" id="tabs-navbar" data-ns="tabs" role="tablist" aria-orientation="horizontal">
@@ -344,7 +344,7 @@
           </div>
           <select class="gt-tab-menu-select" id="tabs-menu" aria-label="Choose a tab"></select>
         </div>
-        <div class="gt-tab-wrap">
+        <div class="gt-tab-wrap" style="--gt-content-min-height:120px;">
           <div class="gt-tab-pane active" id="tabs-pane-one" role="tabpanel" aria-labelledby="tabs-tab-one" aria-hidden="false" tabindex="0">
             <div class="gt-card">
               <p>First</p>
@@ -479,7 +479,7 @@
       
       TABS: dark square 
       <div class="gt-container shape-square gt-overflow-scroll gt-align-center gt-text-align-center" id="tabs-wrap" data-swipe="false">
-        <style>#tabs-wrap{--gt-tab-text:rgba(207,230,255,0.78);--gt-tab-active-text:#ffffff;--gt-halo-bg:rgba(126,195,247,0.16);--gt-halo-border:rgba(126,195,247,0.38);--gt-focus-ring:#7ec3f7;--gt-halo-shadow:inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(255,255,255,.06),0 6px 20px rgba(0,0,0,.38),0 0 0 1px rgba(255,255,255,.03);--gt-content-bg:transparent;--gt-content-border:transparent;--gt-card-bg:transparent;--gt-card-text:#cfe6ff;}</style>
+        <style>#tabs-wrap{--gt-tab-text:rgba(207,230,255,0.78);--gt-tab-active-text:#ffffff;--gt-halo-bg:rgba(126,195,247,0.16);--gt-halo-border:rgba(126,195,247,0.38);--gt-focus-ring:#7ec3f7;--gt-halo-shadow:inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(255,255,255,.06),0 6px 20px rgba(0,0,0,.38),0 0 0 1px rgba(255,255,255,.03);--gt-content-bg:rgba(255,255,255,0.03);--gt-content-border:rgba(255,255,255,0.08);--gt-card-bg:transparent;--gt-card-text:#cfe6ff;}</style>
         <div class="gt-topbar">
           <div class="gt-tab-viewport">
             <div class="gt-navbar" id="tabs-navbar" data-ns="tabs" role="tablist" aria-orientation="horizontal">
@@ -498,7 +498,7 @@
           </div>
           <select class="gt-tab-menu-select" id="tabs-menu" aria-label="Choose a tab"></select>
         </div>
-        <div class="gt-tab-wrap">
+        <div class="gt-tab-wrap" style="--gt-content-min-height:120px;">
           <div class="gt-tab-pane active" id="tabs-pane-one" role="tabpanel" aria-labelledby="tabs-tab-one" aria-hidden="false" tabindex="0">
             <div class="gt-card">
               <p>First</p>
@@ -631,7 +631,7 @@
       
       TABS: light square 
       <div class="gt-container shape-square gt-overflow-scroll gt-align-center gt-text-align-center theme-light" id="tabs-wrap" data-swipe="false">
-        <style>#tabs-wrap{--gt-tab-text:#374151;--gt-tab-active-text:#1d4ed8;--gt-halo-bg:rgba(37,99,235,0.12);--gt-halo-border:rgba(37,99,235,0.60);--gt-focus-ring:#1d4ed8;--gt-halo-shadow:inset 0 1px 0 rgba(255,255,255,.80),0 4px 16px rgba(37,99,235,.20),0 0 0 1px rgba(37,99,235,.12);--gt-content-bg:transparent;--gt-content-border:transparent;--gt-card-bg:transparent;--gt-card-text:#1e293b;}</style>
+        <style>#tabs-wrap{--gt-tab-text:#374151;--gt-tab-active-text:#1d4ed8;--gt-halo-bg:rgba(37,99,235,0.12);--gt-halo-border:rgba(37,99,235,0.60);--gt-focus-ring:#1d4ed8;--gt-halo-shadow:inset 0 1px 0 rgba(255,255,255,.80),0 4px 16px rgba(37,99,235,.20),0 0 0 1px rgba(37,99,235,.12);--gt-content-bg:rgba(15,23,42,0.03);--gt-content-border:rgba(15,23,42,0.10);--gt-card-bg:transparent;--gt-card-text:#1e293b;}</style>
         <div class="gt-topbar">
           <div class="gt-tab-viewport">
             <div class="gt-navbar" id="tabs-navbar" data-ns="tabs" role="tablist" aria-orientation="horizontal">
@@ -650,7 +650,7 @@
           </div>
           <select class="gt-tab-menu-select" id="tabs-menu" aria-label="Choose a tab"></select>
         </div>
-        <div class="gt-tab-wrap">
+        <div class="gt-tab-wrap" style="--gt-content-min-height:120px;">
           <div class="gt-tab-pane active" id="tabs-pane-one" role="tabpanel" aria-labelledby="tabs-tab-one" aria-hidden="false" tabindex="0">
             <div class="gt-card">
               <p>First</p>
@@ -783,8 +783,8 @@
       
       TABS: auto square 
       <div class="gt-container shape-square gt-overflow-scroll gt-align-center gt-text-align-center theme-auto theme-light" id="tabs-wrap" data-swipe="false">
-        <style>#tabs-wrap{--gt-tab-text:#374151;--gt-tab-active-text:#1d4ed8;--gt-halo-bg:rgba(37,99,235,0.12);--gt-halo-border:rgba(37,99,235,0.60);--gt-focus-ring:#1d4ed8;--gt-halo-shadow:inset 0 1px 0 rgba(255,255,255,.80),0 4px 16px rgba(37,99,235,.20),0 0 0 1px rgba(37,99,235,.12);--gt-content-bg:transparent;--gt-content-border:transparent;--gt-card-bg:transparent;--gt-card-text:#1e293b;}</style>
-        <style>[data-bs-theme="dark"] #tabs-wrap{--gt-tab-text:rgba(207,230,255,0.78);--gt-tab-active-text:#ffffff;--gt-halo-bg:rgba(126,195,247,0.16);--gt-halo-border:rgba(126,195,247,0.38);--gt-focus-ring:#7ec3f7;--gt-halo-shadow:inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(255,255,255,.06),0 6px 20px rgba(0,0,0,.38),0 0 0 1px rgba(255,255,255,.03);--gt-content-bg:transparent;--gt-content-border:transparent;--gt-card-bg:transparent;--gt-card-text:#cfe6ff;}</style>
+        <style>#tabs-wrap{--gt-tab-text:#374151;--gt-tab-active-text:#1d4ed8;--gt-halo-bg:rgba(37,99,235,0.12);--gt-halo-border:rgba(37,99,235,0.60);--gt-focus-ring:#1d4ed8;--gt-halo-shadow:inset 0 1px 0 rgba(255,255,255,.80),0 4px 16px rgba(37,99,235,.20),0 0 0 1px rgba(37,99,235,.12);--gt-content-bg:rgba(15,23,42,0.03);--gt-content-border:rgba(15,23,42,0.10);--gt-card-bg:transparent;--gt-card-text:#1e293b;}</style>
+        <style>[data-bs-theme="dark"] #tabs-wrap{--gt-tab-text:rgba(207,230,255,0.78);--gt-tab-active-text:#ffffff;--gt-halo-bg:rgba(126,195,247,0.16);--gt-halo-border:rgba(126,195,247,0.38);--gt-focus-ring:#7ec3f7;--gt-halo-shadow:inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(255,255,255,.06),0 6px 20px rgba(0,0,0,.38),0 0 0 1px rgba(255,255,255,.03);--gt-content-bg:rgba(255,255,255,0.03);--gt-content-border:rgba(255,255,255,0.08);--gt-card-bg:transparent;--gt-card-text:#cfe6ff;}</style>
         <div class="gt-topbar">
           <div class="gt-tab-viewport">
             <div class="gt-navbar" id="tabs-navbar" data-ns="tabs" role="tablist" aria-orientation="horizontal">
@@ -803,7 +803,7 @@
           </div>
           <select class="gt-tab-menu-select" id="tabs-menu" aria-label="Choose a tab"></select>
         </div>
-        <div class="gt-tab-wrap">
+        <div class="gt-tab-wrap" style="--gt-content-min-height:120px;">
           <div class="gt-tab-pane active" id="tabs-pane-one" role="tabpanel" aria-labelledby="tabs-tab-one" aria-hidden="false" tabindex="0">
             <div class="gt-card">
               <p>First</p>

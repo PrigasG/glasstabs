@@ -180,3 +180,22 @@ test_that(".parse_css_color() clamps out-of-range rgb() components", {
 test_that(".parse_css_color() returns NULL for malformed components", {
   expect_null(glasstabs:::.parse_css_color("rgba(1.2.3, 0, 0)"))
 })
+
+test_that("content area has subtle glass defaults (not transparent)", {
+  dark <- glasstabs:::.tab_resolve_theme("dark")
+  light <- glasstabs:::.tab_resolve_theme("light")
+
+  expect_equal(dark$content_bg, "rgba(255,255,255,0.03)")
+  expect_equal(dark$content_border, "rgba(255,255,255,0.08)")
+  expect_equal(light$content_bg, "rgba(15,23,42,0.03)")
+  expect_equal(light$content_border, "rgba(15,23,42,0.10)")
+})
+
+test_that("explicit transparent content_bg still overrides the default", {
+  vals <- glasstabs:::.tab_resolve_theme(
+    glass_tab_theme(content_bg = "transparent", content_border = "transparent")
+  )
+
+  expect_equal(vals$content_bg, "transparent")
+  expect_equal(vals$content_border, "transparent")
+})

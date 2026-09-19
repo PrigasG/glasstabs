@@ -66,6 +66,9 @@ glassTabPanel <- function(value, label, ..., icon = NULL, selected = FALSE) {
 #' @param compact Logical. When `TRUE` applies reduced padding and spacing via
 #'   the `.gt-compact` CSS modifier - useful inside dashboard cards or tight
 #'   layouts (e.g. bs4Dash).
+#' @param content_min_height Minimum height of the tab content area as a CSS
+#'   length, e.g. `"120px"` (the default). Stabilizes the layout when tabs
+#'   hold different amounts of content. Use `"0"` for no minimum.
 #' @param shape Corner style for the tab bar and content. One of `"rounded"`
 #'   (default) for the signature glass look, or `"square"` for crisp,
 #'   selectize-style corners that match [glassSelect()] and
@@ -122,6 +125,7 @@ glassTabsUI <- function(
     selected = NULL,
     wrap = TRUE,
     compact = FALSE,
+    content_min_height = "120px",
     shape = c("rounded", "square"),
     indicator = c("glass", "solid", "underline"),
     orientation = c("horizontal", "vertical"),
@@ -164,6 +168,7 @@ glassTabsUI <- function(
       expected = "TRUE or FALSE"
     )
   }
+  content_min_height <- .gt_css_unit(content_min_height, "content_min_height")
 
   ## theme = "auto": bridge to Bootstrap 5 / bslib color modes. Base vars are
   ## the light preset; dark vars are scoped under [data-bs-theme="dark"] via
@@ -313,7 +318,11 @@ glassTabsUI <- function(
     .make_style_tag(theme_css),
     dark_override_style,
     topbar,
-    shiny::div(class = "gt-tab-wrap", panes)
+    shiny::div(
+      class = "gt-tab-wrap",
+      style = sprintf("--gt-content-min-height:%s;", content_min_height),
+      panes
+    )
   )
 
   is_light <- identical(theme, "light") ||

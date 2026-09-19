@@ -90,8 +90,8 @@ glass_tab_theme <- function(
     halo_border     = "rgba(126,195,247,0.38)",
     focus_ring      = "#7ec3f7",
     halo_shadow     = "inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(255,255,255,.06),0 6px 20px rgba(0,0,0,.38),0 0 0 1px rgba(255,255,255,.03)",
-    content_bg      = "transparent",
-    content_border  = "transparent",
+    content_bg      = "rgba(255,255,255,0.03)",
+    content_border  = "rgba(255,255,255,0.08)",
     card_bg         = "transparent",
     card_text       = "#cfe6ff"
   )
@@ -103,8 +103,8 @@ glass_tab_theme <- function(
     halo_border     = "rgba(37,99,235,0.60)",
     focus_ring      = "#1d4ed8",
     halo_shadow     = "inset 0 1px 0 rgba(255,255,255,.80),0 4px 16px rgba(37,99,235,.20),0 0 0 1px rgba(37,99,235,.12)",
-    content_bg      = "transparent",
-    content_border  = "transparent",
+    content_bg      = "rgba(15,23,42,0.03)",
+    content_border  = "rgba(15,23,42,0.10)",
     card_bg         = "transparent",
     card_text       = "#1e293b"
   )

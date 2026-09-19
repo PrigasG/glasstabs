@@ -7,7 +7,7 @@
 .gt-wrap-shell{width:100%;position:relative;}
 
 /* Top bar */
-.gt-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:12px;flex-wrap:wrap;min-width:0;}
+.gt-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:12px;flex-wrap:wrap;min-width:0;}
 .gt-tab-viewport{position:relative;flex:1 1 auto;min-width:0;max-width:100%;}
 .gt-navbar{display:flex;gap:12px;position:relative;z-index:6;align-items:center;}
 .gt-tab-menu-select{display:none;max-width:100%;min-width:180px;}
@@ -104,10 +104,10 @@
 
 /* Content area */
 .gt-tab-wrap{
-  position:relative;overflow:hidden;border-radius:14px;padding:22px;
+  position:relative;overflow:hidden;border-radius:14px;padding:0;
   background:var(--gt-content-bg,transparent);
   border:1px solid var(--gt-content-border,transparent);
-  box-shadow:var(--gt-content-shadow,none);min-height:200px;z-index:5;
+  box-shadow:var(--gt-content-shadow,none);min-height:var(--gt-content-min-height,120px);z-index:5;
 }
 .gt-tab-pane{
   position:absolute;inset:0;padding:22px;opacity:0;
@@ -1067,7 +1067,7 @@
 .gt-compact .gt-topbar{margin-bottom:6px;}
 .gt-compact .gt-navbar{gap:6px;}
 .gt-compact .gt-tab-link{padding:10px 16px;font-size:15px;border-radius:10px;}
-.gt-compact .gt-tab-wrap{padding:12px;min-height:60px;}
+.gt-compact .gt-tab-wrap{padding:12px;min-height:var(--gt-content-min-height,60px);}
 .gt-compact .gt-tab-pane{padding:12px;}
 .gt-compact .gt-card{padding:10px;}
 .gt-compact .gt-halo{border-radius:10px;}

@@ -140,6 +140,7 @@ glassTabsUI(
   selected = "a",
   wrap = TRUE,
   compact = FALSE,      # set TRUE inside dashboard cards for tighter layout
+  content_min_height = "120px",  # "0" for no minimum; stabilizes tab switching
   extra_ui = tags$div("Right side UI"),
   theme = "light"
 )
