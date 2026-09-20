@@ -96,11 +96,6 @@ reference:
       - glassFilterTags
       - glass_select_theme
 
-  - title: Utilities
-    desc: Small helpers re-used across the package and its examples.
-    contents:
-      - "%||%"
-
 footer:
   structure:
     left: developed_by

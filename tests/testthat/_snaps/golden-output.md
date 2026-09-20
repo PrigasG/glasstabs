@@ -39,7 +39,7 @@
           </div>
           <select class="gt-tab-menu-select" id="tabs-menu" aria-label="Choose a tab"></select>
         </div>
-        <div class="gt-tab-wrap" style="--gt-content-min-height:120px;">
+        <div class="gt-tab-wrap">
           <div class="gt-tab-pane active" id="tabs-pane-one" role="tabpanel" aria-labelledby="tabs-tab-one" aria-hidden="false" tabindex="0">
             <div class="gt-card">
               <p>First</p>
@@ -191,7 +191,7 @@
           </div>
           <select class="gt-tab-menu-select" id="tabs-menu" aria-label="Choose a tab"></select>
         </div>
-        <div class="gt-tab-wrap" style="--gt-content-min-height:120px;">
+        <div class="gt-tab-wrap">
           <div class="gt-tab-pane active" id="tabs-pane-one" role="tabpanel" aria-labelledby="tabs-tab-one" aria-hidden="false" tabindex="0">
             <div class="gt-card">
               <p>First</p>
@@ -344,7 +344,7 @@
           </div>
           <select class="gt-tab-menu-select" id="tabs-menu" aria-label="Choose a tab"></select>
         </div>
-        <div class="gt-tab-wrap" style="--gt-content-min-height:120px;">
+        <div class="gt-tab-wrap">
           <div class="gt-tab-pane active" id="tabs-pane-one" role="tabpanel" aria-labelledby="tabs-tab-one" aria-hidden="false" tabindex="0">
             <div class="gt-card">
               <p>First</p>
@@ -498,7 +498,7 @@
           </div>
           <select class="gt-tab-menu-select" id="tabs-menu" aria-label="Choose a tab"></select>
         </div>
-        <div class="gt-tab-wrap" style="--gt-content-min-height:120px;">
+        <div class="gt-tab-wrap">
           <div class="gt-tab-pane active" id="tabs-pane-one" role="tabpanel" aria-labelledby="tabs-tab-one" aria-hidden="false" tabindex="0">
             <div class="gt-card">
               <p>First</p>
@@ -650,7 +650,7 @@
           </div>
           <select class="gt-tab-menu-select" id="tabs-menu" aria-label="Choose a tab"></select>
         </div>
-        <div class="gt-tab-wrap" style="--gt-content-min-height:120px;">
+        <div class="gt-tab-wrap">
           <div class="gt-tab-pane active" id="tabs-pane-one" role="tabpanel" aria-labelledby="tabs-tab-one" aria-hidden="false" tabindex="0">
             <div class="gt-card">
               <p>First</p>
@@ -803,7 +803,7 @@
           </div>
           <select class="gt-tab-menu-select" id="tabs-menu" aria-label="Choose a tab"></select>
         </div>
-        <div class="gt-tab-wrap" style="--gt-content-min-height:120px;">
+        <div class="gt-tab-wrap">
           <div class="gt-tab-pane active" id="tabs-pane-one" role="tabpanel" aria-labelledby="tabs-tab-one" aria-hidden="false" tabindex="0">
             <div class="gt-card">
               <p>First</p>
