@@ -27,8 +27,9 @@ updateGlassTabBadge(session, id, value, count)
 
 - count:
 
-  Integer count to display. Values above 99 are shown as `"99+"`. `0` or
-  `NA` hides the badge.
+  Integer count to display. Values above 99 are shown as `"99+"`. `0`,
+  `NA`, or `NULL` hides the badge. Fractional values are truncated
+  toward zero.
 
 ## Value
 

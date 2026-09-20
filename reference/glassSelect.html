@@ -74,7 +74,8 @@ selection-marker styling, and programmatic updates via <code><a href="updateGlas
 <span>  disabled_choices <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  server <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  server_limit <span class="op">=</span> <span class="fl">50L</span>,</span>
-<span>  server_min_chars <span class="op">=</span> <span class="fl">0L</span></span>
+<span>  server_min_chars <span class="op">=</span> <span class="fl">0L</span>,</span>
+<span>  no_matches_text <span class="op">=</span> <span class="st">"No matches"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -87,7 +88,10 @@ selection-marker styling, and programmatic updates via <code><a href="updateGlas
 
 
 <dt id="arg-choices">choices<a class="anchor" aria-label="anchor" href="#arg-choices"></a></dt>
-<dd><p>Named or unnamed character vector of choices.</p></dd>
+<dd><p>Named or unnamed character vector of choices, or a named
+list for grouped choices (selectInput()-style). A one-element named list
+such as <code>list(Group = "x")</code> is treated as a flat, ungrouped choice,
+mirroring <code><a href="https://rdrr.io/pkg/shiny/man/selectInput.html" class="external-link">shiny::selectInput()</a></code>.</p></dd>
 
 
 <dt id="arg-selected">selected<a class="anchor" aria-label="anchor" href="#arg-selected"></a></dt>
@@ -168,12 +172,20 @@ the Shiny server. Default <code>FALSE</code>.</p></dd>
 
 <dt id="arg-server-limit">server_limit<a class="anchor" aria-label="anchor" href="#arg-server-limit"></a></dt>
 <dd><p>Maximum number of choices rendered initially and returned
-for each server-side search. Default <code>50</code>.</p></dd>
+for each server-side search. Default <code>50</code>. Explicitly selected
+values that fall outside the initial slice are still rendered as extra
+rows so they stay visible and checked.</p></dd>
 
 
 <dt id="arg-server-min-chars">server_min_chars<a class="anchor" aria-label="anchor" href="#arg-server-min-chars"></a></dt>
 <dd><p>Minimum search characters required before server-side
 matching filters choices. Default <code>0</code>.</p></dd>
+
+
+<dt id="arg-no-matches-text">no_matches_text<a class="anchor" aria-label="anchor" href="#arg-no-matches-text"></a></dt>
+<dd><p>Text shown when a search matches no choices.
+Default <code>"No matches"</code>. This argument is last so that existing
+positional calls keep working.</p></dd>
 
 </dl></div>
     <div class="section level2">

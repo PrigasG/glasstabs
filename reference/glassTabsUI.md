@@ -11,6 +11,9 @@ glassTabsUI(
   selected = NULL,
   wrap = TRUE,
   compact = FALSE,
+  content_min_height = NULL,
+  style = c("floating", "attached"),
+  transition = c("fade", "slide"),
   shape = c("rounded", "square"),
   indicator = c("glass", "solid", "underline"),
   orientation = c("horizontal", "vertical"),
@@ -49,6 +52,27 @@ glassTabsUI(
   Logical. When `TRUE` applies reduced padding and spacing via the
   `.gt-compact` CSS modifier - useful inside dashboard cards or tight
   layouts (e.g. bs4Dash).
+
+- content_min_height:
+
+  Minimum height of the tab content area as a CSS length, e.g.
+  `"120px"`. Stabilizes the layout when tabs hold different amounts of
+  content. Use `"0"` for no minimum. When `NULL` (the default), no
+  inline height is set: the default is `120px`, or `60px` when
+  `compact = TRUE`. An explicitly supplied value always wins.
+
+- style:
+
+  Visual relationship between the tab bar and the content box.
+  `"floating"` (default) renders them as two separate floating pieces.
+  `"attached"` docks the tab bar directly onto the content box: they
+  share one border and read as a single unified card.
+
+- transition:
+
+  How panes animate when switching tabs. `"fade"` (default) fades and
+  rises the incoming pane. `"slide"` slides panes horizontally in the
+  direction of travel, following tab order.
 
 - shape:
 

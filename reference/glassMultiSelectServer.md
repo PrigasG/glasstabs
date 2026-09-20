@@ -25,7 +25,11 @@ glassMultiSelectServer(
 
 - choices:
 
-  Named or unnamed character vector of choices.
+  Named or unnamed character vector of choices, or a named list for
+  grouped choices (selectInput()-style). A one-element named list such
+  as `list(Group = "x")` is treated as a flat, ungrouped choice,
+  mirroring
+  [`shiny::selectInput()`](https://rdrr.io/pkg/shiny/man/selectInput.html).
 
 - session:
 

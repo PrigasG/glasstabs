@@ -20,8 +20,9 @@ It supports:
 - server-side updates with
   [`updateGlassSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassSelect.md)
 - lifecycle helpers with
-  [`closeGlassSelect()`](https://prigasg.github.io/glasstabs/reference/closeGlassSelect.md)
-  and `input$<inputId>_open`
+  [`closeGlassSelect()`](https://prigasg.github.io/glasstabs/reference/closeGlassSelect.md),
+  `input$<inputId>_open`, and `input$<inputId>_ready` (TRUE once the
+  widget has initialized)
 
 ## Basic usage
 

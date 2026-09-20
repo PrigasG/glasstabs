@@ -24,7 +24,7 @@ bs4Dash. They can be used together or independently. —
 install.packages("glasstabs")
 
 # From GitHub
-pak::pak("YOUR_GITHUB_USERNAME/glasstabs")
+pak::pak("PrigasG/glasstabs")
 
 # From source
 devtools::install_local("path/to/glasstabs")
@@ -266,8 +266,11 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
 
+  # Fall back when an input is NULL or empty (no selection yet).
+  fallback <- function(x, default) if (is.null(x) || length(x) == 0) default else x
+
   selected_regions <- reactive({
-    input$region %||% unique(unname(choices))
+    fallback(input$region, unique(unname(choices)))
   })
 
   output$summary_text <- renderUI({

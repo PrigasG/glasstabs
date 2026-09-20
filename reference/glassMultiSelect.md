@@ -32,7 +32,8 @@ glassMultiSelect(
   search_threshold = 15L,
   selection_display = c("auto", "count", "summary", "labels"),
   selection_max_items = 2L,
-  dropdown_max_height = "260px"
+  dropdown_max_height = "260px",
+  no_matches_text = "No matches"
 )
 ```
 
@@ -44,7 +45,11 @@ glassMultiSelect(
 
 - choices:
 
-  Named or unnamed character vector of choices.
+  Named or unnamed character vector of choices, or a named list for
+  grouped choices (selectInput()-style). A one-element named list such
+  as `list(Group = "x")` is treated as a flat, ungrouped choice,
+  mirroring
+  [`shiny::selectInput()`](https://rdrr.io/pkg/shiny/man/selectInput.html).
 
 - selected:
 
@@ -133,7 +138,9 @@ glassMultiSelect(
 - server_limit:
 
   Maximum number of choices rendered initially and returned for each
-  server-side search. Default `50`.
+  server-side search. Default `50`. Explicitly selected values that fall
+  outside the initial slice are still rendered as extra rows so they
+  stay visible and checked.
 
 - server_min_chars:
 
@@ -165,6 +172,11 @@ glassMultiSelect(
 
   Maximum height of the scrolling option area as a CSS unit, such as
   `"18rem"` or `"320px"`. The default is `"260px"`.
+
+- no_matches_text:
+
+  Text shown when a search matches no choices. Default `"No matches"`.
+  This argument is last so that existing positional calls keep working.
 
 ## Value
 

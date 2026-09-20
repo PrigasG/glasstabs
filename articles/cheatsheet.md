@@ -14,8 +14,10 @@ ui <- fluidPage(
 )
 ```
 
-\`glassPage()\` is the experimental exception. It is a thin wrapper
-around \`bslib::page_fillable()\` and loads the dependency itself.
+[`glassPage()`](https://prigasg.github.io/glasstabs/reference/glassPage.md)
+is the experimental exception. It is a thin wrapper around
+[`bslib::page_fillable()`](https://rstudio.github.io/bslib/reference/page_fillable.html)
+and loads the dependency itself.
 
 ``` r
 
@@ -142,6 +144,7 @@ glassTabsUI(
   selected = "a",
   wrap = TRUE,
   compact = FALSE,      # set TRUE inside dashboard cards for tighter layout
+  content_min_height = NULL,  # default: 120px (60px when compact = TRUE); "0" for no minimum
   extra_ui = tags$div("Right side UI"),
   theme = "light"
 )
@@ -165,6 +168,34 @@ bs4Card(
     glassTabPanel("b", "B", p("More content")),
     compact = TRUE      # reduced spacing for card context
   )
+)
+```
+
+## Tabs: connected styling
+
+The active tab and its content are visually linked automatically: the
+active tab carries a subtle inner light on its content-facing edge
+(bottom for horizontal tabs, the rail side for vertical, RTL-aware) in
+the halo color, and the content box’s top edge picks up the same color
+to bridge the gap. The `underline` indicator keeps its own connection
+cue instead. No parameters needed - to restyle the link, theme
+`halo_border` via
+[`glass_tab_theme()`](https://prigasg.github.io/glasstabs/reference/glass_tab_theme.md).
+
+## Tabs: attached style and slide transition
+
+Use `style = "attached"` for a single unified card where the tab bar
+docks onto the content box, and `transition = "slide"` for directional
+pane movement that follows tab order.
+
+``` r
+
+glassTabsUI(
+  "main",
+  glassTabPanel("a", "A", selected = TRUE, p("A")),
+  glassTabPanel("b", "B", p("B")),
+  style = "attached",      # tab bar shares one border with the content box
+  transition = "slide"     # panes slide in the direction of travel
 )
 ```
 
@@ -221,7 +252,8 @@ glassMultiSelect(
   selection_display = "summary",
   selection_max_items = 2,
   dropdown_max_height = "18rem",
-  theme = "dark"
+  theme = "dark",
+  no_matches_text = "No matches"  # last argument, so positional calls keep working
 )
 ```
 
@@ -277,7 +309,8 @@ glassSelect(
   clearable = TRUE,
   include_all = FALSE,
   check_style = "checkbox",
-  theme = "light"
+  theme = "light",
+  no_matches_text = "No matches"  # last argument, so positional calls keep working
 )
 ```
 
@@ -432,6 +465,10 @@ glasstabs_news()      # prints changelog to the console
   reduce widget spacing.
 - If you add new JS/CSS behavior during development, reinstall or
   `load_all()` before retesting.
+- Open select dropdowns stay open while Shiny outputs update and while
+  the window resizes, but they close when a full-screen overlay (loading
+  screen, modal, veil) appears — including overlays nested inside app
+  wrappers or revealed by toggling visibility.
 
 That is the whole working model: load the dependency once, compose
 widgets in the UI, and read their values through ordinary Shiny inputs.

@@ -90,7 +90,10 @@ completely on its own in any Shiny page.</p>
 <code>input$&lt;inputId&gt;</code> stores the selected values, and
 <code>input$&lt;inputId&gt;_style</code> stores the active indicator
 style. The <code>input$&lt;inputId&gt;_open</code> value reports whether
-the dropdown is currently open.</p>
+the dropdown is currently open, and
+<code>input$&lt;inputId&gt;_ready</code> becomes <code>TRUE</code> once
+the widget’s JavaScript has booted and synced its initial state (handy
+for gating observers that depend on the widget being initialized).</p>
 <p>It also supports server-side updates with
 <code><a href="../reference/updateGlassMultiSelect.html">updateGlassMultiSelect()</a></code>.</p>
 </div>
@@ -148,6 +151,11 @@ the dropdown is currently open.</p>
 <td><code>input$&lt;inputId&gt;_open</code></td>
 <td>logical</td>
 <td>Whether the dropdown is open</td>
+</tr>
+<tr class="even">
+<td><code>input$&lt;inputId&gt;_ready</code></td>
+<td>logical</td>
+<td>Whether the widget has finished initializing</td>
 </tr>
 </tbody>
 </table>
@@ -598,9 +606,11 @@ JS:</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="co"># Fall back when an input is NULL or empty (no selection yet).</span></span>
+<span>  <span class="va">fallback</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">default</span><span class="op">)</span> <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">||</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span> <span class="va">default</span> <span class="kw">else</span> <span class="va">x</span></span>
 <span>  <span class="va">filtered</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/reactive.html" class="external-link">reactive</a></span><span class="op">(</span><span class="op">{</span></span>
-<span>    <span class="va">sales</span><span class="op">[</span><span class="va">sales</span><span class="op">$</span><span class="va">region</span>  <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">region</span>  <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">sales</span><span class="op">$</span><span class="va">region</span><span class="op">)</span><span class="op">)</span> <span class="op">&amp;</span></span>
-<span>          <span class="va">sales</span><span class="op">$</span><span class="va">product</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">product</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">sales</span><span class="op">$</span><span class="va">product</span><span class="op">)</span><span class="op">)</span>, <span class="op">]</span></span>
+<span>    <span class="va">sales</span><span class="op">[</span><span class="va">sales</span><span class="op">$</span><span class="va">region</span>  <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu">fallback</span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">region</span>,  <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">sales</span><span class="op">$</span><span class="va">region</span><span class="op">)</span><span class="op">)</span> <span class="op">&amp;</span></span>
+<span>          <span class="va">sales</span><span class="op">$</span><span class="va">product</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu">fallback</span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">product</span>, <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">sales</span><span class="op">$</span><span class="va">product</span><span class="op">)</span><span class="op">)</span>, <span class="op">]</span></span>
 <span>  <span class="op">}</span><span class="op">)</span></span>
 <span>  <span class="va">output</span><span class="op">$</span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/renderTable.html" class="external-link">renderTable</a></span><span class="op">(</span><span class="fu">filtered</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>

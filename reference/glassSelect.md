@@ -26,7 +26,8 @@ glassSelect(
   disabled_choices = NULL,
   server = FALSE,
   server_limit = 50L,
-  server_min_chars = 0L
+  server_min_chars = 0L,
+  no_matches_text = "No matches"
 )
 ```
 
@@ -38,7 +39,11 @@ glassSelect(
 
 - choices:
 
-  Named or unnamed character vector of choices.
+  Named or unnamed character vector of choices, or a named list for
+  grouped choices (selectInput()-style). A one-element named list such
+  as `list(Group = "x")` is treated as a flat, ungrouped choice,
+  mirroring
+  [`shiny::selectInput()`](https://rdrr.io/pkg/shiny/man/selectInput.html).
 
 - selected:
 
@@ -119,12 +124,19 @@ glassSelect(
 - server_limit:
 
   Maximum number of choices rendered initially and returned for each
-  server-side search. Default `50`.
+  server-side search. Default `50`. Explicitly selected values that fall
+  outside the initial slice are still rendered as extra rows so they
+  stay visible and checked.
 
 - server_min_chars:
 
   Minimum search characters required before server-side matching filters
   choices. Default `0`.
+
+- no_matches_text:
+
+  Text shown when a search matches no choices. Default `"No matches"`.
+  This argument is last so that existing positional calls keep working.
 
 ## Value
 

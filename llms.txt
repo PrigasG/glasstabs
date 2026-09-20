@@ -219,6 +219,27 @@ aligns labels and icons inside each tab button. For visible left or
 right alignment in a horizontal bar, the buttons share the width of the
 widest label.
 
+Tab content sits in a subtle glass container, so the tabs and their
+content read as one connected component instead of a tab bar floating
+over bare space. The active tab picks up a soft light on its
+content-facing edge to tie them together.
+
+Use `style = "attached"` to dock the tab bar directly onto the content
+box as a single card, and `transition = "slide"` to slide panes in the
+direction you move between tabs:
+
+``` r
+
+glassTabsUI(
+  "reports",
+  glassTabPanel("summary", "Summary", selected = TRUE, summary_ui),
+  glassTabPanel("activity", "Recent activity", activity_ui),
+  glassTabPanel("quality", "Data quality", quality_ui),
+  style = "attached",
+  transition = "slide"
+)
+```
+
 ## Tabs that fit the screen
 
 Long tab bars stay on one line and scroll on smaller screens. The active
@@ -398,14 +419,14 @@ server <- function(input, output, session) {
 Built-in examples include `basic`, `bs4dash`, `bslib`,
 `connect-workflow`, `dashboard`, `indicators`, `server-select`,
 `smoke-test`, and `square-corners`. The Connect workflow doubles as a
-v0.4.0 test lab, with the responsive, keyboard, touch, dynamic-tab,
+v0.4.1 test lab, with the responsive, keyboard, touch, dynamic-tab,
 badge, theme, and page-wrapper checks collected in one app.
 
 ### Tab widget
 
 | Function | Description |
 |----|----|
-| `glassTabsUI(id, ..., selected, wrap, compact, shape, indicator, orientation, tab_align, text_align, overflow, swipe, extra_ui, theme, dark_selector)` | Animated tab bar with responsive overflow and optional touch swipes |
+| `glassTabsUI(id, ..., selected, wrap, compact, content_min_height, style, transition, shape, indicator, orientation, tab_align, text_align, overflow, swipe, extra_ui, theme, dark_selector)` | Animated tab bar with responsive overflow and optional touch swipes |
 | `glassTabPanel(value, label, ..., icon, selected)` | Define one tab and its content; `icon` accepts [`shiny::icon()`](https://rdrr.io/pkg/shiny/man/icon.html) |
 | `glassTabsServer(id, bookmark)` | Reactive returning the active tab; can bookmark the active tab in the URL |
 | `glassTabsOutput(outputId)` | UI placeholder for a server-rendered tab widget |
@@ -452,7 +473,7 @@ badge, theme, and page-wrapper checks collected in one app.
 ## Documentation and support
 
 The [glasstabs website](https://prigasg.github.io/glasstabs/) includes
-focused articles, a searchable function reference, and the [v0.4.0
+focused articles, a searchable function reference, and the [v0.4.1
 cheatsheet](https://prigasg.github.io/glasstabs/articles/cheatsheet.html).
 Release notes are available in
 [`NEWS.md`](https://prigasg.github.io/glasstabs/NEWS.md) or from R with

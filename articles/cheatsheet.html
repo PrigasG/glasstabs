@@ -90,8 +90,9 @@ using any widget.</p>
 <span>  <span class="fu"><a href="../reference/useGlassTabs.html">useGlassTabs</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="co"># widgets go here</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>`glassPage()` is the experimental exception. It is a thin wrapper
-around `bslib::page_fillable()` and loads the dependency itself.</p>
+<p><code><a href="../reference/glassPage.html">glassPage()</a></code> is the experimental exception. It is a thin
+wrapper around <code><a href="https://rstudio.github.io/bslib/reference/page_fillable.html" class="external-link">bslib::page_fillable()</a></code> and loads the
+dependency itself.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/glassPage.html">glassPage</a></span><span class="op">(</span></span>
 <span>  title <span class="op">=</span> <span class="st">"Review"</span>,</span>
@@ -211,6 +212,7 @@ strings; they do not need to match labels.</p>
 <span>  selected <span class="op">=</span> <span class="st">"a"</span>,</span>
 <span>  wrap <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  compact <span class="op">=</span> <span class="cn">FALSE</span>,      <span class="co"># set TRUE inside dashboard cards for tighter layout</span></span>
+<span>  content_min_height <span class="op">=</span> <span class="cn">NULL</span>,  <span class="co"># default: 120px (60px when compact = TRUE); "0" for no minimum</span></span>
 <span>  extra_ui <span class="op">=</span> <span class="va">tags</span><span class="op">$</span><span class="fu">div</span><span class="op">(</span><span class="st">"Right side UI"</span><span class="op">)</span>,</span>
 <span>  theme <span class="op">=</span> <span class="st">"light"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -234,9 +236,36 @@ card.</p>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
+<h2 id="tabs-connected-styling">Tabs: connected styling<a class="anchor" aria-label="anchor" href="#tabs-connected-styling"></a>
+</h2>
+<p>The active tab and its content are visually linked automatically: the
+active tab carries a subtle inner light on its content-facing edge
+(bottom for horizontal tabs, the rail side for vertical, RTL-aware) in
+the halo color, and the content box’s top edge picks up the same color
+to bridge the gap. The <code>underline</code> indicator keeps its own
+connection cue instead. No parameters needed - to restyle the link,
+theme <code>halo_border</code> via <code><a href="../reference/glass_tab_theme.html">glass_tab_theme()</a></code>.</p>
+</div>
+<div class="section level2">
+<h2 id="tabs-attached-style-and-slide-transition">Tabs: attached style and slide transition<a class="anchor" aria-label="anchor" href="#tabs-attached-style-and-slide-transition"></a>
+</h2>
+<p>Use <code>style = "attached"</code> for a single unified card where
+the tab bar docks onto the content box, and
+<code>transition = "slide"</code> for directional pane movement that
+follows tab order.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
+<span>  <span class="st">"main"</span>,</span>
+<span>  <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"A"</span>, selected <span class="op">=</span> <span class="cn">TRUE</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"A"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"b"</span>, <span class="st">"B"</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"B"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  style <span class="op">=</span> <span class="st">"attached"</span>,      <span class="co"># tab bar shares one border with the content box</span></span>
+<span>  transition <span class="op">=</span> <span class="st">"slide"</span>     <span class="co"># panes slide in the direction of travel</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
 <h2 id="multi-select-basic-pattern">Multi-select: basic pattern<a class="anchor" aria-label="anchor" href="#multi-select-basic-pattern"></a>
 </h2>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">choices</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Revenue <span class="op">=</span> <span class="st">"revenue"</span>, Orders <span class="op">=</span> <span class="st">"orders"</span>, Returns <span class="op">=</span> <span class="st">"returns"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span>
@@ -252,7 +281,7 @@ card.</p>
 <div class="section level2">
 <h2 id="multi-select-update-from-server">Multi-select: update from server<a class="anchor" aria-label="anchor" href="#multi-select-update-from-server"></a>
 </h2>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/updateGlassMultiSelect.html">updateGlassMultiSelect</a></span><span class="op">(</span></span>
 <span>  <span class="va">session</span>,</span>
 <span>  <span class="st">"metric"</span>,</span>
@@ -267,7 +296,7 @@ card.</p>
 <div class="section level2">
 <h2 id="multi-select-useful-arguments">Multi-select: useful arguments<a class="anchor" aria-label="anchor" href="#multi-select-useful-arguments"></a>
 </h2>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span></span>
 <span>  <span class="st">"metric"</span>,</span>
 <span>  <span class="va">choices</span>,</span>
@@ -284,9 +313,10 @@ card.</p>
 <span>  selection_display <span class="op">=</span> <span class="st">"summary"</span>,</span>
 <span>  selection_max_items <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  dropdown_max_height <span class="op">=</span> <span class="st">"18rem"</span>,</span>
-<span>  theme <span class="op">=</span> <span class="st">"dark"</span></span>
+<span>  theme <span class="op">=</span> <span class="st">"dark"</span>,</span>
+<span>  no_matches_text <span class="op">=</span> <span class="st">"No matches"</span>  <span class="co"># last argument, so positional calls keep working</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Let an empty UI selection mean every choice in filtering code.</span></span>
 <span><span class="va">metric</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/glassMultiSelectValue.html">glassMultiSelectValue</a></span><span class="op">(</span></span>
 <span>  <span class="va">input</span>,</span>
@@ -299,7 +329,7 @@ card.</p>
 <div class="section level2">
 <h2 id="single-select-basic-pattern">Single-select: basic pattern<a class="anchor" aria-label="anchor" href="#single-select-basic-pattern"></a>
 </h2>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">regions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"All Regions"</span> <span class="op">=</span> <span class="st">"all"</span>, North <span class="op">=</span> <span class="st">"north"</span>, South <span class="op">=</span> <span class="st">"south"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span>
@@ -314,7 +344,7 @@ card.</p>
 <div class="section level2">
 <h2 id="single-select-update-from-server">Single-select: update from server<a class="anchor" aria-label="anchor" href="#single-select-update-from-server"></a>
 </h2>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/updateGlassSelect.html">updateGlassSelect</a></span><span class="op">(</span><span class="va">session</span>, <span class="st">"region"</span>, selected <span class="op">=</span> <span class="st">"south"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Clear value</span></span>
@@ -323,7 +353,7 @@ card.</p>
 <div class="section level2">
 <h2 id="single-select-useful-arguments">Single-select: useful arguments<a class="anchor" aria-label="anchor" href="#single-select-useful-arguments"></a>
 </h2>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/glassSelect.html">glassSelect</a></span><span class="op">(</span></span>
 <span>  <span class="st">"region"</span>,</span>
 <span>  <span class="va">regions</span>,</span>
@@ -334,7 +364,8 @@ card.</p>
 <span>  clearable <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  include_all <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  check_style <span class="op">=</span> <span class="st">"checkbox"</span>,</span>
-<span>  theme <span class="op">=</span> <span class="st">"light"</span></span>
+<span>  theme <span class="op">=</span> <span class="st">"light"</span>,</span>
+<span>  no_matches_text <span class="op">=</span> <span class="st">"No matches"</span>  <span class="co"># last argument, so positional calls keep working</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -344,7 +375,7 @@ card.</p>
 <code><a href="https://bs4dash.rinterface.com/reference/dashboardBody.html" class="external-link">bs4Dash::tabItem()</a></code>. Place <code><a href="../reference/useGlassTabs.html">useGlassTabs()</a></code> in
 the <code><a href="https://bs4dash.rinterface.com/reference/dashboardBody.html" class="external-link">dashboardBody()</a></code> (or anywhere before the first widget —
 once is enough).</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny.posit.co/" class="external-link">shiny</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RinteRface/bs4Dash" class="external-link">bs4Dash</a></span><span class="op">)</span></span>
 <span></span>
@@ -395,7 +426,7 @@ function.</p>
 <div class="section level2">
 <h2 id="theme-helpers">Theme helpers<a class="anchor" aria-label="anchor" href="#theme-helpers"></a>
 </h2>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Tabs</span></span>
 <span><span class="fu"><a href="../reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
 <span>  <span class="st">"main"</span>,</span>
@@ -474,7 +505,7 @@ function.</p>
 </h2>
 <p>Use <code><a href="../reference/glassTabCondition.html">glassTabCondition()</a></code> to avoid constructing the input
 key manually:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Instead of: condition = "input['main-active_tab'] === 'details'"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/conditionalPanel.html" class="external-link">conditionalPanel</a></span><span class="op">(</span></span>
 <span>  condition <span class="op">=</span> <span class="fu"><a href="../reference/glassTabCondition.html">glassTabCondition</a></span><span class="op">(</span><span class="st">"main"</span>, <span class="st">"details"</span><span class="op">)</span>,</span>
@@ -491,7 +522,7 @@ key manually:</p>
 <div class="section level2">
 <h2 id="view-the-changelog">View the changelog<a class="anchor" aria-label="anchor" href="#view-the-changelog"></a>
 </h2>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/glasstabs_news.html">glasstabs_news</a></span><span class="op">(</span><span class="op">)</span>      <span class="co"># prints changelog to the console</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -524,6 +555,10 @@ use choice values, not labels.</li>
 layout to reduce widget spacing.</li>
 <li>If you add new JS/CSS behavior during development, reinstall or
 <code>load_all()</code> before retesting.</li>
+<li>Open select dropdowns stay open while Shiny outputs update and while
+the window resizes, but they close when a full-screen overlay (loading
+screen, modal, veil) appears — including overlays nested inside app
+wrappers or revealed by toggling visibility.</li>
 </ul>
 <p>That is the whole working model: load the dependency once, compose
 widgets in the UI, and read their values through ordinary Shiny

@@ -10,7 +10,10 @@ layout or completely on its own in any Shiny page.
 The widget behaves like a standard Shiny input: `input$<inputId>` stores
 the selected values, and `input$<inputId>_style` stores the active
 indicator style. The `input$<inputId>_open` value reports whether the
-dropdown is currently open.
+dropdown is currently open, and `input$<inputId>_ready` becomes `TRUE`
+once the widget’s JavaScript has booted and synced its initial state
+(handy for gating observers that depend on the widget being
+initialized).
 
 It also supports server-side updates with
 [`updateGlassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassMultiSelect.md).
@@ -43,11 +46,12 @@ if (interactive()) shinyApp(ui, server)
 
 ## Shiny inputs produced
 
-| Input                   | Type             | Value                        |
-|-------------------------|------------------|------------------------------|
-| `input$<inputId>`       | character vector | Currently selected values    |
-| `input$<inputId>_style` | character        | Active checkbox style        |
-| `input$<inputId>_open`  | logical          | Whether the dropdown is open |
+| Input | Type | Value |
+|----|----|----|
+| `input$<inputId>` | character vector | Currently selected values |
+| `input$<inputId>_style` | character | Active checkbox style |
+| `input$<inputId>_open` | logical | Whether the dropdown is open |
+| `input$<inputId>_ready` | logical | Whether the widget has finished initializing |
 
 ## Initial selection
 
@@ -521,9 +525,11 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
+  # Fall back when an input is NULL or empty (no selection yet).
+  fallback <- function(x, default) if (is.null(x) || length(x) == 0) default else x
   filtered <- reactive({
-    sales[sales$region  %in% (input$region  %||% unique(sales$region)) &
-          sales$product %in% (input$product %||% unique(sales$product)), ]
+    sales[sales$region  %in% fallback(input$region,  unique(sales$region)) &
+          sales$product %in% fallback(input$product, unique(sales$product)), ]
   })
   output$tbl <- renderTable(filtered())
 }

@@ -3,7 +3,8 @@
 All arguments accept any valid CSS color string (hex,
 [`rgb()`](https://rdrr.io/r/grDevices/rgb.html), `rgba()`, named
 colors). Pass only the fields you want to override - unset fields fall
-back to the dark-mode defaults.
+back to the dark-mode defaults, or the light-mode defaults when
+`mode = "light"`.
 
 ## Usage
 
@@ -17,7 +18,8 @@ glass_tab_theme(
   content_bg = NULL,
   content_border = NULL,
   card_bg = NULL,
-  card_text = NULL
+  card_text = NULL,
+  mode = c("dark", "light")
 )
 ```
 
@@ -59,6 +61,13 @@ glass_tab_theme(
 - card_text:
 
   Inner `.gt-card` text color.
+
+- mode:
+
+  Base preset that unset fields inherit from. One of `"dark"` (default)
+  or `"light"`. Use `"light"` when building a light-mode theme so unset
+  fields fall back to the light defaults and the tab container receives
+  the structural `theme-light` class.
 
 ## Value
 

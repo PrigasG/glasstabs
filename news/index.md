@@ -2,6 +2,183 @@
 
 ## glasstabs 0.4.1
 
+### Fixes
+
+- `no_matches_text` moved to the end of the
+  [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md)
+  and
+  [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md)
+  signatures. It was added in the middle, so existing positional calls
+  could silently bind the wrong arguments.
+
+- The full-screen overlay observer now watches the whole document
+  subtree and scans descendants of inserted nodes, so overlays nested
+  inside app wrappers and hidden overlays revealed by class/style
+  toggles also dismiss open select dropdowns. Browser tests cover the
+  nested and toggled cases.
+
+- `glassTabsUI(content_min_height = NULL)` (the new default) no longer
+  writes an inline `--gt-content-min-height`, restoring the `60px`
+  compact minimum: compact widgets use `60px`, regular widgets `120px`,
+  and an explicitly supplied value still wins.
+
+- Attached vertical tabs in RTL layouts now fully reset to the stacked
+  top-bar layout below 760px (the base `[dir="rtl"]` rules previously
+  outranked the narrow-screen reset, leaving side borders and corner
+  radii active).
+
+- `%||%` is internal again instead of exported: its length-zero fallback
+  semantics differ from `rlang::%||%`, and exporting it risked masking
+  between the two. Vignettes and example apps now use a small local
+  `fallback()` helper.
+
+- [`updateGlassTabBadge()`](https://prigasg.github.io/glasstabs/reference/updateGlassTabBadge.md)
+  caps huge counts at 100 instead of letting
+  [`as.integer()`](https://rdrr.io/r/base/integer.html) coerce them to
+  `NA` with a warning; the browser already renders anything above 99 as
+  `"99+"`.
+
+- [`glass_tab_theme()`](https://prigasg.github.io/glasstabs/reference/glass_tab_theme.md)
+  docs no longer claim unset fields always inherit dark defaults; they
+  inherit from the `mode` base preset. The README function table now
+  lists `content_min_height`, `style`, and `transition` in the
+  [`glassTabsUI()`](https://prigasg.github.io/glasstabs/reference/glassTabsUI.md)
+  signature.
+
+- The `%||%` operator is internal (`@noRd`) rather than a documented
+  export, so `R CMD check` has no `|`-in-`\name` concern at all.
+
+- Browser-test and stylesheet tests updated to match intended behavior:
+  open dropdowns reposition (not close) on window resize, and
+  `color-mix()` in `glass.css` is used only where unsupported browsers
+  degrade gracefully.
+
+- The spelling wordlist now covers package vocabulary (`mojibake`,
+  `rlang`, `shinytest`, `ungrouped`), and browser tests clean up
+  Chrome’s temp directories so `R CMD check` reports no detritus.
+
+- Vignettes and example apps that used `%||%` now define a small local
+  `fallback()` helper instead; the operator stays internal to the
+  package.
+
+- [`updateGlassTabBadge()`](https://prigasg.github.io/glasstabs/reference/updateGlassTabBadge.md)
+  no longer crashes on `count = NULL`; `NULL` and empty vectors hide the
+  badge like `NA` does. Non-numeric, multi-length, negative, or infinite
+  counts now raise a clear `glasstabs_error_bad_argument` error instead
+  of producing corrupt messages.
+
+- [`glassTabPanel()`](https://prigasg.github.io/glasstabs/reference/glassTabPanel.md)
+  validates that `value` and `label` are single strings, replacing
+  cryptic downstream errors (empty labels remain allowed for icon-only
+  tabs).
+
+- [`glass_tab_theme()`](https://prigasg.github.io/glasstabs/reference/glass_tab_theme.md)
+  gains a `mode` argument (`"dark"`/`"light"`). Unset fields now inherit
+  from the mode’s base preset, and light-mode custom themes receive the
+  structural `theme-light` class in
+  [`glassTabsUI()`](https://prigasg.github.io/glasstabs/reference/glassTabsUI.md)
+  (previously a dead branch).
+
+- Invalid tab theme presets no longer list `"auto"` as valid; `"auto"`
+  is resolved by
+  [`glassTabsUI()`](https://prigasg.github.io/glasstabs/reference/glassTabsUI.md)
+  before theme resolution runs.
+
+- [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md)
+  and
+  [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md)
+  reject duplicate choice values with a clear error instead of rendering
+  ambiguous duplicate options.
+
+- Out-of-range [`rgb()`](https://rdrr.io/r/grDevices/rgb.html)/`rgba()`
+  components are clamped the way browsers do, and malformed components
+  yield a clean fallback instead of invalid CSS.
+
+- Server-mode
+  [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md)
+  now renders every explicitly selected value outside the initial
+  `server_limit` slice as an extra checked row, so pre-selections stay
+  visible (previously only a single out-of-slice value got an extra
+  row). Default selections remain bounded to the slice.
+
+- Grouped-`choices` docs now note that a one-element named list is
+  treated as a flat choice, mirroring
+  [`shiny::selectInput()`](https://rdrr.io/pkg/shiny/man/selectInput.html).
+
+- Vignettes now document the `input$<id>_ready` signal emitted once a
+  select widget finishes initializing.
+
+- Removed the dead `glasstabs_close_select` custom message handler and
+  its orphaned `closeDropdownById()` helper from `glass.js`;
+  single-widget closes travel through the widget controllers via input
+  messages.
+
+- Corrected a stale CSS comment that claimed teleported dropdowns use
+  `position:fixed` (they deliberately use `position:absolute`).
+
+- Open select dropdowns no longer slam shut when an unrelated Shiny
+  output updates. Only dropdowns anchored inside the updated output are
+  closed, so dropdowns stay usable next to live outputs like timers and
+  previews.
+
+- Window resizes (mobile URL-bar show/hide, the on-screen keyboard) now
+  keep open select dropdowns glued to their trigger via repositioning
+  instead of closing them. Dropdowns still close when their trigger is
+  detached or has no layout box.
+
+- Open select dropdowns are now dismissed when a full-screen overlay
+  appears (loading screens, waiter veils, custom overlays), instead of
+  floating above or lingering beneath it. Smaller floating panels do not
+  trigger this.
+
+- [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md)
+  and
+  [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md)
+  gain a `no_matches_text` argument to customize the “No matches”
+  empty-search message.
+
+- Tab content now sits in a subtle glass container by default
+  (barely-there background and hairline border) instead of an invisible
+  box, so the tab bar and content read as one component. The old
+  invisible look is still available via
+  `glass_tab_theme(content_bg = "transparent", content_border = "transparent")`.
+  Double padding between the tab bar and content is gone (22px instead
+  of 44px) and the tab bar sits slightly closer to the content.
+
+- [`glassTabsUI()`](https://prigasg.github.io/glasstabs/reference/glassTabsUI.md)
+  gains `content_min_height` (default `"120px"`, was a fixed 200px) to
+  control the content area’s minimum height; use `"0"` for none.
+
+- Tabs feel connected to their content: the active tab now shows a
+  subtle inner light on its content-facing edge (bottom for horizontal
+  tabs, side for a vertical rail, RTL-aware) in the halo color, and the
+  content box’s top edge picks up the same halo color to bridge the gap.
+  The underline indicator keeps its own connection cue.
+
+- [`glassTabsUI()`](https://prigasg.github.io/glasstabs/reference/glassTabsUI.md)
+  gains `style = "attached"`, which docks the tab bar directly onto the
+  content box so they share one border and read as a single unified card
+  (`"floating"` keeps the default two-piece look).
+
+- [`glassTabsUI()`](https://prigasg.github.io/glasstabs/reference/glassTabsUI.md)
+  gains `transition = "slide"`, sliding panes horizontally in the
+  direction of travel following tab order (`"fade"` keeps the default
+  fade-and-rise).
+
+- Server-side choice search now normalizes the choice set once per
+  widget instead of on every keystroke, making search over large choice
+  sets noticeably snappier.
+
+### Docs and examples
+
+- Fixed stale `v0.4.0` references, a placeholder GitHub username in the
+  getting-started vignette, mojibake em dashes in the dashboard/bs4dash
+  examples, and a wrong input id in the basic example’s narrative.
+- The pkgdown reference now indexes `closeGlassMultiSelect`,
+  `closeAllGlassSelects`, and the newly exported `%||%`.
+- CI now installs stable Chrome so the shinytest2 browser suite actually
+  runs instead of failing on a missing browser.
+
 ### Select dropdown sizing
 
 - [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md)

@@ -76,7 +76,10 @@ bounded list of matching choices.</p>
 
 
 <dt id="arg-choices">choices<a class="anchor" aria-label="anchor" href="#arg-choices"></a></dt>
-<dd><p>Named or unnamed character vector of choices.</p></dd>
+<dd><p>Named or unnamed character vector of choices, or a named
+list for grouped choices (selectInput()-style). A one-element named list
+such as <code>list(Group = "x")</code> is treated as a flat, ungrouped choice,
+mirroring <code><a href="https://rdrr.io/pkg/shiny/man/selectInput.html" class="external-link">shiny::selectInput()</a></code>.</p></dd>
 
 
 <dt id="arg-session">session<a class="anchor" aria-label="anchor" href="#arg-session"></a></dt>
