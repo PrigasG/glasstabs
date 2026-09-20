@@ -61,7 +61,6 @@ glassSelect <- function(
     selected = NULL,
     label = NULL,
     placeholder = "Select an option",
-    no_matches_text = "No matches",
     searchable = TRUE,
     clearable = FALSE,
     include_all = FALSE,
@@ -75,7 +74,8 @@ glassSelect <- function(
     disabled_choices = NULL,
     server = FALSE,
     server_limit = 50L,
-    server_min_chars = 0L
+    server_min_chars = 0L,
+    no_matches_text = "No matches"
 ) {
   .gt_check_string(
     inputId,

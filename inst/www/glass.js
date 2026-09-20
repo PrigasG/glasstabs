@@ -2689,6 +2689,37 @@
       if (oz === null || dz === null) return true;
       return oz >= dz;
     }
+    /* Find a screen-overlay candidate at or below `root`. `root` itself is
+       checked first; descendants get a cheap inline-style/class prefilter
+       before the expensive computed-style check in looksLikeScreenOverlay,
+       so inserting a large subtree stays fast. */
+    function findOverlayCandidate(root) {
+      if (!root || root.nodeType !== 1) return null;
+      if (root.closest && root.closest('.gt-gs-wrap, .gt-ms-wrap')) return null;
+      if (looksLikeScreenOverlay(root)) return root;
+      var all = root.querySelectorAll ? root.querySelectorAll('*') : [];
+      for (var i = 0; i < all.length; i++) {
+        var el = all[i];
+        if (el.closest && el.closest('.gt-gs-wrap, .gt-ms-wrap')) continue;
+        var pos = el.style ? el.style.position : '';
+        var cls = el.className && typeof el.className === 'string' ? el.className : '';
+        /* Prefilter: inline fixed/absolute positioning or an overlay-ish
+           class name. Anything subtler is still caught when it mutates its
+           own class/style attributes (see below). */
+        if (pos !== 'fixed' && pos !== 'absolute' &&
+            !/overlay|veil|modal|backdrop|loading|waiter|spinner/i.test(cls)) continue;
+        if (looksLikeScreenOverlay(el)) return el;
+      }
+      return null;
+    }
+    function maybeCloseForOverlay(el) {
+      var cand = findOverlayCandidate(el);
+      if (cand && overlayCoversDropdown(cand)) {
+        closeAllDropdowns();
+        return true;
+      }
+      return false;
+    }
     if (typeof MutationObserver !== 'undefined' && document.body) {
       var overlayObserver = new MutationObserver(function (mutations) {
         var open = document.querySelector(
@@ -2699,17 +2730,16 @@
           var m = mutations[i];
           if (m.type === 'childList') {
             for (var j = 0; j < m.addedNodes.length; j++) {
-              var n = m.addedNodes[j];
-              if (looksLikeScreenOverlay(n) && overlayCoversDropdown(n)) {
-                closeAllDropdowns();
-                return;
-              }
+              /* addedNodes covers the node itself; findOverlayCandidate
+                 also scans its descendants, so an overlay nested inside a
+                 newly inserted wrapper is caught. */
+              if (maybeCloseForOverlay(m.addedNodes[j])) return;
             }
           } else if (m.type === 'attributes') {
-            if (looksLikeScreenOverlay(m.target) && overlayCoversDropdown(m.target)) {
-              closeAllDropdowns();
-              return;
-            }
+            /* With subtree observation this fires for class/style changes
+               anywhere, e.g. a hidden overlay made visible by toggling a
+               class on itself or on an ancestor wrapper. */
+            if (maybeCloseForOverlay(m.target)) return;
           }
         }
       });
@@ -2717,7 +2747,7 @@
         childList: true,
         attributes: true,
         attributeFilter: ['style', 'class'],
-        subtree: false
+        subtree: true
       });
     }
   }

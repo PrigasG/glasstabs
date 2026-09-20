@@ -1,15 +1,13 @@
-#' Null-or-empty coalescing operator
+#' Null-or-empty coalescing operator (internal)
 #'
 #' Returns `a` unless it is `NULL` or length-zero, in which case `b` is
 #' returned. Unlike the rlang operator of the same name, length-zero values
 #' (e.g. `character(0)`) intentionally fall back, which the `update*()`
-#' helpers rely on to mean "clear".
+#' helpers rely on to mean "clear". Kept internal on purpose: exporting it
+#' would mask rlang's operator with different semantics when both packages
+#' are attached.
 #'
-#' @param a Value to use when it is not `NULL` and not length-zero.
-#' @param b Fallback value.
-#' @return `a` if it is non-`NULL` and non-empty, otherwise `b`.
-#' @name op-null-default
-#' @export
+#' @noRd
 `%||%` <- function(a, b) {
   # Unlike rlang's operator, length-zero values intentionally fall back. This
   # is load-bearing for update helpers where character(0) means "clear".

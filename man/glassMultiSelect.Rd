@@ -10,7 +10,6 @@ glassMultiSelect(
   selected = NULL,
   label = NULL,
   placeholder = "Filter by Category",
-  no_matches_text = "No matches",
   all_label = "All categories",
   check_style = c("checkbox", "check-only", "filled"),
   show_style_switcher = TRUE,
@@ -30,7 +29,8 @@ glassMultiSelect(
   search_threshold = 15L,
   selection_display = c("auto", "count", "summary", "labels"),
   selection_max_items = 2L,
-  dropdown_max_height = "260px"
+  dropdown_max_height = "260px",
+  no_matches_text = "No matches"
 )
 }
 \arguments{
@@ -47,9 +47,6 @@ mirroring \code{\link[shiny:selectInput]{shiny::selectInput()}}.}
 \item{label}{Optional field label shown above the widget.}
 
 \item{placeholder}{Trigger label when nothing is selected.}
-
-\item{no_matches_text}{Text shown when a search matches no choices.
-Default \code{"No matches"}.}
 
 \item{all_label}{Label shown when all choices are selected.}
 
@@ -120,6 +117,10 @@ trigger: \code{"auto"} (the existing behavior), \code{"count"},
 \item{dropdown_max_height}{Maximum height of the scrolling option area as a
 CSS unit, such as \code{"18rem"} or \code{"320px"}. The default is
 \code{"260px"}.}
+
+\item{no_matches_text}{Text shown when a search matches no choices.
+Default \code{"No matches"}. This argument is last so that existing
+positional calls keep working.}
 }
 \value{
 An \code{htmltools::tagList} containing the trigger button, dropdown

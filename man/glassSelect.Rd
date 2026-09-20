@@ -10,7 +10,6 @@ glassSelect(
   selected = NULL,
   label = NULL,
   placeholder = "Select an option",
-  no_matches_text = "No matches",
   searchable = TRUE,
   clearable = FALSE,
   include_all = FALSE,
@@ -24,7 +23,8 @@ glassSelect(
   disabled_choices = NULL,
   server = FALSE,
   server_limit = 50L,
-  server_min_chars = 0L
+  server_min_chars = 0L,
+  no_matches_text = "No matches"
 )
 }
 \arguments{
@@ -40,9 +40,6 @@ mirroring \code{\link[shiny:selectInput]{shiny::selectInput()}}.}
 \item{label}{Optional field label shown above the widget.}
 
 \item{placeholder}{Trigger label when nothing is selected.}
-
-\item{no_matches_text}{Text shown when a search matches no choices.
-Default \code{"No matches"}.}
 
 \item{searchable}{Logical. Show search input inside dropdown? Default
 \code{TRUE}.}
@@ -91,6 +88,10 @@ row so it stays visible and checked.}
 
 \item{server_min_chars}{Minimum search characters required before server-side
 matching filters choices. Default \code{0}.}
+
+\item{no_matches_text}{Text shown when a search matches no choices.
+Default \code{"No matches"}. This argument is last so that existing
+positional calls keep working.}
 }
 \value{
 An \code{htmltools::tagList} containing the single-select trigger,

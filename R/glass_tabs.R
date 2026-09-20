@@ -67,8 +67,10 @@ glassTabPanel <- function(value, label, ..., icon = NULL, selected = FALSE) {
 #'   the `.gt-compact` CSS modifier - useful inside dashboard cards or tight
 #'   layouts (e.g. bs4Dash).
 #' @param content_min_height Minimum height of the tab content area as a CSS
-#'   length, e.g. `"120px"` (the default). Stabilizes the layout when tabs
-#'   hold different amounts of content. Use `"0"` for no minimum.
+#'   length, e.g. `"120px"`. Stabilizes the layout when tabs hold different
+#'   amounts of content. Use `"0"` for no minimum. When `NULL` (the default),
+#'   no inline height is set: the default is `120px`, or `60px` when
+#'   `compact = TRUE`. An explicitly supplied value always wins.
 #' @param style Visual relationship between the tab bar and the content box.
 #'   `"floating"` (default) renders them as two separate floating pieces.
 #'   `"attached"` docks the tab bar directly onto the content box: they share
@@ -132,7 +134,7 @@ glassTabsUI <- function(
     selected = NULL,
     wrap = TRUE,
     compact = FALSE,
-    content_min_height = "120px",
+    content_min_height = NULL,
     style = c("floating", "attached"),
     transition = c("fade", "slide"),
     shape = c("rounded", "square"),
@@ -177,7 +179,9 @@ glassTabsUI <- function(
       expected = "TRUE or FALSE"
     )
   }
-  content_min_height <- .gt_css_unit(content_min_height, "content_min_height")
+  if (!is.null(content_min_height)) {
+    content_min_height <- .gt_css_unit(content_min_height, "content_min_height")
+  }
   style      <- .gt_match_arg(style, c("floating", "attached"), "style")
   transition <- .gt_match_arg(transition, c("fade", "slide"), "transition")
 
@@ -331,7 +335,11 @@ glassTabsUI <- function(
     topbar,
     shiny::div(
       class = "gt-tab-wrap",
-      style = sprintf("--gt-content-min-height:%s;", content_min_height),
+      style = if (is.null(content_min_height)) {
+        NULL
+      } else {
+        sprintf("--gt-content-min-height:%s;", content_min_height)
+      },
       panes
     )
   )
@@ -471,7 +479,10 @@ updateGlassTabBadge <- function(session, id, value, count) {
       expected = "a single non-negative number"
     )
   }
-  as.integer(count)
+  # The browser renders any count above 99 as "99+", so cap the transported
+  # value at 100: huge counts (e.g. 1e20) would otherwise coerce to NA with
+  # a warning via as.integer().
+  as.integer(min(count, 100))
 }
 
 #' Show or hide a glass tab

@@ -952,3 +952,73 @@ test_that("browser: a full-screen overlay dismisses open select dropdowns", {
   expect_true(app$get_js("document.querySelector('#fruit-dropdown.open') === null"))
   app$get_js("document.querySelector('#test-screen-veil').remove(); 'removed'")
 })
+
+test_that("browser: an overlay nested inside an app wrapper dismisses open select dropdowns", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-select-overlay-nested",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+  app$click(selector = "#fruit-trigger")
+  app$wait_for_js("document.querySelector('#fruit-dropdown.open') !== null")
+
+  # Overlay nested inside a newly inserted application wrapper, not a direct
+  # body child: the subtree observer must still find it.
+  app$get_js("
+    (function() {
+      var wrap = document.createElement('div');
+      wrap.id = 'test-app-wrapper';
+      var veil = document.createElement('div');
+      veil.id = 'test-nested-veil';
+      veil.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.5);';
+      wrap.appendChild(veil);
+      document.querySelector('.container-fluid').appendChild(wrap);
+      return 'added';
+    })()
+  ")
+  app$wait_for_js("document.querySelector('#fruit-dropdown.open') === null")
+  expect_true(app$get_js("document.querySelector('#fruit-dropdown.open') === null"))
+  app$get_js("document.querySelector('#test-app-wrapper').remove(); 'removed'")
+})
+
+test_that("browser: a hidden overlay made visible by a class toggle dismisses open select dropdowns", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-select-overlay-toggle",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+  # Pre-existing hidden overlay: present in the DOM but display:none.
+  app$get_js("
+    (function() {
+      var d = document.createElement('div');
+      d.id = 'test-toggle-veil';
+      d.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.5);display:none;';
+      document.body.appendChild(d);
+      return 'added';
+    })()
+  ")
+  app$click(selector = "#fruit-trigger")
+  app$wait_for_js("document.querySelector('#fruit-dropdown.open') !== null")
+
+  # Reveal it with a style change: no new node is inserted.
+  app$get_js("document.querySelector('#test-toggle-veil').style.display = 'block'; 'shown'")
+  app$wait_for_js("document.querySelector('#fruit-dropdown.open') === null")
+  expect_true(app$get_js("document.querySelector('#fruit-dropdown.open') === null"))
+  app$get_js("document.querySelector('#test-toggle-veil').remove(); 'removed'")
+})

@@ -348,3 +348,11 @@ test_that("glassTabsUI() compact = TRUE without wrap has only gt-compact class",
   expect_false(grepl("gt-container", html))
   expect_true(grepl("gt-compact", html))
 })
+
+test_that("updateGlassTabBadge() caps huge counts instead of coercing to NA", {
+  sess <- make_session()
+  expect_no_warning(
+    updateGlassTabBadge(sess, "tabs", "a", count = 1e20)
+  )
+  expect_equal(sess$msgs()[[1]]$message$count, 100L)
+})

@@ -2,7 +2,8 @@
 #'
 #' All arguments accept any valid CSS color string (hex, `rgb()`, `rgba()`,
 #' named colors). Pass only the fields you want to override - unset fields
-#' fall back to the dark-mode defaults.
+#' fall back to the dark-mode defaults, or the light-mode defaults when
+#' `mode = "light"`.
 #'
 #' @note **Light mode color accessibility:** When building a light-mode theme,
 #'   ensure `tab_text` is dark enough to read on a white background (e.g. at

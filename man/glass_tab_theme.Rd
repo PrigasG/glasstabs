@@ -49,7 +49,8 @@ the \code{theme} argument of \code{\link[=glassTabsUI]{glassTabsUI()}}.
 \description{
 All arguments accept any valid CSS color string (hex, \code{rgb()}, \code{rgba()},
 named colors). Pass only the fields you want to override - unset fields
-fall back to the \code{mode} base preset defaults.
+fall back to the dark-mode defaults, or the light-mode defaults when
+\code{mode = "light"}.
 }
 \note{
 \strong{Light mode color accessibility:} When building a light-mode theme,

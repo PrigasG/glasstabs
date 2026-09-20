@@ -2,9 +2,35 @@
 
 ## Fixes
 
-* The `%||%` documentation topic is now named `op-null-default` (with
-  `%||%` kept as an alias) so `R CMD check` no longer warns about `|` in the
-  `\name` field. `?"%||%"` keeps working as before.
+* `no_matches_text` moved to the end of the `glassSelect()` and
+  `glassMultiSelect()` signatures. It was added in the middle, so existing
+  positional calls could silently bind the wrong arguments.
+* The full-screen overlay observer now watches the whole document subtree
+  and scans descendants of inserted nodes, so overlays nested inside app
+  wrappers and hidden overlays revealed by class/style toggles also dismiss
+  open select dropdowns. Browser tests cover the nested and toggled cases.
+* `glassTabsUI(content_min_height = NULL)` (the new default) no longer
+  writes an inline `--gt-content-min-height`, restoring the `60px` compact
+  minimum: compact widgets use `60px`, regular widgets `120px`, and an
+  explicitly supplied value still wins.
+* Attached vertical tabs in RTL layouts now fully reset to the stacked
+  top-bar layout below 760px (the base `[dir="rtl"]` rules previously
+  outranked the narrow-screen reset, leaving side borders and corner radii
+  active).
+* `%||%` is internal again instead of exported: its length-zero fallback
+  semantics differ from `rlang::%||%`, and exporting it risked masking
+  between the two. Vignettes and example apps now use a small local
+  `fallback()` helper.
+* `updateGlassTabBadge()` caps huge counts at 100 instead of letting
+  `as.integer()` coerce them to `NA` with a warning; the browser already
+  renders anything above 99 as `"99+"`.
+* `glass_tab_theme()` docs no longer claim unset fields always inherit dark
+  defaults; they inherit from the `mode` base preset. The README function
+  table now lists `content_min_height`, `style`, and `transition` in the
+  `glassTabsUI()` signature.
+
+* The `%||%` operator is internal (`@noRd`) rather than a documented export,
+  so `R CMD check` has no `|`-in-`\name` concern at all.
 * Browser-test and stylesheet tests updated to match intended behavior: open
   dropdowns reposition (not close) on window resize, and `color-mix()` in
   `glass.css` is used only where unsupported browsers degrade gracefully.
@@ -12,9 +38,8 @@
   `shinytest`, `ungrouped`), and browser tests clean up Chrome's temp
   directories so `R CMD check` reports no detritus.
 
-* `%||%` is now exported, so example apps and vignette snippets that rely on
-  it (e.g. the dashboard and smoke-test examples) run without attaching
-  internals.
+* Vignettes and example apps that used `%||%` now define a small local
+  `fallback()` helper instead; the operator stays internal to the package.
 * `updateGlassTabBadge()` no longer crashes on `count = NULL`; `NULL` and
   empty vectors hide the badge like `NA` does. Non-numeric, multi-length,
   negative, or infinite counts now raise a clear `glasstabs_error_bad_argument`

@@ -1158,6 +1158,20 @@
     border-top:none;
     border-radius:0 0 14px 14px;
   }
+  /* RTL needs the same reset: the base [dir="rtl"] rules are more specific
+     than the LTR rules above, so without these the side borders and corner
+     radii from the vertical-rail layout would survive the stacking. */
+  [dir="rtl"] .style-attached.gt-vertical > .gt-topbar{
+    border:1px solid var(--gt-content-border,transparent);
+    border-bottom:none;
+    border-radius:14px 14px 0 0;
+    padding:10px 14px 0;
+  }
+  [dir="rtl"] .style-attached.gt-vertical > .gt-tab-wrap{
+    border:1px solid var(--gt-content-border,transparent);
+    border-top:none;
+    border-radius:0 0 14px 14px;
+  }
 }
 
 /* Teleported dropdowns use position:absolute (set by glass.js in

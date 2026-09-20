@@ -21,8 +21,9 @@ This is a minor update refining the select widgets and the tab widget.
   inner light on its content-facing edge to tie them together.
 - `glassTabsUI()` gains `style = "attached"`, docking the tab bar onto the
   content box as a single unified card, and `transition = "slide"`, sliding
-  panes in the direction of travel. `content_min_height` (default `"120px"`)
-  replaces the fixed 200px content minimum.
+  panes in the direction of travel. `content_min_height` (default `NULL`,
+  i.e. `120px`, or `60px` when `compact = TRUE`) replaces the fixed 200px
+  content minimum; an explicitly supplied value always wins.
 - Added real-browser regression coverage for both widget types at narrow field
   widths, long labels, resizing, viewport-edge placement, adaptive search,
   quiet updates, summaries, and list height.

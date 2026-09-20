@@ -23,8 +23,6 @@
 #'   \code{NULL}.
 #' @param label Optional field label shown above the widget.
 #' @param placeholder Trigger label when nothing is selected.
-#' @param no_matches_text Text shown when a search matches no choices.
-#'   Default \code{"No matches"}.
 #' @param all_label Label shown when all choices are selected.
 #' @param check_style One of \code{"checkbox"} (default),
 #'   \code{"check-only"}, or \code{"filled"}.
@@ -75,6 +73,9 @@
 #' @param dropdown_max_height Maximum height of the scrolling option area as a
 #'   CSS unit, such as \code{"18rem"} or \code{"320px"}. The default is
 #'   \code{"260px"}.
+#' @param no_matches_text Text shown when a search matches no choices.
+#'   Default \code{"No matches"}. This argument is last so that existing
+#'   positional calls keep working.
 #'
 #' @return An \code{htmltools::tagList} containing the trigger button, dropdown
 #'   panel, and scoped \code{<style>} block.
@@ -106,7 +107,6 @@ glassMultiSelect <- function(
     selected            = NULL,
     label               = NULL,
     placeholder         = "Filter by Category",
-    no_matches_text     = "No matches",
     all_label           = "All categories",
     check_style         = c("checkbox", "check-only", "filled"),
     show_style_switcher = TRUE,
@@ -126,7 +126,8 @@ glassMultiSelect <- function(
     search_threshold    = 15L,
     selection_display   = c("auto", "count", "summary", "labels"),
     selection_max_items = 2L,
-    dropdown_max_height = "260px"
+    dropdown_max_height = "260px",
+    no_matches_text     = "No matches"
 ) {
   .gt_check_string(
     inputId,

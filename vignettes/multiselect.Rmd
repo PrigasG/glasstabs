@@ -509,9 +509,11 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
+  # Fall back when an input is NULL or empty (no selection yet).
+  fallback <- function(x, default) if (is.null(x) || length(x) == 0) default else x
   filtered <- reactive({
-    sales[sales$region  %in% (input$region  %||% unique(sales$region)) &
-          sales$product %in% (input$product %||% unique(sales$product)), ]
+    sales[sales$region  %in% fallback(input$region,  unique(sales$region)) &
+          sales$product %in% fallback(input$product, unique(sales$product)), ]
   })
   output$tbl <- renderTable(filtered())
 }

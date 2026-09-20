@@ -537,11 +537,23 @@ test_that("glassTabsUI() sets content min-height from content_min_height", {
   )
 })
 
-test_that("glassTabsUI() defaults content_min_height to 120px", {
+test_that("glassTabsUI() omits the min-height inline style by default", {
   ui <- glassTabsUI("nav", glassTabPanel("a", "A"))
 
+  expect_false(
+    grepl("--gt-content-min-height", as.character(ui), fixed = TRUE)
+  )
+})
+
+test_that("glassTabsUI() still emits an explicit content_min_height", {
+  ui <- glassTabsUI(
+    "nav",
+    glassTabPanel("a", "A"),
+    content_min_height = "300px"
+  )
+
   expect_true(
-    grepl("--gt-content-min-height:120px;", as.character(ui), fixed = TRUE)
+    grepl("--gt-content-min-height:300px;", as.character(ui), fixed = TRUE)
   )
 })
 
