@@ -82,6 +82,8 @@ ui <- fluidPage(
       inline = TRUE
     ),
     verbatimTextOutput("fruit_open_state"),
+    actionButton("ping_output", "Ping unrelated output"),
+    textOutput("ping_text"),
     glassSelect(
       "shape_single",
       choices,
@@ -176,6 +178,15 @@ server <- function(input, output, session) {
   output$fruit_open_state <- renderText({
     if (isTRUE(input$fruit_open)) "open" else "closed"
   })
+
+  # Unrelated output used to prove that ordinary Shiny updates do not disturb
+  # open select dropdowns (regression: a global shiny:value handler used to
+  # close every dropdown on any output update).
+  ping_n <- reactiveVal(0L)
+  observeEvent(input$ping_output, {
+    ping_n(ping_n() + 1L)
+  })
+  output$ping_text <- renderText(paste("ping", ping_n()))
 
   adaptive_events <- reactiveVal(0L)
   observeEvent(input$adaptive, {

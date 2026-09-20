@@ -2,6 +2,9 @@
 library(shiny)
 library(glasstabs)
 
+# Local NULL/empty fallback (glasstabs keeps its `%||%` operator internal).
+fallback <- function(x, default) if (is.null(x) || length(x) == 0) default else x
+
 base_tabs <- c("overview", "details", "admin")
 
 page_css <- "
@@ -195,7 +198,7 @@ server <- function(input, output, session) {
 
   observeEvent(input$next_tab, {
     tabs <- visible_tabs()
-    cur <- active_tab() %||% tabs[[1]]
+    cur <- fallback(active_tab(), tabs[[1]])
     idx <- match(cur, tabs)
     if (is.na(idx)) {
       idx <- 1L

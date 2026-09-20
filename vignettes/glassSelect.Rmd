@@ -31,7 +31,7 @@ It supports:
 - custom theming with `glass_select_theme()`
 - selectable marker styles via `check_style`
 - server-side updates with `updateGlassSelect()`
-- lifecycle helpers with `closeGlassSelect()` and `input$<inputId>_open`
+- lifecycle helpers with `closeGlassSelect()`, `input$<inputId>_open`, and `input$<inputId>_ready` (TRUE once the widget has initialized)
 
 ## Basic usage
 

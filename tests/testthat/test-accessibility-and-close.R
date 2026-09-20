@@ -1,13 +1,31 @@
 # Accessibility, CSP, and dropdown lifecycle
 
-test_that("glass.css has no color-mix dependency", {
+test_that("glass.css uses color-mix only as progressive enhancement", {
   css_path <- file.path("inst", "www", "glass.css")
   if (!file.exists(css_path)) {
     css_path <- system.file("www", "glass.css", package = "glasstabs")
   }
 
   css <- paste(readLines(css_path, warn = FALSE), collapse = "\n")
-  expect_false(grepl("color-mix\\(", css))
+  # Ignore comments: only real declarations count.
+  css <- gsub("(?s)/\\*.*?\\*/", "", css, perl = TRUE)
+  # color-mix() is allowed only where an unsupported browser degrades
+  # gracefully: the active-tab inner edge light (the whole box-shadow
+  # declaration is dropped, leaving no shadow) and the tab-wrap top border
+  # (falls back to the border shorthand color set just above it).
+  mix_lines <- grep(
+    "color-mix\\(",
+    strsplit(css, "\n", fixed = TRUE)[[1]],
+    value = TRUE
+  )
+  expect_true(length(mix_lines) > 0)
+  for (line in mix_lines) {
+    expect_true(
+      grepl("box-shadow:inset", line, fixed = TRUE) ||
+        grepl("border-top-color:color-mix", line, fixed = TRUE),
+      info = line
+    )
+  }
   expect_true(grepl("@media (forced-colors: active)", css, fixed = TRUE))
   expect_true(grepl("@media (prefers-reduced-motion: reduce)", css, fixed = TRUE))
   expect_true(grepl("@supports not", css, fixed = TRUE))

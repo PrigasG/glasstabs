@@ -10,6 +10,9 @@ glassTabsUI(
   selected = NULL,
   wrap = TRUE,
   compact = FALSE,
+  content_min_height = NULL,
+  style = c("floating", "attached"),
+  transition = c("fade", "slide"),
   shape = c("rounded", "square"),
   indicator = c("glass", "solid", "underline"),
   orientation = c("horizontal", "vertical"),
@@ -34,6 +37,21 @@ glassTabsUI(
 \item{compact}{Logical. When \code{TRUE} applies reduced padding and spacing via
 the \code{.gt-compact} CSS modifier - useful inside dashboard cards or tight
 layouts (e.g. bs4Dash).}
+
+\item{content_min_height}{Minimum height of the tab content area as a CSS
+length, e.g. \code{"120px"}. Stabilizes the layout when tabs hold different
+amounts of content. Use \code{"0"} for no minimum. When \code{NULL} (the default),
+no inline height is set: the default is \verb{120px}, or \verb{60px} when
+\code{compact = TRUE}. An explicitly supplied value always wins.}
+
+\item{style}{Visual relationship between the tab bar and the content box.
+\code{"floating"} (default) renders them as two separate floating pieces.
+\code{"attached"} docks the tab bar directly onto the content box: they share
+one border and read as a single unified card.}
+
+\item{transition}{How panes animate when switching tabs. \code{"fade"}
+(default) fades and rises the incoming pane. \code{"slide"} slides panes
+horizontally in the direction of travel, following tab order.}
 
 \item{shape}{Corner style for the tab bar and content. One of \code{"rounded"}
 (default) for the signature glass look, or \code{"square"} for crisp,

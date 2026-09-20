@@ -414,6 +414,23 @@ test_that("updateGlassMultiSelect() uses retryable custom messages for Shiny ses
   expect_equal(sent[[1]]$message$data$selected, "apple")
 })
 
+test_that("updateGlassMultiSelect() falls back to input messages when ns() is unavailable", {
+  custom_mock <- mockery::mock()
+  input_mock <- mockery::mock()
+  fake_session <- list(
+    sendCustomMessage = custom_mock,
+    sendInputMessage = input_mock
+  )
+
+  updateGlassMultiSelect(fake_session, "pick", selected = "apple")
+
+  expect_length(mockery::mock_args(custom_mock), 0)
+  mockery::expect_called(input_mock, 1)
+  args <- mockery::mock_args(input_mock)[[1]]
+  expect_equal(args[[1]], "pick")
+  expect_equal(args[[2]]$selected, "apple")
+})
+
 test_that("updateGlassMultiSelect() allows clearing with character(0)", {
   send_mock <- mockery::mock()
   fake_session <- list(sendInputMessage = send_mock)
@@ -544,7 +561,7 @@ test_that("glassMultiSelect(server = TRUE) preserves full selected state outside
   expect_true(grepl('&quot;value-100&quot;]"', html, fixed = TRUE))
 })
 
-test_that("glassMultiSelect(server = TRUE) does not render all explicit selected values", {
+test_that("glassMultiSelect(server = TRUE) renders explicit selected values outside the slice", {
   many <- stats::setNames(sprintf("value-%03d", 1:100), sprintf("Choice %03d", 1:100))
   html <- as.character(
     glassMultiSelect(
@@ -557,9 +574,31 @@ test_that("glassMultiSelect(server = TRUE) does not render all explicit selected
   )
 
   n <- lengths(regmatches(html, gregexpr("gt-ms-option", html, fixed = TRUE)))
-  expect_equal(n, 10L)
-  expect_false(grepl('data-value="value-095"', html, fixed = TRUE))
-  expect_true(grepl('&quot;value-095&quot;', html, fixed = TRUE))
+  checked <- lengths(regmatches(html, gregexpr("gt-ms-option checked", html, fixed = TRUE)))
+
+  # 10 slice rows + 6 explicit selections outside the slice (95:100)
+  expect_equal(n, 16L)
+  expect_true(grepl('data-value="value-095"', html, fixed = TRUE))
+  expect_true(grepl('data-value="value-100"', html, fixed = TRUE))
+  # all 11 selected values render checked (5 in the slice + 6 extra rows)
+  expect_equal(checked, 11L)
+})
+
+test_that("glassMultiSelect(server = TRUE) renders a single explicit selection outside the slice", {
+  many <- stats::setNames(sprintf("value-%03d", 1:100), sprintf("Choice %03d", 1:100))
+  html <- as.character(
+    glassMultiSelect(
+      "remote",
+      many,
+      selected = "value-095",
+      server = TRUE,
+      server_limit = 10
+    )
+  )
+
+  n <- lengths(regmatches(html, gregexpr("gt-ms-option", html, fixed = TRUE)))
+  expect_equal(n, 11L)
+  expect_true(grepl('data-value="value-095"', html, fixed = TRUE))
 })
 
 
@@ -576,4 +615,23 @@ test_that("glassMultiSelect(shape = 'square') adds the shape-square wrap class",
 
 test_that("glassMultiSelect() rejects an invalid shape", {
   expect_error(glassMultiSelect("f", choices, shape = "circle"), class = "glasstabs_error_bad_argument")
+})
+
+test_that("glassMultiSelect() renders a configurable no-matches text", {
+  html <- as.character(
+    glassMultiSelect("m", c(a = "x", b = "y"), no_matches_text = "Rien trouvé")
+  )
+  expect_true(grepl('data-no-matches-text="Rien trouvé"', html, fixed = TRUE))
+})
+
+test_that("glassMultiSelect() defaults no-matches text to 'No matches'", {
+  html <- as.character(glassMultiSelect("m", c(a = "x", b = "y")))
+  expect_true(grepl('data-no-matches-text="No matches"', html, fixed = TRUE))
+})
+
+test_that("glassMultiSelect() rejects a non-string no_matches_text", {
+  expect_error(
+    glassMultiSelect("m", c(a = "x"), no_matches_text = c("a", "b")),
+    class = "glasstabs_error_bad_argument"
+  )
 })

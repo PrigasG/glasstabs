@@ -2,6 +2,9 @@
 library(shiny)
 library(glasstabs)
 
+# Local NULL/empty fallback (glasstabs keeps its `%||%` operator internal).
+fallback <- function(x, default) if (is.null(x) || length(x) == 0) default else x
+
 
 regions <- c("All Regions" = "all", North = "north", South = "south",
              East = "east", West = "west")
@@ -19,8 +22,8 @@ store_stats <- list(
 
 trend_notes <- c(
   all   = "All regions trending +4.2% vs last quarter.",
-  north = "North up +6.1% â€” strongest performer this quarter.",
-  south = "South down -1.3% â€” review Q3 promo strategy.",
+  north = "North up +6.1% — strongest performer this quarter.",
+  south = "South down -1.3% — review Q3 promo strategy.",
   east  = "East steady at +3.8%, new location opening next month.",
   west  = "West recovering after supply disruption, up +2.1%."
 )
@@ -147,8 +150,8 @@ server <- function(input, output, session) {
   region_sel  <- glassSelectValue(input, "region")
   metrics_sel <- glassMultiSelectValue(input, "metrics")
 
-  region  <- reactive(region_sel()  %||% "all")
-  sel_met <- reactive(metrics_sel$selected() %||% character(0))
+  region  <- reactive(fallback(region_sel(), "all"))
+  sel_met <- reactive(fallback(metrics_sel$selected(), character(0)))
 
   observeEvent(input$show_admin, {
     if (isTRUE(input$show_admin)) showGlassTab(session, "main", "admin")
@@ -183,7 +186,7 @@ server <- function(input, output, session) {
       if (compare_present())        "compare" else NULL
     )
     all_tabs <- c(base, extra)
-    cur <- active_tab() %||% "overview"
+    cur <- fallback(active_tab(), "overview")
     idx <- match(cur, all_tabs)
     if (!is.na(idx) && idx < length(all_tabs)) {
       updateGlassTabsUI(session, "main", selected = all_tabs[[idx + 1L]])
@@ -291,7 +294,7 @@ server <- function(input, output, session) {
     met <- sel_met()
     sprintf(
       "Tab: %s  |  Region: %s  |  Metrics: %s",
-      active_tab() %||% "overview",
+      fallback(active_tab(), "overview"),
       region(),
       if (length(met)) paste(met, collapse = ", ") else "none"
     )

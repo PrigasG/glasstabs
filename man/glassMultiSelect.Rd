@@ -29,13 +29,17 @@ glassMultiSelect(
   search_threshold = 15L,
   selection_display = c("auto", "count", "summary", "labels"),
   selection_max_items = 2L,
-  dropdown_max_height = "260px"
+  dropdown_max_height = "260px",
+  no_matches_text = "No matches"
 )
 }
 \arguments{
 \item{inputId}{Shiny input id.}
 
-\item{choices}{Named or unnamed character vector of choices.}
+\item{choices}{Named or unnamed character vector of choices, or a named
+list for grouped choices (selectInput()-style). A one-element named list
+such as \code{list(Group = "x")} is treated as a flat, ungrouped choice,
+mirroring \code{\link[shiny:selectInput]{shiny::selectInput()}}.}
 
 \item{selected}{Initially selected values. Defaults to all choices when
 \code{NULL}.}
@@ -89,7 +93,9 @@ choices and use \code{\link[=glassMultiSelectServer]{glassMultiSelectServer()}} 
 from the Shiny server. Default \code{FALSE}.}
 
 \item{server_limit}{Maximum number of choices rendered initially and returned
-for each server-side search. Default \code{50}.}
+for each server-side search. Default \code{50}. Explicitly selected
+values that fall outside the initial slice are still rendered as extra
+rows so they stay visible and checked.}
 
 \item{server_min_chars}{Minimum search characters required before server-side
 matching filters choices. Default \code{0}.}
@@ -111,6 +117,10 @@ trigger: \code{"auto"} (the existing behavior), \code{"count"},
 \item{dropdown_max_height}{Maximum height of the scrolling option area as a
 CSS unit, such as \code{"18rem"} or \code{"320px"}. The default is
 \code{"260px"}.}
+
+\item{no_matches_text}{Text shown when a search matches no choices.
+Default \code{"No matches"}. This argument is last so that existing
+positional calls keep working.}
 }
 \value{
 An \code{htmltools::tagList} containing the trigger button, dropdown

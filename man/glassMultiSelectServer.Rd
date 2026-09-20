@@ -15,7 +15,10 @@ glassMultiSelectServer(
 \arguments{
 \item{inputId}{Input id used in \code{\link[=glassMultiSelect]{glassMultiSelect()}}.}
 
-\item{choices}{Named or unnamed character vector of choices.}
+\item{choices}{Named or unnamed character vector of choices, or a named
+list for grouped choices (selectInput()-style). A one-element named list
+such as \code{list(Group = "x")} is treated as a flat, ungrouped choice,
+mirroring \code{\link[shiny:selectInput]{shiny::selectInput()}}.}
 
 \item{session}{Shiny session. Defaults to the current reactive domain.}
 

@@ -104,6 +104,16 @@ test_that("choice filtering never matches across label-value boundaries", {
   expect_length(.gt_filter_choices(choices, "na ba")$values, 0L)
 })
 
+test_that(".gt_filter_choices() reuses pre-normalized choices", {
+  choices <- c(Apple = "apple", Banana = "banana", Cherry = "cherry")
+  normalized <- .gt_normalize_choices(choices)
+
+  expect_identical(
+    .gt_filter_choices(choices, "an", normalized = normalized),
+    .gt_filter_choices(choices, "an")
+  )
+})
+
 test_that("dependency version follows DESCRIPTION", {
   expect_identical(
     useGlassTabs()$version,

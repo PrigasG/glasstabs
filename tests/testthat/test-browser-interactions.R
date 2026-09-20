@@ -99,12 +99,9 @@ test_that("browser: narrow select dropdowns resize and wrap long labels", {
       return true;
     })()
   "))
-  app$wait_for_js("
-    !document.querySelector('#short_single-dropdown').classList.contains('open') &&
-    document.querySelector('#short_single-dropdown').parentElement ===
-      document.querySelector('#short_single-wrap')
-  ")
-  app$click(selector = "#short_single-trigger")
+  # Resize repositions the open dropdown to follow the trigger instead of
+  # closing it (mobile URL-bar and on-screen keyboard resizes must not strand
+  # the user mid-task), so it stays open and tracks the new trigger width.
   app$wait_for_js("
     document.querySelector('#short_single-dropdown.open') !== null &&
     Math.abs(
@@ -123,8 +120,7 @@ test_that("browser: narrow select dropdowns resize and wrap long labels", {
       return true;
     })()
   "))
-  app$wait_for_js("document.querySelector('#short_single-dropdown.open') === null")
-  app$click(selector = "#short_single-trigger")
+  # The open dropdown follows the trigger and stays inside the viewport.
   app$wait_for_js("
     (function() {
       var dropdown = document.querySelector('#short_single-dropdown.open');
@@ -846,4 +842,183 @@ test_that("browser: horizontal tab alignment moves the whole tab group", {
         Math.abs(first.getBoundingClientRect().width - second.getBoundingClientRect().width) < 1;
     })()
   "))
+})
+
+test_that("browser: unrelated Shiny output updates keep select dropdowns open", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-select-unrelated-update",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+  app$click(selector = "#fruit-trigger")
+  app$wait_for_js("document.querySelector('#fruit-dropdown.open') !== null")
+
+  # Fire a shiny:value on an output that has nothing to do with the dropdown.
+  app$click(selector = "#ping_output")
+  app$wait_for_js("document.querySelector('#ping_text').textContent.indexOf('ping 1') !== -1")
+  app$wait_for_idle()
+
+  expect_true(app$get_js(
+    "document.querySelector('#fruit-dropdown.open') !== null"
+  ))
+})
+
+test_that("browser: window resize keeps select dropdowns open and repositions them", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-select-resize",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+  app$click(selector = "#fruit-trigger")
+  app$wait_for_js("document.querySelector('#fruit-dropdown.open') !== null")
+
+  app$get_js("window.dispatchEvent(new Event('resize')); 'dispatched'")
+  app$wait_for_idle()
+
+  expect_true(app$get_js(
+    "document.querySelector('#fruit-dropdown.open') !== null"
+  ))
+  # The teleported panel still tracks the trigger after the resize.
+  expect_true(app$get_js("
+    (function() {
+      var trigger = document.querySelector('#fruit-trigger');
+      var dropdown = document.querySelector('#fruit-dropdown');
+      var tr = trigger.getBoundingClientRect();
+      var dr = dropdown.getBoundingClientRect();
+      return Math.abs(dr.left - (tr.right - dr.width)) <= 2 &&
+        dr.top >= tr.bottom;
+    })()
+  "))
+})
+
+test_that("browser: a full-screen overlay dismisses open select dropdowns", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-select-overlay",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+  app$click(selector = "#fruit-trigger")
+  app$wait_for_js("document.querySelector('#fruit-dropdown.open') !== null")
+
+  # A small floating panel is not a screen overlay: the dropdown stays open.
+  app$get_js("
+    (function() {
+      var d = document.createElement('div');
+      d.id = 'test-small-veil';
+      d.style.cssText = 'position:fixed;top:10px;left:10px;width:200px;height:100px;z-index:99999;background:red;';
+      document.body.appendChild(d);
+      return 'added';
+    })()
+  ")
+  Sys.sleep(0.5)
+  expect_true(app$get_js("document.querySelector('#fruit-dropdown.open') !== null"))
+  app$get_js("document.querySelector('#test-small-veil').remove(); 'removed'")
+
+  # A full-screen loading veil above the dropdown dismisses it.
+  app$get_js("
+    (function() {
+      var d = document.createElement('div');
+      d.id = 'test-screen-veil';
+      d.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.5);';
+      document.body.appendChild(d);
+      return 'added';
+    })()
+  ")
+  app$wait_for_js("document.querySelector('#fruit-dropdown.open') === null")
+  expect_true(app$get_js("document.querySelector('#fruit-dropdown.open') === null"))
+  app$get_js("document.querySelector('#test-screen-veil').remove(); 'removed'")
+})
+
+test_that("browser: an overlay nested inside an app wrapper dismisses open select dropdowns", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-select-overlay-nested",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+  app$click(selector = "#fruit-trigger")
+  app$wait_for_js("document.querySelector('#fruit-dropdown.open') !== null")
+
+  # Overlay nested inside a newly inserted application wrapper, not a direct
+  # body child: the subtree observer must still find it.
+  app$get_js("
+    (function() {
+      var wrap = document.createElement('div');
+      wrap.id = 'test-app-wrapper';
+      var veil = document.createElement('div');
+      veil.id = 'test-nested-veil';
+      veil.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.5);';
+      wrap.appendChild(veil);
+      document.querySelector('.container-fluid').appendChild(wrap);
+      return 'added';
+    })()
+  ")
+  app$wait_for_js("document.querySelector('#fruit-dropdown.open') === null")
+  expect_true(app$get_js("document.querySelector('#fruit-dropdown.open') === null"))
+  app$get_js("document.querySelector('#test-app-wrapper').remove(); 'removed'")
+})
+
+test_that("browser: a hidden overlay made visible by a class toggle dismisses open select dropdowns", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-select-overlay-toggle",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+  # Pre-existing hidden overlay: present in the DOM but display:none.
+  app$get_js("
+    (function() {
+      var d = document.createElement('div');
+      d.id = 'test-toggle-veil';
+      d.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.5);display:none;';
+      document.body.appendChild(d);
+      return 'added';
+    })()
+  ")
+  app$click(selector = "#fruit-trigger")
+  app$wait_for_js("document.querySelector('#fruit-dropdown.open') !== null")
+
+  # Reveal it with a style change: no new node is inserted.
+  app$get_js("document.querySelector('#test-toggle-veil').style.display = 'block'; 'shown'")
+  app$wait_for_js("document.querySelector('#fruit-dropdown.open') === null")
+  expect_true(app$get_js("document.querySelector('#fruit-dropdown.open') === null"))
+  app$get_js("document.querySelector('#test-toggle-veil').remove(); 'removed'")
 })

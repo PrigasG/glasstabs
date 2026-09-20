@@ -180,6 +180,21 @@ glassTabsUI(
 
 `tab_align` places the tab group at the left, center, or right of the available navigation area in either layout. `text_align` separately aligns labels and icons inside each tab button. For visible left or right alignment in a horizontal bar, the buttons share the width of the widest label.
 
+Tab content sits in a subtle glass container, so the tabs and their content read as one connected component instead of a tab bar floating over bare space. The active tab picks up a soft light on its content-facing edge to tie them together.
+
+Use `style = "attached"` to dock the tab bar directly onto the content box as a single card, and `transition = "slide"` to slide panes in the direction you move between tabs:
+
+``` r
+glassTabsUI(
+  "reports",
+  glassTabPanel("summary", "Summary", selected = TRUE, summary_ui),
+  glassTabPanel("activity", "Recent activity", activity_ui),
+  glassTabPanel("quality", "Data quality", quality_ui),
+  style = "attached",
+  transition = "slide"
+)
+```
+
 ## Tabs that fit the screen
 
 Long tab bars stay on one line and scroll on smaller screens. The active tab comes back into view after a click, keyboard change, swipe, or server update.
@@ -327,13 +342,13 @@ server <- function(input, output, session) {
 | `runGlassExample(example)` | Launch a built-in example app (`runGlassExample()` lists all available apps) |
 | `glasstabs_news()` | Print the package changelog to the R console |
 
-Built-in examples include `basic`, `bs4dash`, `bslib`, `connect-workflow`, `dashboard`, `indicators`, `server-select`, `smoke-test`, and `square-corners`. The Connect workflow doubles as a v0.4.0 test lab, with the responsive, keyboard, touch, dynamic-tab, badge, theme, and page-wrapper checks collected in one app.
+Built-in examples include `basic`, `bs4dash`, `bslib`, `connect-workflow`, `dashboard`, `indicators`, `server-select`, `smoke-test`, and `square-corners`. The Connect workflow doubles as a v0.4.1 test lab, with the responsive, keyboard, touch, dynamic-tab, badge, theme, and page-wrapper checks collected in one app.
 
 ### Tab widget
 
 | Function | Description |
 |----|----|
-| `glassTabsUI(id, ..., selected, wrap, compact, shape, indicator, orientation, tab_align, text_align, overflow, swipe, extra_ui, theme, dark_selector)` | Animated tab bar with responsive overflow and optional touch swipes |
+| `glassTabsUI(id, ..., selected, wrap, compact, content_min_height, style, transition, shape, indicator, orientation, tab_align, text_align, overflow, swipe, extra_ui, theme, dark_selector)` | Animated tab bar with responsive overflow and optional touch swipes |
 | `glassTabPanel(value, label, ..., icon, selected)` | Define one tab and its content; `icon` accepts `shiny::icon()` |
 | `glassTabsServer(id, bookmark)` | Reactive returning the active tab; can bookmark the active tab in the URL |
 | `glassTabsOutput(outputId)` | UI placeholder for a server-rendered tab widget |
@@ -379,6 +394,6 @@ Built-in examples include `basic`, `bs4dash`, `bslib`, `connect-workflow`, `dash
 
 ## Documentation and support
 
-The [glasstabs website](https://prigasg.github.io/glasstabs/) includes focused articles, a searchable function reference, and the [v0.4.0 cheatsheet](https://prigasg.github.io/glasstabs/articles/cheatsheet.html). Release notes are available in [`NEWS.md`](NEWS.md) or from R with `glasstabs_news()`.
+The [glasstabs website](https://prigasg.github.io/glasstabs/) includes focused articles, a searchable function reference, and the [v0.4.1 cheatsheet](https://prigasg.github.io/glasstabs/articles/cheatsheet.html). Release notes are available in [`NEWS.md`](NEWS.md) or from R with `glasstabs_news()`.
 
 If a widget does not fit naturally into your app, please open a [GitHub issue](https://github.com/PrigasG/glasstabs/issues) with a small Shiny example. Questions, bug reports, and ideas for making the package easier to use are all welcome.

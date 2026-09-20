@@ -33,6 +33,7 @@ Imports:
 Suggests:
     bs4Dash,
     bslib (>= 0.5.0),
+    chromote,
     covr,
     knitr,
     lintr,

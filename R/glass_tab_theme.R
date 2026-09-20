@@ -2,7 +2,8 @@
 #'
 #' All arguments accept any valid CSS color string (hex, `rgb()`, `rgba()`,
 #' named colors). Pass only the fields you want to override - unset fields
-#' fall back to the dark-mode defaults.
+#' fall back to the dark-mode defaults, or the light-mode defaults when
+#' `mode = "light"`.
 #'
 #' @note **Light mode color accessibility:** When building a light-mode theme,
 #'   ensure `tab_text` is dark enough to read on a white background (e.g. at
@@ -20,6 +21,10 @@
 #' @param content_border Tab content area border.
 #' @param card_bg    Inner `.gt-card` background.
 #' @param card_text  Inner `.gt-card` text color.
+#' @param mode       Base preset that unset fields inherit from. One of
+#'   `"dark"` (default) or `"light"`. Use `"light"` when building a
+#'   light-mode theme so unset fields fall back to the light defaults and the
+#'   tab container receives the structural `theme-light` class.
 #'
 #' @return A named list of class `"glass_tab_theme"` for passing to
 #'   the `theme` argument of [glassTabsUI()].
@@ -57,8 +62,10 @@ glass_tab_theme <- function(
     content_bg = NULL,
     content_border = NULL,
     card_bg = NULL,
-    card_text = NULL
+    card_text = NULL,
+    mode = c("dark", "light")
 ) {
+  mode <- .gt_match_arg(mode, c("dark", "light"), "mode")
   structure(
     list(
       tab_text = tab_text,
@@ -69,7 +76,8 @@ glass_tab_theme <- function(
       content_bg = content_bg,
       content_border = content_border,
       card_bg = card_bg,
-      card_text = card_text
+      card_text = card_text,
+      mode = mode
     ),
     class = "glass_tab_theme"
   )
@@ -83,8 +91,8 @@ glass_tab_theme <- function(
     halo_border     = "rgba(126,195,247,0.38)",
     focus_ring      = "#7ec3f7",
     halo_shadow     = "inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(255,255,255,.06),0 6px 20px rgba(0,0,0,.38),0 0 0 1px rgba(255,255,255,.03)",
-    content_bg      = "transparent",
-    content_border  = "transparent",
+    content_bg      = "rgba(255,255,255,0.03)",
+    content_border  = "rgba(255,255,255,0.08)",
     card_bg         = "transparent",
     card_text       = "#cfe6ff"
   )
@@ -96,8 +104,8 @@ glass_tab_theme <- function(
     halo_border     = "rgba(37,99,235,0.60)",
     focus_ring      = "#1d4ed8",
     halo_shadow     = "inset 0 1px 0 rgba(255,255,255,.80),0 4px 16px rgba(37,99,235,.20),0 0 0 1px rgba(37,99,235,.12)",
-    content_bg      = "transparent",
-    content_border  = "transparent",
+    content_bg      = "rgba(15,23,42,0.03)",
+    content_border  = "rgba(15,23,42,0.10)",
     card_bg         = "transparent",
     card_text       = "#1e293b"
   )
@@ -112,14 +120,14 @@ glass_tab_theme <- function(
         sprintf(
           paste0(
             "glassTabsUI(): `theme = \"%s\"` is not a valid preset.\n",
-            "Use theme = \"dark\", \"light\", \"auto\", or a glass_tab_theme() object."
+            "Use theme = \"dark\", \"light\", or a glass_tab_theme() object."
           ),
           theme
         ),
         class = "glasstabs_error_bad_theme",
         argument = "theme",
         value = theme,
-        expected = c("dark", "light", "auto", "glass_tab_theme")
+        expected = c("dark", "light", "glass_tab_theme")
       )
     }
     return(if (theme == "light") light_defaults else dark_defaults)
@@ -127,7 +135,11 @@ glass_tab_theme <- function(
 
   if (inherits(theme, "glass_tab_theme")) {
     overrides <- Filter(Negate(is.null), unclass(theme))
-    return(utils::modifyList(dark_defaults, overrides))
+    # `mode` selects the base preset; it is not a CSS value.
+    base_mode <- overrides$mode %||% "dark"
+    overrides$mode <- NULL
+    base <- if (identical(base_mode, "light")) light_defaults else dark_defaults
+    return(utils::modifyList(base, overrides))
   }
 
   .gt_abort(
@@ -141,6 +153,6 @@ glass_tab_theme <- function(
     class = "glasstabs_error_bad_theme",
     argument = "theme",
     value = theme,
-    expected = c("dark", "light", "auto", "glass_tab_theme")
+    expected = c("dark", "light", "glass_tab_theme")
   )
 }

@@ -91,6 +91,8 @@ reference:
       - glassMultiSelectValue
       - glassMultiSelectServer
       - closeGlassSelect
+      - closeGlassMultiSelect
+      - closeAllGlassSelects
       - glassFilterTags
       - glass_select_theme
 

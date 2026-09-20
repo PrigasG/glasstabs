@@ -13,7 +13,8 @@ glass_tab_theme(
   content_bg = NULL,
   content_border = NULL,
   card_bg = NULL,
-  card_text = NULL
+  card_text = NULL,
+  mode = c("dark", "light")
 )
 }
 \arguments{
@@ -35,6 +36,11 @@ least 3:1 contrast against the tab surface.}
 \item{card_bg}{Inner \code{.gt-card} background.}
 
 \item{card_text}{Inner \code{.gt-card} text color.}
+
+\item{mode}{Base preset that unset fields inherit from. One of
+\code{"dark"} (default) or \code{"light"}. Use \code{"light"} when building a
+light-mode theme so unset fields fall back to the light defaults and the
+tab container receives the structural \code{theme-light} class.}
 }
 \value{
 A named list of class \code{"glass_tab_theme"} for passing to
@@ -43,7 +49,8 @@ the \code{theme} argument of \code{\link[=glassTabsUI]{glassTabsUI()}}.
 \description{
 All arguments accept any valid CSS color string (hex, \code{rgb()}, \code{rgba()},
 named colors). Pass only the fields you want to override - unset fields
-fall back to the dark-mode defaults.
+fall back to the dark-mode defaults, or the light-mode defaults when
+\code{mode = "light"}.
 }
 \note{
 \strong{Light mode color accessibility:} When building a light-mode theme,

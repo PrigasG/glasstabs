@@ -23,13 +23,17 @@ glassSelect(
   disabled_choices = NULL,
   server = FALSE,
   server_limit = 50L,
-  server_min_chars = 0L
+  server_min_chars = 0L,
+  no_matches_text = "No matches"
 )
 }
 \arguments{
 \item{inputId}{Shiny input id.}
 
-\item{choices}{Named or unnamed character vector of choices.}
+\item{choices}{Named or unnamed character vector of choices, or a named
+list for grouped choices (selectInput()-style). A one-element named list
+such as \code{list(Group = "x")} is treated as a flat, ungrouped choice,
+mirroring \code{\link[shiny:selectInput]{shiny::selectInput()}}.}
 
 \item{selected}{Initially selected value. Defaults to \code{NULL}.}
 
@@ -78,10 +82,16 @@ choices and use \code{\link[=glassSelectServer]{glassSelectServer()}} to search 
 the Shiny server. Default \code{FALSE}.}
 
 \item{server_limit}{Maximum number of choices rendered initially and returned
-for each server-side search. Default \code{50}.}
+for each server-side search. Default \code{50}. Explicitly selected
+values that fall outside the initial slice are still rendered as extra
+rows so they stay visible and checked.}
 
 \item{server_min_chars}{Minimum search characters required before server-side
 matching filters choices. Default \code{0}.}
+
+\item{no_matches_text}{Text shown when a search matches no choices.
+Default \code{"No matches"}. This argument is last so that existing
+positional calls keep working.}
 }
 \value{
 An \code{htmltools::tagList} containing the single-select trigger,
