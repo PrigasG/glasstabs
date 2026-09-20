@@ -61,7 +61,7 @@ server <- function(input, output, session) {
   data_filters_visible <- reactiveVal(FALSE)
 
   output$main_year_ui <- renderUI({
-    cat_val <- fallback(input$data_category, "none"
+    cat_val <- fallback(input$data_category, "none")
 
     if (identical(cat_val, "acs_demo")) {
       glassSelect(
@@ -87,7 +87,7 @@ server <- function(input, output, session) {
   })
 
   output$data_specific_filters_ui <- renderUI({
-    cat_val <- fallback(input$data_category, "none"
+    cat_val <- fallback(input$data_category, "none")
 
     if (identical(cat_val, "acs_demo")) {
       tagList(
@@ -135,7 +135,7 @@ server <- function(input, output, session) {
   })
 
   output$acs_demo_section_ui <- renderUI({
-    sec <- fallback(input$acs_demo_section, "race"
+    sec <- fallback(input$acs_demo_section, "race")
 
     if (identical(sec, "race")) {
       glassMultiSelect(
@@ -183,7 +183,7 @@ server <- function(input, output, session) {
   }, ignoreInit = TRUE)
 
   observeEvent(input$dec_age_grouping_filter, {
-    group_size <- suppressWarnings(as.integer(fallback(input$dec_age_grouping_filter, "1"))
+    group_size <- suppressWarnings(as.integer(fallback(input$dec_age_grouping_filter, "1")))
     if (is.na(group_size)) group_size <- 1L
 
     if (group_size <= 1L) {
@@ -205,8 +205,8 @@ server <- function(input, output, session) {
   }, ignoreInit = FALSE)
 
   observeEvent(input$load_btn, {
-    yr_val <- fallback(input$census_year, NULL
-    cat_val <- fallback(input$data_category, "none"
+    yr_val <- fallback(input$census_year, NULL)
+    cat_val <- fallback(input$data_category, "none")
 
     if (identical(cat_val, "none")) {
       showNotification("Select a dataset first.", type = "warning")

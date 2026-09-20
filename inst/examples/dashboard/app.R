@@ -150,8 +150,8 @@ server <- function(input, output, session) {
   region_sel  <- glassSelectValue(input, "region")
   metrics_sel <- glassMultiSelectValue(input, "metrics")
 
-  region  <- reactive(fallback(region_sel(), "all")
-  sel_met <- reactive(fallback(metrics_sel$selected(), character(0))
+  region  <- reactive(fallback(region_sel(), "all"))
+  sel_met <- reactive(fallback(metrics_sel$selected(), character(0)))
 
   observeEvent(input$show_admin, {
     if (isTRUE(input$show_admin)) showGlassTab(session, "main", "admin")
@@ -186,7 +186,7 @@ server <- function(input, output, session) {
       if (compare_present())        "compare" else NULL
     )
     all_tabs <- c(base, extra)
-    cur <- fallback(active_tab(), "overview"
+    cur <- fallback(active_tab(), "overview")
     idx <- match(cur, all_tabs)
     if (!is.na(idx) && idx < length(all_tabs)) {
       updateGlassTabsUI(session, "main", selected = all_tabs[[idx + 1L]])
@@ -294,7 +294,7 @@ server <- function(input, output, session) {
     met <- sel_met()
     sprintf(
       "Tab: %s  |  Region: %s  |  Metrics: %s",
-      fallback(active_tab(), "overview",
+      fallback(active_tab(), "overview"),
       region(),
       if (length(met)) paste(met, collapse = ", ") else "none"
     )

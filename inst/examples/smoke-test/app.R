@@ -198,7 +198,7 @@ server <- function(input, output, session) {
 
   observeEvent(input$next_tab, {
     tabs <- visible_tabs()
-    cur <- fallback(active_tab(), tabs[[1]]
+    cur <- fallback(active_tab(), tabs[[1]])
     idx <- match(cur, tabs)
     if (is.na(idx)) {
       idx <- 1L
