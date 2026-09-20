@@ -82,9 +82,9 @@ choices and use \code{\link[=glassSelectServer]{glassSelectServer()}} to search 
 the Shiny server. Default \code{FALSE}.}
 
 \item{server_limit}{Maximum number of choices rendered initially and returned
-for each server-side search. Default \code{50}. An explicitly selected
-value that falls outside the initial slice is still rendered as an extra
-row so it stays visible and checked.}
+for each server-side search. Default \code{50}. Explicitly selected
+values that fall outside the initial slice are still rendered as extra
+rows so they stay visible and checked.}
 
 \item{server_min_chars}{Minimum search characters required before server-side
 matching filters choices. Default \code{0}.}
