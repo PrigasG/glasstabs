@@ -180,6 +180,21 @@ glassTabsUI(
 
 `tab_align` places the tab group at the left, center, or right of the available navigation area in either layout. `text_align` separately aligns labels and icons inside each tab button. For visible left or right alignment in a horizontal bar, the buttons share the width of the widest label.
 
+Tab content sits in a subtle glass container, so the tabs and their content read as one connected component instead of a tab bar floating over bare space. The active tab picks up a soft light on its content-facing edge to tie them together.
+
+Use `style = "attached"` to dock the tab bar directly onto the content box as a single card, and `transition = "slide"` to slide panes in the direction you move between tabs:
+
+``` r
+glassTabsUI(
+  "reports",
+  glassTabPanel("summary", "Summary", selected = TRUE, summary_ui),
+  glassTabPanel("activity", "Recent activity", activity_ui),
+  glassTabPanel("quality", "Data quality", quality_ui),
+  style = "attached",
+  transition = "slide"
+)
+```
+
 ## Tabs that fit the screen
 
 Long tab bars stay on one line and scroll on smaller screens. The active tab comes back into view after a click, keyboard change, swipe, or server update.
