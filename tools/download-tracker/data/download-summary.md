@@ -1,6 +1,6 @@
 # glasstabs CRAN Downloads
 
-Updated: 2026-10-06 02:17:42 UTC
+Updated: 2026-10-06 02:20:41 UTC
 
 - Latest day: 2026-10-04 (16 downloads)
 - Last 7 days: 105 downloads
