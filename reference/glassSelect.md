@@ -102,8 +102,9 @@ glassSelect(
 
   Optional widget width passed to
   [`shiny::validateCssUnit()`](https://rstudio.github.io/htmltools/reference/validateCssUnit.html),
-  e.g. `100%` or `240px`. When `NULL` (default) the trigger keeps its
-  intrinsic width.
+  e.g. `100%` or `240px`. When `NULL` (default) the trigger uses a
+  stable compact width of `160px`. Explicit widths continue to be capped
+  by the container.
 
 - disabled:
 
