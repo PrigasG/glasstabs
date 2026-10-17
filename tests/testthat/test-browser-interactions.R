@@ -91,6 +91,33 @@ test_that("browser: select dropdowns grow for long labels and stay viewport-safe
         token.scrollWidth <= token.clientWidth + 1;
     })()
   "))
+  expect_true(app$get_js("
+    (function() {
+      var label = document.querySelector(
+        '#short_single-dropdown [data-value=pathological] > span:last-child'
+      );
+      var option = label.parentElement;
+      return label.textContent.length > 9000 &&
+        getComputedStyle(label).webkitLineClamp === '3' &&
+        option.offsetHeight < 90;
+    })()
+  "))
+
+  app$click(selector = "#short_single-dropdown [data-value=pathological]")
+  app$wait_for_js("document.querySelector('#short_single-dropdown.open') === null")
+  expect_true(app$get_js("
+    (function() {
+      var field = document.querySelector('#short_single-field');
+      var wrap = document.querySelector('#short_single-wrap');
+      var label = document.querySelector('#short_single-label');
+      return wrap.offsetWidth < field.offsetWidth &&
+        wrap.offsetWidth <= 420 &&
+        label.scrollWidth > label.clientWidth;
+    })()
+  "))
+
+  app$click(selector = "#short_single-trigger")
+  app$wait_for_js("document.querySelector('#short_single-dropdown.open') !== null")
 
   expect_true(app$get_js("
     (function() {
@@ -149,6 +176,16 @@ test_that("browser: select dropdowns grow for long labels and stay viewport-safe
       );
       return words.scrollWidth <= words.clientWidth + 1 &&
         token.scrollWidth <= token.clientWidth + 1;
+    })()
+  "))
+  expect_true(app$get_js("
+    (function() {
+      var label = document.querySelector(
+        '#short_multi-dropdown [data-value=pathological] > span:last-child'
+      );
+      return label.textContent.length > 9000 &&
+        getComputedStyle(label).webkitLineClamp === '3' &&
+        label.parentElement.offsetHeight < 90;
     })()
   "))
   expect_true(app$get_js("
@@ -914,7 +951,8 @@ test_that("browser: window resize keeps select dropdowns open and repositions th
       var dropdown = document.querySelector('#fruit-dropdown');
       var tr = trigger.getBoundingClientRect();
       var dr = dropdown.getBoundingClientRect();
-      return Math.abs(dr.left - (tr.right - dr.width)) <= 2 &&
+      var expectedLeft = Math.max(8, tr.right - dr.width);
+      return Math.abs(dr.left - expectedLeft) <= 2 &&
         dr.top >= tr.bottom;
     })()
   "))

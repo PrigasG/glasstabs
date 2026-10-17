@@ -175,6 +175,7 @@
 .gt-gs-wrap{
   position:relative;
   z-index:100;
+  width:fit-content;
   max-width:100%;
 }
 
@@ -314,6 +315,13 @@
   min-width:0;
   overflow-wrap:anywhere;
   word-break:break-word;
+}
+
+.gt-ms-option > span:last-child{
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:3;
+  overflow:hidden;
 }
 
 /* Checkbox container (shared) */
@@ -468,6 +476,7 @@
 
 .gt-gs-trigger [id$="-label"],
 .gt-ms-trigger [id$="-label"]{
+  max-width:40ch;
   min-width:0;
   overflow:hidden;
   text-overflow:ellipsis;
@@ -619,7 +628,11 @@
 }
 
 .gt-gs-option > span:last-child{
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:3;
   min-width:0;
+  overflow:hidden;
   overflow-wrap:anywhere;
   word-break:break-word;
 }
