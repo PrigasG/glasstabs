@@ -40,7 +40,8 @@
 #'   neatly alongside native Shiny \code{selectizeInput()} controls.
 #' @param width Optional widget width passed to
 #'   \code{shiny::validateCssUnit()}, e.g. \code{100\%} or \code{240px}. When
-#'   \code{NULL} (default) the trigger keeps its intrinsic width.
+#'   \code{NULL} (default) the trigger uses a stable compact width of
+#'   \code{160px}. Explicit widths continue to be capped by the container.
 #' @param disabled Logical. When \code{TRUE} the whole widget is greyed out and
 #'   non-interactive. Default \code{FALSE}.
 #' @param disabled_choices Optional character vector of choice values to render

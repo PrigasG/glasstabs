@@ -252,7 +252,8 @@
 }
 .gt-ms-search input{
   background:none;border:none;outline:none;
-  color:var(--ms-text);font-size:12px;width:100%;font-family:inherit;
+  color:var(--ms-text);font-size:12px;width:0;min-width:0;
+  flex:1 1 0;font-family:inherit;
 }
 .gt-ms-search input::placeholder{
   color:var(--ms-tx-35);
@@ -589,7 +590,9 @@
   outline:none;
   color:var(--ms-text);
   font-size:12px;
-  width:100%;
+  width:0;
+  min-width:0;
+  flex:1 1 0;
   font-family:inherit;
 }
 

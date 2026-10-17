@@ -26,6 +26,12 @@ test_that("browser: glassSelect opens and clicking an option updates input", {
   app$wait_for_idle()
   app$click(selector = "#fruit-trigger")
   app$wait_for_js("document.querySelector('#fruit-dropdown.open') !== null")
+  expect_true(app$get_js("
+    Math.abs(
+      document.querySelector('#fruit-dropdown').offsetWidth -
+      document.querySelector('#fruit-trigger').offsetWidth
+    ) <= 2
+  "))
   app$click(selector = "#fruit-dropdown .gt-gs-option[data-value='banana']")
   app$wait_for_idle()
 
@@ -956,11 +962,33 @@ test_that("browser: window resize keeps select dropdowns open and repositions th
       var dropdown = document.querySelector('#fruit-dropdown');
       var tr = trigger.getBoundingClientRect();
       var dr = dropdown.getBoundingClientRect();
-      var expectedLeft = Math.max(8, tr.right - dr.width);
+      var expectedLeft = Math.max(
+        8,
+        Math.min(tr.left, window.innerWidth - dr.width - 8)
+      );
       return Math.abs(dr.left - expectedLeft) <= 2 &&
         dr.top >= tr.bottom;
     })()
   "))
+
+  expect_true(app$get_js("
+    document.documentElement.setAttribute('dir', 'rtl');
+    window.dispatchEvent(new Event('resize'));
+    true;
+  "))
+  app$wait_for_js("
+    (function() {
+      var trigger = document.querySelector('#fruit-trigger');
+      var dropdown = document.querySelector('#fruit-dropdown');
+      var tr = trigger.getBoundingClientRect();
+      var dr = dropdown.getBoundingClientRect();
+      var expectedLeft = Math.max(
+        8,
+        Math.min(tr.right - dr.width, window.innerWidth - dr.width - 8)
+      );
+      return Math.abs(dr.left - expectedLeft) <= 2;
+    })()
+  ")
 })
 
 test_that("browser: a full-screen overlay dismisses open select dropdowns", {

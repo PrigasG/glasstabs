@@ -313,7 +313,9 @@
     var docEl = document.documentElement;
     var dirEl = wrap.closest ? wrap.closest('[dir]') : null;
     var isRtl = (dirEl || docEl).getAttribute('dir') === 'rtl';
-    var left = isRtl ? rect.left : rect.right - ddWidth;
+    /* Follow the document's reading direction: grow toward the trailing edge,
+       then clamp only when the viewport does not have enough room. */
+    var left = isRtl ? rect.right - ddWidth : rect.left;
     left = Math.max(margin, Math.min(left, vw - ddWidth - margin));
 
     dropdown.style.top = top + 'px';
