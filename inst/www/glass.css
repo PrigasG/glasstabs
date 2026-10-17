@@ -175,7 +175,7 @@
 .gt-gs-wrap{
   position:relative;
   z-index:100;
-  width:fit-content;
+  width:160px;
   max-width:100%;
 }
 

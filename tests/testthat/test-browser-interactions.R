@@ -70,6 +70,11 @@ test_that("browser: select dropdowns grow for long labels and stay viewport-safe
   on.exit(app$stop(), add = TRUE)
 
   app$wait_for_idle()
+  expect_true(app$get_js("
+    window.__shortSingleInitialWidth =
+      document.querySelector('#short_single-wrap').offsetWidth;
+    window.__shortSingleInitialWidth > 0;
+  "))
   app$click(selector = "#short_single-trigger")
   app$wait_for_js("document.querySelector('#short_single-dropdown.open') !== null")
   expect_true(app$get_js("
@@ -111,7 +116,7 @@ test_that("browser: select dropdowns grow for long labels and stay viewport-safe
       var wrap = document.querySelector('#short_single-wrap');
       var label = document.querySelector('#short_single-label');
       return wrap.offsetWidth < field.offsetWidth &&
-        wrap.offsetWidth <= 420 &&
+        Math.abs(wrap.offsetWidth - window.__shortSingleInitialWidth) < 1 &&
         label.scrollWidth > label.clientWidth;
     })()
   "))
