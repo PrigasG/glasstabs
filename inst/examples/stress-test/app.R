@@ -273,7 +273,7 @@ ui <- fluidPage(
         ))),
         {
           ch <- big_choices(10000)
-          dis <- names(ch)[seq(2, 10000, by = 2)]
+          dis <- unname(ch)[seq(2, 10000, by = 2)]
           tagList(
             glassSelect(
               "disabled_single",

@@ -30,6 +30,17 @@ test_that("bslib example app exists, parses, and demonstrates square selects", {
   expect_gte(lengths(regmatches(app_src, gregexpr('shape = "square"', app_src, fixed = TRUE))), 2L)
 })
 
+test_that("light-mode example app exists, parses, and covers wide labels", {
+  app <- system.file("examples", "light-mode", "app.R", package = "glasstabs")
+  expect_true(nzchar(app) && file.exists(app))
+  expect_no_error(parse(app))
+
+  app_src <- paste(readLines(app, warn = FALSE), collapse = "\n")
+  expect_match(app_src, 'theme = "light"', fixed = TRUE)
+  expect_match(app_src, "Customer success and implementation", fixed = TRUE)
+  expect_match(app_src, "show_style_switcher = TRUE", fixed = TRUE)
+})
+
 test_that("connect workflow example exists, parses, and demonstrates workflow features", {
   app <- system.file("examples", "connect-workflow", "app.R", package = "glasstabs")
   expect_true(nzchar(app) && file.exists(app))
