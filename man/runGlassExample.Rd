@@ -9,8 +9,8 @@ runGlassExample(example = NULL, ...)
 \arguments{
 \item{example}{Name of the example to run, such as \code{"basic"},
 \code{"bslib"}, \code{"connect-workflow"}, \code{"dashboard"}, \code{"indicators"},
-\code{"light-mode"}, \code{"server-select"}, \code{"smoke-test"}, or
-\code{"square-corners"}. When \code{NULL}
+\code{"light-mode"}, \code{"server-select"}, \code{"smoke-test"},
+\code{"square-corners"}, or \code{"stress-test"}. When \code{NULL}
 (default), lists all available examples.}
 
 \item{...}{Additional arguments passed to \code{\link[shiny:runApp]{shiny::runApp()}}.}

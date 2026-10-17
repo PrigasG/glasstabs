@@ -6,8 +6,8 @@
 #'
 #' @param example Name of the example to run, such as `"basic"`,
 #'   `"bslib"`, `"connect-workflow"`, `"dashboard"`, `"indicators"`,
-#'   `"light-mode"`, `"server-select"`, `"smoke-test"`, or
-#'   `"square-corners"`. When `NULL`
+#'   `"light-mode"`, `"server-select"`, `"smoke-test"`,
+#'   `"square-corners"`, or `"stress-test"`. When `NULL`
 #'   (default), lists all available examples.
 #' @param ... Additional arguments passed to [shiny::runApp()].
 #'
