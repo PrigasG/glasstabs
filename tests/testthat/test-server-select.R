@@ -10,7 +10,7 @@ test_that("all built-in examples have app files and README coverage", {
 
   expect_true(all(file.exists(app_files)))
   expect_no_error(lapply(app_files, parse))
-  expect_true(all(examples %in% c("basic", "bs4dash", "bslib", "connect-workflow", "dashboard", "indicators", "server-select", "smoke-test", "square-corners")))
+  expect_true(all(examples %in% c("basic", "bs4dash", "bslib", "connect-workflow", "dashboard", "indicators", "light-mode", "server-select", "smoke-test", "square-corners")))
 
   readme_path <- test_path("..", "..", "README.md")
   if (file.exists(readme_path)) {
@@ -28,6 +28,17 @@ test_that("bslib example app exists, parses, and demonstrates square selects", {
   expect_match(app_src, "bslib::bs_theme", fixed = TRUE)
   expect_match(app_src, "bslib::navset_card_tab", fixed = TRUE)
   expect_gte(lengths(regmatches(app_src, gregexpr('shape = "square"', app_src, fixed = TRUE))), 2L)
+})
+
+test_that("light-mode example app exists, parses, and covers wide labels", {
+  app <- system.file("examples", "light-mode", "app.R", package = "glasstabs")
+  expect_true(nzchar(app) && file.exists(app))
+  expect_no_error(parse(app))
+
+  app_src <- paste(readLines(app, warn = FALSE), collapse = "\n")
+  expect_match(app_src, 'theme = "light"', fixed = TRUE)
+  expect_match(app_src, "Customer success and implementation", fixed = TRUE)
+  expect_match(app_src, "show_style_switcher = TRUE", fixed = TRUE)
 })
 
 test_that("connect workflow example exists, parses, and demonstrates workflow features", {

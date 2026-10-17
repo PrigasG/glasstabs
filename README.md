@@ -117,7 +117,7 @@ glassMultiSelect(
 glassFilterTags("status")
 ```
 
-Select dropdowns follow the width of their trigger, so short option lists stay visually aligned with the field instead of opening an unnecessarily wide panel. Long labels and unbroken identifiers wrap within the available space.
+Select dropdowns stay aligned with their trigger for short option lists, then grow as needed for longer labels and built-in controls. Panels are capped at a comfortable width and at the viewport edge; exceptionally long labels still wrap safely.
 
 For a short list, the search box can stay out of the way. With `searchable = "auto"`, it appears only when the list reaches the chosen threshold. The trigger can also show a compact summary instead of the generic “Multiple selection” label.
 
@@ -342,7 +342,7 @@ server <- function(input, output, session) {
 | `runGlassExample(example)` | Launch a built-in example app (`runGlassExample()` lists all available apps) |
 | `glasstabs_news()` | Print the package changelog to the R console |
 
-Built-in examples include `basic`, `bs4dash`, `bslib`, `connect-workflow`, `dashboard`, `indicators`, `server-select`, `smoke-test`, and `square-corners`. The Connect workflow doubles as a v0.4.1 test lab, with the responsive, keyboard, touch, dynamic-tab, badge, theme, and page-wrapper checks collected in one app.
+Built-in examples include `basic`, `bs4dash`, `bslib`, `connect-workflow`, `dashboard`, `indicators`, `light-mode`, `server-select`, `smoke-test`, and `square-corners`. The dedicated light-mode example includes long select labels for checking adaptive dropdown sizing. The Connect workflow doubles as a v0.4.1 test lab, with the responsive, keyboard, touch, dynamic-tab, badge, theme, and page-wrapper checks collected in one app.
 
 ### Tab widget
 

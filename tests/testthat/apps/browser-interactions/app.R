@@ -71,7 +71,7 @@ ui <- fluidPage(
         "short_multi",
         short_field_choices,
         selected = "one",
-        show_style_switcher = FALSE
+        show_style_switcher = TRUE
       )
     ),
     radioButtons(

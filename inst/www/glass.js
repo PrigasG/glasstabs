@@ -286,13 +286,25 @@
     var vh = window.innerHeight;
     var margin = 8;
     var maxWidth = Math.max(160, vw - margin * 2);
-    var dropdownWidth = Math.min(rect.width || 160, maxWidth);
-    dropdown.style.maxWidth = maxWidth + 'px';
+    var triggerWidth = Math.max(rect.width || 160, 160);
+    var preferredMaxWidth = Math.min(maxWidth, 420);
+
+    /* Let long labels and the multi-select style switcher widen the panel,
+       while keeping compact option lists aligned with their trigger. */
+    dropdown.style.width = 'max-content';
+    dropdown.style.minWidth = Math.min(triggerWidth, preferredMaxWidth) + 'px';
+    dropdown.style.maxWidth = preferredMaxWidth + 'px';
+    var naturalWidth = Math.ceil(dropdown.offsetWidth || triggerWidth);
+    var switcherMinWidth = dropdown.querySelector('.gt-style-switcher') ? 220 : 0;
+    var dropdownWidth = Math.min(
+      preferredMaxWidth,
+      Math.max(triggerWidth, naturalWidth, switcherMinWidth)
+    );
     dropdown.style.width = dropdownWidth + 'px';
     dropdown.style.minWidth = dropdownWidth + 'px';
 
     var ddHeight = dropdown.offsetHeight || 0;
-    var ddWidth = Math.min(dropdown.offsetWidth || rect.width, maxWidth);
+    var ddWidth = Math.min(dropdown.offsetWidth || dropdownWidth, preferredMaxWidth);
     var top = rect.bottom + scrollY + margin;
     if (rect.bottom + ddHeight + margin > vh - margin && rect.top - ddHeight - margin > 0) {
       top = rect.top + scrollY - ddHeight - margin;

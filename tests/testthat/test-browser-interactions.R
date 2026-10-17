@@ -56,7 +56,7 @@ test_that("browser: glassMultiSelect toggles choices and updates input", {
   expect_equal(app$get_value(input = "cats"), c("apple", "cherry"))
 })
 
-test_that("browser: narrow select dropdowns resize and wrap long labels", {
+test_that("browser: select dropdowns grow for long labels and stay viewport-safe", {
   skip_on_covr()
   skip_if_not_installed("shinytest2")
   local_browser_pkg_root()
@@ -76,7 +76,7 @@ test_that("browser: narrow select dropdowns resize and wrap long labels", {
     (function() {
       var trigger = document.querySelector('#short_single-trigger');
       var dropdown = document.querySelector('#short_single-dropdown');
-      return Math.abs(trigger.offsetWidth - dropdown.offsetWidth) <= 1;
+      return dropdown.offsetWidth > trigger.offsetWidth && dropdown.offsetWidth <= 420;
     })()
   "))
   expect_true(app$get_js("
@@ -87,7 +87,8 @@ test_that("browser: narrow select dropdowns resize and wrap long labels", {
       var token = document.querySelector(
         '#short_single-dropdown [data-value=long_token] > span:last-child'
       );
-      return words.offsetHeight > 20 && token.scrollWidth <= token.clientWidth + 1;
+      return words.scrollWidth <= words.clientWidth + 1 &&
+        token.scrollWidth <= token.clientWidth + 1;
     })()
   "))
 
@@ -99,15 +100,14 @@ test_that("browser: narrow select dropdowns resize and wrap long labels", {
       return true;
     })()
   "))
-  # Resize repositions the open dropdown to follow the trigger instead of
-  # closing it (mobile URL-bar and on-screen keyboard resizes must not strand
-  # the user mid-task), so it stays open and tracks the new trigger width.
+  # Resize repositions the open dropdown instead of closing it (mobile URL-bar
+  # and on-screen keyboard resizes must not strand the user mid-task). It stays
+  # at least as wide as the trigger while retaining room for long labels.
   app$wait_for_js("
     document.querySelector('#short_single-dropdown.open') !== null &&
-    Math.abs(
-      document.querySelector('#short_single-trigger').offsetWidth -
-      document.querySelector('#short_single-dropdown').offsetWidth
-    ) <= 1 && document.querySelector('#short_single-dropdown').offsetWidth >= 219
+    document.querySelector('#short_single-dropdown').offsetWidth >=
+      document.querySelector('#short_single-trigger').offsetWidth &&
+    document.querySelector('#short_single-dropdown').offsetWidth <= 420
   ")
 
   expect_true(app$get_js("
@@ -136,7 +136,7 @@ test_that("browser: narrow select dropdowns resize and wrap long labels", {
     (function() {
       var trigger = document.querySelector('#short_multi-trigger');
       var dropdown = document.querySelector('#short_multi-dropdown');
-      return Math.abs(trigger.offsetWidth - dropdown.offsetWidth) <= 1;
+      return dropdown.offsetWidth > trigger.offsetWidth && dropdown.offsetWidth <= 420;
     })()
   "))
   expect_true(app$get_js("
@@ -147,7 +147,20 @@ test_that("browser: narrow select dropdowns resize and wrap long labels", {
       var token = document.querySelector(
         '#short_multi-dropdown [data-value=long_token] > span:last-child'
       );
-      return words.offsetHeight > 20 && token.scrollWidth <= token.clientWidth + 1;
+      return words.scrollWidth <= words.clientWidth + 1 &&
+        token.scrollWidth <= token.clientWidth + 1;
+    })()
+  "))
+  expect_true(app$get_js("
+    (function() {
+      var dropdown = document.querySelector('#short_multi-dropdown');
+      var buttons = Array.from(dropdown.querySelectorAll('.gt-style-btn'));
+      var panel = dropdown.getBoundingClientRect();
+      return buttons.length === 3 && buttons.every(function(button) {
+        var rect = button.getBoundingClientRect();
+        return rect.left >= panel.left && rect.right <= panel.right &&
+          button.textContent.trim().length > 0;
+      });
     })()
   "))
 })
