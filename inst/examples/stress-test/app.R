@@ -90,31 +90,8 @@ ui <- fluidPage(
           "responsiveness on the client-mode copy; whether the server-mode copy ",
           "stays usable. Compare client (all 100k in DOM) vs server (paged)."
         ))),
-        fluidRow(
-          column(
-            6,
-            h4("Client mode (100k in DOM)"),
-            glassSelect(
-              "scale_single_client",
-              big_choices(100000),
-              label = "Client 100k",
-              server = FALSE,
-              clearable = TRUE
-            )
-          ),
-          column(
-            6,
-            h4("Server mode (100k, paged)"),
-            glassSelect(
-              "scale_single_server",
-              big_choices(100000),
-              label = "Server 100k",
-              server = TRUE,
-              server_limit = 50,
-              clearable = TRUE
-            )
-          )
-        ),
+        p("Heavy scenario loads on first visit to this tab."),
+        uiOutput("scale_single_lazy"),
         verbatimTextOutput("scale_single_timing", placeholder = TRUE)
       ),
 
@@ -127,15 +104,8 @@ ui <- fluidPage(
           "summary chip (\"50,000 selected\" vs label soup); select-all latency; ",
           "scroll performance inside the dropdown; chip rendering cost."
         ))),
-        glassMultiSelect(
-          "scale_multi",
-          big_choices(50000),
-          label = "Multi 50k (all pre-selected)",
-          server = TRUE,
-          server_limit = 50,
-          selection_display = "auto",
-          show_style_switcher = TRUE
-        ),
+        p("Heavy scenario loads on first visit to this tab."),
+        uiOutput("scale_multi_lazy"),
         fluidRow(
           column(
             6,
@@ -410,7 +380,34 @@ ui <- fluidPage(
 # ---------------------------------------------------------------------------
 
 server <- function(input, output, session) {
-  # ---- 1. Scale: single ------------------------------------------------
+  # ---- 1. Scale: single (lazy) ------------------------------------------
+  output$scale_single_lazy <- renderUI({
+    fluidRow(
+      column(
+        6,
+        h4("Client mode (100k in DOM)"),
+        glassSelect(
+          "scale_single_client",
+          big_choices(100000),
+          label = "Client 100k",
+          server = FALSE,
+          clearable = TRUE
+        )
+      ),
+      column(
+        6,
+        h4("Server mode (100k, paged)"),
+        glassSelect(
+          "scale_single_server",
+          big_choices(100000),
+          label = "Server 100k",
+          server = TRUE,
+          server_limit = 50,
+          clearable = TRUE
+        )
+      )
+    )
+  })
   t0 <- Sys.time()
   glassSelectServer("scale_single_server", big_choices(100000),
                     session = session, limit = 50)
@@ -423,7 +420,18 @@ server <- function(input, output, session) {
     )
   })
 
-  # ---- 2. Scale: multi --------------------------------------------------
+  # ---- 2. Scale: multi (lazy) -------------------------------------------
+  output$scale_multi_lazy <- renderUI({
+    glassMultiSelect(
+      "scale_multi",
+      big_choices(50000),
+      label = "Multi 50k (all pre-selected)",
+      server = TRUE,
+      server_limit = 50,
+      selection_display = "auto",
+      show_style_switcher = TRUE
+    )
+  })
   t1 <- Sys.time()
   glassMultiSelectServer("scale_multi", big_choices(50000),
                          session = session, limit = 50)
