@@ -418,11 +418,11 @@ server <- function(input, output, session) {
 
 Built-in examples include `basic`, `bs4dash`, `bslib`,
 `connect-workflow`, `dashboard`, `indicators`, `light-mode`,
-`server-select`, `smoke-test`, and `square-corners`. The dedicated
-light-mode example includes long select labels for checking adaptive
-dropdown sizing. The Connect workflow doubles as a v0.4.1 test lab, with
-the responsive, keyboard, touch, dynamic-tab, badge, theme, and
-page-wrapper checks collected in one app.
+`server-select`, `smoke-test`, `square-corners`, and `stress-test`. The
+dedicated light-mode example includes long select labels for checking
+adaptive dropdown sizing. The Connect workflow doubles as a v0.4.1 test
+lab, with the responsive, keyboard, touch, dynamic-tab, badge, theme,
+and page-wrapper checks collected in one app.
 
 ### Tab widget
 
