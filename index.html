@@ -178,7 +178,7 @@
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="reference/glassFilterTags.html">glassFilterTags</a></span><span class="op">(</span><span class="st">"status"</span><span class="op">)</span></span></code></pre></div>
-<p>Select dropdowns follow the width of their trigger, so short option lists stay visually aligned with the field instead of opening an unnecessarily wide panel. Long labels and unbroken identifiers wrap within the available space.</p>
+<p>Select dropdowns stay aligned with their trigger for short option lists, then grow as needed for longer labels and built-in controls. Panels are capped at a comfortable width and at the viewport edge; exceptionally long labels still wrap safely.</p>
 <p>For a short list, the search box can stay out of the way. With <code>searchable = "auto"</code>, it appears only when the list reaches the chosen threshold. The trigger can also show a compact summary instead of the generic “Multiple selection” label.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span></span>
@@ -413,7 +413,7 @@
 </tr>
 </tbody>
 </table>
-<p>Built-in examples include <code>basic</code>, <code>bs4dash</code>, <code>bslib</code>, <code>connect-workflow</code>, <code>dashboard</code>, <code>indicators</code>, <code>server-select</code>, <code>smoke-test</code>, and <code>square-corners</code>. The Connect workflow doubles as a v0.4.1 test lab, with the responsive, keyboard, touch, dynamic-tab, badge, theme, and page-wrapper checks collected in one app.</p>
+<p>Built-in examples include <code>basic</code>, <code>bs4dash</code>, <code>bslib</code>, <code>connect-workflow</code>, <code>dashboard</code>, <code>indicators</code>, <code>light-mode</code>, <code>server-select</code>, <code>smoke-test</code>, and <code>square-corners</code>. The dedicated light-mode example includes long select labels for checking adaptive dropdown sizing. The Connect workflow doubles as a v0.4.1 test lab, with the responsive, keyboard, touch, dynamic-tab, badge, theme, and page-wrapper checks collected in one app.</p>
 </div>
 <div class="section level3">
 <h3 id="tab-widget">Tab widget<a class="anchor" aria-label="anchor" href="#tab-widget"></a>

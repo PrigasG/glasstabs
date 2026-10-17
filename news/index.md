@@ -4,6 +4,16 @@
 
 ### Fixes
 
+- Select dropdowns now grow beyond narrow triggers when their controls
+  or longer option labels need more room, up to a comfortable
+  viewport-aware cap. The multi-select Check / Box / Fill switcher also
+  falls back to compact text-only buttons on extremely narrow screens,
+  so Fill is never clipped.
+
+- Added `runGlassExample("light-mode")`, a dedicated light-interface
+  example covering tabs, single-select, multi-select, and intentionally
+  long labels.
+
 - `no_matches_text` moved to the end of the
   [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md)
   and
