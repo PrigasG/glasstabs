@@ -1106,3 +1106,57 @@ test_that("browser: a hidden overlay made visible by a class toggle dismisses op
   expect_true(app$get_js("document.querySelector('#fruit-dropdown.open') === null"))
   app$get_js("document.querySelector('#test-toggle-veil').remove(); 'removed'")
 })
+
+test_that("browser: dropdown opens flush like a tongue from the field", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-dropdown-tongue",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+  app$click(selector = "#fruit-trigger")
+  app$wait_for_js("document.querySelector('#fruit-dropdown.open') !== null")
+
+  # Panel attaches flush: 1px border overlap, no gap.
+  expect_true(app$get_js("
+    (function() {
+      var trigger = document.querySelector('#fruit-trigger');
+      var panel = document.querySelector('#fruit-dropdown');
+      var tr = trigger.getBoundingClientRect();
+      var pr = panel.getBoundingClientRect();
+      return Math.abs(pr.top - (tr.bottom - 1)) <= 2;
+    })()
+  "))
+
+  # Adjoining corners square off so the two read as one surface.
+  expect_true(app$get_js("
+    (function() {
+      var panel = document.querySelector('#fruit-dropdown');
+      var cs = getComputedStyle(panel);
+      return cs.borderTopLeftRadius === '0px' && cs.borderTopRightRadius === '0px';
+    })()
+  "))
+  expect_true(app$get_js("
+    (function() {
+      var trigger = document.querySelector('#fruit-trigger');
+      var cs = getComputedStyle(trigger);
+      return cs.borderBottomLeftRadius === '0px' && cs.borderBottomRightRadius === '0px';
+    })()
+  "))
+
+  # Panel unfurls with scaleY (not the old translateY/scale pop).
+  expect_true(app$get_js("
+    (function() {
+      var panel = document.querySelector('#fruit-dropdown');
+      var t = getComputedStyle(panel).transform;
+      return t !== 'none';
+    })()
+  "))
+})

@@ -284,8 +284,11 @@
     var scrollY = window.pageYOffset || 0;
     var vw = window.innerWidth;
     var vh = window.innerHeight;
-    var margin = 8;
-    var maxWidth = Math.max(160, vw - margin * 2);
+    var edge = 8;
+    /* Tongue attachment: the panel sits flush against the field with a 1px
+       border overlap, so the two read as one continuous surface. */
+    var overlap = 1;
+    var maxWidth = Math.max(160, vw - edge * 2);
     var triggerWidth = Math.max(rect.width || 160, 160);
     var preferredMaxWidth = Math.min(maxWidth, 420);
 
@@ -305,10 +308,17 @@
 
     var ddHeight = dropdown.offsetHeight || 0;
     var ddWidth = Math.min(dropdown.offsetWidth || dropdownWidth, preferredMaxWidth);
-    var top = rect.bottom + scrollY + margin;
-    if (rect.bottom + ddHeight + margin > vh - margin && rect.top - ddHeight - margin > 0) {
-      top = rect.top + scrollY - ddHeight - margin;
+    var top = rect.bottom + scrollY - overlap;
+    var flipped = false;
+    if (rect.bottom + ddHeight - overlap > vh - edge && rect.top - ddHeight + overlap > edge) {
+      top = rect.top + scrollY - ddHeight + overlap;
+      flipped = true;
     }
+    /* Signal the tongue direction so CSS squares the adjoining corners and
+       anchors the unfurl animation at the attached edge. This runs before
+       `.open` is added, so the opening transition uses the right origin. */
+    dropdown.classList.toggle('gt-flip-above', flipped);
+    wrap.classList.toggle('gt-flip-above', flipped);
 
     var docEl = document.documentElement;
     var dirEl = wrap.closest ? wrap.closest('[dir]') : null;
@@ -316,7 +326,7 @@
     /* Follow the document's reading direction: grow toward the trailing edge,
        then clamp only when the viewport does not have enough room. */
     var left = isRtl ? rect.right - ddWidth : rect.left;
-    left = Math.max(margin, Math.min(left, vw - ddWidth - margin));
+    left = Math.max(edge, Math.min(left, vw - ddWidth - edge));
 
     dropdown.style.top = top + 'px';
     dropdown.style.left = (left + scrollX) + 'px';
