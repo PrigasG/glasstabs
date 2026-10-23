@@ -2,12 +2,6 @@
 
 ## Fixes
 
-* Select dropdowns now grow beyond narrow triggers when their controls or
-  longer option labels need more room, up to a comfortable viewport-aware
-  cap. The multi-select Check / Box / Fill switcher also falls back to compact
-  text-only buttons on extremely narrow screens, so Fill is never clipped.
-* Added `runGlassExample("light-mode")`, a dedicated light-interface example
-  covering tabs, single-select, multi-select, and intentionally long labels.
 * `no_matches_text` moved to the end of the `glassSelect()` and
   `glassMultiSelect()` signatures. It was added in the middle, so existing
   positional calls could silently bind the wrong arguments.
@@ -123,11 +117,6 @@
 
 ## Select dropdown sizing
 
-* Select dropdowns now open like a tongue from the field: the panel attaches
-  flush against the trigger with no gap, the adjoining corners square off so
-  the two read as one continuous surface, and the panel unfurls with a smooth
-  scale animation anchored at the attached edge. When space is tight below,
-  the panel flips above the field and the tongue retracts upward instead.
 * `glassSelect()` and `glassMultiSelect()` dropdown panels now follow their
   trigger width. Short option lists stay aligned with the field instead of
   opening a wider fixed panel, while the viewport cap still protects narrow

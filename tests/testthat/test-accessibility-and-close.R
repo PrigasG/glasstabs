@@ -176,16 +176,6 @@ test_that("teleported select dropdowns clamp to the viewport", {
   expect_true(grepl("dropdown.style.minWidth", js, fixed = TRUE))
 })
 
-test_that("teleported select dropdowns grow for controls and long labels", {
-  js <- paste(readLines(system.file("www", "glass.js", package = "glasstabs"), warn = FALSE), collapse = "\n")
-
-  expect_true(grepl("dropdown.style.width = 'max-content'", js, fixed = TRUE))
-  expect_true(grepl("dropdown.offsetWidth", js, fixed = TRUE))
-  expect_true(grepl(".gt-style-switcher", js, fixed = TRUE))
-  expect_true(grepl("switcherMinWidth", js, fixed = TRUE))
-  expect_true(grepl("preferredMaxWidth", js, fixed = TRUE))
-})
-
 test_that("glass.js does not ship debug-only message handlers", {
   js_path <- file.path("inst", "www", "glass.js")
   if (!file.exists(js_path)) {

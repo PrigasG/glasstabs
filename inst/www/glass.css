@@ -175,7 +175,6 @@
 .gt-gs-wrap{
   position:relative;
   z-index:100;
-  width:160px;
   max-width:100%;
 }
 
@@ -206,16 +205,6 @@
   background:rgba(255,255,255,0.08);
   border-color:var(--ms-accent);
   box-shadow:0 0 0 3px var(--ms-ac-18),0 4px 14px rgba(0,0,0,0.2);
-  /* Tongue: the field opens its mouth — bottom corners square off to meet the panel. */
-  border-bottom-left-radius:0;
-  border-bottom-right-radius:0;
-}
-/* Flipped above: square the top corners instead. */
-.gt-ms-wrap.gt-flip-above:not(.shape-square) .gt-ms-trigger.open{
-  border-bottom-left-radius:12px;
-  border-bottom-right-radius:12px;
-  border-top-left-radius:0;
-  border-top-right-radius:0;
 }
 
 /* Light theme trigger needs darker base */
@@ -242,35 +231,17 @@
   background:var(--ms-bg);
   border:1px solid var(--ms-border);
   box-shadow:0 22px 64px rgba(0,0,0,0.45),inset 0 1px 0 rgba(255,255,255,0.06);
-  padding:8px;opacity:0;transform:scaleY(0);
+  padding:8px;opacity:0;transform:translateY(-8px) scale(0.96);
   pointer-events:none;
-  transition:opacity 120ms ease-out,transform 180ms cubic-bezier(.2,.9,.25,1);
-  transform-origin:top center;
+  transition:opacity 180ms cubic-bezier(.2,.9,.25,1),transform 180ms cubic-bezier(.2,.9,.25,1);
+  transform-origin:top right;
   backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
   z-index:9001;
 }
 .gt-ms-wrap.theme-light .gt-ms-dropdown{
   box-shadow:0 12px 40px rgba(0,0,0,0.15),0 0 0 1px rgba(0,0,0,0.06);
 }
-.gt-ms-dropdown.open{
-  opacity:1;transform:scaleY(1);pointer-events:auto;
-  /* Tongue: panel unfurls from the field, adjoining corners square off so the
-     two read as one continuous surface. The inset top highlight is dropped at
-     the seam. */
-  border-top-left-radius:0;border-top-right-radius:0;
-  box-shadow:0 22px 64px rgba(0,0,0,0.45);
-  transition:opacity 180ms ease-out,transform 240ms cubic-bezier(.16,1,.3,1);
-}
-/* Flipped above the field: the tongue retracts upward instead. */
-.gt-ms-dropdown.open.gt-flip-above:not(.shape-square){
-  transform-origin:bottom center;
-  border-top-left-radius:14px;border-top-right-radius:14px;
-  border-bottom-left-radius:0;border-bottom-right-radius:0;
-  box-shadow:0 -22px 64px rgba(0,0,0,0.45);
-}
-.gt-ms-wrap.theme-light .gt-ms-dropdown.open.gt-flip-above:not(.shape-square){
-  box-shadow:0 -12px 40px rgba(0,0,0,0.15),0 0 0 1px rgba(0,0,0,0.06);
-}
+.gt-ms-dropdown.open{opacity:1;transform:translateY(0) scale(1);pointer-events:auto;}
 
 /* Search */
 .gt-ms-search{
@@ -280,8 +251,7 @@
 }
 .gt-ms-search input{
   background:none;border:none;outline:none;
-  color:var(--ms-text);font-size:12px;width:0;min-width:0;
-  flex:1 1 0;font-family:inherit;
+  color:var(--ms-text);font-size:12px;width:100%;font-family:inherit;
 }
 .gt-ms-search input::placeholder{
   color:var(--ms-tx-35);
@@ -296,7 +266,6 @@
 }
 .gt-style-btn{
   flex:1;display:flex;align-items:center;justify-content:center;gap:5px;
-  min-width:0;
   padding:5px 8px;border-radius:7px;cursor:pointer;user-select:none;
   color:var(--ms-tx-50);
   font-size:11px;font-weight:600;letter-spacing:.02em;
@@ -312,13 +281,6 @@
   box-shadow:inset 0 1px 0 rgba(255,255,255,0.08);
 }
 .gt-sb-icon{width:13px;height:13px;flex-shrink:0;}
-
-/* On genuinely narrow viewports, keep every style name visible by using
-   text-only buttons. Wider screens receive the full icon + label treatment. */
-@media(max-width:240px){
-  .gt-style-btn{gap:0;padding-inline:3px;}
-  .gt-style-btn .gt-sb-icon{display:none;}
-}
 
 /* Select all row */
 .gt-ms-all{
@@ -344,13 +306,6 @@
   min-width:0;
   overflow-wrap:anywhere;
   word-break:break-word;
-}
-
-.gt-ms-option > span:last-child{
-  display:-webkit-box;
-  -webkit-box-orient:vertical;
-  -webkit-line-clamp:3;
-  overflow:hidden;
 }
 
 /* Checkbox container (shared) */
@@ -505,7 +460,6 @@
 
 .gt-gs-trigger [id$="-label"],
 .gt-ms-trigger [id$="-label"]{
-  max-width:40ch;
   min-width:0;
   overflow:hidden;
   text-overflow:ellipsis;
@@ -523,16 +477,6 @@
   box-shadow:
     0 0 0 3px var(--ms-ac-18),
     0 4px 14px rgba(0,0,0,0.2);
-  /* Tongue: the field opens its mouth — bottom corners square off to meet the panel. */
-  border-bottom-left-radius:0;
-  border-bottom-right-radius:0;
-}
-/* Flipped above: square the top corners instead. */
-.gt-gs-wrap.gt-flip-above:not(.shape-square) .gt-gs-trigger.open{
-  border-bottom-left-radius:12px;
-  border-bottom-right-radius:12px;
-  border-top-left-radius:0;
-  border-top-right-radius:0;
 }
 
 .gt-gs-trigger:focus-visible,
@@ -587,12 +531,12 @@
     inset 0 1px 0 rgba(255,255,255,0.06);
   padding:8px;
   opacity:0;
-  transform:scaleY(0);
+  transform:translateY(-8px) scale(0.96);
   pointer-events:none;
   transition:
-    opacity 120ms ease-out,
+    opacity 180ms cubic-bezier(.2,.9,.25,1),
     transform 180ms cubic-bezier(.2,.9,.25,1);
-  transform-origin:top center;
+  transform-origin:top right;
   backdrop-filter:blur(20px);
   -webkit-backdrop-filter:blur(20px);
   z-index:9001;
@@ -606,32 +550,8 @@
 
 .gt-gs-dropdown.open{
   opacity:1;
-  transform:scaleY(1);
+  transform:translateY(0) scale(1);
   pointer-events:auto;
-  /* Tongue: panel unfurls from the field, adjoining corners square off so the
-     two read as one continuous surface. The inset top highlight is dropped at
-     the seam. */
-  border-top-left-radius:0;
-  border-top-right-radius:0;
-  box-shadow:0 22px 64px rgba(0,0,0,0.45);
-  transition:
-    opacity 180ms ease-out,
-    transform 240ms cubic-bezier(.16,1,.3,1);
-}
-/* Flipped above the field: the tongue retracts upward instead. */
-.gt-gs-dropdown.open.gt-flip-above:not(.shape-square){
-  transform-origin:bottom center;
-  border-top-left-radius:14px;
-  border-top-right-radius:14px;
-  border-bottom-left-radius:0;
-  border-bottom-right-radius:0;
-  box-shadow:0 -22px 64px rgba(0,0,0,0.45);
-}
-.gt-gs-wrap.theme-light .gt-gs-dropdown.open.gt-flip-above:not(.shape-square){
-  box-shadow:0 -12px 40px rgba(0,0,0,0.15),0 0 0 1px rgba(0,0,0,0.06);
-}
-.gt-gs-wrap.theme-light .gt-gs-dropdown.open.gt-flip-above:not(.shape-square){
-  box-shadow:0 -12px 40px rgba(0,0,0,0.15),0 0 0 1px rgba(0,0,0,0.06);
 }
 
 /* Search */
@@ -652,9 +572,7 @@
   outline:none;
   color:var(--ms-text);
   font-size:12px;
-  width:0;
-  min-width:0;
-  flex:1 1 0;
+  width:100%;
   font-family:inherit;
 }
 
@@ -693,11 +611,7 @@
 }
 
 .gt-gs-option > span:last-child{
-  display:-webkit-box;
-  -webkit-box-orient:vertical;
-  -webkit-line-clamp:3;
   min-width:0;
-  overflow:hidden;
   overflow-wrap:anywhere;
   word-break:break-word;
 }

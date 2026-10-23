@@ -15,15 +15,14 @@ choices <- c(Apple = "apple", Banana = "banana", Cherry = "cherry")
 short_field_choices <- c(
   One = "one",
   "A longer option label that should wrap cleanly" = "long_words",
-  "FacilityIdentifierWithoutNaturalBreakPoints123456789" = "long_token",
-  stats::setNames("pathological", paste(rep("Very long label ", 700), collapse = ""))
+  "FacilityIdentifierWithoutNaturalBreakPoints123456789" = "long_token"
 )
 
 ui <- fluidPage(
   useGlassTabs(),
   tags$style(HTML("
     body { padding: 24px; }
-    .test-row { max-width: 700px; display: grid; gap: 18px; }
+    .test-row { max-width: 420px; display: grid; gap: 18px; }
     .mobile-frame { width: 300px; }
     .alignment-frame { width: 480px; }
   ")),
@@ -58,7 +57,7 @@ ui <- fluidPage(
     actionButton("adaptive_expand", "Expand adaptive choices"),
     actionButton("adaptive_silent", "Silently select cherry"),
     tags$div(
-      style = "width:600px;max-width:100%",
+      style = "width:176px",
       glassSelect(
         "short_single",
         short_field_choices,
@@ -72,7 +71,7 @@ ui <- fluidPage(
         "short_multi",
         short_field_choices,
         selected = "one",
-        show_style_switcher = TRUE
+        show_style_switcher = FALSE
       )
     ),
     radioButtons(

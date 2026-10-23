@@ -5,13 +5,7 @@ output_dir <- file.path("tools", "download-tracker", "data")
   if (is.null(x)) y else x
 }
 
-fetch_downloads <- function(
-  package = package_name,
-  from = Sys.Date() - 365,
-  to = Sys.Date(),
-  attempts = 3L,
-  retry_wait = 5
-) {
+fetch_downloads <- function(package = package_name, from = Sys.Date() - 365, to = Sys.Date()) {
   query <- sprintf(
     "https://cranlogs.r-pkg.org/downloads/daily/%s:%s/%s",
     format(as.Date(from), "%Y-%m-%d"),
@@ -19,66 +13,45 @@ fetch_downloads <- function(
     utils::URLencode(package, reserved = TRUE)
   )
 
-  if (attempts < 1L) {
-    stop("attempts must be at least 1.", call. = FALSE)
+  empty_stats <- function() {
+    data.frame(
+      date = as.Date(character()),
+      package = character(),
+      count = numeric(),
+      stringsAsFactors = FALSE
+    )
   }
 
-  errors <- character()
+  tryCatch(
+    {
+      response <- jsonlite::fromJSON(query, simplifyVector = FALSE)
+      stats <- response[[1]]
+      downloads <- stats$downloads
 
-  for (attempt in seq_len(attempts)) {
-    result <- tryCatch(
-      {
-        response <- jsonlite::fromJSON(query, simplifyVector = FALSE)
+      if (!length(downloads)) {
+        return(empty_stats())
+      }
 
-        if (length(response) != 1L || !is.list(response[[1]])) {
-          stop("CRAN logs returned an unexpected response.", call. = FALSE)
-        }
-
-        stats <- response[[1]]
-        downloads <- stats$downloads
-
-        if (!length(downloads)) {
-          stop("CRAN logs returned no daily download records.", call. = FALSE)
-        }
-
-        data.frame(
-          date = as.Date(vapply(downloads, function(x) x$day, character(1))),
-          package = stats$package %||% package,
-          count = vapply(downloads, function(x) as.numeric(x$downloads), numeric(1)),
-          stringsAsFactors = FALSE
-        )
-      },
-      error = identity
-    )
-
-    if (!inherits(result, "error")) {
-      return(result)
-    }
-
-    errors <- c(errors, conditionMessage(result))
-    if (attempt < attempts) {
+      data.frame(
+        date = as.Date(vapply(downloads, function(x) x$day, character(1))),
+        package = stats$package %||% package,
+        count = vapply(downloads, function(x) as.numeric(x$downloads), numeric(1)),
+        stringsAsFactors = FALSE
+      )
+    },
+    error = function(err) {
       warning(
         sprintf(
-          "Download data request %s of %s failed; retrying: %s",
-          attempt,
-          attempts,
-          errors[[attempt]]
+          "Could not fetch CRAN download data for %s from %s: %s",
+          package,
+          query,
+          conditionMessage(err)
         ),
         call. = FALSE
       )
-      Sys.sleep(retry_wait)
-    }
-  }
 
-  stop(
-    sprintf(
-      "Could not fetch CRAN download data for %s from %s after %s attempts: %s",
-      package,
-      query,
-      attempts,
-      errors[[length(errors)]]
-    ),
-    call. = FALSE
+      empty_stats()
+    }
   )
 }
 

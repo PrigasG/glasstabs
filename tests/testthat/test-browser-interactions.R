@@ -26,12 +26,6 @@ test_that("browser: glassSelect opens and clicking an option updates input", {
   app$wait_for_idle()
   app$click(selector = "#fruit-trigger")
   app$wait_for_js("document.querySelector('#fruit-dropdown.open') !== null")
-  expect_true(app$get_js("
-    Math.abs(
-      document.querySelector('#fruit-dropdown').offsetWidth -
-      document.querySelector('#fruit-trigger').offsetWidth
-    ) <= 2
-  "))
   app$click(selector = "#fruit-dropdown .gt-gs-option[data-value='banana']")
   app$wait_for_idle()
 
@@ -62,7 +56,7 @@ test_that("browser: glassMultiSelect toggles choices and updates input", {
   expect_equal(app$get_value(input = "cats"), c("apple", "cherry"))
 })
 
-test_that("browser: select dropdowns grow for long labels and stay viewport-safe", {
+test_that("browser: narrow select dropdowns resize and wrap long labels", {
   skip_on_covr()
   skip_if_not_installed("shinytest2")
   local_browser_pkg_root()
@@ -76,18 +70,13 @@ test_that("browser: select dropdowns grow for long labels and stay viewport-safe
   on.exit(app$stop(), add = TRUE)
 
   app$wait_for_idle()
-  expect_true(app$get_js("
-    window.__shortSingleInitialWidth =
-      document.querySelector('#short_single-wrap').offsetWidth;
-    window.__shortSingleInitialWidth > 0;
-  "))
   app$click(selector = "#short_single-trigger")
   app$wait_for_js("document.querySelector('#short_single-dropdown.open') !== null")
   expect_true(app$get_js("
     (function() {
       var trigger = document.querySelector('#short_single-trigger');
       var dropdown = document.querySelector('#short_single-dropdown');
-      return dropdown.offsetWidth > trigger.offsetWidth && dropdown.offsetWidth <= 420;
+      return Math.abs(trigger.offsetWidth - dropdown.offsetWidth) <= 1;
     })()
   "))
   expect_true(app$get_js("
@@ -98,37 +87,9 @@ test_that("browser: select dropdowns grow for long labels and stay viewport-safe
       var token = document.querySelector(
         '#short_single-dropdown [data-value=long_token] > span:last-child'
       );
-      return words.scrollWidth <= words.clientWidth + 1 &&
-        token.scrollWidth <= token.clientWidth + 1;
+      return words.offsetHeight > 20 && token.scrollWidth <= token.clientWidth + 1;
     })()
   "))
-  expect_true(app$get_js("
-    (function() {
-      var label = document.querySelector(
-        '#short_single-dropdown [data-value=pathological] > span:last-child'
-      );
-      var option = label.parentElement;
-      return label.textContent.length > 9000 &&
-        getComputedStyle(label).webkitLineClamp === '3' &&
-        option.offsetHeight < 90;
-    })()
-  "))
-
-  app$click(selector = "#short_single-dropdown [data-value=pathological]")
-  app$wait_for_js("document.querySelector('#short_single-dropdown.open') === null")
-  expect_true(app$get_js("
-    (function() {
-      var field = document.querySelector('#short_single-field');
-      var wrap = document.querySelector('#short_single-wrap');
-      var label = document.querySelector('#short_single-label');
-      return wrap.offsetWidth < field.offsetWidth &&
-        Math.abs(wrap.offsetWidth - window.__shortSingleInitialWidth) < 1 &&
-        label.scrollWidth > label.clientWidth;
-    })()
-  "))
-
-  app$click(selector = "#short_single-trigger")
-  app$wait_for_js("document.querySelector('#short_single-dropdown.open') !== null")
 
   expect_true(app$get_js("
     (function() {
@@ -138,14 +99,15 @@ test_that("browser: select dropdowns grow for long labels and stay viewport-safe
       return true;
     })()
   "))
-  # Resize repositions the open dropdown instead of closing it (mobile URL-bar
-  # and on-screen keyboard resizes must not strand the user mid-task). It stays
-  # at least as wide as the trigger while retaining room for long labels.
+  # Resize repositions the open dropdown to follow the trigger instead of
+  # closing it (mobile URL-bar and on-screen keyboard resizes must not strand
+  # the user mid-task), so it stays open and tracks the new trigger width.
   app$wait_for_js("
     document.querySelector('#short_single-dropdown.open') !== null &&
-    document.querySelector('#short_single-dropdown').offsetWidth >=
-      document.querySelector('#short_single-trigger').offsetWidth &&
-    document.querySelector('#short_single-dropdown').offsetWidth <= 420
+    Math.abs(
+      document.querySelector('#short_single-trigger').offsetWidth -
+      document.querySelector('#short_single-dropdown').offsetWidth
+    ) <= 1 && document.querySelector('#short_single-dropdown').offsetWidth >= 219
   ")
 
   expect_true(app$get_js("
@@ -174,7 +136,7 @@ test_that("browser: select dropdowns grow for long labels and stay viewport-safe
     (function() {
       var trigger = document.querySelector('#short_multi-trigger');
       var dropdown = document.querySelector('#short_multi-dropdown');
-      return dropdown.offsetWidth > trigger.offsetWidth && dropdown.offsetWidth <= 420;
+      return Math.abs(trigger.offsetWidth - dropdown.offsetWidth) <= 1;
     })()
   "))
   expect_true(app$get_js("
@@ -185,30 +147,7 @@ test_that("browser: select dropdowns grow for long labels and stay viewport-safe
       var token = document.querySelector(
         '#short_multi-dropdown [data-value=long_token] > span:last-child'
       );
-      return words.scrollWidth <= words.clientWidth + 1 &&
-        token.scrollWidth <= token.clientWidth + 1;
-    })()
-  "))
-  expect_true(app$get_js("
-    (function() {
-      var label = document.querySelector(
-        '#short_multi-dropdown [data-value=pathological] > span:last-child'
-      );
-      return label.textContent.length > 9000 &&
-        getComputedStyle(label).webkitLineClamp === '3' &&
-        label.parentElement.offsetHeight < 90;
-    })()
-  "))
-  expect_true(app$get_js("
-    (function() {
-      var dropdown = document.querySelector('#short_multi-dropdown');
-      var buttons = Array.from(dropdown.querySelectorAll('.gt-style-btn'));
-      var panel = dropdown.getBoundingClientRect();
-      return buttons.length === 3 && buttons.every(function(button) {
-        var rect = button.getBoundingClientRect();
-        return rect.left >= panel.left && rect.right <= panel.right &&
-          button.textContent.trim().length > 0;
-      });
+      return words.offsetHeight > 20 && token.scrollWidth <= token.clientWidth + 1;
     })()
   "))
 })
@@ -962,33 +901,10 @@ test_that("browser: window resize keeps select dropdowns open and repositions th
       var dropdown = document.querySelector('#fruit-dropdown');
       var tr = trigger.getBoundingClientRect();
       var dr = dropdown.getBoundingClientRect();
-      var expectedLeft = Math.max(
-        8,
-        Math.min(tr.left, window.innerWidth - dr.width - 8)
-      );
-      return Math.abs(dr.left - expectedLeft) <= 2 &&
+      return Math.abs(dr.left - (tr.right - dr.width)) <= 2 &&
         dr.top >= tr.bottom;
     })()
   "))
-
-  expect_true(app$get_js("
-    document.documentElement.setAttribute('dir', 'rtl');
-    window.dispatchEvent(new Event('resize'));
-    true;
-  "))
-  app$wait_for_js("
-    (function() {
-      var trigger = document.querySelector('#fruit-trigger');
-      var dropdown = document.querySelector('#fruit-dropdown');
-      var tr = trigger.getBoundingClientRect();
-      var dr = dropdown.getBoundingClientRect();
-      var expectedLeft = Math.max(
-        8,
-        Math.min(tr.right - dr.width, window.innerWidth - dr.width - 8)
-      );
-      return Math.abs(dr.left - expectedLeft) <= 2;
-    })()
-  ")
 })
 
 test_that("browser: a full-screen overlay dismisses open select dropdowns", {
@@ -1105,58 +1021,4 @@ test_that("browser: a hidden overlay made visible by a class toggle dismisses op
   app$wait_for_js("document.querySelector('#fruit-dropdown.open') === null")
   expect_true(app$get_js("document.querySelector('#fruit-dropdown.open') === null"))
   app$get_js("document.querySelector('#test-toggle-veil').remove(); 'removed'")
-})
-
-test_that("browser: dropdown opens flush like a tongue from the field", {
-  skip_on_covr()
-  skip_if_not_installed("shinytest2")
-  local_browser_pkg_root()
-
-  app <- shinytest2::AppDriver$new(
-    test_path("apps", "browser-interactions"),
-    name = "browser-dropdown-tongue",
-    height = 800,
-    width = 1000
-  )
-  on.exit(app$stop(), add = TRUE)
-
-  app$wait_for_idle()
-  app$click(selector = "#fruit-trigger")
-  app$wait_for_js("document.querySelector('#fruit-dropdown.open') !== null")
-
-  # Panel attaches flush: 1px border overlap, no gap.
-  expect_true(app$get_js("
-    (function() {
-      var trigger = document.querySelector('#fruit-trigger');
-      var panel = document.querySelector('#fruit-dropdown');
-      var tr = trigger.getBoundingClientRect();
-      var pr = panel.getBoundingClientRect();
-      return Math.abs(pr.top - (tr.bottom - 1)) <= 2;
-    })()
-  "))
-
-  # Adjoining corners square off so the two read as one surface.
-  expect_true(app$get_js("
-    (function() {
-      var panel = document.querySelector('#fruit-dropdown');
-      var cs = getComputedStyle(panel);
-      return cs.borderTopLeftRadius === '0px' && cs.borderTopRightRadius === '0px';
-    })()
-  "))
-  expect_true(app$get_js("
-    (function() {
-      var trigger = document.querySelector('#fruit-trigger');
-      var cs = getComputedStyle(trigger);
-      return cs.borderBottomLeftRadius === '0px' && cs.borderBottomRightRadius === '0px';
-    })()
-  "))
-
-  # Panel unfurls with scaleY (not the old translateY/scale pop).
-  expect_true(app$get_js("
-    (function() {
-      var panel = document.querySelector('#fruit-dropdown');
-      var t = getComputedStyle(panel).transform;
-      return t !== 'none';
-    })()
-  "))
 })

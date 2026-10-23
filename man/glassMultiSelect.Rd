@@ -72,8 +72,7 @@ neatly alongside native Shiny \code{selectizeInput()} controls.}
 
 \item{width}{Optional widget width passed to
 \code{shiny::validateCssUnit()}, e.g. \code{100\%} or \code{240px}. When
-\code{NULL} (default) the trigger uses a stable compact width of
-\code{160px}. Explicit widths continue to be capped by the container.}
+\code{NULL} (default) the trigger keeps its intrinsic width.}
 
 \item{disabled}{Logical. When \code{TRUE} the whole widget is greyed out and
 non-interactive. Default \code{FALSE}.}
