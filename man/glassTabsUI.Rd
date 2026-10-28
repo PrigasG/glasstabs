@@ -40,9 +40,9 @@ layouts (e.g. bs4Dash).}
 
 \item{content_min_height}{Minimum height of the tab content area as a CSS
 length, e.g. \code{"120px"}. Stabilizes the layout when tabs hold different
-amounts of content. Use \code{"0"} for no minimum. When \code{NULL} (the
-default), no inline height is set: the default is \code{120px}, or \code{60px}
-when \code{compact = TRUE}. An explicitly supplied value always wins.}
+amounts of content. Use \code{"0"} for no minimum. When \code{NULL} (the default),
+no inline height is set: the default is \verb{120px}, or \verb{60px} when
+\code{compact = TRUE}. An explicitly supplied value always wins.}
 
 \item{style}{Visual relationship between the tab bar and the content box.
 \code{"floating"} (default) renders them as two separate floating pieces.

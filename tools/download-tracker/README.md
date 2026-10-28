@@ -18,7 +18,9 @@ The app reads the public daily download feed from
 
 The GitHub Actions workflow
 `.github/workflows/download-stats.yaml` refreshes cached download data
-weekly on Mondays and stores it in `tools/download-tracker/data/`.
+weekly on Mondays and stores it in `tools/download-tracker/data/`. The updater
+retries temporary API failures and exits without replacing the cache if fresh
+data cannot be retrieved.
 
 The whole `tools/` directory is excluded from CRAN source builds by
 `.Rbuildignore`.
