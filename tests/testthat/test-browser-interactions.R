@@ -1172,64 +1172,52 @@ test_that("browser: dropdown opens flush like a tongue from the field", {
   # that guard first, or the close click is swallowed and the panel stays open.
   Sys.sleep(0.6)
   # Closing must animate, not teleport: the panel stays under <body>,
-  # attached to the trigger, and mid-retract (scale strictly between 0 and 1)
-  # while closing, and only returns to the wrapper once the retract finishes.
-  # Moving it back in the same turn as removing `.open` collapses it instantly,
-  # so a final-matrix check alone passes even when no transition occurs.
-  # Samples are polled every 20ms on the browser clock (not fixed 50/100ms
-  # points, which loaded runners can miss entirely), and the test requires
-  # at least one mid-close sample plus the final returned state.
+  # attached to the trigger, while it retracts, and only returns to the
+  # wrapper once the retract finishes. Moving it back in the same turn as
+  # removing `.open` collapses it instantly, so a final-matrix check alone
+  # passes even when no transition occurs.
+  # The observable is the dwell, not a mid-scale sample: sampling the
+  # transform from JS cannot observe a compositor animation while the main
+  # thread is blocked (Shiny processing the close blocks it on loaded
+  # runners, so fixed-time and interval samples both miss the window). But
+  # the dwell is measured on the browser clock: if the panel stays
+  # teleported for ~180ms (transitionend) or ~250ms (fallback) instead of
+  # teleporting instantly, the retract necessarily ran, because a
+  # transitioned property on an element that stays in place cannot jump.
   app$get_js("
     (function() {
       var trigger = document.querySelector('#fruit-trigger');
       var panel = document.querySelector('#fruit-dropdown');
-      var samples = [];
-      function record() {
-        var tr = trigger.getBoundingClientRect();
-        var pr = panel.getBoundingClientRect();
-        var m = getComputedStyle(panel).transform;
-        var scaleY = null;
-        if (m && m !== 'none') {
-          scaleY = parseFloat(m.replace('matrix(', '').replace(')', '').split(',')[3]);
-        }
-        samples.push({
-          parentIsBody: panel.parentNode === document.body,
-          attached: Math.abs(pr.top - (tr.bottom - 1)) <= 2,
-          scaleY: scaleY
-        });
-      }
+      var closeStarted = Date.now();
+      window.__gtCloseReturned = false;
+      window.__gtCloseDwell = null;
       trigger.click();
-      var started = Date.now();
       var iv = setInterval(function() {
-        record();
-        if (panel.parentNode !== document.body || Date.now() - started > 600) {
+        if (panel.parentNode !== document.body) {
+          window.__gtCloseDwell = Date.now() - closeStarted;
+          window.__gtCloseReturned = true;
           clearInterval(iv);
         }
       }, 20);
-      window.__gtCloseSamples = samples;
       return 'sampling';
     })()
   ")
-  Sys.sleep(0.9)
+  app$wait_for_js("window.__gtCloseReturned === true")
   close_state <- app$get_js("
     (function() {
       var panel = document.querySelector('#fruit-dropdown');
-      var samples = window.__gtCloseSamples || [];
-      var hasMidClose = samples.some(function(s) {
-        return s.parentIsBody && s.attached &&
-          s.scaleY !== null && s.scaleY > 0 && s.scaleY < 1;
-      });
       return {
-        nSamples: samples.length,
-        hasMidClose: hasMidClose,
+        dwell: window.__gtCloseDwell,
         returnedToWrap: panel.parentNode !== document.body,
-        closed: !panel.classList.contains('open'),
-        detail: JSON.stringify(samples)
+        closed: !panel.classList.contains('open')
       };
     })()
   ")
-  expect_gte(close_state$nSamples, 1)
-  expect_true(close_state$hasMidClose, info = close_state$detail)
+  # Not instant (the bug teleports in the same turn, dwell ~0ms) and not
+  # stuck (fallback is 250ms; the bound is generous for loaded runners).
+  expect_true(!is.null(close_state$dwell) && close_state$dwell >= 100,
+              info = paste("dwell ms:", close_state$dwell))
+  expect_true(close_state$dwell < 4000)
   expect_true(close_state$returnedToWrap)
   expect_true(close_state$closed)
   app$wait_for_js("
