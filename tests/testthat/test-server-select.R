@@ -10,12 +10,36 @@ test_that("all built-in examples have app files and README coverage", {
 
   expect_true(all(file.exists(app_files)))
   expect_no_error(lapply(app_files, parse))
+  app_sources <- vapply(
+    app_files,
+    function(path) paste(readLines(path, warn = FALSE), collapse = "\n"),
+    character(1)
+  )
+  expect_true(all(grepl("shinyApp(ui, server)", app_sources, fixed = TRUE)))
+  expect_false(any(grepl(
+    "if (interactive()) shinyApp(ui, server)",
+    app_sources,
+    fixed = TRUE
+  )))
   expect_true(all(examples %in% c("basic", "bs4dash", "bslib", "connect-workflow", "dashboard", "indicators", "native-comparison", "server-select", "smoke-test", "square-corners", "stress-test", "light-mode", "theme-switcher")))
 
   readme_path <- test_path("..", "..", "README.md")
   if (file.exists(readme_path)) {
     readme <- paste(readLines(readme_path, warn = FALSE), collapse = "\n")
     expect_true(all(vapply(examples, grepl, logical(1), x = readme, fixed = TRUE)))
+  }
+})
+
+test_that("formerly dark-only examples expose live light and dark themes", {
+  themed_examples <- c("basic", "dashboard", "server-select", "smoke-test", "stress-test")
+  app_files <- test_path("..", "..", "inst", "examples", themed_examples, "app.R")
+
+  for (app_file in app_files) {
+    source <- paste(readLines(app_file, warn = FALSE), collapse = "\n")
+    expect_true(grepl('"example_theme"', source, fixed = TRUE), info = app_file)
+    expect_true(grepl("data-bs-theme", source, fixed = TRUE), info = app_file)
+    expect_true(grepl('"auto"', source, fixed = TRUE), info = app_file)
+    expect_true(grepl('"Light" = "light"', source, fixed = TRUE), info = app_file)
   }
 })
 

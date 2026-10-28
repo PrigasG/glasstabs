@@ -55,6 +55,20 @@ test_that("glassSelect() supports label size and an optional search ring", {
   )
 })
 
+test_that("glassSelect() enables truncation tooltips by default", {
+  default <- as.character(glassSelect("f", choices))
+  disabled <- as.character(glassSelect(
+    "f", choices, overflow_tooltip = "never"
+  ))
+
+  expect_match(default, 'data-overflow-tooltip="auto"', fixed = TRUE)
+  expect_match(disabled, 'data-overflow-tooltip="never"', fixed = TRUE)
+  expect_error(
+    glassSelect("f", choices, overflow_tooltip = "always"),
+    class = "glasstabs_error_bad_argument"
+  )
+})
+
 
 test_that("glassSelect() accepts unnamed choices", {
   expect_no_error(glassSelect("f", c("x", "y", "z")))

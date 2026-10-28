@@ -89,6 +89,11 @@
 #' @param search_focus_ring Logical. When \code{TRUE}, focusing the dropdown
 #'   search field adds the accent-colored outline. The default, \code{FALSE},
 #'   uses a quieter background and border change without the outer ring.
+#' @param overflow_tooltip Tooltip behavior for trigger text that is visually
+#'   truncated with an ellipsis. \code{"auto"} (default) shows the complete
+#'   text on pointer hover or keyboard focus only when truncation is detected;
+#'   \code{"never"} disables it. On touch devices, opening the dropdown remains
+#'   the primary way to inspect the full, wrapped option text.
 #' @param fill_colors Color treatment for \code{check_style = "filled"}.
 #'   \code{"single"} (default) uses the theme accent for every selected row;
 #'   \code{"multi"} keeps the categorical per-option colors.
@@ -148,7 +153,8 @@ glassMultiSelect <- function(
     label_bold         = TRUE,
     fill_colors        = c("single", "multi"),
     label_size         = "14px",
-    search_focus_ring  = FALSE
+    search_focus_ring  = FALSE,
+    overflow_tooltip   = c("auto", "never")
 ) {
   .gt_check_string(
     inputId,
@@ -160,6 +166,11 @@ glassMultiSelect <- function(
   .gt_check_flag(label_bold, "label_bold")
   .gt_check_flag(search_focus_ring, "search_focus_ring")
   label_size <- .gt_css_unit(label_size, "label_size")
+  overflow_tooltip <- .gt_match_arg(
+    overflow_tooltip,
+    c("auto", "never"),
+    "overflow_tooltip"
+  )
   fill_colors <- .gt_match_arg(fill_colors, c("single", "multi"), "fill_colors")
   check_style <- .gt_match_arg(check_style, c("checkbox", "check-only", "filled"), "check_style")
   shape <- .gt_match_arg(shape, c("rounded", "square"), "shape")
@@ -473,6 +484,7 @@ glassMultiSelect <- function(
         `data-search-threshold` = as.character(search_threshold),
         `data-selection-display` = selection_display,
         `data-selection-max-items` = as.character(selection_max_items),
+        `data-overflow-tooltip` = overflow_tooltip,
         `data-selected-values` = .gt_json_array(selected),
 
         shiny::div(

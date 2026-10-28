@@ -210,6 +210,10 @@ test_that("single-color filled multi-selects use the theme accent", {
   expect_true(grepl("background:var(--ms-accent)!important", css, fixed = TRUE))
   expect_true(grepl("'fill-single'", js, fixed = TRUE))
   expect_true(grepl("'gt-search-ring'", js, fixed = TRUE))
+  expect_true(grepl("createOverflowTooltip", js, fixed = TRUE))
+  expect_true(grepl("scrollWidth > labelEl.clientWidth + 1", js, fixed = TRUE))
+  expect_true(grepl(".gt-overflow-tooltip", css, fixed = TRUE))
+  expect_true(grepl("max-width:min(36rem,calc(100vw - 24px))", css, fixed = TRUE))
 })
 
 test_that("glass.js does not ship debug-only message handlers", {

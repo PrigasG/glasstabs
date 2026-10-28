@@ -108,6 +108,154 @@
       window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   }
 
+  /* Ellipsized trigger labels reveal their complete text on desktop hover or
+     keyboard focus. Touch users already get the full wrapped label by opening
+     the dropdown, so a tap never has to manage a second overlay. */
+  function createOverflowTooltip(trigger, labelEl, id, mode) {
+    var enabled = mode === 'auto';
+    var tooltip = null;
+    var showTimer = null;
+    var hideTimer = null;
+    var fullText = '';
+
+    function isTruncated() {
+      return enabled && labelEl && labelEl.clientWidth > 0 &&
+        labelEl.scrollWidth > labelEl.clientWidth + 1;
+    }
+
+    function ensureTooltip() {
+      if (tooltip) return tooltip;
+      tooltip = document.createElement('div');
+      tooltip.id = id;
+      tooltip.className = 'gt-overflow-tooltip';
+      tooltip.setAttribute('role', 'tooltip');
+      tooltip.setAttribute('aria-hidden', 'true');
+      tooltip.addEventListener('mouseenter', function () {
+        if (hideTimer !== null) {
+          clearTimeout(hideTimer);
+          hideTimer = null;
+        }
+      });
+      tooltip.addEventListener('mouseleave', hide);
+      document.body.appendChild(tooltip);
+      return tooltip;
+    }
+
+    function position() {
+      if (!tooltip) return;
+      var triggerRect = trigger.getBoundingClientRect();
+      var tipRect = tooltip.getBoundingClientRect();
+      var edge = 12;
+      var gap = 8;
+      var left = triggerRect.left + (triggerRect.width - tipRect.width) / 2;
+      left = Math.max(edge, Math.min(left, window.innerWidth - tipRect.width - edge));
+      var top = triggerRect.bottom + gap;
+      var above = top + tipRect.height > window.innerHeight - edge &&
+        triggerRect.top - tipRect.height - gap >= edge;
+      if (above) top = triggerRect.top - tipRect.height - gap;
+      top = Math.max(edge, Math.min(top, window.innerHeight - tipRect.height - edge));
+      tooltip.classList.toggle('gt-tooltip-above', above);
+      tooltip.style.left = Math.round(left) + 'px';
+      tooltip.style.top = Math.round(top) + 'px';
+    }
+
+    function hide() {
+      if (showTimer !== null) {
+        clearTimeout(showTimer);
+        showTimer = null;
+      }
+      if (hideTimer !== null) {
+        clearTimeout(hideTimer);
+        hideTimer = null;
+      }
+      if (!tooltip) return;
+      tooltip.classList.remove('visible');
+      tooltip.setAttribute('aria-hidden', 'true');
+      trigger.removeAttribute('aria-describedby');
+    }
+
+    function show() {
+      showTimer = null;
+      if (!fullText || trigger.classList.contains('open') || !isTruncated()) return;
+      var node = ensureTooltip();
+      node.textContent = fullText;
+      node.setAttribute('aria-hidden', 'false');
+      node.classList.add('visible');
+      trigger.setAttribute('aria-describedby', id);
+      position();
+    }
+
+    function schedule(delay) {
+      hide();
+      if (!isTruncated()) return;
+      showTimer = setTimeout(show, delay);
+    }
+
+    function scheduleHide() {
+      if (showTimer !== null) {
+        clearTimeout(showTimer);
+        showTimer = null;
+      }
+      if (hideTimer !== null) clearTimeout(hideTimer);
+      hideTimer = setTimeout(hide, 120);
+    }
+
+    function hasFineHover() {
+      return !window.matchMedia ||
+        window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    }
+
+    function focusVisible() {
+      if (!trigger.matches) return true;
+      try { return trigger.matches(':focus-visible'); }
+      catch (e) { return true; }
+    }
+
+    function onMouseEnter() {
+      if (hasFineHover()) schedule(420);
+    }
+    function onFocus() {
+      if (focusVisible()) schedule(160);
+    }
+    function onViewportChange() { hide(); }
+
+    trigger.addEventListener('mouseenter', onMouseEnter);
+    trigger.addEventListener('mouseleave', scheduleHide);
+    trigger.addEventListener('focus', onFocus);
+    trigger.addEventListener('blur', hide);
+    trigger.addEventListener('click', hide);
+    window.addEventListener('scroll', onViewportChange, true);
+    window.addEventListener('resize', onViewportChange);
+
+    return {
+      refresh: function (text) {
+        fullText = String(text || '').trim();
+        if (fullText) trigger.setAttribute('aria-label', fullText);
+        else trigger.removeAttribute('aria-label');
+        if (tooltip && tooltip.classList.contains('visible')) {
+          if (!isTruncated()) hide();
+          else {
+            tooltip.textContent = fullText;
+            position();
+          }
+        }
+      },
+      hide: hide,
+      destroy: function () {
+        hide();
+        trigger.removeEventListener('mouseenter', onMouseEnter);
+        trigger.removeEventListener('mouseleave', scheduleHide);
+        trigger.removeEventListener('focus', onFocus);
+        trigger.removeEventListener('blur', hide);
+        trigger.removeEventListener('click', hide);
+        window.removeEventListener('scroll', onViewportChange, true);
+        window.removeEventListener('resize', onViewportChange);
+        if (tooltip && tooltip.parentNode) tooltip.parentNode.removeChild(tooltip);
+        tooltip = null;
+      }
+    };
+  }
+
   /* Keep inactive panels out of both keyboard focus and the accessibility
      tree. `inert` is the behavioral guard; ARIA remains useful to older
      assistive technology and makes the panel state explicit. */
@@ -1140,6 +1288,12 @@
     if (!trigger || !dropdown || !labelEl) return;
 
     wrap._gtDropdown = dropdown;
+    var overflowTip = createOverflowTooltip(
+      trigger,
+      labelEl,
+      inputId + '-overflow-tooltip',
+      wrap.getAttribute('data-overflow-tooltip') || 'auto'
+    );
 
     /* Capture check SVG template before any rebuilds */
     var checkTemplate = wrap.querySelector('.gt-gs-check');
@@ -1252,6 +1406,7 @@
     function syncUI() {
       var ch = findChoice(state.selected);
       labelEl.textContent = ch ? ch.label : (state.selectedLabel || placeholder);
+      overflowTip.refresh(labelEl.textContent);
       patchOptionClasses();
       updateStatus();
     }
@@ -1437,6 +1592,7 @@
       /* A pending close teleport (panel still retracting under <body>) must
          not yank the panel back mid-reopen. */
       cancelPendingTeleportClose(dropdown);
+      overflowTip.hide();
       closeAllDropdowns(wrap);
       wrap.classList.add('gt-layer-active');
       teleportOpen(wrap, dropdown);
@@ -1578,6 +1734,7 @@
         wrap._gtScrollHandler = null;
       }
       close();
+      overflowTip.destroy();
       teleportClose(wrap, dropdown);
       wrap._gtDropdown = null;
       wrap._gt = null;
@@ -1682,6 +1839,12 @@
     var optionsBox = wrap.querySelector('[id$="-options"]') || wrap;
 
     wrap._gtDropdown = dropdown;
+    var overflowTip = createOverflowTooltip(
+      trigger,
+      labelEl,
+      inputId + '-overflow-tooltip',
+      wrap.getAttribute('data-overflow-tooltip') || 'auto'
+    );
 
     var STYLES = ['check-only', 'checkbox', 'filled'];
     var currentStyle = 'checkbox';
@@ -1823,6 +1986,15 @@
       return 'Multiple selection';
     }
 
+    function overflowLabel(total) {
+      var visible = selectionLabel(total);
+      var n = state.selected.size;
+      if (n === 0 || (total > 0 && n === total)) return visible;
+      if (selectionDisplay !== 'summary' && selectionDisplay !== 'labels') return visible;
+      var labels = selectedLabels();
+      return labels.length === n && labels.length ? labels.join(', ') : visible;
+    }
+
     function setStatus(text, active, loading) {
       statusRow.textContent = text || '';
       statusRow.classList.toggle('hidden', !active);
@@ -1894,7 +2066,10 @@
         countEl.textContent = selCount + ' / ' + total + ' selected';
       }
 
-      if (labelEl) labelEl.textContent = selectionLabel(total);
+      if (labelEl) {
+        labelEl.textContent = selectionLabel(total);
+        overflowTip.refresh(overflowLabel(total));
+      }
 
       patchOptionClasses();
       syncSearchVisibility();
@@ -2141,6 +2316,7 @@
       /* A pending close teleport (panel still retracting under <body>) must
          not yank the panel back mid-reopen. */
       cancelPendingTeleportClose(dropdown);
+      overflowTip.hide();
       closeAllDropdowns(wrap);
       wrap.classList.add('gt-layer-active');
       teleportOpen(wrap, dropdown);
@@ -2316,6 +2492,7 @@
         wrap._gtScrollHandler = null;
       }
       close();
+      overflowTip.destroy();
       teleportClose(wrap, dropdown);
       wrap._gtDropdown = null;
       wrap._gt = null;

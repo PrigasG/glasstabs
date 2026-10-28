@@ -73,6 +73,8 @@ ui <- fluidPage(
         "short_multi",
         short_field_choices,
         selected = "one",
+        selection_display = "summary",
+        selection_max_items = 1,
         show_style_switcher = TRUE
       )
     ),

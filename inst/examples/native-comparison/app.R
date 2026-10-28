@@ -135,6 +135,7 @@ ui <- fluidPage(
           ),
           checkboxInput("single_searchable", "Show dropdown search", TRUE),
           checkboxInput("single_search_ring", "Show blue search focus ring", FALSE),
+          checkboxInput("single_overflow_tooltip", "Explain truncated trigger text", TRUE),
           checkboxInput("single_clearable", "Show clear action", TRUE),
           selectInput(
             "single_check_style", "Selection marker",
@@ -156,6 +157,7 @@ ui <- fluidPage(
           ),
           checkboxInput("enhanced_searchable", "Show dropdown search", TRUE),
           checkboxInput("enhanced_search_ring", "Show blue search focus ring", FALSE),
+          checkboxInput("enhanced_overflow_tooltip", "Explain truncated trigger text", TRUE),
           selectInput(
             "enhanced_check_style", "Selection marker",
             c("Checkbox" = "checkbox", "Check only" = "check-only", "Filled" = "filled"),
@@ -186,6 +188,7 @@ ui <- fluidPage(
           ),
           checkboxInput("coexist_searchable", "Show dropdown search", TRUE),
           checkboxInput("coexist_search_ring", "Show blue search focus ring", FALSE),
+          checkboxInput("coexist_overflow_tooltip", "Explain truncated trigger text", TRUE),
           selectInput(
             "coexist_check_style", "Selection marker",
             c("Checkbox" = "checkbox", "Check only" = "check-only", "Filled" = "filled"),
@@ -268,6 +271,7 @@ server <- function(input, output, session) {
       ", label_size = \"", label_size(), "\", searchable = ",
       toupper(as.character(isTRUE(input$single_searchable))),
       ", search_focus_ring = ", toupper(as.character(isTRUE(input$single_search_ring))),
+      ", overflow_tooltip = \"", if (isTRUE(input$single_overflow_tooltip)) "auto" else "never", "\"",
       ", clearable = ", toupper(as.character(isTRUE(input$single_clearable))),
       ", shape = \"", glass_shape(), "\", check_style = \"",
       value_or(input$single_check_style, "checkbox"), "\")"
@@ -279,6 +283,7 @@ server <- function(input, output, session) {
       "glassMultiSelect(..., searchable = ",
       toupper(as.character(isTRUE(input$enhanced_searchable))),
       ", search_focus_ring = ", toupper(as.character(isTRUE(input$enhanced_search_ring))),
+      ", overflow_tooltip = \"", if (isTRUE(input$enhanced_overflow_tooltip)) "auto" else "never", "\"",
       ", check_style = \"", value_or(input$enhanced_check_style, "filled"),
       "\", selection_display = \"", value_or(input$enhanced_selection_display, "summary"),
       "\", fill_colors = \"", value_or(input$enhanced_fill_colors, "single"),
@@ -293,6 +298,7 @@ server <- function(input, output, session) {
       "glassMultiSelect(..., searchable = ",
       toupper(as.character(isTRUE(input$coexist_searchable))),
       ", search_focus_ring = ", toupper(as.character(isTRUE(input$coexist_search_ring))),
+      ", overflow_tooltip = \"", if (isTRUE(input$coexist_overflow_tooltip)) "auto" else "never", "\"",
       ", check_style = \"", value_or(input$coexist_check_style, "checkbox"),
       "\", selection_display = \"", value_or(input$coexist_selection_display, "summary"),
       "\", fill_colors = \"", value_or(input$coexist_fill_colors, "single"), "\")"
@@ -307,6 +313,7 @@ server <- function(input, output, session) {
     title_size <- label_size()
     searchable <- isTRUE(input$single_searchable)
     search_ring <- isTRUE(input$single_search_ring)
+    overflow_tooltip <- if (isTRUE(input$single_overflow_tooltip)) "auto" else "never"
     clearable <- isTRUE(input$single_clearable)
     shape <- glass_shape()
     check_style <- value_or(input$single_check_style, "checkbox")
@@ -345,6 +352,7 @@ server <- function(input, output, session) {
             label_bold = label_bold,
             label_size = title_size,
             search_focus_ring = search_ring,
+            overflow_tooltip = overflow_tooltip,
             theme = theme
           ),
           tags$div(class = "nc-value", "input$glass_single: ", textOutput("glass_single_value", inline = TRUE))
@@ -365,6 +373,7 @@ server <- function(input, output, session) {
     title_size <- label_size()
     searchable <- isTRUE(input$enhanced_searchable)
     search_ring <- isTRUE(input$enhanced_search_ring)
+    overflow_tooltip <- if (isTRUE(input$enhanced_overflow_tooltip)) "auto" else "never"
     shape <- glass_shape()
     check_style <- value_or(input$enhanced_check_style, "filled")
     selection_display <- value_or(input$enhanced_selection_display, "summary")
@@ -413,6 +422,7 @@ server <- function(input, output, session) {
               label_bold = label_bold,
               label_size = title_size,
               search_focus_ring = search_ring,
+              overflow_tooltip = overflow_tooltip,
               theme = theme
             ),
             glassMultiSelect(
@@ -429,6 +439,7 @@ server <- function(input, output, session) {
               label_bold = label_bold,
               label_size = title_size,
               search_focus_ring = search_ring,
+              overflow_tooltip = overflow_tooltip,
               theme = theme
             )
           ),
@@ -446,6 +457,7 @@ server <- function(input, output, session) {
     title_size <- label_size()
     searchable <- isTRUE(input$coexist_searchable)
     search_ring <- isTRUE(input$coexist_search_ring)
+    overflow_tooltip <- if (isTRUE(input$coexist_overflow_tooltip)) "auto" else "never"
     shape <- glass_shape()
     check_style <- value_or(input$coexist_check_style, "checkbox")
     selection_display <- value_or(input$coexist_selection_display, "summary")
@@ -480,6 +492,7 @@ server <- function(input, output, session) {
             label_bold = label_bold,
             label_size = title_size,
             search_focus_ring = search_ring,
+            overflow_tooltip = overflow_tooltip,
             theme = theme
           )
         ),

@@ -14,6 +14,11 @@ library(glasstabs)
 
 `%||%` <- function(a, b) if (is.null(a)) b else a
 
+# Every stress scenario follows the page theme without repeating the same
+# argument across twenty deliberately noisy widget constructions.
+glassSelect <- function(...) glasstabs::glassSelect(..., theme = "auto")
+glassMultiSelect <- function(...) glasstabs::glassMultiSelect(..., theme = "auto")
+
 # ---------------------------------------------------------------------------
 # Choice factories
 # ---------------------------------------------------------------------------
@@ -59,7 +64,9 @@ hostile_choices <- function() {
 
 ui <- fluidPage(
   useGlassTabs(),
-  tags$head(tags$style(HTML("
+  tags$head(
+    tags$script(HTML("document.documentElement.setAttribute('data-bs-theme','dark');")),
+    tags$style(HTML("
     body { background:#071026; color:#e6eef8; font-family:Inter,system-ui,sans-serif; }
     .stress-wrap { max-width:900px; margin:28px auto; display:grid; gap:16px; }
     .watch { background:rgba(255,180,60,.08); border:1px solid rgba(255,180,60,.25);
@@ -70,12 +77,32 @@ ui <- fluidPage(
     .scroll-trap { height:220px; overflow-y:auto; border:1px solid rgba(255,255,255,.15);
                    border-radius:8px; padding:12px; }
     .spacer-tall { height:1200px; }
-  "))),
+    [data-bs-theme='light'] body { background:#f4f8ff; color:#172033; }
+    [data-bs-theme='light'] .watch { background:#fff8ea; border-color:#e7c98a; }
+    [data-bs-theme='light'] .watch b { color:#985b00; }
+    [data-bs-theme='light'] pre.timing { background:#fff; border-color:#d6e0ed; color:#26354d; }
+    [data-bs-theme='light'] .scroll-trap { border-color:#c8d4e4; }
+    .stress-theme .form-group { margin-bottom:0; }
+  ")),
+    tags$script(HTML("
+      Shiny.addCustomMessageHandler('stress_theme', function(mode) {
+        document.documentElement.setAttribute('data-bs-theme', mode);
+      });
+    "))
+  ),
   div(
     class = "stress-wrap",
     h2("glasstabs dropdown stress tests"),
     p("Each tab tries to break something. Timings print server-side where measurable;",
       "the rest needs eyeballs and a stopwatch."),
+    div(
+      class = "stress-theme",
+      radioButtons(
+        "example_theme", "Example theme",
+        choices = c("Dark" = "dark", "Light" = "light"),
+        selected = "dark", inline = TRUE
+      )
+    ),
 
     tabsetPanel(
       id = "scenario",
@@ -380,6 +407,10 @@ ui <- fluidPage(
 # ---------------------------------------------------------------------------
 
 server <- function(input, output, session) {
+  observeEvent(input$example_theme, {
+    session$sendCustomMessage("stress_theme", input$example_theme)
+  }, ignoreInit = FALSE)
+
   # ---- 1. Scale: single (lazy) ------------------------------------------
   output$scale_single_lazy <- renderUI({
     fluidRow(
@@ -643,4 +674,4 @@ server <- function(input, output, session) {
 }
 
 
-if (interactive()) shinyApp(ui, server)
+shinyApp(ui, server)

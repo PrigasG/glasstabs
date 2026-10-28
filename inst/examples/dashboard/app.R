@@ -74,11 +74,38 @@ body {
                border: 1px solid rgba(239,68,68,.3); color: #fca5a5;
                border-radius: 6px; padding: 2px 10px; font-size: 12px;
                margin-bottom: 10px; }
+.stat-value { font-size:13px; color:#90b8e0; width:70px; text-align:right; }
+.compare-row { flex:1; display:flex; gap:10px; font-size:13px; color:#90b8e0; }
+.compare-divider { color:rgba(180,210,255,.4); }
+.compare-note { font-size:13px; color:rgba(180,210,255,.55); margin-bottom:8px; }
+[data-bs-theme='light'] body { background:linear-gradient(135deg,#f8fbff 0%,#edf4ff 100%); color:#172033; }
+[data-bs-theme='light'] .dash-title { color:#17345c; }
+[data-bs-theme='light'] .dash-actions label,
+[data-bs-theme='light'] .metric-lbl,
+[data-bs-theme='light'] .stat-label { color:#607089; }
+[data-bs-theme='light'] .dash-footer { color:#708198; border-color:rgba(15,23,42,.10); }
+[data-bs-theme='light'] .metric-card,
+[data-bs-theme='light'] .note-box { background:#fff; border-color:#d6e0ed; }
+[data-bs-theme='light'] .metric-val { color:#17345c; }
+[data-bs-theme='light'] .note-box,
+[data-bs-theme='light'] .stat-value,
+[data-bs-theme='light'] .compare-row,
+[data-bs-theme='light'] .compare-note { color:#536078; }
+[data-bs-theme='light'] .compare-divider { color:#9aa8ba; }
+[data-bs-theme='light'] .stat-bar-bg { background:rgba(15,23,42,.10); }
 "
 
 ui <- fluidPage(
   useGlassTabs(),
-  tags$head(tags$style(page_css)),
+  tags$head(
+    tags$script(HTML("document.documentElement.setAttribute('data-bs-theme','dark');")),
+    tags$style(page_css),
+    tags$script(HTML("
+      Shiny.addCustomMessageHandler('dashboard_theme', function(mode) {
+        document.documentElement.setAttribute('data-bs-theme', mode);
+      });
+    "))
+  ),
 
   tags$div(
     class = "dash-wrap",
@@ -90,14 +117,16 @@ ui <- fluidPage(
         "region", regions,
         selected  = "all",
         label     = "Region",
-        clearable = FALSE
+        clearable = FALSE,
+        theme = "auto"
       ),
       glassMultiSelect(
         "metrics", metrics,
         label               = "Metrics",
         selected            = unname(metrics),
         show_style_switcher = FALSE,
-        show_select_all     = FALSE
+        show_select_all     = FALSE,
+        theme = "auto"
       )
     ),
 
@@ -106,6 +135,11 @@ ui <- fluidPage(
     tags$div(
       class = "dash-actions",
       checkboxInput("show_admin", "Admin view", value = FALSE),
+      radioButtons(
+        "example_theme", "Example theme",
+        choices = c("Dark" = "dark", "Light" = "light"),
+        selected = "dark", inline = TRUE
+      ),
       actionButton("add_compare",    "Add Compare",    class = "btn btn-sm"),
       actionButton("remove_compare", "Remove Compare", class = "btn btn-sm"),
       actionButton("next_tab",       "Next \u2192",    class = "btn btn-sm btn-primary")
@@ -115,6 +149,7 @@ ui <- fluidPage(
       "main",
       selected = "overview",
       wrap     = FALSE,
+      theme    = "auto",
 
       glassTabPanel("overview", "Overview",
         tags$h3("Overview"),
@@ -145,6 +180,10 @@ ui <- fluidPage(
 
 
 server <- function(input, output, session) {
+
+  observeEvent(input$example_theme, {
+    session$sendCustomMessage("dashboard_theme", input$example_theme)
+  }, ignoreInit = FALSE)
 
   active_tab  <- glassTabsServer("main")
   region_sel  <- glassSelectValue(input, "region")
@@ -226,7 +265,7 @@ server <- function(input, output, session) {
           class = "stat-bar-bg",
           tags$div(class = "stat-bar-fg", style = paste0("width:", pct, "%"))
         ),
-        tags$div(style = "font-size:13px;color:#90b8e0;width:70px;text-align:right;",
+        tags$div(class = "stat-value",
                  s[[m]])
       )
     })
@@ -245,7 +284,7 @@ server <- function(input, output, session) {
           class = "stat-bar-bg",
           tags$div(class = "stat-bar-fg", style = paste0("width:", lvl, "%"))
         ),
-        tags$div(style = "font-size:13px;color:#90b8e0;width:70px;text-align:right;",
+        tags$div(class = "stat-value",
                  paste0(lvl, "%"))
       ),
       tags$div(class = "note-box", style = "margin-top:14px;",
@@ -276,15 +315,15 @@ server <- function(input, output, session) {
         class = "stat-row",
         tags$div(class = "stat-label", m),
         tags$div(
-          style = "flex:1;display:flex;gap:10px;font-size:13px;color:#90b8e0;",
+          class = "compare-row",
           tags$span(paste("Selected:", s[[m]])),
-          tags$span(style = "color:rgba(180,210,255,.4);", "|"),
+          tags$span(class = "compare-divider", "|"),
           tags$span(paste("All:", s_all[[m]]))
         )
       )
     })
     tagList(
-      tags$p(style = "font-size:13px;color:rgba(180,210,255,.55);margin-bottom:8px;",
+      tags$p(class = "compare-note",
              paste("Comparing", r, "vs all regions")),
       rows
     )
@@ -301,4 +340,4 @@ server <- function(input, output, session) {
   })
 }
 
-if (interactive()) shinyApp(ui, server)
+shinyApp(ui, server)

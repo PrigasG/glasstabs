@@ -28,7 +28,8 @@ glassSelect(
   tongue = TRUE,
   label_bold = TRUE,
   label_size = "14px",
-  search_focus_ring = FALSE
+  search_focus_ring = FALSE,
+  overflow_tooltip = c("auto", "never")
 )
 }
 \arguments{
@@ -112,6 +113,12 @@ keeps the title visually distinct from the dropdown options.}
 \item{search_focus_ring}{Logical. When \code{TRUE}, focusing the dropdown
 search field adds the accent-colored outline. The default, \code{FALSE},
 uses a quieter background and border change without the outer ring.}
+
+\item{overflow_tooltip}{Tooltip behavior for trigger text that is visually
+truncated with an ellipsis. \code{"auto"} (default) shows the complete
+text on pointer hover or keyboard focus only when truncation is detected;
+\code{"never"} disables it. On touch devices, opening the dropdown remains
+the primary way to inspect the full, wrapped option text.}
 }
 \value{
 An \code{htmltools::tagList} containing the single-select trigger,

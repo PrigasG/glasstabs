@@ -55,6 +55,20 @@ test_that("glassMultiSelect() supports label size and an optional search ring", 
   )
 })
 
+test_that("glassMultiSelect() enables truncation tooltips by default", {
+  default <- as.character(glassMultiSelect("f", choices))
+  disabled <- as.character(glassMultiSelect(
+    "f", choices, overflow_tooltip = "never"
+  ))
+
+  expect_match(default, 'data-overflow-tooltip="auto"', fixed = TRUE)
+  expect_match(disabled, 'data-overflow-tooltip="never"', fixed = TRUE)
+  expect_error(
+    glassMultiSelect("f", choices, overflow_tooltip = "always"),
+    class = "glasstabs_error_bad_argument"
+  )
+})
+
 test_that("glassFilterTags() returns an htmltools tag", {
   expect_true(inherits(glassFilterTags("f"), "shiny.tag"))
 })

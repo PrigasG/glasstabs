@@ -127,8 +127,32 @@ test_that("browser: select dropdowns match their fields and stay viewport-safe",
     })()
   "))
 
+  expect_true(app$get_js("
+    (function() {
+      var trigger = document.querySelector('#short_single-trigger');
+      trigger.dispatchEvent(new MouseEvent('mouseenter', {bubbles:true}));
+      return trigger.getAttribute('aria-label').length > 9000;
+    })()
+  "))
+  app$wait_for_js("
+    document.querySelector('#short_single-overflow-tooltip.visible') !== null
+  ")
+  expect_true(app$get_js("
+    (function() {
+      var tip = document.querySelector('#short_single-overflow-tooltip');
+      var rect = tip.getBoundingClientRect();
+      return tip.getAttribute('role') === 'tooltip' &&
+        tip.textContent.length > 9000 &&
+        rect.left >= 11 && rect.right <= window.innerWidth - 11;
+    })()
+  "))
+
   app$click(selector = "#short_single-trigger")
   app$wait_for_js("document.querySelector('#short_single-dropdown.open') !== null")
+  expect_true(app$get_js("
+    !document.querySelector('#short_single-overflow-tooltip')
+      .classList.contains('visible')
+  "))
 
   expect_true(app$get_js("
     (function() {
@@ -212,6 +236,22 @@ test_that("browser: select dropdowns match their fields and stay viewport-safe",
           button.textContent.trim().length > 0;
       });
     })()
+  "))
+  expect_true(app$get_js("
+    (function() {
+      var wrap = document.querySelector('#short_multi-wrap');
+      wrap._gt.close();
+      wrap._gt.setValue(['long_words', 'pathological'], {notify:false});
+      var trigger = document.querySelector('#short_multi-trigger');
+      trigger.dispatchEvent(new MouseEvent('mouseenter', {bubbles:true}));
+      return trigger.getAttribute('aria-label').length > 9000;
+    })()
+  "))
+  app$wait_for_js("
+    document.querySelector('#short_multi-overflow-tooltip.visible') !== null
+  ")
+  expect_true(app$get_js("
+    document.querySelector('#short_multi-overflow-tooltip').textContent.length > 9000
   "))
 })
 

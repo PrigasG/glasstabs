@@ -521,6 +521,32 @@
   text-overflow:ellipsis;
 }
 
+.gt-overflow-tooltip{
+  position:fixed;
+  z-index:10050;
+  max-width:min(36rem,calc(100vw - 24px));
+  max-height:calc(100vh - 24px);
+  padding:8px 10px;
+  border:1px solid rgba(255,255,255,0.14);
+  border-radius:8px;
+  background:rgba(12,23,40,0.97);
+  color:#f3f8ff;
+  box-shadow:0 10px 30px rgba(0,0,0,0.28);
+  font-size:12px;
+  font-weight:500;
+  line-height:1.4;
+  overflow-wrap:anywhere;
+  word-break:break-word;
+  overflow-y:auto;
+  pointer-events:auto;
+  opacity:0;
+  transform:translateY(-2px);
+  transition:opacity 100ms ease-out,transform 100ms ease-out;
+}
+.gt-overflow-tooltip.visible{opacity:1;transform:translateY(0);}
+.gt-overflow-tooltip.gt-tooltip-above{transform:translateY(2px);}
+.gt-overflow-tooltip.gt-tooltip-above.visible{transform:translateY(0);}
+
 .gt-gs-trigger:hover{
   background:rgba(255,255,255,0.08);
   border-color:var(--ms-accent);
@@ -1492,7 +1518,8 @@
    same media query before starting transfer or swipe animations. */
 @media (prefers-reduced-motion: reduce){
   .gt-halo,.gt-tab-pane,.gt-transfer,.gt-tab-link,
-  .gt-gs-trigger,.gt-ms-trigger,.gt-gs-dropdown,.gt-ms-dropdown{
+  .gt-gs-trigger,.gt-ms-trigger,.gt-gs-dropdown,.gt-ms-dropdown,
+  .gt-overflow-tooltip{
     transition-duration:0.01ms !important;
     animation-duration:0.01ms !important;
     animation-iteration-count:1 !important;

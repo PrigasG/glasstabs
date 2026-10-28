@@ -57,6 +57,13 @@ body {
   font-size: 13px;
   line-height: 1.6;
 }
+[data-bs-theme='light'] body {
+  background:linear-gradient(135deg,#f8fbff 0%,#edf4ff 100%); color:#172033;
+}
+[data-bs-theme='light'] .smoke-head h1 { color:#17345c; }
+[data-bs-theme='light'] .smoke-head p,
+[data-bs-theme='light'] .smoke-note { color:#607089; }
+[data-bs-theme='light'] .smoke-panel { background:#fff; border-color:#d6e0ed; }
 @media (max-width: 820px) {
   .smoke-grid {
     grid-template-columns: 1fr;
@@ -66,7 +73,15 @@ body {
 
 ui <- fluidPage(
   useGlassTabs(),
-  tags$head(tags$style(page_css)),
+  tags$head(
+    tags$script(HTML("document.documentElement.setAttribute('data-bs-theme','dark');")),
+    tags$style(page_css),
+    tags$script(HTML("
+      Shiny.addCustomMessageHandler('smoke_theme', function(mode) {
+        document.documentElement.setAttribute('data-bs-theme', mode);
+      });
+    "))
+  ),
   tags$div(
     class = "smoke-wrap",
     tags$div(
@@ -76,6 +91,11 @@ ui <- fluidPage(
     ),
     tags$div(
       class = "smoke-controls",
+      radioButtons(
+        "example_theme", "Example theme",
+        choices = c("Dark" = "dark", "Light" = "light"),
+        selected = "dark", inline = TRUE
+      ),
       checkboxInput("show_admin", "Show admin tab", value = TRUE),
       actionButton("next_tab", "Next visible tab"),
       actionButton("go_admin", "Go to admin"),
@@ -91,8 +111,10 @@ ui <- fluidPage(
         "metric_filter",
         c(Revenue = "revenue", Orders = "orders", Returns = "returns"),
         selected = c("revenue", "orders", "returns"),
-        show_style_switcher = FALSE
+        show_style_switcher = FALSE,
+        theme = "auto"
       ),
+      theme = "auto",
       glassTabPanel(
         "overview", "Overview", selected = TRUE,
         tags$h3("Overview"),
@@ -136,6 +158,10 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
+  observeEvent(input$example_theme, {
+    session$sendCustomMessage("smoke_theme", input$example_theme)
+  }, ignoreInit = FALSE)
+
   active_tab <- glassTabsServer("main")
   metrics <- glassMultiSelectValue(input, "metric_filter")
   compare_present <- reactiveVal(FALSE)
@@ -237,4 +263,4 @@ server <- function(input, output, session) {
   })
 }
 
-if (interactive()) shinyApp(ui, server)
+shinyApp(ui, server)

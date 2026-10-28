@@ -2,6 +2,14 @@
 
 ## Fixes
 
+* Ellipsized select trigger text now exposes its complete value through a
+  viewport-safe hover/keyboard tooltip by default. Set
+  `overflow_tooltip = "never"` to disable the visual tooltip; full accessible
+  names remain available, and touch users can open the dropdown to read the
+  wrapped option. The formerly dark-only built-in examples now include live
+  light/dark switches and use `theme = "auto"` consistently. Example apps now
+  return standard Shiny app objects for automated launchers, and an obsolete
+  `shinyjs` scratch app was removed from the installed examples.
 * Select field titles now default to a distinct 14px semibold treatment and
   accept `label_size` alongside `label_bold`. Dropdown search uses a quieter
   neutral focus treatment by default; `search_focus_ring = TRUE` opts into the

@@ -117,58 +117,11 @@ glassMultiSelect(
 glassFilterTags("status")
 ```
 
-Select dropdowns always match their trigger width. The standard width is a compact
-`160px`; use the optional `width` argument only when an app needs more room for
-long labels. Both fixed and fluid CSS widths are supported and remain capped by
-the containing layout, so `width = "240px"` works well for a wider filter while
-`width = "100%"` fills the available column. Exceptionally long labels still
-wrap safely inside the matching panel.
+Select dropdowns always match their trigger width. The standard width is a compact `160px`; use the optional `width` argument only when an app needs more room for long labels. Both fixed and fluid CSS widths are supported and remain capped by the containing layout, so `width = "240px"` works well for a wider filter while `width = "100%"` fills the available column. Exceptionally long labels still wrap safely inside the matching panel.
 
 ``` r
 glassSelect("industry", industry_choices, width = "240px")
 glassMultiSelect("filters", filter_choices, width = "100%")
-```
-
-The attached tongue and its unfold/retract motion are enabled by default. Turn
-them off per input when a conventional detached menu fits the surrounding Shiny
-controls better. Detached menus retain a short native-like fade/slide instead
-of appearing abruptly. This changes presentation only; values and server APIs
-remain the same.
-
-``` r
-selectInput("team", "Team", teams, selectize = FALSE)
-glassSelect("industry", industries, tongue = FALSE)
-glassMultiSelect("topics", topics, tongue = TRUE)
-```
-
-Field labels use a distinct 14px semibold title treatment by default. Use
-`label_size` to match a surrounding form, or `label_bold = FALSE` when a
-quieter, regular-weight label is more appropriate.
-
-``` r
-glassSelect("industry", industries, label = "Industry", label_size = "16px")
-glassSelect("region", regions, label = "Region", label_bold = FALSE)
-```
-
-The dropdown search field uses a restrained neutral focus treatment by
-default. Set `search_focus_ring = TRUE` when the stronger blue accessibility
-ring better suits the app or when you want to emphasize active search.
-
-``` r
-glassSelect("industry", industries, search_focus_ring = FALSE)
-glassMultiSelect("topics", topics, search_focus_ring = TRUE)
-```
-
-Filled multi-selects use one consistent theme accent by default. Set
-`fill_colors = "multi"` when categorical per-option colors carry useful meaning.
-
-``` r
-glassMultiSelect("topics", topics, check_style = "filled")
-glassMultiSelect(
-  "categories", categories,
-  check_style = "filled",
-  fill_colors = "multi"
-)
 ```
 
 For a short list, the search box can stay out of the way. With `searchable = "auto"`, it appears only when the list reaches the chosen threshold. The trigger can also show a compact summary instead of the generic “Multiple selection” label.
@@ -394,7 +347,7 @@ server <- function(input, output, session) {
 | `runGlassExample(example)` | Launch a built-in example app (`runGlassExample()` lists all available apps) |
 | `glasstabs_news()` | Print the package changelog to the R console |
 
-Built-in examples include `basic`, `bs4dash`, `bslib`, `connect-workflow`, `dashboard`, `indicators`, `light-mode`, `native-comparison`, `server-select`, `smoke-test`, `square-corners`, `stress-test`, and `theme-switcher`. The `native-comparison` lab places native Shiny, Selectize, and glasstabs inputs side by side, including a live width control and tongue toggle. The theme-switcher example flips every select between dark and light with one switch, and exercises long category names, optional widths, wide text in a narrow phone frame, and a bottom-of-page dropdown that must flip above the field. The Connect workflow doubles as a v0.4.1 test lab, with the responsive, keyboard, touch, dynamic-tab, badge, theme, and page-wrapper checks collected in one app.
+Built-in examples include `basic`, `bs4dash`, `bslib`, `connect-workflow`, `dashboard`, `indicators`, `light-mode`, `server-select`, `smoke-test`, `square-corners`, `stress-test`, and `theme-switcher`. The dedicated light-mode example includes long select labels for checking adaptive dropdown sizing. The theme-switcher example flips every select between dark and light with one switch, and exercises long category names, wide text in a narrow phone frame, and a bottom-of-page dropdown that must flip above the field. The Connect workflow doubles as a v0.4.1 test lab, with the responsive, keyboard, touch, dynamic-tab, badge, theme, and page-wrapper checks collected in one app.
 
 ### Tab widget
 

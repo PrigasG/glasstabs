@@ -79,7 +79,8 @@ glassSelect <- function(
     tongue = TRUE,
     label_bold = TRUE,
     label_size = "14px",
-    search_focus_ring = FALSE
+    search_focus_ring = FALSE,
+    overflow_tooltip = c("auto", "never")
 ) {
   .gt_check_string(
     inputId,
@@ -91,6 +92,11 @@ glassSelect <- function(
   .gt_check_flag(label_bold, "label_bold")
   .gt_check_flag(search_focus_ring, "search_focus_ring")
   label_size <- .gt_css_unit(label_size, "label_size")
+  overflow_tooltip <- .gt_match_arg(
+    overflow_tooltip,
+    c("auto", "never"),
+    "overflow_tooltip"
+  )
   check_style <- .gt_match_arg(check_style, c("checkbox", "check-only", "filled"), "check_style")
   shape <- .gt_match_arg(shape, c("rounded", "square"), "shape")
   field_width_style <- .gt_field_width_style(width)
@@ -296,6 +302,7 @@ glassSelect <- function(
         `data-server` = tolower(as.character(server)),
         `data-server-total` = as.character(length(vals)),
         `data-server-min-chars` = as.character(server_min_chars),
+        `data-overflow-tooltip` = overflow_tooltip,
 
         shiny::div(
           class = "gt-gs-trigger",
