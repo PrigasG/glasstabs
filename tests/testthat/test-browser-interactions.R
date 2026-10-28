@@ -1152,12 +1152,167 @@ test_that("browser: dropdown opens flush like a tongue from the field", {
     })()
   "))
 
-  # Panel unfurls with scaleY (not the old translateY/scale pop).
+  # The unfurl is scaleY, not the old translateY/scale pop: once closed and
+  # settled, the transform is exactly scaleY(0). The old closed state was
+  # translateY(-8px) scale(0.96), a different matrix, so this assertion fails
+  # on the old animation. The open-state matrix cannot distinguish them
+  # (both settle at scale(1)), which is why the closed state is checked.
+  app$click(selector = "#fruit-trigger")
+  app$wait_for_js("document.querySelector('#fruit-dropdown.open') === null")
+  app$wait_for_js("
+    getComputedStyle(document.querySelector('#fruit-dropdown')).transform ===
+      'matrix(1, 0, 0, 0, 0, 0)'
+  ")
+  expect_true(app$get_js("
+    getComputedStyle(document.querySelector('#fruit-dropdown')).transform ===
+      'matrix(1, 0, 0, 0, 0, 0)'
+  "))
+})
+
+test_that("browser: dropdown flipped above the field retracts into the trigger", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-dropdown-flip-above",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+  # Scroll the trigger to the viewport bottom so no room remains below it;
+  # the panel must flip above the field. A JS click is used (not app$click)
+  # so the driver does not scroll the trigger back into view first.
+  app$get_js("
+    (function() {
+      var tr = document.querySelector('#fruit-trigger').getBoundingClientRect();
+      window.scrollTo(0, window.pageYOffset + tr.bottom - window.innerHeight);
+      return 'scrolled';
+    })()
+  ")
+  app$get_js("document.querySelector('#fruit-trigger').click(); 'clicked'")
+  app$wait_for_js("
+    (function() {
+      var p = document.querySelector('#fruit-dropdown');
+      return p !== null && p.classList.contains('open') &&
+        p.classList.contains('gt-flip-above');
+    })()
+  ")
+
+  # Panel sits above, flush: 1px border overlap with the trigger top.
+  expect_true(app$get_js("
+    (function() {
+      var trigger = document.querySelector('#fruit-trigger');
+      var panel = document.querySelector('#fruit-dropdown');
+      var tr = trigger.getBoundingClientRect();
+      var dr = panel.getBoundingClientRect();
+      return Math.abs(dr.bottom - (tr.top + 1)) <= 2;
+    })()
+  "))
+
+  # Flipped corners: bottom squared, top restored.
+  expect_true(app$get_js("
+    (function() {
+      var cs = getComputedStyle(document.querySelector('#fruit-dropdown'));
+      return cs.borderBottomLeftRadius === '0px' &&
+        cs.borderBottomRightRadius === '0px' &&
+        cs.borderTopLeftRadius === '14px' &&
+        cs.borderTopRightRadius === '14px';
+    })()
+  "))
+
+  # Flipped origin is bottom center, so the panel retracts into the trigger.
+  # offsetWidth/offsetHeight are used because transforms do not affect them.
   expect_true(app$get_js("
     (function() {
       var panel = document.querySelector('#fruit-dropdown');
-      var t = getComputedStyle(panel).transform;
-      return t !== 'none';
+      var parts = getComputedStyle(panel).transformOrigin.split(' ');
+      var ox = parseFloat(parts[0]);
+      var oy = parseFloat(parts[1]);
+      return Math.abs(ox - panel.offsetWidth / 2) <= 2 &&
+        Math.abs(oy - panel.offsetHeight) <= 2;
+    })()
+  "))
+
+  # Flipped dark shadow points upward.
+  expect_true(app$get_js("
+    getComputedStyle(document.querySelector('#fruit-dropdown')).boxShadow
+      .indexOf('-22px') !== -1
+  "))
+
+  # Width is untouched by the flip: still the field's width.
+  expect_true(app$get_js("
+    Math.abs(
+      document.querySelector('#fruit-dropdown').offsetWidth -
+      document.querySelector('#fruit-trigger').offsetWidth
+    ) <= 2
+  "))
+
+  # Closing keeps the bottom origin: clicking to close and reading the origin
+  # in the same JS turn must still show bottom center. With the origin scoped
+  # to `.open`, it would revert to top center the moment `.open` is removed.
+  expect_true(app$get_js("
+    (function() {
+      var trigger = document.querySelector('#fruit-trigger');
+      var panel = document.querySelector('#fruit-dropdown');
+      trigger.click();
+      var parts = getComputedStyle(panel).transformOrigin.split(' ');
+      var ox = parseFloat(parts[0]);
+      var oy = parseFloat(parts[1]);
+      return Math.abs(ox - panel.offsetWidth / 2) <= 2 &&
+        Math.abs(oy - panel.offsetHeight) <= 2;
+    })()
+  "))
+})
+
+test_that("browser: flipped light dropdown keeps its upward light shadow", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-dropdown-flip-light",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+  app$get_js("
+    (function() {
+      var tr = document.querySelector('#fruit_light-trigger').getBoundingClientRect();
+      window.scrollTo(0, window.pageYOffset + tr.bottom - window.innerHeight);
+      return 'scrolled';
+    })()
+  ")
+  app$get_js("document.querySelector('#fruit_light-trigger').click(); 'clicked'")
+  app$wait_for_js("
+    (function() {
+      var p = document.querySelector('#fruit_light-dropdown');
+      return p !== null && p.classList.contains('open') &&
+        p.classList.contains('gt-flip-above');
+    })()
+  ")
+
+  # The teleported panel carries the light theme itself.
+  expect_true(app$get_js("
+    document.querySelector('#fruit_light-dropdown').classList.contains('theme-light')
+  "))
+
+  # Flipped light shadow points upward with light values, not the dark
+  # upward shadow. This fails when the shadow selector expects the panel to
+  # still sit beneath the wrap, which teleporting breaks.
+  expect_true(app$get_js("
+    (function() {
+      var shadow = getComputedStyle(
+        document.querySelector('#fruit_light-dropdown')
+      ).boxShadow;
+      return shadow.indexOf('-12px') !== -1 &&
+        shadow.indexOf('-22px') === -1;
     })()
   "))
 })

@@ -263,12 +263,19 @@
 }
 /* Flipped above the field: the tongue retracts upward instead. */
 .gt-ms-dropdown.open.gt-flip-above:not(.shape-square){
-  transform-origin:bottom center;
   border-top-left-radius:14px;border-top-right-radius:14px;
   border-bottom-left-radius:0;border-bottom-right-radius:0;
   box-shadow:0 -22px 64px rgba(0,0,0,0.45);
 }
-.gt-ms-wrap.theme-light .gt-ms-dropdown.open.gt-flip-above:not(.shape-square){
+/* The bottom origin must hold while closing too: `.open` is removed at the
+   start of the close transition, so scoping the origin to `.open` would make
+   an above-field panel retract from the wrong edge. */
+.gt-ms-dropdown.gt-flip-above:not(.shape-square){
+  transform-origin:bottom center;
+}
+/* Teleported panels live under <body>, not under the wrap, so the light
+   shadow must target the theme class copied onto the dropdown itself. */
+.gt-ms-dropdown.theme-light.gt-flip-above:not(.shape-square){
   box-shadow:0 -12px 40px rgba(0,0,0,0.15),0 0 0 1px rgba(0,0,0,0.06);
 }
 
@@ -620,14 +627,21 @@
 }
 /* Flipped above the field: the tongue retracts upward instead. */
 .gt-gs-dropdown.open.gt-flip-above:not(.shape-square){
-  transform-origin:bottom center;
   border-top-left-radius:14px;
   border-top-right-radius:14px;
   border-bottom-left-radius:0;
   border-bottom-right-radius:0;
   box-shadow:0 -22px 64px rgba(0,0,0,0.45);
 }
-.gt-gs-wrap.theme-light .gt-gs-dropdown.open.gt-flip-above:not(.shape-square){
+/* The bottom origin must hold while closing too: `.open` is removed at the
+   start of the close transition, so scoping the origin to `.open` would make
+   an above-field panel retract from the wrong edge. */
+.gt-gs-dropdown.gt-flip-above:not(.shape-square){
+  transform-origin:bottom center;
+}
+/* Teleported panels live under <body>, not under the wrap, so the light
+   shadow must target the theme class copied onto the dropdown itself. */
+.gt-gs-dropdown.theme-light.gt-flip-above:not(.shape-square){
   box-shadow:0 -12px 40px rgba(0,0,0,0.15),0 0 0 1px rgba(0,0,0,0.06);
 }
 

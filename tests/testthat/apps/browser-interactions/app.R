@@ -91,6 +91,13 @@ ui <- fluidPage(
       selected = "apple",
       shape = "rounded"
     ),
+    glassSelect(
+      "fruit_light",
+      choices,
+      selected = "apple",
+      shape = "rounded",
+      theme = "light"
+    ),
     tags$div(
       class = "mobile-frame",
       glassTabsUI(
