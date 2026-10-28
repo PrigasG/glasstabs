@@ -2,6 +2,11 @@
 
 ## Fixes
 
+* Select field titles now default to a distinct 14px semibold treatment and
+  accept `label_size` alongside `label_bold`. Dropdown search uses a quieter
+  neutral focus treatment by default; `search_focus_ring = TRUE` opts into the
+  accent outline. The native-comparison lab groups shared settings separately
+  from the feature controls for each demonstration.
 * Select dropdowns now grow beyond narrow triggers when their controls or
   longer option labels need more room, up to a comfortable viewport-aware
   cap. The multi-select Check / Box / Fill switcher also falls back to compact

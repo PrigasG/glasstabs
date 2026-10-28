@@ -33,7 +33,9 @@ glassMultiSelect(
   no_matches_text = "No matches",
   tongue = TRUE,
   label_bold = TRUE,
-  fill_colors = c("single", "multi")
+  fill_colors = c("single", "multi"),
+  label_size = "14px",
+  search_focus_ring = FALSE
 )
 }
 \arguments{
@@ -137,8 +139,14 @@ label text.}
 
 \item{fill_colors}{Color treatment for \code{check_style = "filled"}.
 \code{"single"} (default) uses the theme accent for every selected row;
-\code{"multi"} keeps the categorical per-option colors. This argument is
-last so existing positional calls keep working.}
+\code{"multi"} keeps the categorical per-option colors.}
+
+\item{label_size}{CSS size for the field label. The default, \code{"14px"},
+keeps the title visually distinct from the dropdown options.}
+
+\item{search_focus_ring}{Logical. When \code{TRUE}, focusing the dropdown
+search field adds the accent-colored outline. The default, \code{FALSE},
+uses a quieter background and border change without the outer ring.}
 }
 \value{
 An \code{htmltools::tagList} containing the trigger button, dropdown

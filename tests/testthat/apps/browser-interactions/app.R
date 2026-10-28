@@ -35,6 +35,7 @@ ui <- fluidPage(
       selected = "apple",
       clearable = TRUE,
       shape = "rounded",
+      search_focus_ring = TRUE,
       theme = glass_select_theme(focus_ring = "#a21caf")
     ),
     glassMultiSelect(

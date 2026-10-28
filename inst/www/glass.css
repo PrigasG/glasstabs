@@ -477,7 +477,7 @@
 
 .gt-input-label{
   color:var(--ms-label, var(--ms-text, #cfe6ff));
-  font-size:12px;
+  font-size:var(--gt-label-size,14px);
   font-weight:600;
   letter-spacing:.01em;
   margin:0;
@@ -710,6 +710,12 @@
 
 .gt-gs-search:focus-within,
 .gt-ms-search:focus-within{
+  background:var(--ms-tx-08);
+  border-color:var(--ms-tx-35);
+}
+
+.gt-gs-dropdown.gt-search-ring .gt-gs-search:focus-within,
+.gt-ms-dropdown.gt-search-ring .gt-ms-search:focus-within{
   border-color:var(--ms-focus-ring,#7ec3f7);
   outline:2px solid var(--ms-focus-ring,#7ec3f7);
   outline-offset:2px;

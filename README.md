@@ -141,12 +141,22 @@ glassSelect("industry", industries, tongue = FALSE)
 glassMultiSelect("topics", topics, tongue = TRUE)
 ```
 
-Field labels use the same semibold emphasis as native Shiny inputs by default.
-Use `label_bold = FALSE` when a quieter, regular-weight label better matches the
-surrounding form.
+Field labels use a distinct 14px semibold title treatment by default. Use
+`label_size` to match a surrounding form, or `label_bold = FALSE` when a
+quieter, regular-weight label is more appropriate.
 
 ``` r
-glassSelect("industry", industries, label = "Industry", label_bold = FALSE)
+glassSelect("industry", industries, label = "Industry", label_size = "16px")
+glassSelect("region", regions, label = "Region", label_bold = FALSE)
+```
+
+The dropdown search field uses a restrained neutral focus treatment by
+default. Set `search_focus_ring = TRUE` when the stronger blue accessibility
+ring better suits the app or when you want to emphasize active search.
+
+``` r
+glassSelect("industry", industries, search_focus_ring = FALSE)
+glassMultiSelect("topics", topics, search_focus_ring = TRUE)
 ```
 
 Filled multi-selects use one consistent theme accent by default. Set

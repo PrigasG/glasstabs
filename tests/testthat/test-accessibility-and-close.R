@@ -37,6 +37,8 @@ test_that("glass.css uses color-mix only as progressive enhancement", {
   expect_true(grepl(".gt-tab-menu-select option", css, fixed = TRUE))
   expect_true(grepl(".gt-gs-trigger:focus-visible", css, fixed = TRUE))
   expect_true(grepl(".gt-ms-search:focus-within", css, fixed = TRUE))
+  expect_true(grepl(".gt-ms-dropdown.gt-search-ring", css, fixed = TRUE))
+  expect_true(grepl("background:var(--ms-tx-08)", css, fixed = TRUE))
   expect_true(grepl("--ms-focus-ring", css, fixed = TRUE))
 })
 
@@ -207,6 +209,7 @@ test_that("single-color filled multi-selects use the theme accent", {
   expect_true(grepl(".gt-ms-dropdown.fill-single.style-filled", css, fixed = TRUE))
   expect_true(grepl("background:var(--ms-accent)!important", css, fixed = TRUE))
   expect_true(grepl("'fill-single'", js, fixed = TRUE))
+  expect_true(grepl("'gt-search-ring'", js, fixed = TRUE))
 })
 
 test_that("glass.js does not ship debug-only message handlers", {

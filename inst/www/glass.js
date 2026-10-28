@@ -244,7 +244,7 @@
   ];
 
   var TELEPORT_CLASSES = [
-    'style-checkbox','style-check-only','style-filled','fill-single',
+    'style-checkbox','style-check-only','style-filled','fill-single','gt-search-ring',
     'theme-light','shape-square','gt-no-tongue'
   ];
 

@@ -77,7 +77,9 @@ glassSelect <- function(
     server_min_chars = 0L,
     no_matches_text = "No matches",
     tongue = TRUE,
-    label_bold = TRUE
+    label_bold = TRUE,
+    label_size = "14px",
+    search_focus_ring = FALSE
 ) {
   .gt_check_string(
     inputId,
@@ -87,6 +89,8 @@ glassSelect <- function(
   .gt_check_text(no_matches_text, "no_matches_text", "glassSelect")
   .gt_check_flag(tongue, "tongue")
   .gt_check_flag(label_bold, "label_bold")
+  .gt_check_flag(search_focus_ring, "search_focus_ring")
+  label_size <- .gt_css_unit(label_size, "label_size")
   check_style <- .gt_match_arg(check_style, c("checkbox", "check-only", "filled"), "check_style")
   shape <- .gt_match_arg(shape, c("rounded", "square"), "shape")
   field_width_style <- .gt_field_width_style(width)
@@ -165,9 +169,9 @@ glassSelect <- function(
   scope_id <- paste0(inputId, "-wrap")
 
   theme_css <- sprintf(
-    "#%s{--ms-bg:%s;--ms-border:%s;--ms-text:%s;--ms-accent:%s;--ms-focus-ring:%s;--ms-label:%s;%s}",
+    "#%s{--ms-bg:%s;--ms-border:%s;--ms-text:%s;--ms-accent:%s;--ms-focus-ring:%s;--ms-label:%s;--gt-label-size:%s;%s}",
     field_id, colors$bg, colors$border, colors$text, colors$accent, colors$focus, colors$label,
-    .to_rgba_vars(colors)
+    label_size, .to_rgba_vars(colors)
   )
   dark_override_style <- if (is_auto) {
     .select_dark_override_style('[data-bs-theme="dark"]', field_id)
@@ -180,6 +184,7 @@ glassSelect <- function(
     paste(
       "gt-gs-wrap",
       paste0("style-", check_style),
+      if (search_focus_ring) "gt-search-ring" else NULL,
       if (!tongue) "gt-no-tongue" else NULL,
       if (identical(shape, "square")) "shape-square" else NULL,
       if (disabled) "gt-disabled" else NULL,

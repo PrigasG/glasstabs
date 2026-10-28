@@ -84,10 +84,14 @@
 #' @param label_bold Logical. Use a semibold field label, matching native Shiny
 #'   inputs, when \code{TRUE} (default). Set to \code{FALSE} for regular-weight
 #'   label text.
+#' @param label_size CSS size for the field label. The default, \code{"14px"},
+#'   keeps the title visually distinct from the dropdown options.
+#' @param search_focus_ring Logical. When \code{TRUE}, focusing the dropdown
+#'   search field adds the accent-colored outline. The default, \code{FALSE},
+#'   uses a quieter background and border change without the outer ring.
 #' @param fill_colors Color treatment for \code{check_style = "filled"}.
 #'   \code{"single"} (default) uses the theme accent for every selected row;
-#'   \code{"multi"} keeps the categorical per-option colors. This argument is
-#'   last so existing positional calls keep working.
+#'   \code{"multi"} keeps the categorical per-option colors.
 #'
 #' @return An \code{htmltools::tagList} containing the trigger button, dropdown
 #'   panel, and scoped \code{<style>} block.
@@ -142,7 +146,9 @@ glassMultiSelect <- function(
     no_matches_text     = "No matches",
     tongue             = TRUE,
     label_bold         = TRUE,
-    fill_colors        = c("single", "multi")
+    fill_colors        = c("single", "multi"),
+    label_size         = "14px",
+    search_focus_ring  = FALSE
 ) {
   .gt_check_string(
     inputId,
@@ -152,6 +158,8 @@ glassMultiSelect <- function(
   .gt_check_text(no_matches_text, "no_matches_text", "glassMultiSelect")
   .gt_check_flag(tongue, "tongue")
   .gt_check_flag(label_bold, "label_bold")
+  .gt_check_flag(search_focus_ring, "search_focus_ring")
+  label_size <- .gt_css_unit(label_size, "label_size")
   fill_colors <- .gt_match_arg(fill_colors, c("single", "multi"), "fill_colors")
   check_style <- .gt_match_arg(check_style, c("checkbox", "check-only", "filled"), "check_style")
   shape <- .gt_match_arg(shape, c("rounded", "square"), "shape")
@@ -230,9 +238,9 @@ glassMultiSelect <- function(
   scope_id <- paste0(inputId, "-wrap")
 
   theme_css <- sprintf(
-    "#%s{--ms-bg:%s;--ms-border:%s;--ms-text:%s;--ms-accent:%s;--ms-focus-ring:%s;--ms-label:%s;--ms-dropdown-max-height:%s;%s}",
+    "#%s{--ms-bg:%s;--ms-border:%s;--ms-text:%s;--ms-accent:%s;--ms-focus-ring:%s;--ms-label:%s;--gt-label-size:%s;--ms-dropdown-max-height:%s;%s}",
     field_id, colors$bg, colors$border, colors$text, colors$accent, colors$focus, colors$label,
-    dropdown_max_height, .to_rgba_vars(colors)
+    label_size, dropdown_max_height, .to_rgba_vars(colors)
   )
 
   dark_override_style <- if (!is.null(dark_selector) && nzchar(dark_selector)) {
@@ -433,6 +441,7 @@ glassMultiSelect <- function(
       "gt-ms-wrap",
       paste0("style-", check_style),
       if (identical(fill_colors, "single")) "fill-single" else NULL,
+      if (search_focus_ring) "gt-search-ring" else NULL,
       if (!tongue) "gt-no-tongue" else NULL,
       if (identical(shape, "square")) "shape-square" else NULL,
       if (disabled) "gt-disabled" else NULL,

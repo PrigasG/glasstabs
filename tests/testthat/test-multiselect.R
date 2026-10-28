@@ -34,6 +34,27 @@ test_that("glassMultiSelect() uses bold labels by default and can opt out", {
   )
 })
 
+test_that("glassMultiSelect() supports label size and an optional search ring", {
+  default <- as.character(glassMultiSelect("f", choices, label = "Fruit"))
+  customized <- as.character(glassMultiSelect(
+    "f", choices, label = "Fruit", label_size = "16px",
+    search_focus_ring = TRUE
+  ))
+
+  expect_match(default, "--gt-label-size:14px", fixed = TRUE)
+  expect_false(grepl("gt-search-ring", default, fixed = TRUE))
+  expect_match(customized, "--gt-label-size:16px", fixed = TRUE)
+  expect_match(customized, "gt-ms-wrap[^\"]*gt-search-ring")
+  expect_error(
+    glassMultiSelect("f", choices, label_size = "large-ish"),
+    class = "glasstabs_error_bad_argument"
+  )
+  expect_error(
+    glassMultiSelect("f", choices, search_focus_ring = NA),
+    class = "glasstabs_error_bad_argument"
+  )
+})
+
 test_that("glassFilterTags() returns an htmltools tag", {
   expect_true(inherits(glassFilterTags("f"), "shiny.tag"))
 })

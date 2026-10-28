@@ -257,7 +257,10 @@ test_that("browser: tongue can be disabled for detached native-like panels", {
         parseFloat(getComputedStyle(trigger).borderBottomLeftRadius) > 0 &&
         getComputedStyle(
           document.querySelector('#detached_single-field .gt-input-label')
-        ).fontWeight === '400';
+        ).fontWeight === '400' &&
+        getComputedStyle(
+          document.querySelector('#detached_single-field .gt-input-label')
+        ).fontSize === '14px';
     })()
   "))
 

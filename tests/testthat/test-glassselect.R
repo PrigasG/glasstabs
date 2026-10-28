@@ -34,6 +34,27 @@ test_that("glassSelect() uses bold labels by default and can opt out", {
   )
 })
 
+test_that("glassSelect() supports label size and an optional search ring", {
+  default <- as.character(glassSelect("f", choices, label = "Fruit"))
+  customized <- as.character(glassSelect(
+    "f", choices, label = "Fruit", label_size = "16px",
+    search_focus_ring = TRUE
+  ))
+
+  expect_match(default, "--gt-label-size:14px", fixed = TRUE)
+  expect_false(grepl("gt-search-ring", default, fixed = TRUE))
+  expect_match(customized, "--gt-label-size:16px", fixed = TRUE)
+  expect_match(customized, "gt-gs-wrap[^\"]*gt-search-ring")
+  expect_error(
+    glassSelect("f", choices, label_size = "large-ish"),
+    class = "glasstabs_error_bad_argument"
+  )
+  expect_error(
+    glassSelect("f", choices, search_focus_ring = "yes"),
+    class = "glasstabs_error_bad_argument"
+  )
+})
+
 
 test_that("glassSelect() accepts unnamed choices", {
   expect_no_error(glassSelect("f", c("x", "y", "z")))

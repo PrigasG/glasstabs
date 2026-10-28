@@ -26,7 +26,9 @@ glassSelect(
   server_min_chars = 0L,
   no_matches_text = "No matches",
   tongue = TRUE,
-  label_bold = TRUE
+  label_bold = TRUE,
+  label_size = "14px",
+  search_focus_ring = FALSE
 )
 }
 \arguments{
@@ -103,6 +105,13 @@ naturally beside native Shiny inputs.}
 \item{label_bold}{Logical. Use a semibold field label, matching native Shiny
 inputs, when \code{TRUE} (default). Set to \code{FALSE} for regular-weight
 label text.}
+
+\item{label_size}{CSS size for the field label. The default, \code{"14px"},
+keeps the title visually distinct from the dropdown options.}
+
+\item{search_focus_ring}{Logical. When \code{TRUE}, focusing the dropdown
+search field adds the accent-colored outline. The default, \code{FALSE},
+uses a quieter background and border change without the outer ring.}
 }
 \value{
 An \code{htmltools::tagList} containing the single-select trigger,
