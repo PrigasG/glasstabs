@@ -1160,8 +1160,68 @@ test_that("browser: dropdown opens flush like a tongue from the field", {
   # The trigger ignores close clicks within 500 ms of opening, so wait out
   # that guard first, or the close click is swallowed and the panel stays open.
   Sys.sleep(0.6)
-  app$click(selector = "#fruit-trigger")
-  app$wait_for_js("document.querySelector('#fruit-dropdown.open') === null")
+  # Closing must animate, not teleport: the panel stays under <body>,
+  # attached to the trigger, and mid-retract (scale strictly between 0 and 1)
+  # while closing, and only returns to the wrapper once the retract finishes.
+  # Moving it back in the same turn as removing `.open` collapses it instantly,
+  # so a final-matrix check alone passes even when no transition occurs.
+  # Samples are taken on the browser clock (setTimeout), then read after the
+  # transition and the delayed teleport have both had time to complete.
+  app$get_js("
+    (function() {
+      var trigger = document.querySelector('#fruit-trigger');
+      var panel = document.querySelector('#fruit-dropdown');
+      var samples = [];
+      function record(label) {
+        var tr = trigger.getBoundingClientRect();
+        var pr = panel.getBoundingClientRect();
+        var m = getComputedStyle(panel).transform;
+        var scaleY = null;
+        if (m && m !== 'none') {
+          scaleY = parseFloat(m.replace('matrix(', '').replace(')', '').split(',')[3]);
+        }
+        samples.push({
+          label: label,
+          parentIsBody: panel.parentNode === document.body,
+          attached: Math.abs(pr.top - (tr.bottom - 1)) <= 2,
+          scaleY: scaleY
+        });
+      }
+      trigger.click();
+      [50, 100].forEach(function(ms) {
+        setTimeout(function() { record('t' + ms); }, ms);
+      });
+      window.__gtCloseSamples = samples;
+      return 'sampling';
+    })()
+  ")
+  Sys.sleep(0.6)
+  close_state <- app$get_js("
+    (function() {
+      var panel = document.querySelector('#fruit-dropdown');
+      var samples = window.__gtCloseSamples || [];
+      var allTeleported = samples.length > 0 && samples.every(function(s) { return s.parentIsBody; });
+      var allAttached = samples.length > 0 && samples.every(function(s) { return s.attached; });
+      var allMidScale = samples.length > 0 && samples.every(function(s) {
+        return s.scaleY !== null && s.scaleY > 0 && s.scaleY < 1;
+      });
+      return {
+        nSamples: samples.length,
+        allTeleported: allTeleported,
+        allAttached: allAttached,
+        allMidScale: allMidScale,
+        returnedToWrap: panel.parentNode !== document.body,
+        closed: !panel.classList.contains('open'),
+        detail: JSON.stringify(samples)
+      };
+    })()
+  ")
+  expect_equal(close_state$nSamples, 2)
+  expect_true(close_state$allTeleported, info = close_state$detail)
+  expect_true(close_state$allAttached, info = close_state$detail)
+  expect_true(close_state$allMidScale, info = close_state$detail)
+  expect_true(close_state$returnedToWrap)
+  expect_true(close_state$closed)
   app$wait_for_js("
     getComputedStyle(document.querySelector('#fruit-dropdown')).transform ===
       'matrix(1, 0, 0, 0, 0, 0)'
