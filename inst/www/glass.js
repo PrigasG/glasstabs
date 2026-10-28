@@ -288,37 +288,15 @@
     /* Tongue attachment: the panel sits flush against the field with a 1px
        border overlap, so the two read as one continuous surface. */
     var overlap = 1;
-    var maxWidth = Math.max(160, vw - edge * 2);
-    var triggerWidth = Math.max(rect.width || 160, 160);
-    var preferredMaxWidth = Math.min(maxWidth, 420);
+    var maxWidth = Math.max(0, vw - edge * 2);
+    var triggerWidth = Math.ceil(rect.width || 160);
 
-    /* A teleported panel no longer has its field as a CSS containing block.
-       Keep its adaptive growth inside the space the field actually owns so a
-       select in a phone card, grid column, or other narrow layout cannot grow
-       across neighbouring content merely because the browser is wider. */
-    var field = wrap.closest ? wrap.closest('.gt-ms-field, .gt-gs-field') : null;
-    var fieldRect = field ? field.getBoundingClientRect() : null;
-    var fieldWidth = fieldRect && fieldRect.width > 0
-      ? Math.floor(fieldRect.width)
-      : 0;
-    if (fieldWidth) {
-      preferredMaxWidth = Math.min(
-        preferredMaxWidth,
-        Math.max(triggerWidth, fieldWidth)
-      );
-    }
-
-    /* Let long labels and the multi-select style switcher widen the panel,
-       while keeping compact option lists aligned with their trigger. */
-    dropdown.style.width = 'max-content';
-    dropdown.style.minWidth = Math.min(triggerWidth, preferredMaxWidth) + 'px';
-    dropdown.style.maxWidth = preferredMaxWidth + 'px';
-    var naturalWidth = Math.ceil(dropdown.offsetWidth || triggerWidth);
-    var switcherMinWidth = dropdown.querySelector('.gt-style-switcher') ? 220 : 0;
-    var dropdownWidth = Math.min(
-      preferredMaxWidth,
-      Math.max(triggerWidth, naturalWidth, switcherMinWidth)
-    );
+    /* The trigger and its panel form one tongue-shaped control, so their
+       rendered widths must match. Long labels wrap inside this shared width;
+       only a viewport narrower than the trigger may clamp the panel further. */
+    var dropdownWidth = Math.min(triggerWidth, maxWidth);
+    var preferredMaxWidth = dropdownWidth;
+    dropdown.style.maxWidth = dropdownWidth + 'px';
     dropdown.style.width = dropdownWidth + 'px';
     dropdown.style.minWidth = dropdownWidth + 'px';
     dropdown.classList.toggle('gt-compact-controls', dropdownWidth <= 240);

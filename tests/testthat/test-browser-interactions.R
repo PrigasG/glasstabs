@@ -62,7 +62,7 @@ test_that("browser: glassMultiSelect toggles choices and updates input", {
   expect_equal(app$get_value(input = "cats"), c("apple", "cherry"))
 })
 
-test_that("browser: select dropdowns grow for long labels and stay viewport-safe", {
+test_that("browser: select dropdowns match their fields and stay viewport-safe", {
   skip_on_covr()
   skip_if_not_installed("shinytest2")
   local_browser_pkg_root()
@@ -87,9 +87,7 @@ test_that("browser: select dropdowns grow for long labels and stay viewport-safe
     (function() {
       var trigger = document.querySelector('#short_single-trigger');
       var dropdown = document.querySelector('#short_single-dropdown');
-      var field = document.querySelector('#short_single-field');
-      return dropdown.offsetWidth > trigger.offsetWidth &&
-        dropdown.offsetWidth <= Math.min(420, field.offsetWidth);
+      return Math.abs(dropdown.offsetWidth - trigger.offsetWidth) <= 1;
     })()
   "))
   expect_true(app$get_js("
@@ -141,14 +139,14 @@ test_that("browser: select dropdowns grow for long labels and stay viewport-safe
     })()
   "))
   # Resize repositions the open dropdown instead of closing it (mobile URL-bar
-  # and on-screen keyboard resizes must not strand the user mid-task). It stays
-  # at least as wide as the trigger while retaining room for long labels.
+  # and on-screen keyboard resizes must not strand the user mid-task). The
+  # field and panel retain one continuous, equal-width silhouette.
   app$wait_for_js("
     document.querySelector('#short_single-dropdown.open') !== null &&
-    document.querySelector('#short_single-dropdown').offsetWidth >=
-      document.querySelector('#short_single-trigger').offsetWidth &&
-    document.querySelector('#short_single-dropdown').offsetWidth <=
-      document.querySelector('#short_single-field').offsetWidth
+    Math.abs(
+      document.querySelector('#short_single-dropdown').offsetWidth -
+      document.querySelector('#short_single-trigger').offsetWidth
+    ) <= 1
   ")
 
   expect_true(app$get_js("
@@ -177,9 +175,7 @@ test_that("browser: select dropdowns grow for long labels and stay viewport-safe
     (function() {
       var trigger = document.querySelector('#short_multi-trigger');
       var dropdown = document.querySelector('#short_multi-dropdown');
-      var field = document.querySelector('#short_multi-field');
-      return dropdown.offsetWidth > trigger.offsetWidth &&
-        dropdown.offsetWidth <= field.offsetWidth &&
+      return Math.abs(dropdown.offsetWidth - trigger.offsetWidth) <= 1 &&
         dropdown.classList.contains('gt-compact-controls');
     })()
   "))
