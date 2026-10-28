@@ -19,6 +19,21 @@ test_that("glassSelect() can disable the tongue treatment", {
   )
 })
 
+test_that("glassSelect() uses bold labels by default and can opt out", {
+  default <- as.character(glassSelect("f", choices, label = "Fruit"))
+  regular <- as.character(glassSelect(
+    "f", choices, label = "Fruit", label_bold = FALSE
+  ))
+
+  expect_match(default, 'class="gt-input-label"')
+  expect_false(grepl("gt-label-regular", default, fixed = TRUE))
+  expect_match(regular, 'class="gt-input-label gt-label-regular"')
+  expect_error(
+    glassSelect("f", choices, label_bold = 1),
+    class = "glasstabs_error_bad_argument"
+  )
+})
+
 
 test_that("glassSelect() accepts unnamed choices", {
   expect_no_error(glassSelect("f", c("x", "y", "z")))

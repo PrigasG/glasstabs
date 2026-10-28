@@ -19,6 +19,21 @@ test_that("glassMultiSelect() can disable the tongue treatment", {
   )
 })
 
+test_that("glassMultiSelect() uses bold labels by default and can opt out", {
+  default <- as.character(glassMultiSelect("f", choices, label = "Fruit"))
+  regular <- as.character(glassMultiSelect(
+    "f", choices, label = "Fruit", label_bold = FALSE
+  ))
+
+  expect_match(default, 'class="gt-input-label"')
+  expect_false(grepl("gt-label-regular", default, fixed = TRUE))
+  expect_match(regular, 'class="gt-input-label gt-label-regular"')
+  expect_error(
+    glassMultiSelect("f", choices, label_bold = NA),
+    class = "glasstabs_error_bad_argument"
+  )
+})
+
 test_that("glassFilterTags() returns an htmltools tag", {
   expect_true(inherits(glassFilterTags("f"), "shiny.tag"))
 })

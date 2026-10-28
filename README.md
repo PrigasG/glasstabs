@@ -140,6 +140,14 @@ glassSelect("industry", industries, tongue = FALSE)
 glassMultiSelect("topics", topics, tongue = TRUE)
 ```
 
+Field labels use the same semibold emphasis as native Shiny inputs by default.
+Use `label_bold = FALSE` when a quieter, regular-weight label better matches the
+surrounding form.
+
+``` r
+glassSelect("industry", industries, label = "Industry", label_bold = FALSE)
+```
+
 For a short list, the search box can stay out of the way. With `searchable = "auto"`, it appears only when the list reaches the chosen threshold. The trigger can also show a compact summary instead of the generic “Multiple selection” label.
 
 ``` r

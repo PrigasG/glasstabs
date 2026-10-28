@@ -31,7 +31,8 @@ glassMultiSelect(
   selection_max_items = 2L,
   dropdown_max_height = "260px",
   no_matches_text = "No matches",
-  tongue = TRUE
+  tongue = TRUE,
+  label_bold = TRUE
 )
 }
 \arguments{
@@ -126,8 +127,12 @@ Default \code{"No matches"}.}
 \item{tongue}{Logical. When \code{TRUE} (default), the dropdown attaches to
 the trigger and uses the signature tongue unfurl/retract animation. Set to
 \code{FALSE} for a detached, immediately opening panel that sits more
-naturally beside native Shiny inputs. This argument is last so existing
-positional calls keep working.}
+naturally beside native Shiny inputs.}
+
+\item{label_bold}{Logical. Use a semibold field label, matching native Shiny
+inputs, when \code{TRUE} (default). Set to \code{FALSE} for regular-weight
+label text. This argument is last so existing positional calls keep
+working.}
 }
 \value{
 An \code{htmltools::tagList} containing the trigger button, dropdown

@@ -79,8 +79,11 @@
 #' @param tongue Logical. When \code{TRUE} (default), the dropdown attaches to
 #'   the trigger and uses the signature tongue unfurl/retract animation. Set to
 #'   \code{FALSE} for a detached, immediately opening panel that sits more
-#'   naturally beside native Shiny inputs. This argument is last so existing
-#'   positional calls keep working.
+#'   naturally beside native Shiny inputs.
+#' @param label_bold Logical. Use a semibold field label, matching native Shiny
+#'   inputs, when \code{TRUE} (default). Set to \code{FALSE} for regular-weight
+#'   label text. This argument is last so existing positional calls keep
+#'   working.
 #'
 #' @return An \code{htmltools::tagList} containing the trigger button, dropdown
 #'   panel, and scoped \code{<style>} block.
@@ -133,7 +136,8 @@ glassMultiSelect <- function(
     selection_max_items = 2L,
     dropdown_max_height = "260px",
     no_matches_text     = "No matches",
-    tongue             = TRUE
+    tongue             = TRUE,
+    label_bold         = TRUE
 ) {
   .gt_check_string(
     inputId,
@@ -142,6 +146,7 @@ glassMultiSelect <- function(
   )
   .gt_check_text(no_matches_text, "no_matches_text", "glassMultiSelect")
   .gt_check_flag(tongue, "tongue")
+  .gt_check_flag(label_bold, "label_bold")
   check_style <- .gt_match_arg(check_style, c("checkbox", "check-only", "filled"), "check_style")
   shape <- .gt_match_arg(shape, c("rounded", "square"), "shape")
   field_width_style <- .gt_field_width_style(width)
@@ -246,7 +251,10 @@ glassMultiSelect <- function(
 
   label_tag <- if (!is.null(label)) {
     shiny::tags$label(
-      class = "gt-input-label",
+      class = trimws(paste(
+        "gt-input-label",
+        if (!label_bold) "gt-label-regular" else NULL
+      )),
       `for` = paste0(inputId, "-trigger"),
       label
     )

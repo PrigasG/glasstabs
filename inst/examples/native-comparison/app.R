@@ -27,6 +27,7 @@ body { background: #eef3f9; color: #172033; }
 .nc-hero p { max-width: 850px; line-height: 1.6; color: #536078; }
 .nc-controls { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin: 22px 0; padding: 18px; border: 1px solid #d6e0ed; border-radius: 16px; background: #fff; box-shadow: 0 10px 30px rgba(46,70,110,.08); }
 .nc-controls .form-group { margin-bottom: 0; }
+.nc-call-preview { margin: -8px 0 22px; padding: 14px 16px; border-radius: 12px; background: #101827; color: #d7e8ff; font-size: 12px; white-space: pre-wrap; }
 .nc-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
 .nc-card { min-width: 0; padding: 20px; border: 1px solid #d6e0ed; border-radius: 16px; background: #fff; box-shadow: 0 12px 32px rgba(46,70,110,.07); }
 .nc-card h3 { margin: 0 0 6px; }
@@ -78,11 +79,57 @@ ui <- fluidPage(
         "Use glass tongue attachment and animation",
         value = TRUE
       ),
+      checkboxInput(
+        "compare_label_bold",
+        "Use bold glass field labels",
+        value = TRUE
+      ),
+      checkboxInput(
+        "compare_searchable",
+        "Show search in glass dropdowns",
+        value = TRUE
+      ),
+      checkboxInput(
+        "compare_clearable",
+        "Show glass single-select clear action",
+        value = TRUE
+      ),
+      selectInput(
+        "compare_shape", "Glass shape",
+        choices = c("Rounded" = "rounded", "Square" = "square"),
+        selected = "rounded",
+        selectize = FALSE
+      ),
+      selectInput(
+        "compare_check_style", "Glass selection marker",
+        choices = c(
+          "Checkbox" = "checkbox",
+          "Check only" = "check-only",
+          "Filled" = "filled"
+        ),
+        selected = "checkbox",
+        selectize = FALSE
+      ),
+      selectInput(
+        "compare_selection_display", "Glass multi-select trigger",
+        choices = c(
+          "Automatic" = "auto",
+          "Count" = "count",
+          "Summary" = "summary",
+          "Labels" = "labels"
+        ),
+        selected = "summary",
+        selectize = FALSE
+      ),
       sliderInput(
         "compare_width", "Shared field width",
         min = 160, max = 360, value = 260, step = 20,
         post = " px"
       )
+    ),
+    htmltools::tagAppendAttributes(
+      verbatimTextOutput("call_preview", placeholder = TRUE),
+      class = "nc-call-preview"
     ),
     tabsetPanel(
       id = "comparison_tab",
@@ -118,7 +165,8 @@ ui <- fluidPage(
             tags$ul(
               tags$li("Predictable long-label wrapping, matching trigger/panel widths, themes, and selection styles."),
               tags$li("Optional server search, disabled choices, custom summaries, and consistent mobile behavior."),
-              tags$li("The signature tongue remains the default but can be disabled per input with tongue = FALSE.")
+              tags$li("The signature tongue remains the default but can be disabled per input with tongue = FALSE."),
+              tags$li("Labels match Shiny's bold default; label_bold = FALSE opts into regular-weight text.")
             )
           ),
           tags$pre(
@@ -137,11 +185,37 @@ server <- function(input, output, session) {
   field_width <- reactive(paste0(value_or(input$compare_width, 260), "px"))
   glass_theme <- reactive(value_or(input$compare_theme, "light"))
   use_tongue <- reactive(isTRUE(input$compare_tongue))
+  bold_labels <- reactive(isTRUE(input$compare_label_bold))
+  use_search <- reactive(isTRUE(input$compare_searchable))
+  use_clear <- reactive(isTRUE(input$compare_clearable))
+  glass_shape <- reactive(value_or(input$compare_shape, "rounded"))
+  marker_style <- reactive(value_or(input$compare_check_style, "checkbox"))
+  multi_display <- reactive(value_or(input$compare_selection_display, "summary"))
+
+  output$call_preview <- renderText({
+    paste0(
+      "glassSelect(..., width = \"", field_width(), "\", tongue = ",
+      toupper(as.character(use_tongue())),
+      ", label_bold = ", toupper(as.character(bold_labels())),
+      ", searchable = ", toupper(as.character(use_search())),
+      ", clearable = ", toupper(as.character(use_clear())),
+      ", shape = \"", glass_shape(), "\", check_style = \"",
+      marker_style(), "\")\n",
+      "glassMultiSelect(..., selection_display = \"", multi_display(),
+      "\", width = \"", field_width(), "\", tongue = ",
+      toupper(as.character(use_tongue())), ")"
+    )
+  })
 
   output$single_compare <- renderUI({
     width <- field_width()
     theme <- glass_theme()
     tongue <- use_tongue()
+    label_bold <- bold_labels()
+    searchable <- use_search()
+    clearable <- use_clear()
+    shape <- glass_shape()
+    check_style <- marker_style()
 
     tags$div(
       class = if (theme == "dark") "nc-dark" else NULL,
@@ -168,10 +242,13 @@ server <- function(input, output, session) {
             "glass_single", choices,
             label = "Industry",
             selected = isolate(value_or(input$glass_single, "industry-down")),
-            searchable = TRUE,
-            clearable = TRUE,
+            searchable = searchable,
+            clearable = clearable,
+            check_style = check_style,
+            shape = shape,
             width = width,
             tongue = tongue,
+            label_bold = label_bold,
             theme = theme
           ),
           tags$div(class = "nc-value", "input$glass_single: ", textOutput("glass_single_value", inline = TRUE))
@@ -188,6 +265,11 @@ server <- function(input, output, session) {
     width <- field_width()
     theme <- glass_theme()
     tongue <- use_tongue()
+    label_bold <- bold_labels()
+    searchable <- use_search()
+    shape <- glass_shape()
+    check_style <- marker_style()
+    selection_display <- multi_display()
 
     tags$div(
       class = if (theme == "dark") "nc-dark" else NULL,
@@ -224,17 +306,25 @@ server <- function(input, output, session) {
               "glass_search", choices,
               label = "Search one",
               selected = isolate(value_or(input$glass_search, "industry-down")),
+              searchable = searchable,
+              check_style = check_style,
+              shape = shape,
               width = width,
               tongue = tongue,
+              label_bold = label_bold,
               theme = theme
             ),
             glassMultiSelect(
               "glass_multi", choices,
               label = "Select several",
               selected = isolate(value_or(input$glass_multi, c("industry-down", "healthcare"))),
-              selection_display = "summary",
+              searchable = searchable,
+              check_style = check_style,
+              shape = shape,
+              selection_display = selection_display,
               width = width,
               tongue = tongue,
+              label_bold = label_bold,
               theme = theme
             )
           ),
@@ -248,6 +338,11 @@ server <- function(input, output, session) {
     width <- field_width()
     theme <- glass_theme()
     tongue <- use_tongue()
+    label_bold <- bold_labels()
+    searchable <- use_search()
+    shape <- glass_shape()
+    check_style <- marker_style()
+    selection_display <- multi_display()
 
     tags$div(
       class = if (theme == "dark") "nc-dark" else NULL,
@@ -268,9 +363,13 @@ server <- function(input, output, session) {
             "mixed_topics", choices,
             label = "Topics",
             selected = isolate(value_or(input$mixed_topics, c("industry-down", "renewable-energy"))),
-            selection_display = "summary",
+            searchable = searchable,
+            check_style = check_style,
+            shape = shape,
+            selection_display = selection_display,
             width = width,
             tongue = tongue,
+            label_bold = label_bold,
             theme = theme
           )
         ),

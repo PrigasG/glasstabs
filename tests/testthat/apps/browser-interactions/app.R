@@ -78,14 +78,17 @@ ui <- fluidPage(
     glassSelect(
       "detached_single",
       short_field_choices,
+      label = "Detached single",
       selected = "one",
       searchable = FALSE,
       tongue = FALSE,
+      label_bold = FALSE,
       width = "240px"
     ),
     glassMultiSelect(
       "detached_multi",
       choices,
+      label = "Detached multi",
       selected = "apple",
       show_style_switcher = FALSE,
       tongue = FALSE,

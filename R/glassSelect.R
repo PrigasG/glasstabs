@@ -76,7 +76,8 @@ glassSelect <- function(
     server_limit = 50L,
     server_min_chars = 0L,
     no_matches_text = "No matches",
-    tongue = TRUE
+    tongue = TRUE,
+    label_bold = TRUE
 ) {
   .gt_check_string(
     inputId,
@@ -85,6 +86,7 @@ glassSelect <- function(
   )
   .gt_check_text(no_matches_text, "no_matches_text", "glassSelect")
   .gt_check_flag(tongue, "tongue")
+  .gt_check_flag(label_bold, "label_bold")
   check_style <- .gt_match_arg(check_style, c("checkbox", "check-only", "filled"), "check_style")
   shape <- .gt_match_arg(shape, c("rounded", "square"), "shape")
   field_width_style <- .gt_field_width_style(width)
@@ -202,7 +204,10 @@ glassSelect <- function(
 
   label_tag <- if (!is.null(label)) {
     shiny::tags$label(
-      class = "gt-input-label",
+      class = trimws(paste(
+        "gt-input-label",
+        if (!label_bold) "gt-label-regular" else NULL
+      )),
       `for` = paste0(inputId, "-trigger"),
       label
     )

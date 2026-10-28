@@ -247,7 +247,10 @@ test_that("browser: tongue can be disabled for detached native-like panels", {
         style.transform === 'none' &&
         style.transitionDuration === '0s' &&
         parseFloat(style.borderTopLeftRadius) > 0 &&
-        parseFloat(getComputedStyle(trigger).borderBottomLeftRadius) > 0;
+        parseFloat(getComputedStyle(trigger).borderBottomLeftRadius) > 0 &&
+        getComputedStyle(
+          document.querySelector('#detached_single-field .gt-input-label')
+        ).fontWeight === '400';
     })()
   "))
 
@@ -266,7 +269,10 @@ test_that("browser: tongue can be disabled for detached native-like panels", {
       var dropdown = document.querySelector('#detached_multi-dropdown');
       return dropdown.classList.contains('gt-no-tongue') &&
         Math.abs(dropdown.offsetWidth - trigger.offsetWidth) <= 1 &&
-        getComputedStyle(dropdown).transform === 'none';
+        getComputedStyle(dropdown).transform === 'none' &&
+        getComputedStyle(
+          document.querySelector('#detached_multi-field .gt-input-label')
+        ).fontWeight === '600';
     })()
   "))
 })

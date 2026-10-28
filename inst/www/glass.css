@@ -482,6 +482,7 @@
   letter-spacing:.01em;
   margin:0;
 }
+.gt-input-label.gt-label-regular{font-weight:400;}
 
 .gt-gs-wrap{
   position:relative;
