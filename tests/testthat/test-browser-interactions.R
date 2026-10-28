@@ -349,9 +349,12 @@ test_that("browser: immediate outside presses close teleported dropdowns", {
         bubbles: true,
         composed: true
       }));
+      /* Close animates (180ms retract, 250ms teleport fallback), so settled
+         must wait past 250ms; 150ms only worked when close teleported
+         instantly and no retract was visible. */
       setTimeout(function() {
         document.body.setAttribute('data-gt-close-settled', 'true');
-      }, 150);
+      }, 300);
       return true;
     })()
   "))
@@ -400,9 +403,11 @@ test_that("browser: overlay event interception cannot strand dropdowns", {
         bubbles: true,
         composed: true
       }));
+      /* See above: close animates, so settled must wait past the 250ms
+         teleport fallback. */
       setTimeout(function() {
         document.body.setAttribute('data-gt-overlay-close-settled', 'true');
-      }, 150);
+      }, 300);
       return true;
     })()
   "))
@@ -473,6 +478,12 @@ test_that("browser: a programmatically opened Bootstrap modal closes dropdowns",
   # No outside pointer press occurs, so the modal lifecycle event owns close.
   app$set_inputs(show_test_modal = "click")
   app$wait_for_js("document.querySelector('.modal.in, .modal.show') !== null")
+  # The modal can appear before the close animation finishes, so wait for
+  # the panel to return to the wrapper instead of asserting immediately.
+  app$wait_for_js("
+    document.querySelector('#cats-dropdown').parentElement ===
+      document.querySelector('#cats-wrap')
+  ")
   expect_true(app$get_js("
     (function() {
       var wrap = document.querySelector('#cats-wrap');
@@ -955,7 +966,8 @@ test_that("browser: window resize keeps select dropdowns open and repositions th
   expect_true(app$get_js(
     "document.querySelector('#fruit-dropdown.open') !== null"
   ))
-  # The teleported panel still tracks the trigger after the resize.
+  # The teleported panel still tracks the trigger after the resize, hanging
+  # flush off the field with the tongue's 1px border overlap.
   expect_true(app$get_js("
     (function() {
       var trigger = document.querySelector('#fruit-trigger');
@@ -967,7 +979,7 @@ test_that("browser: window resize keeps select dropdowns open and repositions th
         Math.min(tr.left, window.innerWidth - dr.width - 8)
       );
       return Math.abs(dr.left - expectedLeft) <= 2 &&
-        dr.top >= tr.bottom;
+        Math.abs(dr.top - (tr.bottom - 1)) <= 2;
     })()
   "))
 
@@ -1105,4 +1117,289 @@ test_that("browser: a hidden overlay made visible by a class toggle dismisses op
   app$wait_for_js("document.querySelector('#fruit-dropdown.open') === null")
   expect_true(app$get_js("document.querySelector('#fruit-dropdown.open') === null"))
   app$get_js("document.querySelector('#test-toggle-veil').remove(); 'removed'")
+})
+
+test_that("browser: dropdown opens flush like a tongue from the field", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-dropdown-tongue",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+  app$click(selector = "#fruit-trigger")
+  app$wait_for_js("document.querySelector('#fruit-dropdown.open') !== null")
+
+  # Panel attaches flush: 1px border overlap, no gap.
+  expect_true(app$get_js("
+    (function() {
+      var trigger = document.querySelector('#fruit-trigger');
+      var panel = document.querySelector('#fruit-dropdown');
+      var tr = trigger.getBoundingClientRect();
+      var pr = panel.getBoundingClientRect();
+      return Math.abs(pr.top - (tr.bottom - 1)) <= 2;
+    })()
+  "))
+
+  # Adjoining corners square off so the two read as one surface.
+  expect_true(app$get_js("
+    (function() {
+      var panel = document.querySelector('#fruit-dropdown');
+      var cs = getComputedStyle(panel);
+      return cs.borderTopLeftRadius === '0px' && cs.borderTopRightRadius === '0px';
+    })()
+  "))
+  expect_true(app$get_js("
+    (function() {
+      var trigger = document.querySelector('#fruit-trigger');
+      var cs = getComputedStyle(trigger);
+      return cs.borderBottomLeftRadius === '0px' && cs.borderBottomRightRadius === '0px';
+    })()
+  "))
+
+  # The unfurl is scaleY, not the old translateY/scale pop: once closed and
+  # settled, the transform is exactly scaleY(0). The old closed state was
+  # translateY(-8px) scale(0.96), a different matrix, so this assertion fails
+  # on the old animation. The open-state matrix cannot distinguish them
+  # (both settle at scale(1)), which is why the closed state is checked.
+  # The trigger ignores close clicks within 500 ms of opening, so wait out
+  # that guard first, or the close click is swallowed and the panel stays open.
+  Sys.sleep(0.6)
+  # Closing must animate, not teleport: the panel stays under <body>,
+  # attached to the trigger, while it retracts, and only returns to the
+  # wrapper once the retract finishes. Moving it back in the same turn as
+  # removing `.open` collapses it instantly, so a final-matrix check alone
+  # passes even when no transition occurs.
+  # The observable is the dwell, not a mid-scale sample: sampling the
+  # transform from JS cannot observe a compositor animation while the main
+  # thread is blocked (Shiny processing the close blocks it on loaded
+  # runners, so fixed-time and interval samples both miss the window). But
+  # the dwell is measured on the browser clock: if the panel stays
+  # teleported for ~180ms (transitionend) or ~250ms (fallback) instead of
+  # teleporting instantly, the retract necessarily ran, because a
+  # transitioned property on an element that stays in place cannot jump.
+  # The duration is forced inline first: under prefers-reduced-motion the
+  # stylesheet collapses transitions to 0.01ms, so without this the dwell
+  # would be ~0ms even though the delayed-teleport logic is correct. The
+  # inline !important beats the stylesheet !important, making the dwell
+  # assertion valid on every runner.
+  app$get_js("
+    (function() {
+      var trigger = document.querySelector('#fruit-trigger');
+      var panel = document.querySelector('#fruit-dropdown');
+      var closeStarted = Date.now();
+      window.__gtCloseReturned = false;
+      window.__gtCloseDwell = null;
+      panel.style.setProperty('transition-duration', '180ms', 'important');
+      trigger.click();
+      var iv = setInterval(function() {
+        if (document.querySelector('#fruit-dropdown').parentNode !== document.body) {
+          window.__gtCloseDwell = Date.now() - closeStarted;
+          window.__gtCloseReturned = true;
+          clearInterval(iv);
+        }
+      }, 20);
+      return 'sampling';
+    })()
+  ")
+  app$wait_for_js("window.__gtCloseReturned === true")
+  close_state <- app$get_js("
+    (function() {
+      var panel = document.querySelector('#fruit-dropdown');
+      return {
+        dwell: window.__gtCloseDwell,
+        returnedToWrap: panel.parentNode !== document.body,
+        closed: !panel.classList.contains('open')
+      };
+    })()
+  ")
+  # Not instant (the bug teleports in the same turn, dwell ~0ms) and not
+  # stuck (fallback is 250ms; the bound is generous for loaded runners).
+  expect_true(!is.null(close_state$dwell) && close_state$dwell >= 100,
+              info = paste("dwell ms:", close_state$dwell))
+  expect_true(close_state$dwell < 4000)
+  expect_true(close_state$returnedToWrap)
+  expect_true(close_state$closed)
+  app$wait_for_js("
+    getComputedStyle(document.querySelector('#fruit-dropdown')).transform ===
+      'matrix(1, 0, 0, 0, 0, 0)'
+  ")
+  expect_true(app$get_js("
+    getComputedStyle(document.querySelector('#fruit-dropdown')).transform ===
+      'matrix(1, 0, 0, 0, 0, 0)'
+  "))
+})
+
+test_that("browser: dropdown flipped above the field retracts into the trigger", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-dropdown-flip-above",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+  # Pin the trigger to the viewport bottom so no room remains below it; the
+  # panel must flip above the field. Scrolling cannot do this for a
+  # top-of-page trigger: the target scroll goes negative and clamps to 0,
+  # leaving the trigger at the top and the panel opening below. A JS click
+  # is used (not app$click) so the driver does not scroll the trigger back
+  # into view first. Width and left are preserved so geometry is unchanged.
+  app$get_js("
+    (function() {
+      var trigger = document.querySelector('#fruit-trigger');
+      var r = trigger.getBoundingClientRect();
+      trigger.style.position = 'fixed';
+      trigger.style.left = r.left + 'px';
+      trigger.style.bottom = '0px';
+      trigger.style.width = r.width + 'px';
+      trigger.style.zIndex = '1';
+      return 'pinned';
+    })()
+  ")
+  app$get_js("document.querySelector('#fruit-trigger').click(); 'clicked'")
+  app$wait_for_js("
+    (function() {
+      var p = document.querySelector('#fruit-dropdown');
+      return p !== null && p.classList.contains('open') &&
+        p.classList.contains('gt-flip-above');
+    })()
+  ")
+
+  # Panel sits above, flush: 1px border overlap with the trigger top.
+  expect_true(app$get_js("
+    (function() {
+      var trigger = document.querySelector('#fruit-trigger');
+      var panel = document.querySelector('#fruit-dropdown');
+      var tr = trigger.getBoundingClientRect();
+      var dr = panel.getBoundingClientRect();
+      return Math.abs(dr.bottom - (tr.top + 1)) <= 2;
+    })()
+  "))
+
+  # Flipped corners: bottom squared, top restored.
+  expect_true(app$get_js("
+    (function() {
+      var cs = getComputedStyle(document.querySelector('#fruit-dropdown'));
+      return cs.borderBottomLeftRadius === '0px' &&
+        cs.borderBottomRightRadius === '0px' &&
+        cs.borderTopLeftRadius === '14px' &&
+        cs.borderTopRightRadius === '14px';
+    })()
+  "))
+
+  # Flipped origin is bottom center, so the panel retracts into the trigger.
+  # offsetWidth/offsetHeight are used because transforms do not affect them.
+  expect_true(app$get_js("
+    (function() {
+      var panel = document.querySelector('#fruit-dropdown');
+      var parts = getComputedStyle(panel).transformOrigin.split(' ');
+      var ox = parseFloat(parts[0]);
+      var oy = parseFloat(parts[1]);
+      return Math.abs(ox - panel.offsetWidth / 2) <= 2 &&
+        Math.abs(oy - panel.offsetHeight) <= 2;
+    })()
+  "))
+
+  # Flipped dark shadow points upward.
+  expect_true(app$get_js("
+    getComputedStyle(document.querySelector('#fruit-dropdown')).boxShadow
+      .indexOf('-22px') !== -1
+  "))
+
+  # Width is untouched by the flip: still the field's width.
+  expect_true(app$get_js("
+    Math.abs(
+      document.querySelector('#fruit-dropdown').offsetWidth -
+      document.querySelector('#fruit-trigger').offsetWidth
+    ) <= 2
+  "))
+
+  # Closing keeps the bottom origin: clicking to close and reading the origin
+  # in the same JS turn must still show bottom center. With the origin scoped
+  # to `.open`, it would revert to top center the moment `.open` is removed.
+  # The assertion also requires `.open` to be gone, so a close click swallowed
+  # by the 500 ms open guard fails honestly instead of passing on the still
+  # open panel's origin. The guard is waited out first.
+  Sys.sleep(0.6)
+  expect_true(app$get_js("
+    (function() {
+      var trigger = document.querySelector('#fruit-trigger');
+      var panel = document.querySelector('#fruit-dropdown');
+      trigger.click();
+      var parts = getComputedStyle(panel).transformOrigin.split(' ');
+      var ox = parseFloat(parts[0]);
+      var oy = parseFloat(parts[1]);
+      return !panel.classList.contains('open') &&
+        Math.abs(ox - panel.offsetWidth / 2) <= 2 &&
+        Math.abs(oy - panel.offsetHeight) <= 2;
+    })()
+  "))
+})
+
+test_that("browser: flipped light dropdown keeps its upward light shadow", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-dropdown-flip-light",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+  # Pin the trigger to the viewport bottom so the panel must flip above the
+  # field (see the dark flip test: scrolling cannot do this reliably).
+  app$get_js("
+    (function() {
+      var trigger = document.querySelector('#fruit_light-trigger');
+      var r = trigger.getBoundingClientRect();
+      trigger.style.position = 'fixed';
+      trigger.style.left = r.left + 'px';
+      trigger.style.bottom = '0px';
+      trigger.style.width = r.width + 'px';
+      trigger.style.zIndex = '1';
+      return 'pinned';
+    })()
+  ")
+  app$get_js("document.querySelector('#fruit_light-trigger').click(); 'clicked'")
+  app$wait_for_js("
+    (function() {
+      var p = document.querySelector('#fruit_light-dropdown');
+      return p !== null && p.classList.contains('open') &&
+        p.classList.contains('gt-flip-above');
+    })()
+  ")
+
+  # The teleported panel carries the light theme itself.
+  expect_true(app$get_js("
+    document.querySelector('#fruit_light-dropdown').classList.contains('theme-light')
+  "))
+
+  # Flipped light shadow points upward with light values, not the dark
+  # upward shadow. This fails when the shadow selector expects the panel to
+  # still sit beneath the wrap, which teleporting breaks.
+  expect_true(app$get_js("
+    (function() {
+      var shadow = getComputedStyle(
+        document.querySelector('#fruit_light-dropdown')
+      ).boxShadow;
+      return shadow.indexOf('-12px') !== -1 &&
+        shadow.indexOf('-22px') === -1;
+    })()
+  "))
 })

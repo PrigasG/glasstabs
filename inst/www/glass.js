@@ -284,8 +284,11 @@
     var scrollY = window.pageYOffset || 0;
     var vw = window.innerWidth;
     var vh = window.innerHeight;
-    var margin = 8;
-    var maxWidth = Math.max(160, vw - margin * 2);
+    var edge = 8;
+    /* Tongue attachment: the panel sits flush against the field with a 1px
+       border overlap, so the two read as one continuous surface. */
+    var overlap = 1;
+    var maxWidth = Math.max(160, vw - edge * 2);
     var triggerWidth = Math.max(rect.width || 160, 160);
     var preferredMaxWidth = Math.min(maxWidth, 420);
 
@@ -305,10 +308,17 @@
 
     var ddHeight = dropdown.offsetHeight || 0;
     var ddWidth = Math.min(dropdown.offsetWidth || dropdownWidth, preferredMaxWidth);
-    var top = rect.bottom + scrollY + margin;
-    if (rect.bottom + ddHeight + margin > vh - margin && rect.top - ddHeight - margin > 0) {
-      top = rect.top + scrollY - ddHeight - margin;
+    var top = rect.bottom + scrollY - overlap;
+    var flipped = false;
+    if (rect.bottom + ddHeight - overlap > vh - edge && rect.top - ddHeight + overlap > edge) {
+      top = rect.top + scrollY - ddHeight + overlap;
+      flipped = true;
     }
+    /* Signal the tongue direction so CSS squares the adjoining corners and
+       anchors the unfurl animation at the attached edge. This runs before
+       `.open` is added, so the opening transition uses the right origin. */
+    dropdown.classList.toggle('gt-flip-above', flipped);
+    wrap.classList.toggle('gt-flip-above', flipped);
 
     var docEl = document.documentElement;
     var dirEl = wrap.closest ? wrap.closest('[dir]') : null;
@@ -316,7 +326,7 @@
     /* Follow the document's reading direction: grow toward the trailing edge,
        then clamp only when the viewport does not have enough room. */
     var left = isRtl ? rect.right - ddWidth : rect.left;
-    left = Math.max(margin, Math.min(left, vw - ddWidth - margin));
+    left = Math.max(edge, Math.min(left, vw - ddWidth - edge));
 
     dropdown.style.top = top + 'px';
     dropdown.style.left = (left + scrollX) + 'px';
@@ -325,6 +335,10 @@
 
   /** Move a teleported dropdown back to its wrap */
   function teleportClose(wrap, dropdown) {
+    /* A direct move cancels any pending delayed move (e.g. destroy runs
+       close() and then moves immediately; it must not leave a timer or
+       listener behind). */
+    cancelPendingTeleportClose(dropdown);
     if (dropdown.parentNode !== document.body) return;
     MS_VARS.forEach(function (v) { dropdown.style.removeProperty(v); });
     dropdown.style.removeProperty('position');
@@ -336,6 +350,50 @@
     dropdown.style.removeProperty('min-width');
     TELEPORT_CLASSES.forEach(function (cls) { dropdown.classList.remove(cls); });
     wrap.appendChild(dropdown);
+  }
+
+  /* Keep a closing panel teleported until its retract transition finishes.
+     Moving it back to the wrap in the same turn as removing `.open` collapses
+     it instantly: the browser treats the re-inserted node as new, so the
+     transform transition never runs and the advertised retract/fade is
+     invisible. The panel therefore stays under <body>, positioned, while it
+     retracts, and only returns to the wrap on the transform transitionend
+     (with a timeout fallback if that event never fires). Close runs on the
+     base rule (transform 180ms), so the fallback sits comfortably above it. */
+  var CLOSE_TELEPORT_FALLBACK_MS = 250;
+
+  function cancelPendingTeleportClose(dropdown) {
+    if (dropdown._gtCloseTimer) {
+      clearTimeout(dropdown._gtCloseTimer);
+      dropdown._gtCloseTimer = null;
+    }
+    if (dropdown._gtCloseHandler) {
+      dropdown.removeEventListener('transitionend', dropdown._gtCloseHandler);
+      dropdown._gtCloseHandler = null;
+    }
+  }
+
+  function scheduleTeleportClose(wrap, dropdown) {
+    if (dropdown.parentNode !== document.body) {
+      teleportClose(wrap, dropdown);
+      return;
+    }
+    cancelPendingTeleportClose(dropdown);
+    var done = false;
+    function finish() {
+      if (done) return;
+      done = true;
+      cancelPendingTeleportClose(dropdown);
+      teleportClose(wrap, dropdown);
+    }
+    /* Only the panel's own transform end counts: opacity finishes first
+       (120ms) and must not cut the 180ms retract short, and transitionend
+       bubbles, so a descendant's transform end must not teleport early. */
+    dropdown._gtCloseHandler = function (e) {
+      if (e.target === dropdown && e.propertyName === 'transform') finish();
+    };
+    dropdown.addEventListener('transitionend', dropdown._gtCloseHandler);
+    dropdown._gtCloseTimer = setTimeout(finish, CLOSE_TELEPORT_FALLBACK_MS);
   }
 
   function closeDropdownWrap(w) {
@@ -1376,6 +1434,9 @@
 
     /* Open / Close */
     function open() {
+      /* A pending close teleport (panel still retracting under <body>) must
+         not yank the panel back mid-reopen. */
+      cancelPendingTeleportClose(dropdown);
       closeAllDropdowns(wrap);
       wrap.classList.add('gt-layer-active');
       teleportOpen(wrap, dropdown);
@@ -1413,7 +1474,10 @@
       dropdown.classList.remove('open');
       trigger.classList.remove('open');
       trigger.setAttribute('aria-expanded', 'false');
-      teleportClose(wrap, dropdown);
+      /* Keep the panel teleported while it retracts; teleportClose() runs
+         on the transform transitionend (or a fallback timeout), not here.
+         Moving it now would collapse it instantly with no visible retract. */
+      scheduleTeleportClose(wrap, dropdown);
       setDropdownOpenState(wrap, inputId, false);
       optionNav.clear();
     }
@@ -2074,6 +2138,9 @@
 
     /* Open / Close */
     function open() {
+      /* A pending close teleport (panel still retracting under <body>) must
+         not yank the panel back mid-reopen. */
+      cancelPendingTeleportClose(dropdown);
       closeAllDropdowns(wrap);
       wrap.classList.add('gt-layer-active');
       teleportOpen(wrap, dropdown);
@@ -2109,7 +2176,10 @@
       dropdown.classList.remove('open');
       trigger.classList.remove('open');
       trigger.setAttribute('aria-expanded', 'false');
-      teleportClose(wrap, dropdown);
+      /* Keep the panel teleported while it retracts; teleportClose() runs
+         on the transform transitionend (or a fallback timeout), not here.
+         Moving it now would collapse it instantly with no visible retract. */
+      scheduleTeleportClose(wrap, dropdown);
       setDropdownOpenState(wrap, inputId, false);
       optionNav.clear();
     }
