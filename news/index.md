@@ -191,6 +191,12 @@
 
 ### Select dropdown sizing
 
+- Select dropdowns now open like a tongue from the field: the panel
+  attaches flush against the trigger with no gap, the adjoining corners
+  square off so the two read as one continuous surface, and the panel
+  unfurls with a smooth scale animation anchored at the attached edge.
+  When space is tight below, the panel flips above the field and the
+  tongue retracts upward instead.
 - [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md)
   and
   [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md)

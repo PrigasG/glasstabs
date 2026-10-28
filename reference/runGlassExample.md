@@ -45,6 +45,7 @@ runGlassExample()
 #>   - smoke-test
 #>   - square-corners
 #>   - stress-test
+#>   - theme-switcher
 #> 
 #> Run one with: runGlassExample("basic")
 
