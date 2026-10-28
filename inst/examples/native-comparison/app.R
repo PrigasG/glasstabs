@@ -2,7 +2,7 @@ library(shiny)
 library(glasstabs)
 
 choices <- c(
-  "The nature of the industry is going down" = "industry-down",
+  "The nature of the industry is changing so quickly that this deliberately long category title cannot fit inside a compact filter field" = "industry-down",
   "Consumer discretionary spending on durable goods and household appliances" = "consumer-discretionary",
   "Renewable energy generation, storage, and grid-scale distribution networks" = "renewable-energy",
   "Commercial real estate development and property management services" = "commercial-real-estate",
@@ -338,7 +338,7 @@ server <- function(input, output, session) {
         tags$section(
           class = "nc-card",
           tags$h3("glassSelect()"),
-          tags$p("The same values with controlled wrapping, a searchable panel, matching widths, and optional tongue motion."),
+          tags$p("The same values with controlled wrapping, a searchable panel, matching widths, optional tongue motion, and a full-text tooltip when the selected title is ellipsized."),
           glassSelect(
             "glass_single", choices,
             label = "Industry",
@@ -360,7 +360,7 @@ server <- function(input, output, session) {
       ),
       tags$div(
         class = "nc-note",
-        "Both controls use the same named choice vector and produce the same scalar Shiny value. The visual behavior is the only reason to choose one over the other."
+        "Both controls use the same named choice vector and produce the same scalar Shiny value. Hover or keyboard-focus the truncated glass trigger to inspect its full title; on touch, open the menu to read the wrapped option."
       )
     )
   })

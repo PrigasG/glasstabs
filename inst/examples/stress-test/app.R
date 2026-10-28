@@ -82,6 +82,21 @@ ui <- fluidPage(
     [data-bs-theme='light'] .watch b { color:#985b00; }
     [data-bs-theme='light'] pre.timing { background:#fff; border-color:#d6e0ed; color:#26354d; }
     [data-bs-theme='light'] .scroll-trap { border-color:#c8d4e4; }
+    [data-bs-theme='light'] .nav-pills > li > a { color:#2563eb; }
+    [data-bs-theme='light'] .nav-pills > li.active > a,
+    [data-bs-theme='light'] .nav-pills > li.active > a:hover,
+    [data-bs-theme='light'] .nav-pills > li.active > a:focus { background:#337ab7; color:#fff; }
+    [data-bs-theme='light'] .form-control,
+    [data-bs-theme='light'] .selectize-input,
+    [data-bs-theme='light'] .selectize-dropdown { background:#fff; color:#172033; border-color:#c8d4e4; }
+    [data-bs-theme='light'] .selectize-dropdown .active { background:#e7f0ff; color:#172033; }
+    [data-bs-theme='light'] .btn-default { background:#fff; color:#26354d; border-color:#c8d4e4; }
+    [data-bs-theme='light'] .modal-content { background:#fff; color:#172033; }
+    [data-bs-theme='light'] .modal-header,
+    [data-bs-theme='light'] .modal-footer { border-color:#d6e0ed; }
+    [data-bs-theme='light'] pre:not(.timing),
+    [data-bs-theme='light'] .well { background:#fff; color:#26354d; border-color:#d6e0ed; }
+    [data-bs-theme='light'] .shiny-text-output { color:#26354d; }
     .stress-theme .form-group { margin-bottom:0; }
   ")),
     tags$script(HTML("
@@ -107,6 +122,7 @@ ui <- fluidPage(
     tabsetPanel(
       id = "scenario",
       type = "pills",
+      selected = "Hostile labels",
 
       # ---- 1. Scale: single select --------------------------------------
       tabPanel(
@@ -268,27 +284,8 @@ ui <- fluidPage(
           "rows; select-all including/excluding disabled; keyboard nav jumping ",
           "over disabled; pre-selected values that are also disabled."
         ))),
-        {
-          ch <- big_choices(10000)
-          dis <- unname(ch)[seq(2, 10000, by = 2)]
-          tagList(
-            glassSelect(
-              "disabled_single",
-              ch,
-              label = "Single (even values disabled)",
-              disabled_choices = dis,
-              selected = "value-000002",
-              searchable = TRUE
-            ),
-            glassMultiSelect(
-              "disabled_multi",
-              ch,
-              label = "Multi (even values disabled)",
-              disabled_choices = dis,
-              show_style_switcher = FALSE
-            )
-          )
-        },
+        p("Heavy scenario loads only while this tab is open."),
+        uiOutput("disabled_lazy"),
         verbatimTextOutput("disabled_values", placeholder = TRUE)
       ),
 
@@ -382,15 +379,8 @@ ui <- fluidPage(
           "summary truncation quality; count accuracy after select-all then ",
           "deselect-one; switching modes live via update."
         ))),
-        glassMultiSelect(
-          "display_multi",
-          big_choices(5000),
-          label = "Multi 5k (1k pre-selected)",
-          selected = sprintf("value-%06d", 1:1000),
-          selection_display = "auto",
-          selection_max_items = 2L,
-          show_style_switcher = TRUE
-        ),
+        p("Heavy scenario loads only while this tab is open."),
+        uiOutput("display_lazy"),
         selectInput(
           "display_mode", "Live-switch display mode",
           choices = c("auto", "count", "summary", "labels"),
@@ -413,6 +403,7 @@ server <- function(input, output, session) {
 
   # ---- 1. Scale: single (lazy) ------------------------------------------
   output$scale_single_lazy <- renderUI({
+    req(identical(input$scenario, "Scale: single"))
     fluidRow(
       column(
         6,
@@ -453,6 +444,7 @@ server <- function(input, output, session) {
 
   # ---- 2. Scale: multi (lazy) -------------------------------------------
   output$scale_multi_lazy <- renderUI({
+    req(identical(input$scenario, "Scale: multi"))
     glassMultiSelect(
       "scale_multi",
       big_choices(50000),
@@ -534,6 +526,28 @@ server <- function(input, output, session) {
   })
 
   # ---- 6. Disabled army -------------------------------------------------
+  output$disabled_lazy <- renderUI({
+    req(identical(input$scenario, "Disabled army"))
+    ch <- big_choices(10000)
+    dis <- unname(ch)[seq(2, 10000, by = 2)]
+    tagList(
+      glassSelect(
+        "disabled_single",
+        ch,
+        label = "Single (even values disabled)",
+        disabled_choices = dis,
+        selected = "value-000002",
+        searchable = TRUE
+      ),
+      glassMultiSelect(
+        "disabled_multi",
+        ch,
+        label = "Multi (even values disabled)",
+        disabled_choices = dis,
+        show_style_switcher = FALSE
+      )
+    )
+  })
   output$disabled_values <- renderPrint({
     list(
       single = input$disabled_single,
@@ -659,6 +673,18 @@ server <- function(input, output, session) {
   })
 
   # ---- 9. Display modes -------------------------------------------------
+  output$display_lazy <- renderUI({
+    req(identical(input$scenario, "Display modes"))
+    glassMultiSelect(
+      "display_multi",
+      big_choices(5000),
+      label = "Multi 5k (1k pre-selected)",
+      selected = sprintf("value-%06d", 1:1000),
+      selection_display = "auto",
+      selection_max_items = 2L,
+      show_style_switcher = TRUE
+    )
+  })
   observeEvent(input$display_mode, {
     updateGlassMultiSelect(session, "display_multi",
                            selection_display = input$display_mode)

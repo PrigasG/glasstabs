@@ -142,6 +142,12 @@ if (interactive()) shinyApp(ui, server)
 use it like any other Shiny input to filter data, drive outputs, or trigger
 reactives.
 
+For long filter names, give the field more room with `width = "240px"` or
+`width = "100%"`. If selected text is still ellipsized, the default
+`overflow_tooltip = "auto"` reveals it on hover or keyboard focus; touch users
+open the dropdown to read the wrapped option. These controls affect appearance
+only, not the value returned to Shiny.
+
 ### Optional reactive helper
 
 If you want a small convenience wrapper:
@@ -213,6 +219,12 @@ if (interactive()) shinyApp(ui, server)
 
 `input$region` is a single character value, or `NULL` when nothing is
 selected.
+
+The single- and multi-select widgets share `tongue`, `label_bold`,
+`label_size`, `search_focus_ring`, and `overflow_tooltip`. This makes it
+possible to keep the glass animation, use the quieter detached transition, or
+match native Shiny labels without changing server code. Multi-selects add
+`fill_colors = "single"` (default) or `"multi"` for filled markers.
 
 ### Updating from the server
 

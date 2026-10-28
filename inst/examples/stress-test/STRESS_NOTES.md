@@ -2,6 +2,18 @@
 
 Run with `glasstabs::runGlassExample("stress-test")`. Record what breaks below.
 
+Start on **Hostile labels** and verify both values of the **Example theme**
+switch before entering the scale tabs. The 100k/50k, disabled-army, and
+display-mode controls are intentionally created only while their tab is open;
+this keeps the landing page and light-mode review usable without weakening the
+individual stress scenarios.
+
+## Theme coverage
+
+- Light page, navigation, watch boxes, inputs, output blocks, and modals:
+- Dark mode regression:
+- Theme switch while a dropdown is open:
+
 ## Scale: single (100k choices)
 
 - Client-mode first paint time:

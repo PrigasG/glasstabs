@@ -32,7 +32,8 @@ test_that("all built-in examples have app files and README coverage", {
 
 test_that("formerly dark-only examples expose live light and dark themes", {
   themed_examples <- c("basic", "dashboard", "server-select", "smoke-test", "stress-test")
-  app_files <- test_path("..", "..", "inst", "examples", themed_examples, "app.R")
+  example_root <- system.file("examples", package = "glasstabs")
+  app_files <- file.path(example_root, themed_examples, "app.R")
 
   for (app_file in app_files) {
     source <- paste(readLines(app_file, warn = FALSE), collapse = "\n")

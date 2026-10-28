@@ -124,6 +124,35 @@ glassSelect("industry", industry_choices, width = "240px")
 glassMultiSelect("filters", filter_choices, width = "100%")
 ```
 
+When selected text still has to be shortened with an ellipsis,
+`overflow_tooltip = "auto"` (the default) reveals the full text on pointer
+hover or keyboard focus, but only when the trigger is actually truncated.
+Touch users open the dropdown and read the wrapped option instead. Set
+`overflow_tooltip = "never"` to suppress the visual tooltip; the full
+accessible label remains available to assistive technology.
+
+The select controls also expose their presentation choices directly:
+
+``` r
+glassSelect(
+  "industry", industry_choices,
+  tongue = FALSE,              # detached panel with a short fade
+  label_bold = TRUE,
+  label_size = "14px",
+  search_focus_ring = FALSE    # quiet search focus is the default
+)
+
+glassMultiSelect(
+  "filters", filter_choices,
+  check_style = "filled",
+  fill_colors = "single"       # use "multi" for per-choice hues
+)
+```
+
+`tongue = TRUE` keeps the signature attached unfurl animation. Turning it off
+does not remove motion entirely: the detached panel uses a restrained open and
+close transition and still honors reduced-motion preferences.
+
 For a short list, the search box can stay out of the way. With `searchable = "auto"`, it appears only when the list reaches the chosen threshold. The trigger can also show a compact summary instead of the generic “Multiple selection” label.
 
 ``` r
@@ -347,7 +376,7 @@ server <- function(input, output, session) {
 | `runGlassExample(example)` | Launch a built-in example app (`runGlassExample()` lists all available apps) |
 | `glasstabs_news()` | Print the package changelog to the R console |
 
-Built-in examples include `basic`, `bs4dash`, `bslib`, `connect-workflow`, `dashboard`, `indicators`, `light-mode`, `server-select`, `smoke-test`, `square-corners`, `stress-test`, and `theme-switcher`. The dedicated light-mode example includes long select labels for checking adaptive dropdown sizing. The theme-switcher example flips every select between dark and light with one switch, and exercises long category names, wide text in a narrow phone frame, and a bottom-of-page dropdown that must flip above the field. The Connect workflow doubles as a v0.4.1 test lab, with the responsive, keyboard, touch, dynamic-tab, badge, theme, and page-wrapper checks collected in one app.
+Built-in examples include `basic`, `bs4dash`, `bslib`, `connect-workflow`, `dashboard`, `indicators`, `light-mode`, `native-comparison`, `server-select`, `smoke-test`, `square-corners`, `stress-test`, and `theme-switcher`. The `native-comparison` lab places native Shiny and glasstabs fields side by side, including an intentionally truncated selected label and live controls for width, tongue motion, labels, search focus, filled colors, and overflow tooltips. The dedicated light-mode example includes long select labels for checking adaptive dropdown sizing. The theme-switcher example flips every select between dark and light with one switch, and exercises long category names, wide text in a narrow phone frame, and a bottom-of-page dropdown that must flip above the field. The Connect workflow doubles as a v0.4.1 test lab, with the responsive, keyboard, touch, dynamic-tab, badge, theme, and page-wrapper checks collected in one app.
 
 ### Tab widget
 
