@@ -41,6 +41,8 @@ page_css <- "
 .ts-hero h1 { margin: 0 0 8px; font-size: 30px; }
 .ts-hero p { margin: 0; max-width: 720px; line-height: 1.6; opacity: .8; }
 .ts-switch { margin: 22px 0 26px; padding: 16px 18px; border-radius: 14px; }
+.ts-switch .form-group { margin-bottom: 0; }
+.ts-switch .irs { max-width: 320px; }
 .ts-dark .ts-switch { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14); }
 .ts-light .ts-switch { background: #fff; border: 1px solid #d8e2ef; box-shadow: 0 10px 30px rgba(46,70,110,.08); }
 .ts-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
@@ -76,8 +78,15 @@ server <- function(input, output, session) {
     if (is.null(mode)) "dark" else mode
   })
 
+  demo_width <- reactive({
+    value <- input$demo_width
+    if (is.null(value)) 240L else as.integer(value)
+  })
+
   output$themed <- renderUI({
     mode <- theme()
+    field_width_px <- demo_width()
+    field_width <- paste0(field_width_px, "px")
     tags$div(
       class = paste0("ts-", mode),
       # The page background follows the theme too, so dark selects are not
@@ -103,6 +112,11 @@ server <- function(input, output, session) {
           "theme_mode", "Mode",
           choices = c("Dark" = "dark", "Light" = "light"),
           selected = mode, inline = TRUE
+        ),
+        sliderInput(
+          "demo_width", "Optional width for long-label fields",
+          min = 160, max = 320, value = field_width_px, step = 20,
+          post = " px", width = "320px"
         )
       ),
       tags$div(
@@ -113,7 +127,7 @@ server <- function(input, output, session) {
           tags$p(
             "Pick a long label. The trigger ellipsizes it, the dropdown ",
             "wraps it, and the panel never grows wider than the field. ",
-            "This long-label example opts into width = 240px."
+            "This long-label example uses width = ", field_width, "."
           ),
           glassSelect(
             "category", categories,
@@ -121,7 +135,7 @@ server <- function(input, output, session) {
             placeholder = "Choose a category",
             selected = isolate(input$category),
             searchable = TRUE, clearable = TRUE,
-            width = "240px",
+            width = field_width,
             theme = mode
           )
         ),
@@ -130,7 +144,8 @@ server <- function(input, output, session) {
           tags$h3("Long labels, multi-select"),
           tags$p(
             "Chips for the picks plus a searchable dropdown with the same ",
-            "long labels. This example also uses width = 240px. Flip the ",
+            "long labels. This example also uses width = ", field_width,
+            ". Flip the ",
             "theme and watch the shadows follow."
           ),
           glassMultiSelect(
@@ -139,7 +154,7 @@ server <- function(input, output, session) {
             placeholder = "Choose tags",
             selected = isolate(input$tags),
             searchable = TRUE,
-            width = "240px",
+            width = field_width,
             theme = mode
           )
         )
@@ -151,7 +166,8 @@ server <- function(input, output, session) {
           class = "ts-phone",
           tags$h3("Mobile view"),
           tags$p(
-            "A 360px phone frame with width = 240px fields. Open the menus ",
+            "A 360px phone frame with width = ", field_width,
+            " fields. Open the menus ",
             "here: wide text wraps ",
             "inside the panel instead of pushing it past the screen edge. ",
             "On a real phone, shrink the browser window and the grid above ",
@@ -163,7 +179,7 @@ server <- function(input, output, session) {
             placeholder = "Choose a wide label",
             selected = isolate(input$mobile_wide),
             searchable = TRUE, clearable = TRUE,
-            width = "240px",
+            width = field_width,
             theme = mode
           ),
           glassMultiSelect(
@@ -172,7 +188,7 @@ server <- function(input, output, session) {
             placeholder = "Choose tags",
             selected = isolate(input$mobile_tags),
             searchable = TRUE,
-            width = "240px",
+            width = field_width,
             theme = mode
           )
         )
@@ -200,6 +216,9 @@ server <- function(input, output, session) {
         class = "ts-state",
         tags$strong("Current theme: "), textOutput("theme_state", inline = TRUE),
         tags$br(),
+        tags$strong("Requested long-label width: "),
+        textOutput("width_state", inline = TRUE),
+        tags$br(),
         tags$strong("Category: "), textOutput("category_state", inline = TRUE),
         tags$br(),
         tags$strong("Tags: "), textOutput("tags_state", inline = TRUE),
@@ -217,6 +236,7 @@ server <- function(input, output, session) {
   })
 
   output$theme_state <- renderText(theme())
+  output$width_state <- renderText(paste0(demo_width(), "px"))
   output$category_state <- renderText(or_default(input$category))
   output$tags_state <- renderText(paste(or_default(input$tags), collapse = ", "))
   output$mobile_state <- renderText(or_default(input$mobile_wide))
