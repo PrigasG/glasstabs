@@ -386,10 +386,11 @@
       cancelPendingTeleportClose(dropdown);
       teleportClose(wrap, dropdown);
     }
-    /* Only the transform end counts: opacity finishes first (120ms) and
-       must not cut the 180ms retract short. */
+    /* Only the panel's own transform end counts: opacity finishes first
+       (120ms) and must not cut the 180ms retract short, and transitionend
+       bubbles, so a descendant's transform end must not teleport early. */
     dropdown._gtCloseHandler = function (e) {
-      if (e.propertyName === 'transform') finish();
+      if (e.target === dropdown && e.propertyName === 'transform') finish();
     };
     dropdown.addEventListener('transitionend', dropdown._gtCloseHandler);
     dropdown._gtCloseTimer = setTimeout(finish, CLOSE_TELEPORT_FALLBACK_MS);

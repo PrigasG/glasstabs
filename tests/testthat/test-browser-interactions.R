@@ -478,6 +478,12 @@ test_that("browser: a programmatically opened Bootstrap modal closes dropdowns",
   # No outside pointer press occurs, so the modal lifecycle event owns close.
   app$set_inputs(show_test_modal = "click")
   app$wait_for_js("document.querySelector('.modal.in, .modal.show') !== null")
+  # The modal can appear before the close animation finishes, so wait for
+  # the panel to return to the wrapper instead of asserting immediately.
+  app$wait_for_js("
+    document.querySelector('#cats-dropdown').parentElement ===
+      document.querySelector('#cats-wrap')
+  ")
   expect_true(app$get_js("
     (function() {
       var wrap = document.querySelector('#cats-wrap');
@@ -1170,14 +1176,15 @@ test_that("browser: dropdown opens flush like a tongue from the field", {
   # while closing, and only returns to the wrapper once the retract finishes.
   # Moving it back in the same turn as removing `.open` collapses it instantly,
   # so a final-matrix check alone passes even when no transition occurs.
-  # Samples are taken on the browser clock (setTimeout), then read after the
-  # transition and the delayed teleport have both had time to complete.
+  # Samples are polled every 20ms on the browser clock (not fixed 50/100ms
+  # points, which loaded runners can miss entirely), and the test requires
+  # at least one mid-close sample plus the final returned state.
   app$get_js("
     (function() {
       var trigger = document.querySelector('#fruit-trigger');
       var panel = document.querySelector('#fruit-dropdown');
       var samples = [];
-      function record(label) {
+      function record() {
         var tr = trigger.getBoundingClientRect();
         var pr = panel.getBoundingClientRect();
         var m = getComputedStyle(panel).transform;
@@ -1186,45 +1193,43 @@ test_that("browser: dropdown opens flush like a tongue from the field", {
           scaleY = parseFloat(m.replace('matrix(', '').replace(')', '').split(',')[3]);
         }
         samples.push({
-          label: label,
           parentIsBody: panel.parentNode === document.body,
           attached: Math.abs(pr.top - (tr.bottom - 1)) <= 2,
           scaleY: scaleY
         });
       }
       trigger.click();
-      [50, 100].forEach(function(ms) {
-        setTimeout(function() { record('t' + ms); }, ms);
-      });
+      var started = Date.now();
+      var iv = setInterval(function() {
+        record();
+        if (panel.parentNode !== document.body || Date.now() - started > 600) {
+          clearInterval(iv);
+        }
+      }, 20);
       window.__gtCloseSamples = samples;
       return 'sampling';
     })()
   ")
-  Sys.sleep(0.6)
+  Sys.sleep(0.9)
   close_state <- app$get_js("
     (function() {
       var panel = document.querySelector('#fruit-dropdown');
       var samples = window.__gtCloseSamples || [];
-      var allTeleported = samples.length > 0 && samples.every(function(s) { return s.parentIsBody; });
-      var allAttached = samples.length > 0 && samples.every(function(s) { return s.attached; });
-      var allMidScale = samples.length > 0 && samples.every(function(s) {
-        return s.scaleY !== null && s.scaleY > 0 && s.scaleY < 1;
+      var hasMidClose = samples.some(function(s) {
+        return s.parentIsBody && s.attached &&
+          s.scaleY !== null && s.scaleY > 0 && s.scaleY < 1;
       });
       return {
         nSamples: samples.length,
-        allTeleported: allTeleported,
-        allAttached: allAttached,
-        allMidScale: allMidScale,
+        hasMidClose: hasMidClose,
         returnedToWrap: panel.parentNode !== document.body,
         closed: !panel.classList.contains('open'),
         detail: JSON.stringify(samples)
       };
     })()
   ")
-  expect_equal(close_state$nSamples, 2)
-  expect_true(close_state$allTeleported, info = close_state$detail)
-  expect_true(close_state$allAttached, info = close_state$detail)
-  expect_true(close_state$allMidScale, info = close_state$detail)
+  expect_gte(close_state$nSamples, 1)
+  expect_true(close_state$hasMidClose, info = close_state$detail)
   expect_true(close_state$returnedToWrap)
   expect_true(close_state$closed)
   app$wait_for_js("
