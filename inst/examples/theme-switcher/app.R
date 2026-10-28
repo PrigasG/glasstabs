@@ -112,7 +112,8 @@ server <- function(input, output, session) {
           tags$h3("Long category names"),
           tags$p(
             "Pick a long label. The trigger ellipsizes it, the dropdown ",
-            "wraps it, and the panel never grows wider than the field."
+            "wraps it, and the panel never grows wider than the field. ",
+            "This long-label example opts into width = 240px."
           ),
           glassSelect(
             "category", categories,
@@ -129,7 +130,8 @@ server <- function(input, output, session) {
           tags$h3("Long labels, multi-select"),
           tags$p(
             "Chips for the picks plus a searchable dropdown with the same ",
-            "long labels. Flip the theme and watch the shadows follow."
+            "long labels. This example also uses width = 240px. Flip the ",
+            "theme and watch the shadows follow."
           ),
           glassMultiSelect(
             "tags", long_tags,
@@ -149,7 +151,8 @@ server <- function(input, output, session) {
           class = "ts-phone",
           tags$h3("Mobile view"),
           tags$p(
-            "A 360px phone frame. Open the menus here: wide text wraps ",
+            "A 360px phone frame with width = 240px fields. Open the menus ",
+            "here: wide text wraps ",
             "inside the panel instead of pushing it past the screen edge. ",
             "On a real phone, shrink the browser window and the grid above ",
             "collapses to one column."
@@ -181,7 +184,8 @@ server <- function(input, output, session) {
         tags$p(
           "This select sits near the bottom of the page, so its panel has ",
           "no room below and must flip above the field, retracting back ",
-          "into the trigger when it closes. Try it in both themes."
+          "into the trigger when it closes. It keeps the standard 160px ",
+          "width for comparison. Try it in both themes."
         ),
         glassSelect(
           "bottom_pick", categories,
