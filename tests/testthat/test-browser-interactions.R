@@ -349,9 +349,12 @@ test_that("browser: immediate outside presses close teleported dropdowns", {
         bubbles: true,
         composed: true
       }));
+      /* Close animates (180ms retract, 250ms teleport fallback), so settled
+         must wait past 250ms; 150ms only worked when close teleported
+         instantly and no retract was visible. */
       setTimeout(function() {
         document.body.setAttribute('data-gt-close-settled', 'true');
-      }, 150);
+      }, 300);
       return true;
     })()
   "))
@@ -400,9 +403,11 @@ test_that("browser: overlay event interception cannot strand dropdowns", {
         bubbles: true,
         composed: true
       }));
+      /* See above: close animates, so settled must wait past the 250ms
+         teleport fallback. */
       setTimeout(function() {
         document.body.setAttribute('data-gt-overlay-close-settled', 'true');
-      }, 150);
+      }, 300);
       return true;
     })()
   "))
