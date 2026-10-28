@@ -155,6 +155,33 @@ glassSelect("region_dc", fruits, disabled_choices = "banana")
 `disabled` and `disabled_choices` can also be toggled at runtime with
 [`updateGlassSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassSelect.md).
 
+### Long selected labels
+
+The default `overflow_tooltip = "auto"` adds a full-text tooltip only
+when the selected trigger text is actually shortened with an ellipsis.
+It appears on pointer hover or keyboard focus. Touch users can open the
+dropdown to read the same label wrapped inside its matching-width panel.
+
+``` r
+
+long_industries <- c(
+  "Renewable energy generation, storage, and grid-scale distribution networks" = "energy",
+  Healthcare = "healthcare"
+)
+
+glassSelect(
+  "industry",
+  long_industries,
+  selected = "energy",
+  width = "240px",
+  overflow_tooltip = "auto"
+)
+```
+
+Use `overflow_tooltip = "never"` when the visual explanation is
+unnecessary. The complete accessible label remains on the trigger in
+either mode.
+
 ## Dropdown lifecycle
 
 For dynamic layouts, modals, sidebars, or tab changes, you can
@@ -192,6 +219,26 @@ glassSelect(
   clearable = TRUE
 )
 ```
+
+Field and motion styling can be adjusted without changing the input
+value:
+
+``` r
+
+glassSelect(
+  "f",
+  fruits,
+  tongue = FALSE,
+  label_bold = TRUE,
+  label_size = "14px",
+  search_focus_ring = FALSE
+)
+```
+
+`tongue = TRUE` uses the attached glass unfurl. With `FALSE`, the panel
+is detached and uses a short, native-feeling fade. The quiet search
+focus style is the default; set `search_focus_ring = TRUE` for the
+accent outline.
 
 To hide the search box:
 

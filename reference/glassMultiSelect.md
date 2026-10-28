@@ -33,7 +33,13 @@ glassMultiSelect(
   selection_display = c("auto", "count", "summary", "labels"),
   selection_max_items = 2L,
   dropdown_max_height = "260px",
-  no_matches_text = "No matches"
+  no_matches_text = "No matches",
+  tongue = TRUE,
+  label_bold = TRUE,
+  fill_colors = c("single", "multi"),
+  label_size = "14px",
+  search_focus_ring = FALSE,
+  overflow_tooltip = c("auto", "never")
 )
 ```
 
@@ -121,7 +127,8 @@ glassMultiSelect(
 - hues:
 
   Optional named integer vector of HSL hue angles (0 to 360) for the
-  `"filled"` style. Auto-assigned if `NULL`.
+  `"filled"` style when `fill_colors = "multi"`. Auto-assigned if
+  `NULL`.
 
 - dark_selector:
 
@@ -177,7 +184,43 @@ glassMultiSelect(
 - no_matches_text:
 
   Text shown when a search matches no choices. Default `"No matches"`.
-  This argument is last so that existing positional calls keep working.
+
+- tongue:
+
+  Logical. When `TRUE` (default), the dropdown attaches to the trigger
+  and uses the signature tongue unfurl/retract animation. Set to `FALSE`
+  for a detached, immediately opening panel that sits more naturally
+  beside native Shiny inputs.
+
+- label_bold:
+
+  Logical. Use a semibold field label, matching native Shiny inputs,
+  when `TRUE` (default). Set to `FALSE` for regular-weight label text.
+
+- fill_colors:
+
+  Color treatment for `check_style = "filled"`. `"single"` (default)
+  uses the theme accent for every selected row; `"multi"` keeps the
+  categorical per-option colors.
+
+- label_size:
+
+  CSS size for the field label. The default, `"14px"`, keeps the title
+  visually distinct from the dropdown options.
+
+- search_focus_ring:
+
+  Logical. When `TRUE`, focusing the dropdown search field adds the
+  accent-colored outline. The default, `FALSE`, uses a quieter
+  background and border change without the outer ring.
+
+- overflow_tooltip:
+
+  Tooltip behavior for trigger text that is visually truncated with an
+  ellipsis. `"auto"` (default) shows the complete text on pointer hover
+  or keyboard focus only when truncation is detected; `"never"` disables
+  it. On touch devices, opening the dropdown remains the primary way to
+  inspect the full, wrapped option text.
 
 ## Value
 

@@ -213,6 +213,12 @@ click:</p>
 <p><code>input$category</code> is always a plain character vector of the
 checked values — use it like any other Shiny input to filter data, drive
 outputs, or trigger reactives.</p>
+<p>For long filter names, give the field more room with
+<code>width = "240px"</code> or <code>width = "100%"</code>. If selected
+text is still ellipsized, the default
+<code>overflow_tooltip = "auto"</code> reveals it on hover or keyboard
+focus; touch users open the dropdown to read the wrapped option. These
+controls affect appearance only, not the value returned to Shiny.</p>
 </div>
 <div class="section level3">
 <h3 id="optional-reactive-helper">Optional reactive helper<a class="anchor" aria-label="anchor" href="#optional-reactive-helper"></a>
@@ -278,6 +284,13 @@ updates:</p>
 <span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/shinyApp.html" class="external-link">shinyApp</a></span><span class="op">(</span><span class="va">ui</span>, <span class="va">server</span><span class="op">)</span></span></code></pre></div>
 <p><code>input$region</code> is a single character value, or
 <code>NULL</code> when nothing is selected.</p>
+<p>The single- and multi-select widgets share <code>tongue</code>,
+<code>label_bold</code>, <code>label_size</code>,
+<code>search_focus_ring</code>, and <code>overflow_tooltip</code>. This
+makes it possible to keep the glass animation, use the quieter detached
+transition, or match native Shiny labels without changing server code.
+Multi-selects add <code>fill_colors = "single"</code> (default) or
+<code>"multi"</code> for filled markers.</p>
 </div>
 <div class="section level3">
 <h3 id="updating-from-the-server-1">Updating from the server<a class="anchor" aria-label="anchor" href="#updating-from-the-server-1"></a>

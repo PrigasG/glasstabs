@@ -75,7 +75,12 @@ selection-marker styling, and programmatic updates via <code><a href="updateGlas
 <span>  server <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  server_limit <span class="op">=</span> <span class="fl">50L</span>,</span>
 <span>  server_min_chars <span class="op">=</span> <span class="fl">0L</span>,</span>
-<span>  no_matches_text <span class="op">=</span> <span class="st">"No matches"</span></span>
+<span>  no_matches_text <span class="op">=</span> <span class="st">"No matches"</span>,</span>
+<span>  tongue <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  label_bold <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  label_size <span class="op">=</span> <span class="st">"14px"</span>,</span>
+<span>  search_focus_ring <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  overflow_tooltip <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"never"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -185,8 +190,39 @@ matching filters choices. Default <code>0</code>.</p></dd>
 
 <dt id="arg-no-matches-text">no_matches_text<a class="anchor" aria-label="anchor" href="#arg-no-matches-text"></a></dt>
 <dd><p>Text shown when a search matches no choices.
-Default <code>"No matches"</code>. This argument is last so that existing
-positional calls keep working.</p></dd>
+Default <code>"No matches"</code>.</p></dd>
+
+
+<dt id="arg-tongue">tongue<a class="anchor" aria-label="anchor" href="#arg-tongue"></a></dt>
+<dd><p>Logical. When <code>TRUE</code> (default), the dropdown attaches to
+the trigger and uses the signature tongue unfurl/retract animation. Set to
+<code>FALSE</code> for a detached, immediately opening panel that sits more
+naturally beside native Shiny inputs.</p></dd>
+
+
+<dt id="arg-label-bold">label_bold<a class="anchor" aria-label="anchor" href="#arg-label-bold"></a></dt>
+<dd><p>Logical. Use a semibold field label, matching native Shiny
+inputs, when <code>TRUE</code> (default). Set to <code>FALSE</code> for regular-weight
+label text.</p></dd>
+
+
+<dt id="arg-label-size">label_size<a class="anchor" aria-label="anchor" href="#arg-label-size"></a></dt>
+<dd><p>CSS size for the field label. The default, <code>"14px"</code>,
+keeps the title visually distinct from the dropdown options.</p></dd>
+
+
+<dt id="arg-search-focus-ring">search_focus_ring<a class="anchor" aria-label="anchor" href="#arg-search-focus-ring"></a></dt>
+<dd><p>Logical. When <code>TRUE</code>, focusing the dropdown
+search field adds the accent-colored outline. The default, <code>FALSE</code>,
+uses a quieter background and border change without the outer ring.</p></dd>
+
+
+<dt id="arg-overflow-tooltip">overflow_tooltip<a class="anchor" aria-label="anchor" href="#arg-overflow-tooltip"></a></dt>
+<dd><p>Tooltip behavior for trigger text that is visually
+truncated with an ellipsis. <code>"auto"</code> (default) shows the complete
+text on pointer hover or keyboard focus only when truncation is detected;
+<code>"never"</code> disables it. On touch devices, opening the dropdown remains
+the primary way to inspect the full, wrapped option text.</p></dd>
 
 </dl></div>
     <div class="section level2">

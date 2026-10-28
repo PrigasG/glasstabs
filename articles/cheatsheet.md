@@ -252,8 +252,15 @@ glassMultiSelect(
   selection_display = "summary",
   selection_max_items = 2,
   dropdown_max_height = "18rem",
+  width = "240px",
+  tongue = TRUE,
+  label_bold = TRUE,
+  label_size = "14px",
+  search_focus_ring = FALSE,
+  overflow_tooltip = "auto",
+  fill_colors = "single",
   theme = "dark",
-  no_matches_text = "No matches"  # last argument, so positional calls keep working
+  no_matches_text = "No matches"
 )
 ```
 
@@ -309,10 +316,20 @@ glassSelect(
   clearable = TRUE,
   include_all = FALSE,
   check_style = "checkbox",
+  width = "240px",
+  tongue = TRUE,
+  label_bold = TRUE,
+  label_size = "14px",
+  search_focus_ring = FALSE,
+  overflow_tooltip = "auto",
   theme = "light",
-  no_matches_text = "No matches"  # last argument, so positional calls keep working
+  no_matches_text = "No matches"
 )
 ```
+
+The overflow tooltip appears only for an ellipsized trigger. On touch,
+the dropdown’s wrapped option text is the full-text fallback. Use
+`overflow_tooltip = "never"` to disable the visual tooltip.
 
 ## Tabs: inside bs4Dash
 

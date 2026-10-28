@@ -27,7 +27,12 @@ glassSelect(
   server = FALSE,
   server_limit = 50L,
   server_min_chars = 0L,
-  no_matches_text = "No matches"
+  no_matches_text = "No matches",
+  tongue = TRUE,
+  label_bold = TRUE,
+  label_size = "14px",
+  search_focus_ring = FALSE,
+  overflow_tooltip = c("auto", "never")
 )
 ```
 
@@ -137,7 +142,37 @@ glassSelect(
 - no_matches_text:
 
   Text shown when a search matches no choices. Default `"No matches"`.
-  This argument is last so that existing positional calls keep working.
+
+- tongue:
+
+  Logical. When `TRUE` (default), the dropdown attaches to the trigger
+  and uses the signature tongue unfurl/retract animation. Set to `FALSE`
+  for a detached, immediately opening panel that sits more naturally
+  beside native Shiny inputs.
+
+- label_bold:
+
+  Logical. Use a semibold field label, matching native Shiny inputs,
+  when `TRUE` (default). Set to `FALSE` for regular-weight label text.
+
+- label_size:
+
+  CSS size for the field label. The default, `"14px"`, keeps the title
+  visually distinct from the dropdown options.
+
+- search_focus_ring:
+
+  Logical. When `TRUE`, focusing the dropdown search field adds the
+  accent-colored outline. The default, `FALSE`, uses a quieter
+  background and border change without the outer ring.
+
+- overflow_tooltip:
+
+  Tooltip behavior for trigger text that is visually truncated with an
+  ellipsis. `"auto"` (default) shows the complete text on pointer hover
+  or keyboard focus only when truncation is detected; `"never"` disables
+  it. On touch devices, opening the dropdown remains the primary way to
+  inspect the full, wrapped option text.
 
 ## Value
 

@@ -122,6 +122,26 @@ Keyboard focus follows the selected tab, and a server update brings its
 destination back into view.</p>
 </div>
 <div class="section level2">
+<h2 id="long-select-labels-on-narrow-screens">Long select labels on narrow screens<a class="anchor" aria-label="anchor" href="#long-select-labels-on-narrow-screens"></a>
+</h2>
+<p>Select dropdowns match their trigger width and remain capped by the
+containing layout. Start with the compact default and opt into a wider
+field only where the content needs it:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/glassSelect.html">glassSelect</a></span><span class="op">(</span></span>
+<span>  <span class="st">"industry"</span>,</span>
+<span>  <span class="va">long_industry_choices</span>,</span>
+<span>  width <span class="op">=</span> <span class="st">"280px"</span>,</span>
+<span>  overflow_tooltip <span class="op">=</span> <span class="st">"auto"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>An automatic overflow tooltip appears only when the selected trigger
+text is actually ellipsized. It supports pointer hover and keyboard
+focus. A tap keeps its normal job—opening the dropdown—where the full
+option wraps inside the viewport.
+<code>overflow_tooltip = "never"</code> disables the visual tooltip
+without removing the trigger’s full accessible label.</p>
+</div>
+<div class="section level2">
 <h2 id="choosing-the-overflow-style">Choosing the overflow style<a class="anchor" aria-label="anchor" href="#choosing-the-overflow-style"></a>
 </h2>
 <p><code>"scroll"</code> is a natural fit for most tab bars.
@@ -129,7 +149,7 @@ destination back into view.</p>
 once. In a horizontal layout, <code>"menu"</code> keeps the header
 compact and uses a native select control. Vertical tabs already have a
 dedicated rail, so compact menu mode is not available there.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
 <span>  <span class="st">"wrapped"</span>,</span>
 <span>  <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"one"</span>, <span class="st">"First report"</span>, selected <span class="op">=</span> <span class="cn">TRUE</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"First"</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -151,7 +171,7 @@ dedicated rail, so compact menu mode is not available there.</p>
 <p><code>swipe = TRUE</code> adds left and right gestures to ordinary
 panel content. Inputs, links, buttons, Shiny outputs, HTML widgets, and
 horizontal scrollers keep their own touch behavior.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
 <span>  <span class="st">"story"</span>,</span>
 <span>  <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"opening"</span>, <span class="st">"Opening"</span>, selected <span class="op">=</span> <span class="cn">TRUE</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"The first part."</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -161,7 +181,7 @@ horizontal scrollers keep their own touch behavior.</p>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Add <code>data-gt-no-swipe</code> to any custom region that should
 always keep its own gesture:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tags</span><span class="op">$</span><span class="fu">div</span><span class="op">(</span>`data-gt-no-swipe` <span class="op">=</span> <span class="st">""</span>, <span class="va">custom_touch_component</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -177,13 +197,17 @@ surfaces instead of losing contrast. Custom themes can set
 <code><a href="../reference/glass_select_theme.html">glass_select_theme()</a></code>; the colour follows select dropdowns
 when they move to the document body, so search focus remains
 visible.</p>
+<p>The dropdown search field uses a quiet border/background focus
+treatment by default. Set <code>search_focus_ring = TRUE</code> when the
+stronger accent ring is useful. All tongue and detached-panel
+transitions honor reduced-motion preferences.</p>
 </div>
 <div class="section level2">
 <h2 id="experimental-fillable-page">Experimental fillable page<a class="anchor" aria-label="anchor" href="#experimental-fillable-page"></a>
 </h2>
 <p><code><a href="../reference/glassPage.html">glassPage()</a></code> keeps a small full-page app pleasantly
 short:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/glassPage.html">glassPage</a></span><span class="op">(</span></span>
 <span>  title <span class="op">=</span> <span class="st">"Operations"</span>,</span>
 <span>  <span class="fu"><a href="../reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>

@@ -178,9 +178,29 @@
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="reference/glassFilterTags.html">glassFilterTags</a></span><span class="op">(</span><span class="st">"status"</span><span class="op">)</span></span></code></pre></div>
-<p>Select dropdowns stay aligned with their trigger for short option lists, then grow as needed for longer labels and built-in controls. Panels are capped at a comfortable width and at the viewport edge; exceptionally long labels still wrap safely.</p>
-<p>For a short list, the search box can stay out of the way. With <code>searchable = "auto"</code>, it appears only when the list reaches the chosen threshold. The trigger can also show a compact summary instead of the generic “Multiple selection” label.</p>
+<p>Select dropdowns always match their trigger width. The standard width is a compact <code>160px</code>; use the optional <code>width</code> argument only when an app needs more room for long labels. Both fixed and fluid CSS widths are supported and remain capped by the containing layout, so <code>width = "240px"</code> works well for a wider filter while <code>width = "100%"</code> fills the available column. Exceptionally long labels still wrap safely inside the matching panel.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/glassSelect.html">glassSelect</a></span><span class="op">(</span><span class="st">"industry"</span>, <span class="va">industry_choices</span>, width <span class="op">=</span> <span class="st">"240px"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span><span class="st">"filters"</span>, <span class="va">filter_choices</span>, width <span class="op">=</span> <span class="st">"100%"</span><span class="op">)</span></span></code></pre></div>
+<p>When selected text still has to be shortened with an ellipsis, <code>overflow_tooltip = "auto"</code> (the default) reveals the full text on pointer hover or keyboard focus, but only when the trigger is actually truncated. Touch users open the dropdown and read the wrapped option instead. Set <code>overflow_tooltip = "never"</code> to suppress the visual tooltip; the full accessible label remains available to assistive technology.</p>
+<p>The select controls also expose their presentation choices directly:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/glassSelect.html">glassSelect</a></span><span class="op">(</span></span>
+<span>  <span class="st">"industry"</span>, <span class="va">industry_choices</span>,</span>
+<span>  tongue <span class="op">=</span> <span class="cn">FALSE</span>,              <span class="co"># detached panel with a short fade</span></span>
+<span>  label_bold <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  label_size <span class="op">=</span> <span class="st">"14px"</span>,</span>
+<span>  search_focus_ring <span class="op">=</span> <span class="cn">FALSE</span>    <span class="co"># quiet search focus is the default</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span></span>
+<span>  <span class="st">"filters"</span>, <span class="va">filter_choices</span>,</span>
+<span>  check_style <span class="op">=</span> <span class="st">"filled"</span>,</span>
+<span>  fill_colors <span class="op">=</span> <span class="st">"single"</span>       <span class="co"># use "multi" for per-choice hues</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><code>tongue = TRUE</code> keeps the signature attached unfurl animation. Turning it off does not remove motion entirely: the detached panel uses a restrained open and close transition and still honors reduced-motion preferences.</p>
+<p>For a short list, the search box can stay out of the way. With <code>searchable = "auto"</code>, it appears only when the list reaches the chosen threshold. The trigger can also show a compact summary instead of the generic “Multiple selection” label.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span></span>
 <span>  <span class="st">"facility"</span>,</span>
 <span>  <span class="va">facility_choices</span>,</span>
@@ -191,7 +211,7 @@
 <span>  dropdown_max_height <span class="op">=</span> <span class="st">"18rem"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Choice updates are handled as one transaction. Existing selections are kept when they still exist, and Shiny is notified only when the effective value changes. <code>notify = "never"</code> is useful when several linked filters are settling and the final update should be the only one that reaches the server.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/updateGlassMultiSelect.html">updateGlassMultiSelect</a></span><span class="op">(</span></span>
 <span>  <span class="va">session</span>,</span>
 <span>  <span class="st">"facility"</span>,</span>
@@ -205,7 +225,7 @@
 <h2 id="match-the-surrounding-app">Match the surrounding app<a class="anchor" aria-label="anchor" href="#match-the-surrounding-app"></a>
 </h2>
 <p>Use <code>theme = "auto"</code> in Bootstrap 5 or <code>bslib</code> apps so the widgets follow the page’s light and dark modes. Use <code>shape = "square"</code> when the controls sit next to native Shiny inputs.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
 <span>  <span class="st">"nav"</span>,</span>
 <span>  <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"one"</span>, <span class="st">"One"</span>, selected <span class="op">=</span> <span class="cn">TRUE</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"First panel"</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -217,7 +237,7 @@
 <span><span class="fu"><a href="reference/glassSelect.html">glassSelect</a></span><span class="op">(</span><span class="st">"region"</span>, <span class="va">choices</span>, shape <span class="op">=</span> <span class="st">"square"</span>, theme <span class="op">=</span> <span class="st">"auto"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span><span class="st">"filters"</span>, <span class="va">choices</span>, shape <span class="op">=</span> <span class="st">"square"</span>, theme <span class="op">=</span> <span class="st">"auto"</span><span class="op">)</span></span></code></pre></div>
 <p>Tabs also support a vertical rail and three indicator styles:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
 <span>  <span class="st">"workflow"</span>,</span>
 <span>  <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"intake"</span>, <span class="st">"Intake"</span>, selected <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">intake_ui</span><span class="op">)</span>,</span>
@@ -231,7 +251,7 @@
 <p><code>tab_align</code> places the tab group at the left, center, or right of the available navigation area in either layout. <code>text_align</code> separately aligns labels and icons inside each tab button. For visible left or right alignment in a horizontal bar, the buttons share the width of the widest label.</p>
 <p>Tab content sits in a subtle glass container, so the tabs and their content read as one connected component instead of a tab bar floating over bare space. The active tab picks up a soft light on its content-facing edge to tie them together.</p>
 <p>Use <code>style = "attached"</code> to dock the tab bar directly onto the content box as a single card, and <code>transition = "slide"</code> to slide panes in the direction you move between tabs:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
 <span>  <span class="st">"reports"</span>,</span>
 <span>  <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"summary"</span>, <span class="st">"Summary"</span>, selected <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">summary_ui</span><span class="op">)</span>,</span>
@@ -245,7 +265,7 @@
 <h2 id="tabs-that-fit-the-screen">Tabs that fit the screen<a class="anchor" aria-label="anchor" href="#tabs-that-fit-the-screen"></a>
 </h2>
 <p>Long tab bars stay on one line and scroll on smaller screens. The active tab comes back into view after a click, keyboard change, swipe, or server update.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
 <span>  <span class="st">"reports"</span>,</span>
 <span>  <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"summary"</span>, <span class="st">"Summary"</span>, selected <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">summary_ui</span><span class="op">)</span>,</span>
@@ -261,7 +281,7 @@
 <h2 id="an-experimental-fillable-page">An experimental fillable page<a class="anchor" aria-label="anchor" href="#an-experimental-fillable-page"></a>
 </h2>
 <p><code><a href="reference/glassPage.html">glassPage()</a></code> is a small wrapper around <code><a href="https://rstudio.github.io/bslib/reference/page_fillable.html" class="external-link">bslib::page_fillable()</a></code>. It loads the package assets automatically and starts with Bootstrap 5. The wrapper is experimental during the 0.4.x cycle; regular Shiny and bslib pages remain fully supported.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/glassPage.html">glassPage</a></span><span class="op">(</span></span>
 <span>  title <span class="op">=</span> <span class="st">"Team review"</span>,</span>
 <span>  <span class="fu"><a href="reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
@@ -272,7 +292,7 @@
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>For a custom accent, change only the fields your app needs:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
 <span>  <span class="st">"nav"</span>,</span>
 <span>  <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"A"</span>, selected <span class="op">=</span> <span class="cn">TRUE</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"Content"</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -295,7 +315,7 @@
 <span><span class="op">)</span></span></code></pre></div>
 <p><code>focus_ring</code> keeps the keyboard indicator in the same colour family as the rest of an app while remaining separate from its decorative accent.</p>
 <p>Inside a <code>bs4Dash</code> card, <code>compact = TRUE</code> reduces spacing and <code>wrap = FALSE</code> lets the card provide the outer container.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">bs4Dash</span><span class="fu">::</span><span class="fu"><a href="https://bs4dash.rinterface.com/reference/box.html" class="external-link">box</a></span><span class="op">(</span></span>
 <span>  width <span class="op">=</span> <span class="fl">12</span>,</span>
 <span>  <span class="fu">glasstabs</span><span class="fu">::</span><span class="fu"><a href="reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
@@ -339,7 +359,7 @@
 </tbody>
 </table>
 <p>Server helpers cover common programmatic changes:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/observeEvent.html" class="external-link">observeEvent</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">next_step</span>, <span class="op">{</span></span>
 <span>    <span class="fu"><a href="reference/updateGlassTabsUI.html">updateGlassTabsUI</a></span><span class="op">(</span><span class="va">session</span>, <span class="st">"workflow"</span>, selected <span class="op">=</span> <span class="st">"review"</span><span class="op">)</span></span>
@@ -352,7 +372,7 @@
 <span>  <span class="op">}</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <p>Use <code><a href="reference/glassTabCondition.html">glassTabCondition()</a></code> when a regular <code><a href="https://rdrr.io/pkg/shiny/man/conditionalPanel.html" class="external-link">conditionalPanel()</a></code> should follow the active glass tab:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/conditionalPanel.html" class="external-link">conditionalPanel</a></span><span class="op">(</span></span>
 <span>  condition <span class="op">=</span> <span class="fu"><a href="reference/glassTabCondition.html">glassTabCondition</a></span><span class="op">(</span><span class="st">"main"</span>, <span class="st">"details"</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"This appears while the Details tab is active."</span><span class="op">)</span></span>
@@ -362,7 +382,7 @@
 <h2 id="large-choice-sets">Large choice sets<a class="anchor" aria-label="anchor" href="#large-choice-sets"></a>
 </h2>
 <p>For hundreds or thousands of choices, keep the full vector on the server and send a small page of matches to the browser.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">many_choices</span> <span class="op">&lt;-</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"value-%04d"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">2000</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Choice %04d"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">2000</span><span class="op">)</span></span>
@@ -413,7 +433,7 @@
 </tr>
 </tbody>
 </table>
-<p>Built-in examples include <code>basic</code>, <code>bs4dash</code>, <code>bslib</code>, <code>connect-workflow</code>, <code>dashboard</code>, <code>indicators</code>, <code>light-mode</code>, <code>server-select</code>, <code>smoke-test</code>, <code>square-corners</code>, <code>stress-test</code>, and <code>theme-switcher</code>. The dedicated light-mode example includes long select labels for checking adaptive dropdown sizing. The theme-switcher example flips every select between dark and light with one switch, and exercises long category names, wide text in a narrow phone frame, and a bottom-of-page dropdown that must flip above the field. The Connect workflow doubles as a v0.4.1 test lab, with the responsive, keyboard, touch, dynamic-tab, badge, theme, and page-wrapper checks collected in one app.</p>
+<p>Built-in examples include <code>basic</code>, <code>bs4dash</code>, <code>bslib</code>, <code>connect-workflow</code>, <code>dashboard</code>, <code>indicators</code>, <code>light-mode</code>, <code>native-comparison</code>, <code>server-select</code>, <code>smoke-test</code>, <code>square-corners</code>, <code>stress-test</code>, and <code>theme-switcher</code>. The <code>native-comparison</code> lab places native Shiny and glasstabs fields side by side, including an intentionally truncated selected label and live controls for width, tongue motion, labels, search focus, filled colors, and overflow tooltips. The dedicated light-mode example includes long select labels for checking adaptive dropdown sizing. The theme-switcher example flips every select between dark and light with one switch, and exercises long category names, wide text in a narrow phone frame, and a bottom-of-page dropdown that must flip above the field. The Connect workflow doubles as a v0.4.1 test lab, with the responsive, keyboard, touch, dynamic-tab, badge, theme, and page-wrapper checks collected in one app.</p>
 </div>
 <div class="section level3">
 <h3 id="tab-widget">Tab widget<a class="anchor" aria-label="anchor" href="#tab-widget"></a>

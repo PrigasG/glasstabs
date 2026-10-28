@@ -182,6 +182,32 @@ glassMultiSelect("filters_dc", fruits, disabled_choices = "banana")
 at runtime with
 [`updateGlassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassMultiSelect.md).
 
+### Long trigger summaries
+
+When a selected label or summary is visually shortened, the default
+`overflow_tooltip = "auto"` reveals the complete visible selection text
+on pointer hover or keyboard focus. The tooltip is conditional: short
+text does not produce one. On touch, open the dropdown to inspect the
+wrapped options.
+
+``` r
+
+glassMultiSelect(
+  "long_filters",
+  c(
+    "Commercial real estate development and property management services" = "property",
+    Healthcare = "healthcare"
+  ),
+  selected = "property",
+  width = "240px",
+  selection_display = "summary",
+  overflow_tooltip = "auto"
+)
+```
+
+Set `overflow_tooltip = "never"` to disable the visual tooltip while
+retaining the full accessible trigger label.
+
 ## Dropdown lifecycle
 
 For dynamic layouts, modals, sidebars, or tab changes, you can
@@ -312,6 +338,27 @@ glassMultiSelect(
 selected label, and `"summary"` shows the first labels followed by `+N`.
 `"auto"` keeps the familiar single-label / “Multiple selection”
 behavior.
+
+The surrounding presentation is independently configurable:
+
+``` r
+
+glassMultiSelect(
+  "pick",
+  fruits,
+  tongue = FALSE,
+  label_bold = TRUE,
+  label_size = "14px",
+  search_focus_ring = FALSE,
+  check_style = "filled",
+  fill_colors = "single"
+)
+```
+
+`tongue = TRUE` uses the attached glass animation; `FALSE` uses a
+detached, short fade. Set `search_focus_ring = TRUE` for the accent
+outline. Filled rows use one accent by default; `fill_colors = "multi"`
+assigns per-choice hues and honors custom `hues`.
 
 ## Server-side search for large choice sets
 

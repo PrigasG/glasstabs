@@ -44,6 +44,28 @@ On a narrow screen, the labels remain in a touch-scrollable row.
 Keyboard focus follows the selected tab, and a server update brings its
 destination back into view.
 
+## Long select labels on narrow screens
+
+Select dropdowns match their trigger width and remain capped by the
+containing layout. Start with the compact default and opt into a wider
+field only where the content needs it:
+
+``` r
+
+glassSelect(
+  "industry",
+  long_industry_choices,
+  width = "280px",
+  overflow_tooltip = "auto"
+)
+```
+
+An automatic overflow tooltip appears only when the selected trigger
+text is actually ellipsized. It supports pointer hover and keyboard
+focus. A tap keeps its normal job—opening the dropdown—where the full
+option wraps inside the viewport. `overflow_tooltip = "never"` disables
+the visual tooltip without removing the trigger’s full accessible label.
+
 ## Choosing the overflow style
 
 `"scroll"` is a natural fit for most tab bars. `"multiline"` is useful
@@ -110,6 +132,11 @@ and
 [`glass_select_theme()`](https://prigasg.github.io/glasstabs/reference/glass_select_theme.md);
 the colour follows select dropdowns when they move to the document body,
 so search focus remains visible.
+
+The dropdown search field uses a quiet border/background focus treatment
+by default. Set `search_focus_ring = TRUE` when the stronger accent ring
+is useful. All tongue and detached-panel transitions honor
+reduced-motion preferences.
 
 ## Experimental fillable page
 
