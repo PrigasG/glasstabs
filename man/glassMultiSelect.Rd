@@ -30,7 +30,8 @@ glassMultiSelect(
   selection_display = c("auto", "count", "summary", "labels"),
   selection_max_items = 2L,
   dropdown_max_height = "260px",
-  no_matches_text = "No matches"
+  no_matches_text = "No matches",
+  tongue = TRUE
 )
 }
 \arguments{
@@ -120,7 +121,12 @@ CSS unit, such as \code{"18rem"} or \code{"320px"}. The default is
 \code{"260px"}.}
 
 \item{no_matches_text}{Text shown when a search matches no choices.
-Default \code{"No matches"}. This argument is last so that existing
+Default \code{"No matches"}.}
+
+\item{tongue}{Logical. When \code{TRUE} (default), the dropdown attaches to
+the trigger and uses the signature tongue unfurl/retract animation. Set to
+\code{FALSE} for a detached, immediately opening panel that sits more
+naturally beside native Shiny inputs. This argument is last so existing
 positional calls keep working.}
 }
 \value{

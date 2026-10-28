@@ -6,7 +6,7 @@
 #'
 #' @param example Name of the example to run, such as `"basic"`,
 #'   `"bslib"`, `"connect-workflow"`, `"dashboard"`, `"indicators"`,
-#'   `"light-mode"`, `"server-select"`, `"smoke-test"`,
+#'   `"light-mode"`, `"native-comparison"`, `"server-select"`, `"smoke-test"`,
 #'   `"square-corners"`, or `"stress-test"`. When `NULL`
 #'   (default), lists all available examples.
 #' @param ... Additional arguments passed to [shiny::runApp()].
@@ -21,6 +21,7 @@
 #' if (interactive()) {
 #'   runGlassExample("bslib")
 #'   runGlassExample("connect-workflow")
+#'   runGlassExample("native-comparison")
 #'   runGlassExample("smoke-test")
 #'   runGlassExample("server-select")
 #' }

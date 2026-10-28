@@ -7,6 +7,18 @@ test_that("glassSelect() returns an htmltools object", {
   expect_true(inherits(ui, c("shiny.tag", "shiny.tag.list")))
 })
 
+test_that("glassSelect() can disable the tongue treatment", {
+  default <- as.character(glassSelect("f", choices))
+  detached <- as.character(glassSelect("f", choices, tongue = FALSE))
+
+  expect_false(grepl("gt-no-tongue", default, fixed = TRUE))
+  expect_match(detached, "gt-gs-wrap[^\"]*gt-no-tongue")
+  expect_error(
+    glassSelect("f", choices, tongue = "no"),
+    class = "glasstabs_error_bad_argument"
+  )
+})
+
 
 test_that("glassSelect() accepts unnamed choices", {
   expect_no_error(glassSelect("f", c("x", "y", "z")))

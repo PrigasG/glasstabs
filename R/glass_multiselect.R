@@ -75,7 +75,11 @@
 #'   CSS unit, such as \code{"18rem"} or \code{"320px"}. The default is
 #'   \code{"260px"}.
 #' @param no_matches_text Text shown when a search matches no choices.
-#'   Default \code{"No matches"}. This argument is last so that existing
+#'   Default \code{"No matches"}.
+#' @param tongue Logical. When \code{TRUE} (default), the dropdown attaches to
+#'   the trigger and uses the signature tongue unfurl/retract animation. Set to
+#'   \code{FALSE} for a detached, immediately opening panel that sits more
+#'   naturally beside native Shiny inputs. This argument is last so existing
 #'   positional calls keep working.
 #'
 #' @return An \code{htmltools::tagList} containing the trigger button, dropdown
@@ -128,7 +132,8 @@ glassMultiSelect <- function(
     selection_display   = c("auto", "count", "summary", "labels"),
     selection_max_items = 2L,
     dropdown_max_height = "260px",
-    no_matches_text     = "No matches"
+    no_matches_text     = "No matches",
+    tongue             = TRUE
 ) {
   .gt_check_string(
     inputId,
@@ -136,6 +141,7 @@ glassMultiSelect <- function(
     "glassMultiSelect(): `inputId` must be a single non-empty string."
   )
   .gt_check_text(no_matches_text, "no_matches_text", "glassMultiSelect")
+  .gt_check_flag(tongue, "tongue")
   check_style <- .gt_match_arg(check_style, c("checkbox", "check-only", "filled"), "check_style")
   shape <- .gt_match_arg(shape, c("rounded", "square"), "shape")
   field_width_style <- .gt_field_width_style(width)
@@ -412,6 +418,7 @@ glassMultiSelect <- function(
     paste(
       "gt-ms-wrap",
       paste0("style-", check_style),
+      if (!tongue) "gt-no-tongue" else NULL,
       if (identical(shape, "square")) "shape-square" else NULL,
       if (disabled) "gt-disabled" else NULL,
       if (is_auto) "theme-auto" else NULL,

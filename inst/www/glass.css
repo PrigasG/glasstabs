@@ -648,6 +648,32 @@
   box-shadow:0 -12px 40px rgba(0,0,0,0.15),0 0 0 1px rgba(0,0,0,0.06);
 }
 
+/* Optional detached mode (`tongue = FALSE`). Keep the glass treatment while
+   using a conventional, fully rounded panel with no unfold/retract motion. */
+.gt-ms-wrap.gt-no-tongue .gt-ms-trigger.open,
+.gt-gs-wrap.gt-no-tongue .gt-gs-trigger.open{
+  border-radius:12px;
+}
+.gt-ms-dropdown.gt-no-tongue,
+.gt-gs-dropdown.gt-no-tongue,
+.gt-ms-dropdown.gt-no-tongue.open,
+.gt-gs-dropdown.gt-no-tongue.open,
+.gt-ms-dropdown.gt-no-tongue.gt-flip-above,
+.gt-gs-dropdown.gt-no-tongue.gt-flip-above{
+  border-radius:14px;
+  transform:none;
+  transform-origin:center;
+  transition:none;
+}
+.gt-ms-dropdown.gt-no-tongue,
+.gt-gs-dropdown.gt-no-tongue{
+  opacity:0;
+}
+.gt-ms-dropdown.gt-no-tongue.open,
+.gt-gs-dropdown.gt-no-tongue.open{
+  opacity:1;
+}
+
 /* Search */
 .gt-gs-search{
   display:flex;

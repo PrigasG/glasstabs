@@ -186,6 +186,18 @@ test_that("teleported select dropdowns match their trigger width", {
   expect_true(grepl("gt-compact-controls", js, fixed = TRUE))
 })
 
+test_that("detached select dropdowns skip tongue animation and close delay", {
+  js <- paste(readLines(system.file("www", "glass.js", package = "glasstabs"), warn = FALSE), collapse = "\n")
+  css <- paste(readLines(system.file("www", "glass.css", package = "glasstabs"), warn = FALSE), collapse = "\n")
+
+  expect_true(grepl("'gt-no-tongue'", js, fixed = TRUE))
+  expect_true(grepl("var overlap = tongue ? 1 : -6", js, fixed = TRUE))
+  expect_true(grepl("wrap.classList.contains('gt-no-tongue')", js, fixed = TRUE))
+  expect_true(grepl(".gt-ms-dropdown.gt-no-tongue", css, fixed = TRUE))
+  expect_true(grepl(".gt-gs-dropdown.gt-no-tongue", css, fixed = TRUE))
+  expect_true(grepl("transition:none", css, fixed = TRUE))
+})
+
 test_that("glass.js does not ship debug-only message handlers", {
   js_path <- file.path("inst", "www", "glass.js")
   if (!file.exists(js_path)) {

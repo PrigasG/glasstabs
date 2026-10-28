@@ -7,6 +7,18 @@ test_that("glassMultiSelect() returns an htmltools object", {
   expect_true(inherits(ui, c("shiny.tag", "shiny.tag.list")))
 })
 
+test_that("glassMultiSelect() can disable the tongue treatment", {
+  default <- as.character(glassMultiSelect("f", choices))
+  detached <- as.character(glassMultiSelect("f", choices, tongue = FALSE))
+
+  expect_false(grepl("gt-no-tongue", default, fixed = TRUE))
+  expect_match(detached, "gt-ms-wrap[^\"]*gt-no-tongue")
+  expect_error(
+    glassMultiSelect("f", choices, tongue = NA),
+    class = "glasstabs_error_bad_argument"
+  )
+})
+
 test_that("glassFilterTags() returns an htmltools tag", {
   expect_true(inherits(glassFilterTags("f"), "shiny.tag"))
 })

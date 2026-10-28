@@ -75,6 +75,22 @@ ui <- fluidPage(
         show_style_switcher = TRUE
       )
     ),
+    glassSelect(
+      "detached_single",
+      short_field_choices,
+      selected = "one",
+      searchable = FALSE,
+      tongue = FALSE,
+      width = "240px"
+    ),
+    glassMultiSelect(
+      "detached_multi",
+      choices,
+      selected = "apple",
+      show_style_switcher = FALSE,
+      tongue = FALSE,
+      width = "240px"
+    ),
     radioButtons(
       "shape",
       "Shape",

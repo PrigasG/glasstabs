@@ -24,7 +24,8 @@ glassSelect(
   server = FALSE,
   server_limit = 50L,
   server_min_chars = 0L,
-  no_matches_text = "No matches"
+  no_matches_text = "No matches",
+  tongue = TRUE
 )
 }
 \arguments{
@@ -91,7 +92,12 @@ rows so they stay visible and checked.}
 matching filters choices. Default \code{0}.}
 
 \item{no_matches_text}{Text shown when a search matches no choices.
-Default \code{"No matches"}. This argument is last so that existing
+Default \code{"No matches"}.}
+
+\item{tongue}{Logical. When \code{TRUE} (default), the dropdown attaches to
+the trigger and uses the signature tongue unfurl/retract animation. Set to
+\code{FALSE} for a detached, immediately opening panel that sits more
+naturally beside native Shiny inputs. This argument is last so existing
 positional calls keep working.}
 }
 \value{

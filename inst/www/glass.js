@@ -243,7 +243,10 @@
     '--ms-tx-35','--ms-tx-45','--ms-tx-50','--ms-tx-80','--ms-ac-tx-75'
   ];
 
-  var TELEPORT_CLASSES = ['style-checkbox','style-check-only','style-filled','theme-light','shape-square'];
+  var TELEPORT_CLASSES = [
+    'style-checkbox','style-check-only','style-filled',
+    'theme-light','shape-square','gt-no-tongue'
+  ];
 
   /** Teleport a dropdown to <body> so no parent overflow/transform can clip it */
   function teleportOpen(wrap, dropdown) {
@@ -285,9 +288,10 @@
     var vw = window.innerWidth;
     var vh = window.innerHeight;
     var edge = 8;
-    /* Tongue attachment: the panel sits flush against the field with a 1px
-       border overlap, so the two read as one continuous surface. */
-    var overlap = 1;
+    /* Tongue mode overlaps the borders into one continuous surface. Detached
+       mode keeps a small native-like gap and skips the unfurl animation. */
+    var tongue = !wrap.classList.contains('gt-no-tongue');
+    var overlap = tongue ? 1 : -6;
     var maxWidth = Math.max(0, vw - edge * 2);
     var triggerWidth = Math.ceil(rect.width || 160);
 
@@ -370,6 +374,10 @@
   }
 
   function scheduleTeleportClose(wrap, dropdown) {
+    if (wrap.classList.contains('gt-no-tongue')) {
+      teleportClose(wrap, dropdown);
+      return;
+    }
     if (dropdown.parentNode !== document.body) {
       teleportClose(wrap, dropdown);
       return;

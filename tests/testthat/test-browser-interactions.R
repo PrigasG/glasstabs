@@ -215,6 +215,62 @@ test_that("browser: select dropdowns match their fields and stay viewport-safe",
   "))
 })
 
+test_that("browser: tongue can be disabled for detached native-like panels", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-detached-selects",
+    height = 900,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+  app$click(selector = "#detached_single-trigger")
+  app$wait_for_js("document.querySelector('#detached_single-dropdown.open') !== null")
+  expect_true(app$get_js("
+    (function() {
+      var trigger = document.querySelector('#detached_single-trigger');
+      var dropdown = document.querySelector('#detached_single-dropdown');
+      var tr = trigger.getBoundingClientRect();
+      var dr = dropdown.getBoundingClientRect();
+      var gap = dropdown.classList.contains('gt-flip-above')
+        ? tr.top - dr.bottom
+        : dr.top - tr.bottom;
+      var style = getComputedStyle(dropdown);
+      return dropdown.classList.contains('gt-no-tongue') &&
+        Math.abs(dr.width - tr.width) <= 1 &&
+        gap >= 5 && gap <= 7 &&
+        style.transform === 'none' &&
+        style.transitionDuration === '0s' &&
+        parseFloat(style.borderTopLeftRadius) > 0 &&
+        parseFloat(getComputedStyle(trigger).borderBottomLeftRadius) > 0;
+    })()
+  "))
+
+  Sys.sleep(0.55)
+  app$click(selector = "#detached_single-trigger")
+  app$wait_for_js("
+    document.querySelector('#detached_single-dropdown').parentElement.id ===
+      'detached_single-wrap'
+  ")
+
+  app$click(selector = "#detached_multi-trigger")
+  app$wait_for_js("document.querySelector('#detached_multi-dropdown.open') !== null")
+  expect_true(app$get_js("
+    (function() {
+      var trigger = document.querySelector('#detached_multi-trigger');
+      var dropdown = document.querySelector('#detached_multi-dropdown');
+      return dropdown.classList.contains('gt-no-tongue') &&
+        Math.abs(dropdown.offsetWidth - trigger.offsetWidth) <= 1 &&
+        getComputedStyle(dropdown).transform === 'none';
+    })()
+  "))
+})
+
 test_that("browser: multiselect refinements update as one transaction", {
   skip_on_covr()
   skip_if_not_installed("shinytest2")

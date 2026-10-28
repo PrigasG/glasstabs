@@ -129,6 +129,17 @@ glassSelect("industry", industry_choices, width = "240px")
 glassMultiSelect("filters", filter_choices, width = "100%")
 ```
 
+The attached tongue and its unfold/retract motion are enabled by default. Turn
+them off per input when a conventional detached menu fits the surrounding Shiny
+controls better. This changes presentation only; values and server APIs remain
+the same.
+
+``` r
+selectInput("team", "Team", teams, selectize = FALSE)
+glassSelect("industry", industries, tongue = FALSE)
+glassMultiSelect("topics", topics, tongue = TRUE)
+```
+
 For a short list, the search box can stay out of the way. With `searchable = "auto"`, it appears only when the list reaches the chosen threshold. The trigger can also show a compact summary instead of the generic “Multiple selection” label.
 
 ``` r
@@ -352,7 +363,7 @@ server <- function(input, output, session) {
 | `runGlassExample(example)` | Launch a built-in example app (`runGlassExample()` lists all available apps) |
 | `glasstabs_news()` | Print the package changelog to the R console |
 
-Built-in examples include `basic`, `bs4dash`, `bslib`, `connect-workflow`, `dashboard`, `indicators`, `light-mode`, `server-select`, `smoke-test`, `square-corners`, `stress-test`, and `theme-switcher`. The dedicated light-mode example includes long select labels for checking adaptive dropdown sizing. The theme-switcher example flips every select between dark and light with one switch, and exercises long category names, wide text in a narrow phone frame, and a bottom-of-page dropdown that must flip above the field. The Connect workflow doubles as a v0.4.1 test lab, with the responsive, keyboard, touch, dynamic-tab, badge, theme, and page-wrapper checks collected in one app.
+Built-in examples include `basic`, `bs4dash`, `bslib`, `connect-workflow`, `dashboard`, `indicators`, `light-mode`, `native-comparison`, `server-select`, `smoke-test`, `square-corners`, `stress-test`, and `theme-switcher`. The `native-comparison` lab places native Shiny, Selectize, and glasstabs inputs side by side, including a live width control and tongue toggle. The theme-switcher example flips every select between dark and light with one switch, and exercises long category names, optional widths, wide text in a narrow phone frame, and a bottom-of-page dropdown that must flip above the field. The Connect workflow doubles as a v0.4.1 test lab, with the responsive, keyboard, touch, dynamic-tab, badge, theme, and page-wrapper checks collected in one app.
 
 ### Tab widget
 

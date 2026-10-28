@@ -75,7 +75,8 @@ glassSelect <- function(
     server = FALSE,
     server_limit = 50L,
     server_min_chars = 0L,
-    no_matches_text = "No matches"
+    no_matches_text = "No matches",
+    tongue = TRUE
 ) {
   .gt_check_string(
     inputId,
@@ -83,6 +84,7 @@ glassSelect <- function(
     "glassSelect(): `inputId` must be a single non-empty string."
   )
   .gt_check_text(no_matches_text, "no_matches_text", "glassSelect")
+  .gt_check_flag(tongue, "tongue")
   check_style <- .gt_match_arg(check_style, c("checkbox", "check-only", "filled"), "check_style")
   shape <- .gt_match_arg(shape, c("rounded", "square"), "shape")
   field_width_style <- .gt_field_width_style(width)
@@ -176,6 +178,7 @@ glassSelect <- function(
     paste(
       "gt-gs-wrap",
       paste0("style-", check_style),
+      if (!tongue) "gt-no-tongue" else NULL,
       if (identical(shape, "square")) "shape-square" else NULL,
       if (disabled) "gt-disabled" else NULL,
       if (is_auto) "theme-auto" else NULL,
