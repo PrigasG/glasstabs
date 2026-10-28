@@ -87,7 +87,9 @@ test_that("browser: select dropdowns grow for long labels and stay viewport-safe
     (function() {
       var trigger = document.querySelector('#short_single-trigger');
       var dropdown = document.querySelector('#short_single-dropdown');
-      return dropdown.offsetWidth > trigger.offsetWidth && dropdown.offsetWidth <= 420;
+      var field = document.querySelector('#short_single-field');
+      return dropdown.offsetWidth > trigger.offsetWidth &&
+        dropdown.offsetWidth <= Math.min(420, field.offsetWidth);
     })()
   "))
   expect_true(app$get_js("
@@ -145,7 +147,8 @@ test_that("browser: select dropdowns grow for long labels and stay viewport-safe
     document.querySelector('#short_single-dropdown.open') !== null &&
     document.querySelector('#short_single-dropdown').offsetWidth >=
       document.querySelector('#short_single-trigger').offsetWidth &&
-    document.querySelector('#short_single-dropdown').offsetWidth <= 420
+    document.querySelector('#short_single-dropdown').offsetWidth <=
+      document.querySelector('#short_single-field').offsetWidth
   ")
 
   expect_true(app$get_js("
@@ -174,7 +177,10 @@ test_that("browser: select dropdowns grow for long labels and stay viewport-safe
     (function() {
       var trigger = document.querySelector('#short_multi-trigger');
       var dropdown = document.querySelector('#short_multi-dropdown');
-      return dropdown.offsetWidth > trigger.offsetWidth && dropdown.offsetWidth <= 420;
+      var field = document.querySelector('#short_multi-field');
+      return dropdown.offsetWidth > trigger.offsetWidth &&
+        dropdown.offsetWidth <= field.offsetWidth &&
+        dropdown.classList.contains('gt-compact-controls');
     })()
   "))
   expect_true(app$get_js("

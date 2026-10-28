@@ -292,6 +292,22 @@
     var triggerWidth = Math.max(rect.width || 160, 160);
     var preferredMaxWidth = Math.min(maxWidth, 420);
 
+    /* A teleported panel no longer has its field as a CSS containing block.
+       Keep its adaptive growth inside the space the field actually owns so a
+       select in a phone card, grid column, or other narrow layout cannot grow
+       across neighbouring content merely because the browser is wider. */
+    var field = wrap.closest ? wrap.closest('.gt-ms-field, .gt-gs-field') : null;
+    var fieldRect = field ? field.getBoundingClientRect() : null;
+    var fieldWidth = fieldRect && fieldRect.width > 0
+      ? Math.floor(fieldRect.width)
+      : 0;
+    if (fieldWidth) {
+      preferredMaxWidth = Math.min(
+        preferredMaxWidth,
+        Math.max(triggerWidth, fieldWidth)
+      );
+    }
+
     /* Let long labels and the multi-select style switcher widen the panel,
        while keeping compact option lists aligned with their trigger. */
     dropdown.style.width = 'max-content';
@@ -305,6 +321,7 @@
     );
     dropdown.style.width = dropdownWidth + 'px';
     dropdown.style.minWidth = dropdownWidth + 'px';
+    dropdown.classList.toggle('gt-compact-controls', dropdownWidth <= 240);
 
     var ddHeight = dropdown.offsetHeight || 0;
     var ddWidth = Math.min(dropdown.offsetWidth || dropdownWidth, preferredMaxWidth);
@@ -348,6 +365,7 @@
     dropdown.style.removeProperty('width');
     dropdown.style.removeProperty('max-width');
     dropdown.style.removeProperty('min-width');
+    dropdown.classList.remove('gt-compact-controls');
     TELEPORT_CLASSES.forEach(function (cls) { dropdown.classList.remove(cls); });
     wrap.appendChild(dropdown);
   }

@@ -320,8 +320,10 @@
 }
 .gt-sb-icon{width:13px;height:13px;flex-shrink:0;}
 
-/* On genuinely narrow viewports, keep every style name visible by using
-   text-only buttons. Wider screens receive the full icon + label treatment. */
+/* Keep every style name visible when either the viewport or the field's
+   containing layout makes the teleported dropdown genuinely narrow. */
+.gt-ms-dropdown.gt-compact-controls .gt-style-btn{gap:0;padding-inline:3px;}
+.gt-ms-dropdown.gt-compact-controls .gt-style-btn .gt-sb-icon{display:none;}
 @media(max-width:240px){
   .gt-style-btn{gap:0;padding-inline:3px;}
   .gt-style-btn .gt-sb-icon{display:none;}
