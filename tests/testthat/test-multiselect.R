@@ -176,6 +176,23 @@ test_that("glassMultiSelect() check_style = 'check-only' adds correct class", {
 test_that("glassMultiSelect() check_style = 'filled' adds correct class", {
   html <- as.character(glassMultiSelect("f", choices, check_style = "filled"))
   expect_match(html, "style-filled")
+  expect_match(html, "fill-single")
+})
+
+test_that("glassMultiSelect() filled colors can be single or categorical", {
+  single <- as.character(glassMultiSelect(
+    "f", choices, check_style = "filled", fill_colors = "single"
+  ))
+  multi <- as.character(glassMultiSelect(
+    "f", choices, check_style = "filled", fill_colors = "multi"
+  ))
+
+  expect_match(single, "fill-single")
+  expect_false(grepl("fill-single", multi, fixed = TRUE))
+  expect_error(
+    glassMultiSelect("f", choices, fill_colors = "rainbow"),
+    class = "glasstabs_error_bad_argument"
+  )
 })
 
 test_that("glassMultiSelect() rejects invalid check_style", {
@@ -256,6 +273,7 @@ test_that("glassMultiSelect() respects manual named hues", {
       "f",
       choices,
       check_style = "filled",
+      fill_colors = "multi",
       hues = c(apple = 10L, banana = 50L, cherry = 340L)
     )
   )

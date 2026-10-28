@@ -231,6 +231,12 @@ test_that("browser: tongue can be disabled for detached native-like panels", {
   app$wait_for_idle()
   app$click(selector = "#detached_single-trigger")
   app$wait_for_js("document.querySelector('#detached_single-dropdown.open') !== null")
+  app$wait_for_js("
+    Math.abs(new DOMMatrix(
+      getComputedStyle(document.querySelector('#detached_single-dropdown'))
+        .transform
+    ).m42) < 0.1
+  ")
   expect_true(app$get_js("
     (function() {
       var trigger = document.querySelector('#detached_single-trigger');
@@ -244,8 +250,9 @@ test_that("browser: tongue can be disabled for detached native-like panels", {
       return dropdown.classList.contains('gt-no-tongue') &&
         Math.abs(dr.width - tr.width) <= 1 &&
         gap >= 5 && gap <= 7 &&
-        style.transform === 'none' &&
-        style.transitionDuration === '0s' &&
+        style.transitionDuration.split(',').some(function(value) {
+          return value.trim() === '0.12s';
+        }) &&
         parseFloat(style.borderTopLeftRadius) > 0 &&
         parseFloat(getComputedStyle(trigger).borderBottomLeftRadius) > 0 &&
         getComputedStyle(
@@ -269,7 +276,10 @@ test_that("browser: tongue can be disabled for detached native-like panels", {
       var dropdown = document.querySelector('#detached_multi-dropdown');
       return dropdown.classList.contains('gt-no-tongue') &&
         Math.abs(dropdown.offsetWidth - trigger.offsetWidth) <= 1 &&
-        getComputedStyle(dropdown).transform === 'none' &&
+        getComputedStyle(dropdown).transitionDuration
+          .split(',').some(function(value) {
+            return value.trim() === '0.12s';
+          }) &&
         getComputedStyle(
           document.querySelector('#detached_multi-field .gt-input-label')
         ).fontWeight === '600';

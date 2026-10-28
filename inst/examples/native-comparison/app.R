@@ -121,6 +121,15 @@ ui <- fluidPage(
         selected = "summary",
         selectize = FALSE
       ),
+      selectInput(
+        "compare_fill_colors", "Filled multi-select colors",
+        choices = c(
+          "One accent color" = "single",
+          "Different option colors" = "multi"
+        ),
+        selected = "single",
+        selectize = FALSE
+      ),
       sliderInput(
         "compare_width", "Shared field width",
         min = 160, max = 360, value = 260, step = 20,
@@ -166,7 +175,8 @@ ui <- fluidPage(
               tags$li("Predictable long-label wrapping, matching trigger/panel widths, themes, and selection styles."),
               tags$li("Optional server search, disabled choices, custom summaries, and consistent mobile behavior."),
               tags$li("The signature tongue remains the default but can be disabled per input with tongue = FALSE."),
-              tags$li("Labels match Shiny's bold default; label_bold = FALSE opts into regular-weight text.")
+              tags$li("Labels match Shiny's bold default; label_bold = FALSE opts into regular-weight text."),
+              tags$li("Filled multi-selects use one accent by default; fill_colors = \"multi\" restores categorical colors.")
             )
           ),
           tags$pre(
@@ -191,6 +201,7 @@ server <- function(input, output, session) {
   glass_shape <- reactive(value_or(input$compare_shape, "rounded"))
   marker_style <- reactive(value_or(input$compare_check_style, "checkbox"))
   multi_display <- reactive(value_or(input$compare_selection_display, "summary"))
+  fill_colors <- reactive(value_or(input$compare_fill_colors, "single"))
 
   output$call_preview <- renderText({
     paste0(
@@ -202,7 +213,8 @@ server <- function(input, output, session) {
       ", shape = \"", glass_shape(), "\", check_style = \"",
       marker_style(), "\")\n",
       "glassMultiSelect(..., selection_display = \"", multi_display(),
-      "\", width = \"", field_width(), "\", tongue = ",
+      "\", fill_colors = \"", fill_colors(), "\", width = \"",
+      field_width(), "\", tongue = ",
       toupper(as.character(use_tongue())), ")"
     )
   })
@@ -270,6 +282,7 @@ server <- function(input, output, session) {
     shape <- glass_shape()
     check_style <- marker_style()
     selection_display <- multi_display()
+    fill_color_mode <- fill_colors()
 
     tags$div(
       class = if (theme == "dark") "nc-dark" else NULL,
@@ -322,6 +335,7 @@ server <- function(input, output, session) {
               check_style = check_style,
               shape = shape,
               selection_display = selection_display,
+              fill_colors = fill_color_mode,
               width = width,
               tongue = tongue,
               label_bold = label_bold,
@@ -343,6 +357,7 @@ server <- function(input, output, session) {
     shape <- glass_shape()
     check_style <- marker_style()
     selection_display <- multi_display()
+    fill_color_mode <- fill_colors()
 
     tags$div(
       class = if (theme == "dark") "nc-dark" else NULL,
@@ -367,6 +382,7 @@ server <- function(input, output, session) {
             check_style = check_style,
             shape = shape,
             selection_display = selection_display,
+            fill_colors = fill_color_mode,
             width = width,
             tongue = tongue,
             label_bold = label_bold,

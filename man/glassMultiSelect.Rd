@@ -32,7 +32,8 @@ glassMultiSelect(
   dropdown_max_height = "260px",
   no_matches_text = "No matches",
   tongue = TRUE,
-  label_bold = TRUE
+  label_bold = TRUE,
+  fill_colors = c("single", "multi")
 )
 }
 \arguments{
@@ -84,7 +85,8 @@ non-interactive. Default \code{FALSE}.}
 as disabled (non-selectable) rows. Default \code{NULL}.}
 
 \item{hues}{Optional named integer vector of HSL hue angles (0 to 360) for
-the \code{"filled"} style. Auto-assigned if \code{NULL}.}
+the \code{"filled"} style when \code{fill_colors = "multi"}.
+Auto-assigned if \code{NULL}.}
 
 \item{dark_selector}{Optional CSS selector that signals dark mode (e.g.
 \code{"body.dark-mode"} for bs4Dash). When provided, emits an extra
@@ -131,8 +133,12 @@ naturally beside native Shiny inputs.}
 
 \item{label_bold}{Logical. Use a semibold field label, matching native Shiny
 inputs, when \code{TRUE} (default). Set to \code{FALSE} for regular-weight
-label text. This argument is last so existing positional calls keep
-working.}
+label text.}
+
+\item{fill_colors}{Color treatment for \code{check_style = "filled"}.
+\code{"single"} (default) uses the theme accent for every selected row;
+\code{"multi"} keeps the categorical per-option colors. This argument is
+last so existing positional calls keep working.}
 }
 \value{
 An \code{htmltools::tagList} containing the trigger button, dropdown

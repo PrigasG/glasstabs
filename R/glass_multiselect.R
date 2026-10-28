@@ -47,7 +47,8 @@
 #' @param disabled_choices Optional character vector of choice values to render
 #'   as disabled (non-selectable) rows. Default \code{NULL}.
 #' @param hues Optional named integer vector of HSL hue angles (0 to 360) for
-#'   the \code{"filled"} style. Auto-assigned if \code{NULL}.
+#'   the \code{"filled"} style when \code{fill_colors = "multi"}.
+#'   Auto-assigned if \code{NULL}.
 #' @param dark_selector Optional CSS selector that signals dark mode (e.g.
 #'   \code{"body.dark-mode"} for bs4Dash). When provided, emits an extra
 #'   scoped \code{<style>} block that
@@ -82,8 +83,11 @@
 #'   naturally beside native Shiny inputs.
 #' @param label_bold Logical. Use a semibold field label, matching native Shiny
 #'   inputs, when \code{TRUE} (default). Set to \code{FALSE} for regular-weight
-#'   label text. This argument is last so existing positional calls keep
-#'   working.
+#'   label text.
+#' @param fill_colors Color treatment for \code{check_style = "filled"}.
+#'   \code{"single"} (default) uses the theme accent for every selected row;
+#'   \code{"multi"} keeps the categorical per-option colors. This argument is
+#'   last so existing positional calls keep working.
 #'
 #' @return An \code{htmltools::tagList} containing the trigger button, dropdown
 #'   panel, and scoped \code{<style>} block.
@@ -137,7 +141,8 @@ glassMultiSelect <- function(
     dropdown_max_height = "260px",
     no_matches_text     = "No matches",
     tongue             = TRUE,
-    label_bold         = TRUE
+    label_bold         = TRUE,
+    fill_colors        = c("single", "multi")
 ) {
   .gt_check_string(
     inputId,
@@ -147,6 +152,7 @@ glassMultiSelect <- function(
   .gt_check_text(no_matches_text, "no_matches_text", "glassMultiSelect")
   .gt_check_flag(tongue, "tongue")
   .gt_check_flag(label_bold, "label_bold")
+  fill_colors <- .gt_match_arg(fill_colors, c("single", "multi"), "fill_colors")
   check_style <- .gt_match_arg(check_style, c("checkbox", "check-only", "filled"), "check_style")
   shape <- .gt_match_arg(shape, c("rounded", "square"), "shape")
   field_width_style <- .gt_field_width_style(width)
@@ -426,6 +432,7 @@ glassMultiSelect <- function(
     paste(
       "gt-ms-wrap",
       paste0("style-", check_style),
+      if (identical(fill_colors, "single")) "fill-single" else NULL,
       if (!tongue) "gt-no-tongue" else NULL,
       if (identical(shape, "square")) "shape-square" else NULL,
       if (disabled) "gt-disabled" else NULL,

@@ -186,7 +186,7 @@ test_that("teleported select dropdowns match their trigger width", {
   expect_true(grepl("gt-compact-controls", js, fixed = TRUE))
 })
 
-test_that("detached select dropdowns skip tongue animation and close delay", {
+test_that("detached select dropdowns use a short native-like transition", {
   js <- paste(readLines(system.file("www", "glass.js", package = "glasstabs"), warn = FALSE), collapse = "\n")
   css <- paste(readLines(system.file("www", "glass.css", package = "glasstabs"), warn = FALSE), collapse = "\n")
 
@@ -195,7 +195,18 @@ test_that("detached select dropdowns skip tongue animation and close delay", {
   expect_true(grepl("wrap.classList.contains('gt-no-tongue')", js, fixed = TRUE))
   expect_true(grepl(".gt-ms-dropdown.gt-no-tongue", css, fixed = TRUE))
   expect_true(grepl(".gt-gs-dropdown.gt-no-tongue", css, fixed = TRUE))
-  expect_true(grepl("transition:none", css, fixed = TRUE))
+  expect_true(grepl("transform:translateY(-4px)", css, fixed = TRUE))
+  expect_true(grepl("transition:opacity 100ms ease-out,transform 120ms ease-out", css, fixed = TRUE))
+  expect_true(grepl("transform:translateY(4px)", css, fixed = TRUE))
+})
+
+test_that("single-color filled multi-selects use the theme accent", {
+  css <- paste(readLines(system.file("www", "glass.css", package = "glasstabs"), warn = FALSE), collapse = "\n")
+  js <- paste(readLines(system.file("www", "glass.js", package = "glasstabs"), warn = FALSE), collapse = "\n")
+
+  expect_true(grepl(".gt-ms-dropdown.fill-single.style-filled", css, fixed = TRUE))
+  expect_true(grepl("background:var(--ms-accent)!important", css, fixed = TRUE))
+  expect_true(grepl("'fill-single'", js, fixed = TRUE))
 })
 
 test_that("glass.js does not ship debug-only message handlers", {

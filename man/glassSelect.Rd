@@ -102,8 +102,7 @@ naturally beside native Shiny inputs.}
 
 \item{label_bold}{Logical. Use a semibold field label, matching native Shiny
 inputs, when \code{TRUE} (default). Set to \code{FALSE} for regular-weight
-label text. This argument is last so existing positional calls keep
-working.}
+label text.}
 }
 \value{
 An \code{htmltools::tagList} containing the single-select trigger,

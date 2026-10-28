@@ -131,8 +131,9 @@ glassMultiSelect("filters", filter_choices, width = "100%")
 
 The attached tongue and its unfold/retract motion are enabled by default. Turn
 them off per input when a conventional detached menu fits the surrounding Shiny
-controls better. This changes presentation only; values and server APIs remain
-the same.
+controls better. Detached menus retain a short native-like fade/slide instead
+of appearing abruptly. This changes presentation only; values and server APIs
+remain the same.
 
 ``` r
 selectInput("team", "Team", teams, selectize = FALSE)
@@ -146,6 +147,18 @@ surrounding form.
 
 ``` r
 glassSelect("industry", industries, label = "Industry", label_bold = FALSE)
+```
+
+Filled multi-selects use one consistent theme accent by default. Set
+`fill_colors = "multi"` when categorical per-option colors carry useful meaning.
+
+``` r
+glassMultiSelect("topics", topics, check_style = "filled")
+glassMultiSelect(
+  "categories", categories,
+  check_style = "filled",
+  fill_colors = "multi"
+)
 ```
 
 For a short list, the search box can stay out of the way. With `searchable = "auto"`, it appears only when the list reaches the chosen threshold. The trigger can also show a compact summary instead of the generic “Multiple selection” label.

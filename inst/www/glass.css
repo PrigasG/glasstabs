@@ -662,17 +662,22 @@
 .gt-ms-dropdown.gt-no-tongue.gt-flip-above,
 .gt-gs-dropdown.gt-no-tongue.gt-flip-above{
   border-radius:14px;
-  transform:none;
   transform-origin:center;
-  transition:none;
 }
 .gt-ms-dropdown.gt-no-tongue,
 .gt-gs-dropdown.gt-no-tongue{
   opacity:0;
+  transform:translateY(-4px);
+  transition:opacity 100ms ease-out,transform 120ms ease-out;
+}
+.gt-ms-dropdown.gt-no-tongue.gt-flip-above,
+.gt-gs-dropdown.gt-no-tongue.gt-flip-above{
+  transform:translateY(4px);
 }
 .gt-ms-dropdown.gt-no-tongue.open,
 .gt-gs-dropdown.gt-no-tongue.open{
   opacity:1;
+  transform:translateY(0);
 }
 
 /* Search */
@@ -1362,6 +1367,17 @@
 }
 .gt-ms-dropdown.style-filled .gt-ms-option.checked{
   background:hsla(var(--opt-hue,210),72%,52%,0.12);
+}
+
+/* The simplified filled mode uses one theme accent for every selected item.
+   `fill_colors = "multi"` omits .fill-single and keeps the hue rules above. */
+.gt-ms-wrap.fill-single.style-filled .gt-ms-option.checked .gt-ms-check,
+.gt-ms-dropdown.fill-single.style-filled .gt-ms-option.checked .gt-ms-check{
+  background:var(--ms-accent)!important;
+}
+.gt-ms-wrap.fill-single.style-filled .gt-ms-option.checked,
+.gt-ms-dropdown.fill-single.style-filled .gt-ms-option.checked{
+  background:var(--ms-ac-12);
 }
 
 /* Single-select: check-only style */

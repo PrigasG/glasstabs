@@ -244,7 +244,7 @@
   ];
 
   var TELEPORT_CLASSES = [
-    'style-checkbox','style-check-only','style-filled',
+    'style-checkbox','style-check-only','style-filled','fill-single',
     'theme-light','shape-square','gt-no-tongue'
   ];
 
@@ -374,10 +374,6 @@
   }
 
   function scheduleTeleportClose(wrap, dropdown) {
-    if (wrap.classList.contains('gt-no-tongue')) {
-      teleportClose(wrap, dropdown);
-      return;
-    }
     if (dropdown.parentNode !== document.body) {
       teleportClose(wrap, dropdown);
       return;
