@@ -1184,43 +1184,27 @@ test_that("browser: dropdown opens flush like a tongue from the field", {
   # teleported for ~180ms (transitionend) or ~250ms (fallback) instead of
   # teleporting instantly, the retract necessarily ran, because a
   # transitioned property on an element that stays in place cannot jump.
-  # Nodes are re-queried every tick (never a captured node, which goes
-  # stale if the widget re-renders), and the full trace is kept so a
-  # failure shows exactly when the panel left <body> and what it looked
-  # like at each step.
+  # The duration is forced inline first: under prefers-reduced-motion the
+  # stylesheet collapses transitions to 0.01ms, so without this the dwell
+  # would be ~0ms even though the delayed-teleport logic is correct. The
+  # inline !important beats the stylesheet !important, making the dwell
+  # assertion valid on every runner.
   app$get_js("
     (function() {
-      function scaleOf(el) {
-        var m = getComputedStyle(el).transform;
-        if (!m || m === 'none') return null;
-        return parseFloat(m.replace('matrix(', '').replace(')', '').split(',')[3]);
-      }
-      function snap(el) {
-        return {
-          parentIsBody: el.parentNode === document.body,
-          connected: el.isConnected,
-          open: el.classList.contains('open'),
-          scaleY: scaleOf(el)
-        };
-      }
       var trigger = document.querySelector('#fruit-trigger');
       var panel = document.querySelector('#fruit-dropdown');
-      var trace = [{ t: 0, at: 'before-click', snap: snap(panel) }];
       var closeStarted = Date.now();
       window.__gtCloseReturned = false;
       window.__gtCloseDwell = null;
-      window.__gtCloseTrace = trace;
+      panel.style.setProperty('transition-duration', '180ms', 'important');
       trigger.click();
       var iv = setInterval(function() {
-        var live = document.querySelector('#fruit-dropdown');
-        var s = snap(live);
-        trace.push({ t: Date.now() - closeStarted, at: 'tick', snap: s });
-        if (live.parentNode !== document.body) {
+        if (document.querySelector('#fruit-dropdown').parentNode !== document.body) {
           window.__gtCloseDwell = Date.now() - closeStarted;
           window.__gtCloseReturned = true;
           clearInterval(iv);
         }
-      }, 10);
+      }, 20);
       return 'sampling';
     })()
   ")
@@ -1230,7 +1214,6 @@ test_that("browser: dropdown opens flush like a tongue from the field", {
       var panel = document.querySelector('#fruit-dropdown');
       return {
         dwell: window.__gtCloseDwell,
-        trace: JSON.stringify(window.__gtCloseTrace || []),
         returnedToWrap: panel.parentNode !== document.body,
         closed: !panel.classList.contains('open')
       };
@@ -1239,7 +1222,7 @@ test_that("browser: dropdown opens flush like a tongue from the field", {
   # Not instant (the bug teleports in the same turn, dwell ~0ms) and not
   # stuck (fallback is 250ms; the bound is generous for loaded runners).
   expect_true(!is.null(close_state$dwell) && close_state$dwell >= 100,
-              info = paste("dwell ms:", close_state$dwell, "trace:", close_state$trace))
+              info = paste("dwell ms:", close_state$dwell))
   expect_true(close_state$dwell < 4000)
   expect_true(close_state$returnedToWrap)
   expect_true(close_state$closed)
