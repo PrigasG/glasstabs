@@ -117,7 +117,17 @@ glassMultiSelect(
 glassFilterTags("status")
 ```
 
-Select dropdowns stay aligned with their trigger for short option lists, then grow as needed for longer labels and built-in controls. Panels are capped at a comfortable width and at the viewport edge; exceptionally long labels still wrap safely.
+Select dropdowns always match their trigger width. The standard width is a compact
+`160px`; use the optional `width` argument only when an app needs more room for
+long labels. Both fixed and fluid CSS widths are supported and remain capped by
+the containing layout, so `width = "240px"` works well for a wider filter while
+`width = "100%"` fills the available column. Exceptionally long labels still
+wrap safely inside the matching panel.
+
+``` r
+glassSelect("industry", industry_choices, width = "240px")
+glassMultiSelect("filters", filter_choices, width = "100%")
+```
 
 For a short list, the search box can stay out of the way. With `searchable = "auto"`, it appears only when the list reaches the chosen threshold. The trigger can also show a compact summary instead of the generic “Multiple selection” label.
 

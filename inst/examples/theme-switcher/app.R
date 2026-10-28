@@ -120,6 +120,7 @@ server <- function(input, output, session) {
             placeholder = "Choose a category",
             selected = isolate(input$category),
             searchable = TRUE, clearable = TRUE,
+            width = "240px",
             theme = mode
           )
         ),
@@ -136,6 +137,7 @@ server <- function(input, output, session) {
             placeholder = "Choose tags",
             selected = isolate(input$tags),
             searchable = TRUE,
+            width = "240px",
             theme = mode
           )
         )
@@ -158,6 +160,7 @@ server <- function(input, output, session) {
             placeholder = "Choose a wide label",
             selected = isolate(input$mobile_wide),
             searchable = TRUE, clearable = TRUE,
+            width = "240px",
             theme = mode
           ),
           glassMultiSelect(
@@ -166,6 +169,7 @@ server <- function(input, output, session) {
             placeholder = "Choose tags",
             selected = isolate(input$mobile_tags),
             searchable = TRUE,
+            width = "240px",
             theme = mode
           )
         )
