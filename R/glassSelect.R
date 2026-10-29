@@ -459,20 +459,7 @@ updateGlassSelect <- function(
   message <- list()
 
   if (!is.null(choices)) {
-    normalized <- .gt_normalize_choices(choices)
-    grps <- normalized$groups
-
-    message$choices <- lapply(seq_along(normalized$values), function(i) {
-      choice <- list(
-        label = normalized$labels[[i]],
-        value = normalized$values[[i]],
-        group = grps[[i]]
-      )
-      if (!is.null(disabled_choices)) {
-        choice$disabled <- normalized$values[[i]] %in% as.character(disabled_choices)
-      }
-      choice
-    })
+    message$choices <- .gt_update_choice_payload(choices, disabled_choices)
   }
 
   if (!is.null(selected)) {

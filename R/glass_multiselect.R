@@ -693,8 +693,8 @@ updateGlassMultiSelect <- function(
     .gt_check_session(session, "sendInputMessage")
   }
   notify <- .gt_match_arg(notify, c("changed", "always", "never"), "notify")
-  preserve_selection <- .gt_flag(preserve_selection, "preserve_selection")
-  drop_invalid <- .gt_flag(drop_invalid, "drop_invalid")
+  preserve_selection <- .gt_check_flag(preserve_selection, "preserve_selection")
+  drop_invalid <- .gt_check_flag(drop_invalid, "drop_invalid")
   if (!is.null(check_style)) {
     check_style <- .gt_match_arg(check_style, c("checkbox", "check-only", "filled"), "check_style")
   }
@@ -727,20 +727,7 @@ updateGlassMultiSelect <- function(
   )
 
   if (!is.null(choices)) {
-    normalized <- .gt_normalize_choices(choices)
-    grps <- normalized$groups
-
-    message$choices <- lapply(seq_along(normalized$values), function(i) {
-      choice <- list(
-        label = normalized$labels[[i]],
-        value = normalized$values[[i]],
-        group = grps[[i]]
-      )
-      if (!is.null(disabled_choices)) {
-        choice$disabled <- normalized$values[[i]] %in% as.character(disabled_choices)
-      }
-      choice
-    })
+    message$choices <- .gt_update_choice_payload(choices, disabled_choices)
   }
 
   if (!is.null(selected)) {
@@ -1119,20 +1106,6 @@ glassMultiSelectServer <- function(
 }
 
 #' @noRd
-.gt_flag <- function(x, name) {
-  if (!is.logical(x) || length(x) != 1L || is.na(x)) {
-    .gt_abort(
-      sprintf("`%s` must be TRUE or FALSE.", name),
-      class = "glasstabs_error_bad_argument",
-      argument = name,
-      value = x,
-      expected = "TRUE or FALSE"
-    )
-  }
-  x
-}
-
-#' @noRd
 .gt_search_mode <- function(x) {
   if (is.logical(x) && length(x) == 1L && !is.na(x)) {
     return(if (x) "always" else "never")
@@ -1151,7 +1124,8 @@ glassMultiSelectServer <- function(
 
 #' @noRd
 .gt_positive_int <- function(x, name) {
-  if (!is.numeric(x) || length(x) != 1L || is.na(x) || x < 1) {
+  if (!is.numeric(x) || length(x) != 1L || is.na(x) ||
+      !is.finite(x) || x < 1 || x != floor(x)) {
     .gt_abort(
       sprintf("`%s` must be a single positive integer.", name),
       class = "glasstabs_error_bad_argument",
@@ -1165,7 +1139,8 @@ glassMultiSelectServer <- function(
 
 #' @noRd
 .gt_nonnegative_int <- function(x, name) {
-  if (!is.numeric(x) || length(x) != 1L || is.na(x) || x < 0) {
+  if (!is.numeric(x) || length(x) != 1L || is.na(x) ||
+      !is.finite(x) || x < 0 || x != floor(x)) {
     .gt_abort(
       sprintf("`%s` must be a single non-negative integer.", name),
       class = "glasstabs_error_bad_argument",
@@ -1206,6 +1181,29 @@ glassMultiSelectServer <- function(
       group = groups
     ))
   }
+}
+
+#' Build the choice rows used by both select update messages
+#' @noRd
+.gt_update_choice_payload <- function(choices, disabled_choices = NULL) {
+  normalized <- .gt_normalize_choices(choices)
+  disabled_choices <- if (is.null(disabled_choices)) {
+    NULL
+  } else {
+    as.character(disabled_choices)
+  }
+
+  lapply(seq_along(normalized$values), function(i) {
+    choice <- list(
+      label = normalized$labels[[i]],
+      value = normalized$values[[i]],
+      group = normalized$groups[[i]]
+    )
+    if (!is.null(disabled_choices)) {
+      choice$disabled <- normalized$values[[i]] %in% disabled_choices
+    }
+    choice
+  })
 }
 
 #' @noRd

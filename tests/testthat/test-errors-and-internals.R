@@ -52,6 +52,42 @@ test_that("shared validators preserve accepted and rejected inputs", {
   }
 })
 
+test_that("integer validators reject fractional and non-finite values", {
+  expect_identical(.gt_positive_int(2, "count"), 2L)
+  expect_identical(.gt_nonnegative_int(0, "count"), 0L)
+
+  for (value in list(1.5, Inf, -Inf, NaN)) {
+    expect_error(
+      .gt_positive_int(value, "count"),
+      class = "glasstabs_error_bad_argument"
+    )
+    expect_error(
+      .gt_nonnegative_int(value, "count"),
+      class = "glasstabs_error_bad_argument"
+    )
+  }
+})
+
+test_that("select update choice payload preserves groups and optional disabled state", {
+  choices <- list(
+    Fruit = c(Apple = "apple", Pear = "pear"),
+    Veg = c(Kale = "kale", Pea = "pea")
+  )
+
+  unchanged <- .gt_update_choice_payload(choices)
+  expect_equal(
+    vapply(unchanged, `[[`, character(1), "group"),
+    c("Fruit", "Fruit", "Veg", "Veg")
+  )
+  expect_false(any(vapply(unchanged, function(choice) "disabled" %in% names(choice), logical(1))))
+
+  updated <- .gt_update_choice_payload(choices, "kale")
+  expect_equal(
+    vapply(updated, `[[`, logical(1), "disabled"),
+    c(FALSE, FALSE, TRUE, FALSE)
+  )
+})
+
 test_that("side-effect helpers return NULL invisibly", {
   session <- list(
     ns = shiny::NS("mod"),
