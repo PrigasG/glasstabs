@@ -4,13 +4,16 @@ This is glasstabs 0.4.1. The previous CRAN version is 0.4.0.
 
 ## Changes in this version (0.4.1)
 
-This is a minor update refining the select widgets and the tab widget.
+This is a minor update refining the select widgets, examples, and tab widget.
 
 - `glassSelect()` and `glassMultiSelect()` dropdown panels now follow the
-  rendered trigger width instead of imposing a wider fixed minimum.
-- Long labels and unbroken identifiers wrap within the available panel width.
-- `glassMultiSelect()` now supports automatic search visibility, compact
-  selection summaries, and a configurable option-list height.
+  rendered trigger width, clamp to the viewport on narrow screens, and wrap
+  long labels within the available panel width.
+- Both select widgets support automatic search visibility, configurable field
+  width, optional tongue animation, label styling, search-focus styling, and
+  accessible overflow tooltips for truncated trigger text.
+- `glassMultiSelect()` adds compact selection summaries, a configurable
+  option-list height, and either one fill color or multiple fill colors.
 - Multi-select server updates are transactional and can notify Shiny only when
   the effective value changes, always, or never. Selection preservation and
   invalid-value handling are explicit.
@@ -27,20 +30,20 @@ This is a minor update refining the select widgets and the tab widget.
 - Added real-browser regression coverage for both widget types at narrow field
   widths, long labels, resizing, viewport-edge placement, adaptive search,
   quiet updates, summaries, and list height.
+- Refreshed all shipped examples for dark and light themes, including a native
+  Shiny comparison and stress-test controls for the new select options.
+- Updated the package documentation, print cheatsheet, deployment manifest,
+  and repository metadata to match the 0.4.1 API.
 
 See NEWS.md for the full list.
 
 ## R CMD check results
 
-0 errors | 0 warnings | 1 note
+0 errors | 0 warnings | 0 notes
 
-The note reports that only five days have passed since the 0.4.0 update.
-Version 0.4.1 corrects a visible dropdown sizing issue found after release,
-groups closely related multi-select refinements requested by users testing
-the same filter workflow, and refines the tab widget so tabs and their
-content read as one connected component.
+Checked from a clean source archive with R 4.5.1 on Windows 11 using
+`R CMD check --as-cran`.
 
-In addition to the package test suite, the release candidate was checked with
-JavaScript and R linters and with real-browser interaction tests covering both
-select widget types and the existing interaction suite.
+In addition to the package check, the release candidate passed JavaScript lint
+and 1,014 package assertions, including 104 real-browser interaction checks.
 
