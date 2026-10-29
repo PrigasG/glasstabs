@@ -522,7 +522,7 @@
   position:fixed;
   z-index:10050;
   max-width:min(36rem,calc(100vw - 24px));
-  max-height:calc(100vh - 24px);
+  max-height:min(12rem,calc(100vh - 24px));
   padding:8px 10px;
   border:1px solid rgba(255,255,255,0.14);
   border-radius:8px;
@@ -535,7 +535,7 @@
   overflow-wrap:anywhere;
   word-break:break-word;
   overflow-y:auto;
-  pointer-events:auto;
+  pointer-events:none;
   opacity:0;
   transform:translateY(-2px);
   transition:opacity 100ms ease-out,transform 100ms ease-out;

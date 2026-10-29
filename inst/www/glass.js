@@ -108,6 +108,19 @@
       window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   }
 
+  var OVERFLOW_TOOLTIP_MAX_TEXT = 600;
+  var OVERFLOW_TOOLTIP_HIDE_EVENT = 'glasstabs:hide-overflow-tooltips';
+
+  function overflowTooltipText(text) {
+    text = String(text || '');
+    if (text.length <= OVERFLOW_TOOLTIP_MAX_TEXT) return text;
+    return text.slice(0, OVERFLOW_TOOLTIP_MAX_TEXT).trimEnd() + '\u2026';
+  }
+
+  function hideAllOverflowTooltips() {
+    document.dispatchEvent(new Event(OVERFLOW_TOOLTIP_HIDE_EVENT));
+  }
+
   /* Ellipsized trigger labels reveal their complete text on desktop hover or
      keyboard focus. Touch users already get the full wrapped label by opening
      the dropdown, so a tap never has to manage a second overlay. */
@@ -130,13 +143,6 @@
       tooltip.className = 'gt-overflow-tooltip';
       tooltip.setAttribute('role', 'tooltip');
       tooltip.setAttribute('aria-hidden', 'true');
-      tooltip.addEventListener('mouseenter', function () {
-        if (hideTimer !== null) {
-          clearTimeout(hideTimer);
-          hideTimer = null;
-        }
-      });
-      tooltip.addEventListener('mouseleave', hide);
       document.body.appendChild(tooltip);
       return tooltip;
     }
@@ -178,7 +184,8 @@
       showTimer = null;
       if (!fullText || trigger.classList.contains('open') || !isTruncated()) return;
       var node = ensureTooltip();
-      node.textContent = fullText;
+      node.textContent = overflowTooltipText(fullText);
+      node.setAttribute('data-full-length', String(fullText.length));
       node.setAttribute('aria-hidden', 'false');
       node.classList.add('visible');
       trigger.setAttribute('aria-describedby', id);
@@ -224,6 +231,7 @@
     trigger.addEventListener('focus', onFocus);
     trigger.addEventListener('blur', hide);
     trigger.addEventListener('click', hide);
+    document.addEventListener(OVERFLOW_TOOLTIP_HIDE_EVENT, hide);
     window.addEventListener('scroll', onViewportChange, true);
     window.addEventListener('resize', onViewportChange);
 
@@ -235,7 +243,8 @@
         if (tooltip && tooltip.classList.contains('visible')) {
           if (!isTruncated()) hide();
           else {
-            tooltip.textContent = fullText;
+            tooltip.textContent = overflowTooltipText(fullText);
+            tooltip.setAttribute('data-full-length', String(fullText.length));
             position();
           }
         }
@@ -248,6 +257,7 @@
         trigger.removeEventListener('focus', onFocus);
         trigger.removeEventListener('blur', hide);
         trigger.removeEventListener('click', hide);
+        document.removeEventListener(OVERFLOW_TOOLTIP_HIDE_EVENT, hide);
         window.removeEventListener('scroll', onViewportChange, true);
         window.removeEventListener('resize', onViewportChange);
         if (tooltip && tooltip.parentNode) tooltip.parentNode.removeChild(tooltip);
@@ -267,17 +277,11 @@
     var activeLabel = null;
     var showTimer = null;
     var hideTimer = null;
-    var MAX_VISUAL_TEXT = 600;
 
     function isTruncated(label) {
       return enabled && label && label.clientWidth > 0 &&
         (label.scrollWidth > label.clientWidth + 1 ||
           label.scrollHeight > label.clientHeight + 1);
-    }
-
-    function visualText(text) {
-      if (text.length <= MAX_VISUAL_TEXT) return text;
-      return text.slice(0, MAX_VISUAL_TEXT).trimEnd() + '\u2026';
     }
 
     function ensureTooltip() {
@@ -287,13 +291,6 @@
       tooltip.className = 'gt-overflow-tooltip gt-option-overflow-tooltip';
       tooltip.setAttribute('role', 'tooltip');
       tooltip.setAttribute('aria-hidden', 'true');
-      tooltip.addEventListener('mouseenter', function () {
-        if (hideTimer !== null) {
-          clearTimeout(hideTimer);
-          hideTimer = null;
-        }
-      });
-      tooltip.addEventListener('mouseleave', hide);
       document.body.appendChild(tooltip);
       return tooltip;
     }
@@ -341,7 +338,7 @@
       var text = activeLabel.textContent.trim();
       if (!text) return;
       var node = ensureTooltip();
-      node.textContent = visualText(text);
+      node.textContent = overflowTooltipText(text);
       node.setAttribute('data-full-length', String(text.length));
       node.setAttribute('aria-hidden', 'false');
       node.classList.add('visible');
@@ -369,6 +366,7 @@
     }
 
     function onViewportChange() { hide(); }
+    document.addEventListener(OVERFLOW_TOOLTIP_HIDE_EVENT, hide);
     window.addEventListener('scroll', onViewportChange, true);
     window.addEventListener('resize', onViewportChange);
 
@@ -378,6 +376,7 @@
       hide: hide,
       destroy: function () {
         hide();
+        document.removeEventListener(OVERFLOW_TOOLTIP_HIDE_EVENT, hide);
         window.removeEventListener('scroll', onViewportChange, true);
         window.removeEventListener('resize', onViewportChange);
         if (tooltip && tooltip.parentNode) tooltip.parentNode.removeChild(tooltip);
@@ -1752,6 +1751,7 @@
 
     /* Open / Close */
     function open() {
+      hideAllOverflowTooltips();
       /* A pending close teleport (panel still retracting under <body>) must
          not yank the panel back mid-reopen. */
       cancelPendingTeleportClose(dropdown);
@@ -2496,6 +2496,7 @@
 
     /* Open / Close */
     function open() {
+      hideAllOverflowTooltips();
       /* A pending close teleport (panel still retracting under <body>) must
          not yank the panel back mid-reopen. */
       cancelPendingTeleportClose(dropdown);

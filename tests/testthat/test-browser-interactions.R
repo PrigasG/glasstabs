@@ -215,17 +215,32 @@ test_that("browser: select dropdowns match their fields and stay viewport-safe",
       var tip = document.querySelector('#short_single-overflow-tooltip');
       var rect = tip.getBoundingClientRect();
       return tip.getAttribute('role') === 'tooltip' &&
-        tip.textContent.length > 9000 &&
+        tip.textContent.length === 601 &&
+        Number(tip.getAttribute('data-full-length')) > 9000 &&
+        getComputedStyle(tip).pointerEvents === 'none' &&
         rect.left >= 11 && rect.right <= window.innerWidth - 11;
     })()
   "))
 
+  # A tooltip from one field must never cover or delay opening another field.
+  app$click(selector = "#short_multi-trigger")
+  app$wait_for_js("
+    document.querySelector('#short_multi-dropdown.open') !== null &&
+      !document.querySelector('#short_single-overflow-tooltip.visible')
+  ")
+  expect_true(app$get_js("
+    (function() {
+      document.querySelector('#short_multi-wrap')._gt.close();
+      return true;
+    })()
+  "))
+  app$wait_for_js("
+    document.querySelector('#short_multi-dropdown').parentElement.id ===
+      'short_multi-wrap'
+  ")
+
   app$click(selector = "#short_single-trigger")
   app$wait_for_js("document.querySelector('#short_single-dropdown.open') !== null")
-  expect_true(app$get_js("
-    !document.querySelector('#short_single-overflow-tooltip')
-      .classList.contains('visible')
-  "))
 
   expect_true(app$get_js("
     (function() {
