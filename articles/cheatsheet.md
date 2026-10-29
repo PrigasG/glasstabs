@@ -328,9 +328,13 @@ glassSelect(
 )
 ```
 
-The overflow tooltip appears only for an ellipsized trigger. On touch,
-the dropdown’s wrapped option text is the full-text fallback. Use
-`overflow_tooltip = "never"` to disable the visual tooltip.
+For
+[`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md),
+the overflow tooltip appears for an ellipsized trigger. For
+[`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md),
+it appears only for the truncated option currently hovered inside the
+open dropdown. On touch, wrapped option text is the full-text fallback.
+Use `overflow_tooltip = "never"` to disable visual tips.
 
 ## Tabs: inside bs4Dash
 

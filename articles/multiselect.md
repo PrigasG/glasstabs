@@ -182,13 +182,13 @@ glassMultiSelect("filters_dc", fruits, disabled_choices = "banana")
 at runtime with
 [`updateGlassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassMultiSelect.md).
 
-### Long trigger summaries
+### Long option labels
 
-When a selected label or summary is visually shortened, the default
-`overflow_tooltip = "auto"` reveals the complete visible selection text
-on pointer hover or keyboard focus. The tooltip is conditional: short
-text does not produce one. On touch, open the dropdown to inspect the
-wrapped options.
+The default `overflow_tooltip = "auto"` reveals the label of the
+truncated option currently under the pointer inside an open dropdown.
+Only one option tooltip appears at a time. The multi-select trigger
+keeps its full accessible label but does not show a combined visual
+tooltip for multiple selections.
 
 ``` r
 
@@ -205,8 +205,9 @@ glassMultiSelect(
 )
 ```
 
-Set `overflow_tooltip = "never"` to disable the visual tooltip while
-retaining the full accessible trigger label.
+Set `overflow_tooltip = "never"` to disable option tooltips. On touch,
+the wrapped option text inside the open dropdown remains the full-text
+fallback.
 
 ## Dropdown lifecycle
 

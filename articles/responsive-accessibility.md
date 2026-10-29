@@ -60,11 +60,15 @@ glassSelect(
 )
 ```
 
-An automatic overflow tooltip appears only when the selected trigger
-text is actually ellipsized. It supports pointer hover and keyboard
-focus. A tap keeps its normal job—opening the dropdown—where the full
-option wraps inside the viewport. `overflow_tooltip = "never"` disables
-the visual tooltip without removing the trigger’s full accessible label.
+For
+[`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md),
+an automatic overflow tooltip appears only when selected trigger text is
+ellipsized. For
+[`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md),
+it appears for only the truncated option currently hovered inside the
+open dropdown, avoiding a single combined tooltip for several
+selections. A tap keeps its normal job—opening the dropdown—where option
+text wraps inside the viewport.
 
 ## Choosing the overflow style
 

@@ -135,12 +135,13 @@ field only where the content needs it:</p>
 <span>  width <span class="op">=</span> <span class="st">"280px"</span>,</span>
 <span>  overflow_tooltip <span class="op">=</span> <span class="st">"auto"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>An automatic overflow tooltip appears only when the selected trigger
-text is actually ellipsized. It supports pointer hover and keyboard
-focus. A tap keeps its normal job—opening the dropdown—where the full
-option wraps inside the viewport.
-<code>overflow_tooltip = "never"</code> disables the visual tooltip
-without removing the trigger’s full accessible label.</p>
+<p>For <code><a href="../reference/glassSelect.html">glassSelect()</a></code>, an automatic overflow tooltip appears
+only when selected trigger text is ellipsized. For
+<code><a href="../reference/glassMultiSelect.html">glassMultiSelect()</a></code>, it appears for only the truncated
+option currently hovered inside the open dropdown, avoiding a single
+combined tooltip for several selections. A tap keeps its normal
+job—opening the dropdown—where option text wraps inside the
+viewport.</p>
 </div>
 <div class="section level2">
 <h2 id="choosing-the-overflow-style">Choosing the overflow style<a class="anchor" aria-label="anchor" href="#choosing-the-overflow-style"></a>

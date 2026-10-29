@@ -216,11 +216,11 @@ glassMultiSelect(
 
 - overflow_tooltip:
 
-  Tooltip behavior for trigger text that is visually truncated with an
-  ellipsis. `"auto"` (default) shows the complete text on pointer hover
-  or keyboard focus only when truncation is detected; `"never"` disables
-  it. On touch devices, opening the dropdown remains the primary way to
-  inspect the full, wrapped option text.
+  Tooltip behavior for long option text inside the open dropdown.
+  `"auto"` (default) shows one tooltip for the truncated option
+  currently under the pointer; `"never"` disables it. The multi-value
+  trigger keeps its complete accessible label without showing a combined
+  visual tooltip for every selection.
 
 ## Value
 

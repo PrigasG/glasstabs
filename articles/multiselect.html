@@ -271,13 +271,13 @@ wider.</p>
 can be toggled at runtime with
 <code><a href="../reference/updateGlassMultiSelect.html">updateGlassMultiSelect()</a></code>.</p>
 <div class="section level3">
-<h3 id="long-trigger-summaries">Long trigger summaries<a class="anchor" aria-label="anchor" href="#long-trigger-summaries"></a>
+<h3 id="long-option-labels">Long option labels<a class="anchor" aria-label="anchor" href="#long-option-labels"></a>
 </h3>
-<p>When a selected label or summary is visually shortened, the default
-<code>overflow_tooltip = "auto"</code> reveals the complete visible
-selection text on pointer hover or keyboard focus. The tooltip is
-conditional: short text does not produce one. On touch, open the
-dropdown to inspect the wrapped options.</p>
+<p>The default <code>overflow_tooltip = "auto"</code> reveals the label
+of the truncated option currently under the pointer inside an open
+dropdown. Only one option tooltip appears at a time. The multi-select
+trigger keeps its full accessible label but does not show a combined
+visual tooltip for multiple selections.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span></span>
 <span>  <span class="st">"long_filters"</span>,</span>
@@ -290,8 +290,9 @@ dropdown to inspect the wrapped options.</p>
 <span>  selection_display <span class="op">=</span> <span class="st">"summary"</span>,</span>
 <span>  overflow_tooltip <span class="op">=</span> <span class="st">"auto"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>Set <code>overflow_tooltip = "never"</code> to disable the visual
-tooltip while retaining the full accessible trigger label.</p>
+<p>Set <code>overflow_tooltip = "never"</code> to disable option
+tooltips. On touch, the wrapped option text inside the open dropdown
+remains the full-text fallback.</p>
 </div>
 </div>
 <div class="section level2">
