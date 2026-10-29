@@ -153,7 +153,22 @@ glassMultiSelect(
 does not remove motion entirely: the detached panel uses a restrained open and
 close transition and still honors reduced-motion preferences.
 
-For a short list, the search box can stay out of the way. With `searchable = "auto"`, it appears only when the list reaches the chosen threshold. The trigger can also show a compact summary instead of the generic “Multiple selection” label.
+For a short list, the search box can stay out of the way. Both select widgets
+accept `searchable = "auto"`; search appears only when the list reaches the
+chosen threshold. Five categories, for example, remain uncluttered when the
+threshold is six.
+
+``` r
+glassSelect(
+  "category",
+  category_choices,
+  searchable = "auto",
+  search_threshold = 6
+)
+```
+
+The multi-select trigger can also show a compact summary instead of the generic
+“Multiple selection” label.
 
 ``` r
 glassMultiSelect(

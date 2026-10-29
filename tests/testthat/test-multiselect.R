@@ -170,6 +170,29 @@ test_that("glassMultiSelect() validates search settings", {
   )
 })
 
+test_that("glassMultiSelect() rejects invalid logical arguments", {
+  arguments <- c(
+    "show_style_switcher", "show_select_all", "show_clear_all",
+    "disabled", "server"
+  )
+  for (argument in arguments) {
+    args <- list(inputId = "f", choices = choices)
+    args[[argument]] <- "yes"
+    expect_error(
+      do.call(glassMultiSelect, args),
+      class = "glasstabs_error_bad_argument",
+      info = argument
+    )
+  }
+})
+
+test_that("glassMultiSelect() rejects missing selected values", {
+  expect_error(
+    glassMultiSelect("f", choices, selected = NA_character_),
+    class = "glasstabs_error_bad_choice"
+  )
+})
+
 test_that("glassMultiSelect() renders each selection display", {
   selected <- c("apple", "banana")
   count <- as.character(glassMultiSelect(
@@ -580,6 +603,22 @@ test_that("updateGlassMultiSelect() rejects invalid style", {
       check_style = "bad-style"
     ),
     class = "glasstabs_error_bad_argument"
+  )
+})
+
+test_that("updateGlassMultiSelect() validates session, disabled, and selection", {
+  expect_error(
+    updateGlassMultiSelect(list(), "pick", selected = "apple"),
+    class = "glasstabs_error_no_session"
+  )
+  fake_session <- list(sendInputMessage = function(...) NULL)
+  expect_error(
+    updateGlassMultiSelect(fake_session, "pick", disabled = "yes"),
+    class = "glasstabs_error_bad_argument"
+  )
+  expect_error(
+    updateGlassMultiSelect(fake_session, "pick", selected = NA_character_),
+    class = "glasstabs_error_bad_choice"
   )
 })
 

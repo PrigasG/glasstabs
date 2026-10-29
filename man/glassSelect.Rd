@@ -29,7 +29,8 @@ glassSelect(
   label_bold = TRUE,
   label_size = "14px",
   search_focus_ring = FALSE,
-  overflow_tooltip = c("auto", "never")
+  overflow_tooltip = c("auto", "never"),
+  search_threshold = 15L
 )
 }
 \arguments{
@@ -46,8 +47,9 @@ mirroring \code{\link[shiny:selectInput]{shiny::selectInput()}}.}
 
 \item{placeholder}{Trigger label when nothing is selected.}
 
-\item{searchable}{Logical. Show search input inside dropdown? Default
-\code{TRUE}.}
+\item{searchable}{Search visibility. Use \code{TRUE} (default) to always
+show search, \code{FALSE} to hide it, or \code{"auto"} to show it only
+when the choice count reaches \code{search_threshold}.}
 
 \item{clearable}{Logical. Show clear control for removing the current
 selection? Default \code{FALSE}.}
@@ -119,6 +121,9 @@ truncated with an ellipsis. \code{"auto"} (default) shows the complete
 text on pointer hover or keyboard focus only when truncation is detected;
 \code{"never"} disables it. On touch devices, opening the dropdown remains
 the primary way to inspect the full, wrapped option text.}
+
+\item{search_threshold}{Choice count at which \code{searchable = "auto"}
+shows the search field. Default \code{15}.}
 }
 \value{
 An \code{htmltools::tagList} containing the single-select trigger,

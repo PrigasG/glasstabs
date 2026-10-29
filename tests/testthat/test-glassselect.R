@@ -143,8 +143,34 @@ test_that("glassSelect() searchable = TRUE renders search input", {
 
 test_that("glassSelect() searchable = FALSE omits search input", {
   html <- as.character(glassSelect("f", choices, searchable = FALSE))
-  expect_false(grepl('type="text"', html, fixed = TRUE))
-  expect_false(grepl("Search options...", html, fixed = TRUE))
+  expect_match(html, 'data-searchable="never"', fixed = TRUE)
+  expect_match(html, 'class="gt-gs-search hidden"', fixed = TRUE)
+})
+
+test_that("glassSelect() automatic search follows the choice threshold", {
+  five <- stats::setNames(letters[1:5], LETTERS[1:5])
+  hidden <- as.character(glassSelect(
+    "f", five, searchable = "auto", search_threshold = 6
+  ))
+  shown <- as.character(glassSelect(
+    "f", five, searchable = "auto", search_threshold = 5
+  ))
+
+  expect_match(hidden, 'data-searchable="auto"', fixed = TRUE)
+  expect_match(hidden, 'data-search-threshold="6"', fixed = TRUE)
+  expect_match(hidden, 'class="gt-gs-search hidden"', fixed = TRUE)
+  expect_match(shown, 'class="gt-gs-search"', fixed = TRUE)
+})
+
+test_that("glassSelect() validates search settings", {
+  expect_error(
+    glassSelect("f", choices, searchable = "sometimes"),
+    class = "glasstabs_error_bad_argument"
+  )
+  expect_error(
+    glassSelect("f", choices, search_threshold = 0),
+    class = "glasstabs_error_bad_argument"
+  )
 })
 
 test_that("glassSelect() clearable = TRUE renders clear control", {
@@ -243,8 +269,27 @@ test_that("glassSelect() sets data-input-id attribute", {
 
 test_that("glassSelect() sets data-searchable and data-clearable attributes", {
   html <- as.character(glassSelect("my_select", choices, searchable = FALSE, clearable = TRUE))
-  expect_true(grepl('data-searchable="false"', html, fixed = TRUE))
+  expect_true(grepl('data-searchable="never"', html, fixed = TRUE))
   expect_true(grepl('data-clearable="true"', html, fixed = TRUE))
+})
+
+test_that("glassSelect() rejects invalid logical arguments", {
+  for (argument in c("clearable", "include_all", "disabled", "server")) {
+    args <- list(inputId = "f", choices = choices)
+    args[[argument]] <- "yes"
+    expect_error(
+      do.call(glassSelect, args),
+      class = "glasstabs_error_bad_argument",
+      info = argument
+    )
+  }
+})
+
+test_that("glassSelect() rejects missing selected values", {
+  expect_error(
+    glassSelect("f", choices, selected = NA_character_),
+    class = "glasstabs_error_bad_choice"
+  )
 })
 
 
@@ -343,6 +388,53 @@ test_that("updateGlassSelect() sends empty message when no updates supplied", {
   args <- mockery::mock_args(send_mock)[[1]]
   expect_equal(args[[1]], "pick")
   expect_equal(args[[2]], list())
+})
+
+test_that("updateGlassSelect() sends automatic search settings", {
+  send_mock <- mockery::mock()
+  fake_session <- list(sendInputMessage = send_mock)
+
+  updateGlassSelect(
+    fake_session,
+    "pick",
+    searchable = "auto",
+    search_threshold = 5
+  )
+
+  data <- mockery::mock_args(send_mock)[[1]][[2]]
+  expect_equal(data$searchable, "auto")
+  expect_equal(data$search_threshold, 5L)
+})
+
+test_that("updateGlassSelect() uses the namespaced custom-message path for Shiny sessions", {
+  send_mock <- mockery::mock()
+  fake_session <- list(
+    sendCustomMessage = send_mock,
+    ns = function(id) paste0("module-", id)
+  )
+
+  updateGlassSelect(fake_session, "pick", search_threshold = 5)
+
+  args <- mockery::mock_args(send_mock)[[1]]
+  expect_equal(args[[1]], "glasstabs_update_select")
+  expect_equal(args[[2]]$inputId, "module-pick")
+  expect_equal(args[[2]]$data$search_threshold, 5L)
+})
+
+test_that("updateGlassSelect() validates session, disabled, and selection", {
+  expect_error(
+    updateGlassSelect(list(), "pick", selected = "apple"),
+    class = "glasstabs_error_no_session"
+  )
+  fake_session <- list(sendInputMessage = function(...) NULL)
+  expect_error(
+    updateGlassSelect(fake_session, "pick", disabled = "yes"),
+    class = "glasstabs_error_bad_argument"
+  )
+  expect_error(
+    updateGlassSelect(fake_session, "pick", selected = NA_character_),
+    class = "glasstabs_error_bad_choice"
+  )
 })
 
 

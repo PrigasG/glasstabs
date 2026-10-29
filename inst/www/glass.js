@@ -1270,6 +1270,8 @@
       : 'No matches';
     var serverMode = parseBoolAttr(wrap, 'data-server');
     var serverMinChars = parseIntAttr(wrap, 'data-server-min-chars', 0);
+    var searchMode = wrap.getAttribute('data-searchable') || 'always';
+    var searchThreshold = parseIntAttr(wrap, 'data-search-threshold', 15);
 
     /* DOM refs */
     var trigger = wrap.querySelector('.gt-gs-trigger');
@@ -1277,6 +1279,7 @@
     var labelEl = wrap.querySelector('[id$="-label"]');
     var clearBtn = wrap.querySelector('.gt-gs-clear');
     var searchIn = wrap.querySelector('input[type="text"]');
+    var searchWrap = wrap.querySelector('.gt-gs-search');
     var optionsBox = wrap.querySelector('[id$="-options"]') || wrap;
 
     var STYLES = ['check-only', 'checkbox', 'filled'];
@@ -1312,6 +1315,7 @@
       choices: [],     // [{label, value, hidden, _labelLower}]
       selected: null,  // string | null
       selectedLabel: null,
+      total: parseIntAttr(wrap, 'data-server-total', null),
       loading: false,
       query: ''
     };
@@ -1339,7 +1343,7 @@
     var optionNav = createOptionNavigator(
       dropdown,
       '.gt-gs-option',
-      function () { return searchIn || trigger; },
+      function () { return searchIn && !searchIn.disabled ? searchIn : trigger; },
       inputId + '-option'
     );
 
@@ -1362,6 +1366,27 @@
         if (!ch.hidden) n++;
       });
       return n;
+    }
+
+    function searchEnabled() {
+      var total = state.total === null ? state.choices.length : state.total;
+      return searchMode === 'always' || (searchMode === 'auto' && total >= searchThreshold);
+    }
+
+    function syncSearchVisibility() {
+      var enabled = searchEnabled();
+      if (searchWrap) searchWrap.classList.toggle('hidden', !enabled);
+      if (searchIn) {
+        searchIn.disabled = !enabled;
+        searchIn.setAttribute('aria-hidden', enabled ? 'false' : 'true');
+      }
+      if (!enabled && state.query) {
+        state.query = '';
+        if (searchIn) searchIn.value = '';
+        state.choices.forEach(function (ch) { ch.hidden = false; });
+        patchVisibility();
+        optionNav.prepare();
+      }
     }
 
     function setStatus(text, active, loading) {
@@ -1487,6 +1512,7 @@
       var preserveSel = opts.preserveSelection !== false;
       var preserveMissingSel = opts.preserveMissingSelection === true;
       var doNotify = opts.notify !== false;
+      var total = typeof opts.total === 'number' ? opts.total : null;
 
       var oldSelected = preserveSel ? state.selected : null;
       var oldSelectedLabel = preserveSel ? state.selectedLabel : null;
@@ -1504,6 +1530,7 @@
           _labelLower: String(ch.label).toLowerCase()
         };
       });
+      state.total = total === null ? state.choices.length : total;
 
       /* Intersect selection */
       if (oldSelected !== null && findChoice(oldSelected)) {
@@ -1531,6 +1558,7 @@
       optionsBox.appendChild(frag);
       optionsBox.appendChild(statusRow);
       optionNav.prepare();
+      syncSearchVisibility();
 
       /* Re-apply search if active */
       if (!serverMode && state.query) {
@@ -1613,7 +1641,7 @@
         focusTimer = null;
         if (!wrap.classList.contains('gt-layer-active')) return;
         optionNav.move('current');
-        if (searchIn) searchIn.focus();
+        if (searchIn && !searchIn.disabled) searchIn.focus();
       }, 100);
     }
 
@@ -1742,6 +1770,7 @@
     }
 
     /* Initial UI sync */
+    syncSearchVisibility();
     syncUI();
 
     /* Emit initial value to Shiny */
@@ -1797,6 +1826,12 @@
           if (off) trigger.setAttribute('aria-disabled', 'true');
           else trigger.removeAttribute('aria-disabled');
         }
+      },
+      setSearch: function (mode, threshold) {
+        if (mode) searchMode = mode;
+        if (typeof threshold === 'number') searchThreshold = threshold;
+        syncSearchVisibility();
+        syncUI();
       },
       clear: function (opts) {
         setValue(null, opts);
@@ -2500,6 +2535,7 @@
     }
 
     /* Initial sync */
+    syncSearchVisibility();
     syncUI();
 
     /* Emit initial value to Shiny */
@@ -2596,6 +2632,45 @@
 
   function multiSelectSignature(ctrl) {
     return JSON.stringify({ value: ctrl.getValue(), style: ctrl.getStyle() });
+  }
+
+  function applySingleSelectData(ctrl, data, el) {
+    var shouldCommit = false;
+
+    if (hasOwn(data, 'choices')) {
+      ctrl.setChoices(data.choices || [], { notify: false });
+      shouldCommit = true;
+    }
+    if (hasOwn(data, 'selected')) {
+      var sel = data.selected;
+      if (Array.isArray(sel)) sel = sel.length ? sel[0] : null;
+      if (sel === '') sel = null;
+      ctrl.setValue(sel, { notify: false });
+      shouldCommit = true;
+    }
+    if (hasOwn(data, 'style')) {
+      ctrl.setStyle(data.style, { notify: false });
+      shouldCommit = true;
+    }
+    if (hasOwn(data, 'shape') && typeof ctrl.setShape === 'function') {
+      ctrl.setShape(data.shape);
+    }
+    if (hasOwn(data, 'disabled') && typeof ctrl.setDisabled === 'function') {
+      ctrl.setDisabled(data.disabled);
+    }
+    if (hasOwn(data, 'disabled_choices') && typeof ctrl.setDisabledChoices === 'function') {
+      ctrl.setDisabledChoices(data.disabled_choices);
+    }
+    if ((hasOwn(data, 'searchable') || hasOwn(data, 'search_threshold')) &&
+        typeof ctrl.setSearch === 'function') {
+      ctrl.setSearch(data.searchable, data.search_threshold);
+    }
+    if (hasOwn(data, 'close') && data.close && typeof ctrl.close === 'function') {
+      ctrl.close();
+    }
+
+    if (shouldCommit && ctrl.commitSelection) ctrl.commitSelection();
+    if (shouldCommit && el) triggerShinyChange(el);
   }
 
   function applyMultiSelectData(ctrl, data) {
@@ -2711,45 +2786,7 @@
       receiveMessage: function (el, data) {
         var ctrl = ensureInit(el);
         if (!ctrl) return;
-        var shouldCommit = false;
-
-        if (hasOwn(data, 'choices')) {
-          ctrl.setChoices(data.choices || [], { notify: false });
-          shouldCommit = true;
-        }
-
-        if (hasOwn(data, 'selected')) {
-          var sel = data.selected;
-          if (Array.isArray(sel)) sel = sel.length ? sel[0] : null;
-          if (sel === '') sel = null;
-          ctrl.setValue(sel, { notify: false });
-          shouldCommit = true;
-        }
-
-        if (hasOwn(data, 'style')) {
-          ctrl.setStyle(data.style, { notify: false });
-          shouldCommit = true;
-        }
-
-        if (hasOwn(data, 'shape') && typeof ctrl.setShape === 'function') {
-          ctrl.setShape(data.shape);
-        }
-
-        if (hasOwn(data, 'disabled') && typeof ctrl.setDisabled === 'function') {
-          ctrl.setDisabled(data.disabled);
-        }
-
-        if (hasOwn(data, 'disabled_choices') && typeof ctrl.setDisabledChoices === 'function') {
-          ctrl.setDisabledChoices(data.disabled_choices);
-        }
-
-        if (hasOwn(data, 'close') && data.close && typeof ctrl.close === 'function') {
-          ctrl.close();
-        }
-
-        /* Single commit after all fields are set */
-        if (shouldCommit && ctrl.commitSelection) ctrl.commitSelection();
-        if (shouldCommit) triggerShinyChange(el);
+        applySingleSelectData(ctrl, data || {}, el);
       }
     });
     Shiny.inputBindings.register(glassSelectBinding, 'glasstabs.glassSelect');
@@ -3091,6 +3128,23 @@
   function registerCustomMessageHandlers() {
     if (typeof Shiny === 'undefined' || registerCustomMessageHandlers._done) return;
 
+    function applySingleSelectUpdate(msg, attempt) {
+      attempt = attempt || 0;
+      var wrap = msg && msg.inputId
+        ? document.querySelector('.gt-gs-wrap' + attrEquals('data-input-id', msg.inputId))
+        : null;
+      var ctrl = wrap ? ensureInit(wrap) : null;
+
+      if (!ctrl) {
+        if (attempt < 20) {
+          setTimeout(function () { applySingleSelectUpdate(msg, attempt + 1); }, 25);
+        }
+        return;
+      }
+
+      applySingleSelectData(ctrl, msg.data || {}, wrap);
+    }
+
     function applyMultiSelectUpdate(msg, attempt) {
       attempt = attempt || 0;
       var wrap = msg && msg.inputId
@@ -3110,6 +3164,10 @@
 
     Shiny.addCustomMessageHandler('glasstabs_reinit', function (msg) {
       bootAll();
+    });
+
+    Shiny.addCustomMessageHandler('glasstabs_update_select', function (msg) {
+      setTimeout(function () { applySingleSelectUpdate(msg, 0); }, 50);
     });
 
     Shiny.addCustomMessageHandler('glasstabs_update_multiselect', function (msg) {

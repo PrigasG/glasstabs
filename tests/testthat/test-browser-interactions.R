@@ -38,6 +38,41 @@ test_that("browser: glassSelect opens and clicking an option updates input", {
   expect_equal(app$get_value(input = "fruit"), "banana")
 })
 
+test_that("browser: glassSelect automatic search responds to threshold updates", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-glassSelect-auto-search",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+  expect_true(app$get_js("(function() {
+    var input = document.querySelector('#auto_single-search');
+    return input.closest('.gt-gs-search').classList.contains('hidden') &&
+      input.disabled;
+  })()"))
+
+  app$set_inputs(auto_single_show = "click")
+  app$wait_for_idle()
+  app$wait_for_js("(function() {
+    var input = document.querySelector('#auto_single-search');
+    return !input.closest('.gt-gs-search').classList.contains('hidden') && !input.disabled;
+  })()")
+
+  app$set_inputs(auto_single_hide = "click")
+  app$wait_for_idle()
+  app$wait_for_js("(function() {
+    var input = document.querySelector('#auto_single-search');
+    return input.closest('.gt-gs-search').classList.contains('hidden') && input.disabled;
+  })()")
+})
+
 test_that("browser: glassMultiSelect toggles choices and updates input", {
   skip_on_covr()
   skip_if_not_installed("shinytest2")

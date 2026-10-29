@@ -162,6 +162,11 @@ glassMultiSelect <- function(
     "glassMultiSelect(): `inputId` must be a single non-empty string."
   )
   .gt_check_text(no_matches_text, "no_matches_text", "glassMultiSelect")
+  .gt_check_flag(show_style_switcher, "show_style_switcher")
+  .gt_check_flag(show_select_all, "show_select_all")
+  .gt_check_flag(show_clear_all, "show_clear_all")
+  .gt_check_flag(disabled, "disabled")
+  .gt_check_flag(server, "server")
   .gt_check_flag(tongue, "tongue")
   .gt_check_flag(label_bold, "label_bold")
   .gt_check_flag(search_focus_ring, "search_focus_ring")
@@ -176,9 +181,7 @@ glassMultiSelect <- function(
   shape <- .gt_match_arg(shape, c("rounded", "square"), "shape")
   field_width_style <- .gt_field_width_style(width)
   inner_width_style <- if (is.null(width)) NULL else "width:100%;"
-  disabled <- isTRUE(disabled)
   disabled_choices <- if (is.null(disabled_choices)) character(0) else as.character(disabled_choices)
-  server <- isTRUE(server)
   server_limit <- .gt_positive_int(server_limit, "server_limit")
   server_min_chars <- .gt_nonnegative_int(server_min_chars, "server_min_chars")
   searchable <- .gt_search_mode(searchable)
@@ -204,6 +207,7 @@ glassMultiSelect <- function(
   if (is.null(selected)) {
     selected <- setdiff(vals, disabled_choices)
   } else {
+    .gt_check_no_missing(selected, "selected", "glassMultiSelect")
     selected <- as.character(selected)
   }
 
@@ -683,6 +687,11 @@ updateGlassMultiSelect <- function(
     selection_max_items = NULL,
     dropdown_max_height = NULL
 ) {
+  if (is.function(session$sendCustomMessage) && is.function(session$ns)) {
+    .gt_check_session(session, "sendCustomMessage")
+  } else {
+    .gt_check_session(session, "sendInputMessage")
+  }
   notify <- .gt_match_arg(notify, c("changed", "always", "never"), "notify")
   preserve_selection <- .gt_flag(preserve_selection, "preserve_selection")
   drop_invalid <- .gt_flag(drop_invalid, "drop_invalid")
@@ -692,6 +701,7 @@ updateGlassMultiSelect <- function(
   if (!is.null(shape)) {
     shape <- .gt_match_arg(shape, c("rounded", "square"), "shape")
   }
+  if (!is.null(disabled)) .gt_check_flag(disabled, "disabled")
   if (!is.null(searchable)) searchable <- .gt_search_mode(searchable)
   if (!is.null(search_threshold)) {
     search_threshold <- .gt_positive_int(search_threshold, "search_threshold")
@@ -732,6 +742,7 @@ updateGlassMultiSelect <- function(
   }
 
   if (!is.null(selected)) {
+    .gt_check_no_missing(selected, "selected", "updateGlassMultiSelect")
     message$selected <- unname(as.character(selected))
   }
 
@@ -744,7 +755,7 @@ updateGlassMultiSelect <- function(
   }
 
   if (!is.null(disabled)) {
-    message$disabled <- isTRUE(disabled)
+    message$disabled <- disabled
   }
 
   if (!is.null(disabled_choices)) {

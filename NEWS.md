@@ -2,6 +2,15 @@
 
 ## Fixes
 
+* `glassSelect()` now supports `searchable = "auto"` with a configurable
+  `search_threshold`, matching the multi-select behavior. Short lists can keep
+  the search field hidden and reveal it automatically as choices grow. Both
+  settings can also be changed with `updateGlassSelect()`.
+
+* Select constructors now reject invalid logical arguments instead of silently
+  treating values such as `"yes"` as `FALSE`; update helpers validate sessions,
+  disabled state, and missing selections consistently.
+
 * Ellipsized select trigger text now exposes its complete value through a
   viewport-safe hover/keyboard tooltip by default. Set
   `overflow_tooltip = "never"` to disable the visual tooltip; full accessible

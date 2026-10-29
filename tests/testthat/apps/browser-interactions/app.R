@@ -12,6 +12,7 @@ if (file.exists(file.path(pkg_root, "DESCRIPTION")) &&
 }
 
 choices <- c(Apple = "apple", Banana = "banana", Cherry = "cherry")
+five_choices <- stats::setNames(letters[1:5], paste("Category", 1:5))
 short_field_choices <- c(
   One = "one",
   "A longer option label that should wrap cleanly" = "long_words",
@@ -38,6 +39,15 @@ ui <- fluidPage(
       search_focus_ring = TRUE,
       theme = glass_select_theme(focus_ring = "#a21caf")
     ),
+    glassSelect(
+      "auto_single",
+      five_choices,
+      label = "Automatic single search",
+      searchable = "auto",
+      search_threshold = 6
+    ),
+    actionButton("auto_single_show", "Show automatic single search"),
+    actionButton("auto_single_hide", "Hide automatic single search"),
     glassMultiSelect(
       "cats",
       choices,
@@ -203,6 +213,14 @@ server <- function(input, output, session) {
   observe({
     req(input$shape)
     updateGlassSelect(session, "shape_single", shape = input$shape)
+  })
+
+  observeEvent(input$auto_single_show, {
+    updateGlassSelect(session, "auto_single", search_threshold = 5)
+  })
+
+  observeEvent(input$auto_single_hide, {
+    updateGlassSelect(session, "auto_single", search_threshold = 6)
   })
 
   output$fruit_open_state <- renderText({

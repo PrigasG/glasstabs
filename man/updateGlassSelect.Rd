@@ -12,7 +12,9 @@ updateGlassSelect(
   check_style = NULL,
   shape = NULL,
   disabled = NULL,
-  disabled_choices = NULL
+  disabled_choices = NULL,
+  searchable = NULL,
+  search_threshold = NULL
 )
 }
 \arguments{
@@ -40,6 +42,12 @@ unchanged.}
 \item{disabled_choices}{Optional character vector of choice values to render
 as disabled. Defaults to \code{NULL}, which leaves disabled choices
 unchanged.}
+
+\item{searchable}{Optional new search visibility: \code{TRUE}, \code{FALSE},
+or \code{"auto"}. \code{NULL} keeps the current setting.}
+
+\item{search_threshold}{Optional new choice-count threshold used when
+\code{searchable = "auto"}. \code{NULL} keeps the current threshold.}
 }
 \value{
 No return value. Called for its side effect of updating the client-side

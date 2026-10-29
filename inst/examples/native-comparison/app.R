@@ -133,7 +133,12 @@ ui <- fluidPage(
             tags$h3("Single-select features"),
             tags$p("These settings affect only the glassSelect() demonstration in this tab.")
           ),
-          checkboxInput("single_searchable", "Show dropdown search", TRUE),
+          selectInput(
+            "single_searchable", "Dropdown search",
+            c("Always" = "always", "Automatic" = "auto", "Never" = "never"),
+            selected = "auto", selectize = FALSE
+          ),
+          numericInput("single_search_threshold", "Automatic search threshold", 6, min = 1),
           checkboxInput("single_search_ring", "Show blue search focus ring", FALSE),
           checkboxInput("single_overflow_tooltip", "Explain truncated trigger text", TRUE),
           checkboxInput("single_clearable", "Show clear action", TRUE),
@@ -155,7 +160,12 @@ ui <- fluidPage(
             tags$h3("Search and multi-select features"),
             tags$p("Search controls sit with search; marker, summary, and color controls sit with the multi-select example.")
           ),
-          checkboxInput("enhanced_searchable", "Show dropdown search", TRUE),
+          selectInput(
+            "enhanced_searchable", "Dropdown search",
+            c("Always" = "always", "Automatic" = "auto", "Never" = "never"),
+            selected = "auto", selectize = FALSE
+          ),
+          numericInput("enhanced_search_threshold", "Automatic search threshold", 6, min = 1),
           checkboxInput("enhanced_search_ring", "Show blue search focus ring", FALSE),
           checkboxInput("enhanced_overflow_tooltip", "Explain truncated trigger text", TRUE),
           selectInput(
@@ -186,7 +196,12 @@ ui <- fluidPage(
             tags$h3("Mixed-form glass features"),
             tags$p("These options affect only the glass multi-select beside the native Team field.")
           ),
-          checkboxInput("coexist_searchable", "Show dropdown search", TRUE),
+          selectInput(
+            "coexist_searchable", "Dropdown search",
+            c("Always" = "always", "Automatic" = "auto", "Never" = "never"),
+            selected = "auto", selectize = FALSE
+          ),
+          numericInput("coexist_search_threshold", "Automatic search threshold", 6, min = 1),
           checkboxInput("coexist_search_ring", "Show blue search focus ring", FALSE),
           checkboxInput("coexist_overflow_tooltip", "Explain truncated trigger text", TRUE),
           selectInput(
@@ -262,6 +277,12 @@ server <- function(input, output, session) {
   bold_labels <- reactive(isTRUE(input$compare_label_bold))
   label_size <- reactive(value_or(input$compare_label_size, "14px"))
   glass_shape <- reactive(value_or(input$compare_shape, "rounded"))
+  search_setting <- function(value) {
+    switch(value_or(value, "auto"), always = TRUE, never = FALSE, "auto")
+  }
+  search_preview <- function(value) {
+    switch(value_or(value, "auto"), always = "TRUE", never = "FALSE", '"auto"')
+  }
 
   output$single_call_preview <- renderText({
     paste0(
@@ -269,7 +290,8 @@ server <- function(input, output, session) {
       toupper(as.character(use_tongue())),
       ", label_bold = ", toupper(as.character(bold_labels())),
       ", label_size = \"", label_size(), "\", searchable = ",
-      toupper(as.character(isTRUE(input$single_searchable))),
+      search_preview(input$single_searchable),
+      ", search_threshold = ", value_or(input$single_search_threshold, 6),
       ", search_focus_ring = ", toupper(as.character(isTRUE(input$single_search_ring))),
       ", overflow_tooltip = \"", if (isTRUE(input$single_overflow_tooltip)) "auto" else "never", "\"",
       ", clearable = ", toupper(as.character(isTRUE(input$single_clearable))),
@@ -281,7 +303,8 @@ server <- function(input, output, session) {
   output$enhanced_call_preview <- renderText({
     paste0(
       "glassMultiSelect(..., searchable = ",
-      toupper(as.character(isTRUE(input$enhanced_searchable))),
+      search_preview(input$enhanced_searchable),
+      ", search_threshold = ", value_or(input$enhanced_search_threshold, 6),
       ", search_focus_ring = ", toupper(as.character(isTRUE(input$enhanced_search_ring))),
       ", overflow_tooltip = \"", if (isTRUE(input$enhanced_overflow_tooltip)) "auto" else "never", "\"",
       ", check_style = \"", value_or(input$enhanced_check_style, "filled"),
@@ -296,7 +319,8 @@ server <- function(input, output, session) {
       "selectInput(\"team\", \"Team\", short_choices, selectize = FALSE, width = \"",
       field_width(), "\")\n",
       "glassMultiSelect(..., searchable = ",
-      toupper(as.character(isTRUE(input$coexist_searchable))),
+      search_preview(input$coexist_searchable),
+      ", search_threshold = ", value_or(input$coexist_search_threshold, 6),
       ", search_focus_ring = ", toupper(as.character(isTRUE(input$coexist_search_ring))),
       ", overflow_tooltip = \"", if (isTRUE(input$coexist_overflow_tooltip)) "auto" else "never", "\"",
       ", check_style = \"", value_or(input$coexist_check_style, "checkbox"),
@@ -311,7 +335,8 @@ server <- function(input, output, session) {
     tongue <- use_tongue()
     label_bold <- bold_labels()
     title_size <- label_size()
-    searchable <- isTRUE(input$single_searchable)
+    searchable <- search_setting(input$single_searchable)
+    search_threshold <- value_or(input$single_search_threshold, 6)
     search_ring <- isTRUE(input$single_search_ring)
     overflow_tooltip <- if (isTRUE(input$single_overflow_tooltip)) "auto" else "never"
     clearable <- isTRUE(input$single_clearable)
@@ -344,6 +369,7 @@ server <- function(input, output, session) {
             label = "Industry",
             selected = isolate(value_or(input$glass_single, "industry-down")),
             searchable = searchable,
+            search_threshold = search_threshold,
             clearable = clearable,
             check_style = check_style,
             shape = shape,
@@ -371,7 +397,8 @@ server <- function(input, output, session) {
     tongue <- use_tongue()
     label_bold <- bold_labels()
     title_size <- label_size()
-    searchable <- isTRUE(input$enhanced_searchable)
+    searchable <- search_setting(input$enhanced_searchable)
+    search_threshold <- value_or(input$enhanced_search_threshold, 6)
     search_ring <- isTRUE(input$enhanced_search_ring)
     overflow_tooltip <- if (isTRUE(input$enhanced_overflow_tooltip)) "auto" else "never"
     shape <- glass_shape()
@@ -415,6 +442,7 @@ server <- function(input, output, session) {
               label = "Search one",
               selected = isolate(value_or(input$glass_search, "industry-down")),
               searchable = searchable,
+              search_threshold = search_threshold,
               check_style = check_style,
               shape = shape,
               width = width,
@@ -430,6 +458,7 @@ server <- function(input, output, session) {
               label = "Select several",
               selected = isolate(value_or(input$glass_multi, c("industry-down", "healthcare"))),
               searchable = searchable,
+              search_threshold = search_threshold,
               check_style = check_style,
               shape = shape,
               selection_display = selection_display,
@@ -455,7 +484,8 @@ server <- function(input, output, session) {
     tongue <- use_tongue()
     label_bold <- bold_labels()
     title_size <- label_size()
-    searchable <- isTRUE(input$coexist_searchable)
+    searchable <- search_setting(input$coexist_searchable)
+    search_threshold <- value_or(input$coexist_search_threshold, 6)
     search_ring <- isTRUE(input$coexist_search_ring)
     overflow_tooltip <- if (isTRUE(input$coexist_overflow_tooltip)) "auto" else "never"
     shape <- glass_shape()
@@ -483,6 +513,7 @@ server <- function(input, output, session) {
             label = "Topics",
             selected = isolate(value_or(input$mixed_topics, c("industry-down", "renewable-energy"))),
             searchable = searchable,
+            search_threshold = search_threshold,
             check_style = check_style,
             shape = shape,
             selection_display = selection_display,
