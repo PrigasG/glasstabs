@@ -269,7 +269,7 @@ glassTabsUI <- function(
   }
 
   tab_links <- lapply(panels, function(p) {
-    .gt_tab_link(p, p$value == active_val, id, preserve_inactive_space = TRUE)
+    .gt_tab_link(p, p$value == active_val, id)
   })
 
   panes <- lapply(panels, function(p) {
@@ -277,8 +277,7 @@ glassTabsUI <- function(
       p,
       p$value == active_val,
       ns(paste0("pane-", p$value)),
-      tab_id = ns(paste0("tab-", p$value)),
-      preserve_inactive_space = TRUE
+      tab_id = ns(paste0("tab-", p$value))
     )
   })
 
@@ -767,21 +766,6 @@ removeGlassTab <- function(session, id, value) {
 #' @family glass tabs
 #' @export
 glassTabsServer <- function(id, bookmark = TRUE) {
-  if (grepl("-", id, fixed = TRUE)) {
-    warning(
-      sprintf(
-        paste0(
-          "glassTabsServer() received id \"%s\" which contains \"-\".\n",
-          "This usually means ns(\"tabs\") was passed instead of the bare id \"tabs\".\n",
-          "Fix: glassTabsServer(\"tabs\")  # NOT glassTabsServer(ns(\"tabs\"))\n",
-          "moduleServer() handles namespacing automatically."
-        ),
-        id
-      ),
-      call. = FALSE
-    )
-  }
-
   shiny::moduleServer(id, function(input, output, session) {
     active <- shiny::reactive({
       input$active_tab

@@ -82,7 +82,8 @@ glassSelect <- function(
     label_size = "14px",
     search_focus_ring = FALSE,
     overflow_tooltip = c("auto", "never"),
-    search_threshold = 15L
+    search_threshold = 15L,
+    dark_selector = NULL
 ) {
   .gt_check_string(
     inputId,
@@ -114,6 +115,8 @@ glassSelect <- function(
   server_min_chars <- .gt_nonnegative_int(server_min_chars, "server_min_chars")
   colors <- .ms_resolve_theme(theme)
   is_auto <- .is_auto_theme(theme)
+  if (is_auto && is.null(dark_selector)) dark_selector <- '[data-bs-theme="dark"]'
+  if (!is.null(dark_selector)) .gt_check_string(dark_selector, "dark_selector")
 
   normalized <- .gt_normalize_choices(choices)
   vals <- normalized$values
@@ -187,7 +190,7 @@ glassSelect <- function(
     label_size, .to_rgba_vars(colors)
   )
   dark_override_style <- if (is_auto) {
-    .select_dark_override_style('[data-bs-theme="dark"]', field_id)
+    .select_dark_override_style(dark_selector, field_id)
   } else {
     NULL
   }
@@ -457,16 +460,18 @@ updateGlassSelect <- function(
 
   if (!is.null(choices)) {
     normalized <- .gt_normalize_choices(choices)
-    disabled_vals <- if (is.null(disabled_choices)) character(0) else as.character(disabled_choices)
     grps <- normalized$groups %||% rep("", length(normalized$values))
 
     message$choices <- lapply(seq_along(normalized$values), function(i) {
-      list(
+      choice <- list(
         label = normalized$labels[[i]],
         value = normalized$values[[i]],
-        group = grps[[i]],
-        disabled = normalized$values[[i]] %in% disabled_vals
+        group = grps[[i]]
       )
+      if (!is.null(disabled_choices)) {
+        choice$disabled <- normalized$values[[i]] %in% as.character(disabled_choices)
+      }
+      choice
     })
   }
 

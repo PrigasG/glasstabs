@@ -225,10 +225,9 @@ test_that("glassTabsServer() accepts bookmark = FALSE without error", {
   expect_equal(formals(glassTabsServer)$bookmark, TRUE)
 })
 
-test_that("glassTabsServer() warns when id contains '-'", {
-  expect_warning(
-    tryCatch(glassTabsServer("parent-tabs"), error = function(e) NULL),
-    "ns\\("
+test_that("glassTabsServer() accepts legitimate hyphenated ids without warning", {
+  expect_no_warning(
+    tryCatch(glassTabsServer("parent-tabs"), error = function(e) NULL)
   )
 })
 

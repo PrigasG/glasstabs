@@ -1,9 +1,7 @@
 #' @noRd
-.gt_tab_link <- function(panel, is_active, data_ns, preserve_inactive_space = FALSE) {
+.gt_tab_link <- function(panel, is_active, data_ns) {
   class <- if (is_active) {
     "gt-tab-link active"
-  } else if (preserve_inactive_space) {
-    "gt-tab-link "
   } else {
     "gt-tab-link"
   }
@@ -35,12 +33,9 @@
 }
 
 #' @noRd
-.gt_tab_pane <- function(panel, is_active, id, tab_id = NULL,
-                         preserve_inactive_space = FALSE) {
+.gt_tab_pane <- function(panel, is_active, id, tab_id = NULL) {
   class <- if (is_active) {
     "gt-tab-pane active"
-  } else if (preserve_inactive_space) {
-    "gt-tab-pane "
   } else {
     "gt-tab-pane"
   }

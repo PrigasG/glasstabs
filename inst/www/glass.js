@@ -1516,6 +1516,11 @@
 
       var oldSelected = preserveSel ? state.selected : null;
       var oldSelectedLabel = preserveSel ? state.selectedLabel : null;
+      var oldDisabled = new Set(state.choices.filter(function (ch) {
+        return ch.disabled;
+      }).map(function (ch) {
+        return ch.value;
+      }));
       choices = asChoiceArray(choices);
       state.loading = false;
 
@@ -1525,7 +1530,7 @@
           label: String(ch.label),
           value: String(ch.value),
           hidden: false,
-          disabled: !!ch.disabled,
+          disabled: typeof ch.disabled === 'boolean' ? ch.disabled : oldDisabled.has(String(ch.value)),
           group: ch.group ? String(ch.group) : '',
           _labelLower: String(ch.label).toLowerCase()
         };
@@ -1795,10 +1800,13 @@
       },
       setStyle: function (s, opts) {
         if (STYLES.indexOf(s) === -1) return;
+        /* opts is accepted for controller-interface symmetry. A single select
+           has no separate _style input, so style changes remain visual-only. */
         STYLES.forEach(function (st) { wrap.classList.remove('style-' + st); dropdown.classList.remove('style-' + st); });
         wrap.classList.add('style-' + s);
         dropdown.classList.add('style-' + s);
         currentStyle = s;
+        syncUI();
       },
       setShape: function (sh) {
         var square = (sh === 'square');
@@ -1816,6 +1824,7 @@
           if (off) el.setAttribute('aria-disabled', 'true');
           else el.removeAttribute('aria-disabled');
         });
+        syncUI();
       },
       setDisabled: function (d) {
         var off = !!d;
@@ -2238,6 +2247,11 @@
       var total = typeof opts.total === 'number' ? opts.total : null;
 
       var oldSelected = preserveSel ? new Set(state.selected) : new Set();
+      var oldDisabled = new Set(state.choices.filter(function (ch) {
+        return ch.disabled;
+      }).map(function (ch) {
+        return ch.value;
+      }));
       choices = asChoiceArray(choices);
       state.loading = false;
 
@@ -2248,7 +2262,7 @@
           label: String(ch.label),
           value: String(ch.value),
           hidden: false,
-          disabled: !!ch.disabled,
+          disabled: typeof ch.disabled === 'boolean' ? ch.disabled : oldDisabled.has(String(ch.value)),
           group: ch.group ? String(ch.group) : '',
           hue: ch.hue || Math.round((200 + 360 * i / Math.max(1, n)) % 360),
           _labelLower: String(ch.label).toLowerCase()

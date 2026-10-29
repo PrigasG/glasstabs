@@ -1,3 +1,11 @@
+test_that("server choice registration does not resend the rendered initial page", {
+  source <- paste(
+    deparse(body(glasstabs:::.gt_register_server_choices)),
+    collapse = "\n"
+  )
+  expect_match(source, "ignoreInit = TRUE", fixed = TRUE)
+})
+
 test_that("runGlassExample() lists the server-select example", {
   expect_true("server-select" %in% runGlassExample())
 })

@@ -728,16 +728,18 @@ updateGlassMultiSelect <- function(
 
   if (!is.null(choices)) {
     normalized <- .gt_normalize_choices(choices)
-    disabled_vals <- if (is.null(disabled_choices)) character(0) else as.character(disabled_choices)
     grps <- normalized$groups %||% rep("", length(normalized$values))
 
     message$choices <- lapply(seq_along(normalized$values), function(i) {
-      list(
+      choice <- list(
         label = normalized$labels[[i]],
         value = normalized$values[[i]],
-        group = grps[[i]],
-        disabled = normalized$values[[i]] %in% disabled_vals
+        group = grps[[i]]
       )
+      if (!is.null(disabled_choices)) {
+        choice$disabled <- normalized$values[[i]] %in% as.character(disabled_choices)
+      }
+      choice
     })
   }
 
@@ -1296,6 +1298,6 @@ glassMultiSelectServer <- function(
         )
       )
     },
-    ignoreInit = FALSE
+    ignoreInit = TRUE
   )
 }

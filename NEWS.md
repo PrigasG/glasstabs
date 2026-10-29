@@ -11,6 +11,15 @@
   treating values such as `"yes"` as `FALSE`; update helpers validate sessions,
   disabled state, and missing selections consistently.
 
+* `glassSelect()` now accepts `dark_selector` for parity with tabs and
+  multi-selects. Choice-only updates preserve existing disabled rows unless
+  `disabled_choices` is explicitly supplied, and server-backed selects no
+  longer resend their already-rendered initial page during registration.
+
+* Hyphenated tab ids no longer produce a false namespacing warning. Initial
+  and appended tabs now emit the same clean class names, and select dropdown
+  base positioning matches the absolute positioning used while teleported.
+
 * Ellipsized select trigger text now exposes its complete value through a
   viewport-safe hover/keyboard tooltip by default. Set
   `overflow_tooltip = "never"` to disable the visual tooltip; full accessible
@@ -24,10 +33,10 @@
   neutral focus treatment by default; `search_focus_ring = TRUE` opts into the
   accent outline. The native-comparison lab groups shared settings separately
   from the feature controls for each demonstration.
-* Select dropdowns now grow beyond narrow triggers when their controls or
-  longer option labels need more room, up to a comfortable viewport-aware
-  cap. The multi-select Check / Box / Fill switcher also falls back to compact
-  text-only buttons on extremely narrow screens, so Fill is never clipped.
+* Select dropdowns match their trigger width, wrap longer option labels inside
+  that shared width, and clamp safely to narrow viewports. The multi-select
+  Check / Box / Fill switcher also falls back to compact text-only buttons on
+  extremely narrow screens, so Fill is never clipped.
 * Added `runGlassExample("light-mode")`, a dedicated light-interface example
   covering tabs, single-select, multi-select, and intentionally long labels.
 * `no_matches_text` moved to the end of the `glassSelect()` and

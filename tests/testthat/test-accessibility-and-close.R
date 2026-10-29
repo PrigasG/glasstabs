@@ -30,6 +30,8 @@ test_that("glass.css uses color-mix only as progressive enhancement", {
   expect_true(grepl("@media (prefers-reduced-motion: reduce)", css, fixed = TRUE))
   expect_true(grepl("@supports not", css, fixed = TRUE))
   expect_true(grepl("gt-overflow-scroll", css, fixed = TRUE))
+  expect_true(grepl(".gt-ms-dropdown{\n  position:absolute", css, fixed = TRUE))
+  expect_true(grepl(".gt-gs-dropdown{\n  position:absolute", css, fixed = TRUE))
   expect_true(grepl('[dir="rtl"]', css, fixed = TRUE))
   expect_false(grepl("transform:translate(-50%,-50%) scale", css, fixed = TRUE))
   expect_true(grepl("color-scheme:dark", css, fixed = TRUE))

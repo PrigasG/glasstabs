@@ -27,7 +27,7 @@
               <div class="gt-tab-link active" id="tabs-tab-one" data-value="one" data-ns="tabs" role="tab" tabindex="0" aria-selected="true" aria-controls="tabs-pane-one">
                 <span class="gt-tab-label">One</span>
               </div>
-              <div class="gt-tab-link " id="tabs-tab-two" data-value="two" data-ns="tabs" role="tab" tabindex="-1" aria-selected="false" aria-controls="tabs-pane-two">
+              <div class="gt-tab-link" id="tabs-tab-two" data-value="two" data-ns="tabs" role="tab" tabindex="-1" aria-selected="false" aria-controls="tabs-pane-two">
                 <span class="gt-tab-icon">
                   <i class="fas fa-table" role="presentation" aria-label="table icon"></i>
                 </span>
@@ -45,7 +45,7 @@
               <p>First</p>
             </div>
           </div>
-          <div class="gt-tab-pane " id="tabs-pane-two" role="tabpanel" aria-labelledby="tabs-tab-two" aria-hidden="true" inert="" tabindex="-1">
+          <div class="gt-tab-pane" id="tabs-pane-two" role="tabpanel" aria-labelledby="tabs-tab-two" aria-hidden="true" inert="" tabindex="-1">
             <div class="gt-card">
               <p>Second</p>
             </div>
@@ -179,7 +179,7 @@
               <div class="gt-tab-link active" id="tabs-tab-one" data-value="one" data-ns="tabs" role="tab" tabindex="0" aria-selected="true" aria-controls="tabs-pane-one">
                 <span class="gt-tab-label">One</span>
               </div>
-              <div class="gt-tab-link " id="tabs-tab-two" data-value="two" data-ns="tabs" role="tab" tabindex="-1" aria-selected="false" aria-controls="tabs-pane-two">
+              <div class="gt-tab-link" id="tabs-tab-two" data-value="two" data-ns="tabs" role="tab" tabindex="-1" aria-selected="false" aria-controls="tabs-pane-two">
                 <span class="gt-tab-icon">
                   <i class="fas fa-table" role="presentation" aria-label="table icon"></i>
                 </span>
@@ -197,7 +197,7 @@
               <p>First</p>
             </div>
           </div>
-          <div class="gt-tab-pane " id="tabs-pane-two" role="tabpanel" aria-labelledby="tabs-tab-two" aria-hidden="true" inert="" tabindex="-1">
+          <div class="gt-tab-pane" id="tabs-pane-two" role="tabpanel" aria-labelledby="tabs-tab-two" aria-hidden="true" inert="" tabindex="-1">
             <div class="gt-card">
               <p>Second</p>
             </div>
@@ -332,7 +332,7 @@
               <div class="gt-tab-link active" id="tabs-tab-one" data-value="one" data-ns="tabs" role="tab" tabindex="0" aria-selected="true" aria-controls="tabs-pane-one">
                 <span class="gt-tab-label">One</span>
               </div>
-              <div class="gt-tab-link " id="tabs-tab-two" data-value="two" data-ns="tabs" role="tab" tabindex="-1" aria-selected="false" aria-controls="tabs-pane-two">
+              <div class="gt-tab-link" id="tabs-tab-two" data-value="two" data-ns="tabs" role="tab" tabindex="-1" aria-selected="false" aria-controls="tabs-pane-two">
                 <span class="gt-tab-icon">
                   <i class="fas fa-table" role="presentation" aria-label="table icon"></i>
                 </span>
@@ -350,7 +350,7 @@
               <p>First</p>
             </div>
           </div>
-          <div class="gt-tab-pane " id="tabs-pane-two" role="tabpanel" aria-labelledby="tabs-tab-two" aria-hidden="true" inert="" tabindex="-1">
+          <div class="gt-tab-pane" id="tabs-pane-two" role="tabpanel" aria-labelledby="tabs-tab-two" aria-hidden="true" inert="" tabindex="-1">
             <div class="gt-card">
               <p>Second</p>
             </div>
@@ -486,7 +486,7 @@
               <div class="gt-tab-link active" id="tabs-tab-one" data-value="one" data-ns="tabs" role="tab" tabindex="0" aria-selected="true" aria-controls="tabs-pane-one">
                 <span class="gt-tab-label">One</span>
               </div>
-              <div class="gt-tab-link " id="tabs-tab-two" data-value="two" data-ns="tabs" role="tab" tabindex="-1" aria-selected="false" aria-controls="tabs-pane-two">
+              <div class="gt-tab-link" id="tabs-tab-two" data-value="two" data-ns="tabs" role="tab" tabindex="-1" aria-selected="false" aria-controls="tabs-pane-two">
                 <span class="gt-tab-icon">
                   <i class="fas fa-table" role="presentation" aria-label="table icon"></i>
                 </span>
@@ -504,7 +504,7 @@
               <p>First</p>
             </div>
           </div>
-          <div class="gt-tab-pane " id="tabs-pane-two" role="tabpanel" aria-labelledby="tabs-tab-two" aria-hidden="true" inert="" tabindex="-1">
+          <div class="gt-tab-pane" id="tabs-pane-two" role="tabpanel" aria-labelledby="tabs-tab-two" aria-hidden="true" inert="" tabindex="-1">
             <div class="gt-card">
               <p>Second</p>
             </div>
@@ -638,7 +638,7 @@
               <div class="gt-tab-link active" id="tabs-tab-one" data-value="one" data-ns="tabs" role="tab" tabindex="0" aria-selected="true" aria-controls="tabs-pane-one">
                 <span class="gt-tab-label">One</span>
               </div>
-              <div class="gt-tab-link " id="tabs-tab-two" data-value="two" data-ns="tabs" role="tab" tabindex="-1" aria-selected="false" aria-controls="tabs-pane-two">
+              <div class="gt-tab-link" id="tabs-tab-two" data-value="two" data-ns="tabs" role="tab" tabindex="-1" aria-selected="false" aria-controls="tabs-pane-two">
                 <span class="gt-tab-icon">
                   <i class="fas fa-table" role="presentation" aria-label="table icon"></i>
                 </span>
@@ -656,7 +656,7 @@
               <p>First</p>
             </div>
           </div>
-          <div class="gt-tab-pane " id="tabs-pane-two" role="tabpanel" aria-labelledby="tabs-tab-two" aria-hidden="true" inert="" tabindex="-1">
+          <div class="gt-tab-pane" id="tabs-pane-two" role="tabpanel" aria-labelledby="tabs-tab-two" aria-hidden="true" inert="" tabindex="-1">
             <div class="gt-card">
               <p>Second</p>
             </div>
@@ -791,7 +791,7 @@
               <div class="gt-tab-link active" id="tabs-tab-one" data-value="one" data-ns="tabs" role="tab" tabindex="0" aria-selected="true" aria-controls="tabs-pane-one">
                 <span class="gt-tab-label">One</span>
               </div>
-              <div class="gt-tab-link " id="tabs-tab-two" data-value="two" data-ns="tabs" role="tab" tabindex="-1" aria-selected="false" aria-controls="tabs-pane-two">
+              <div class="gt-tab-link" id="tabs-tab-two" data-value="two" data-ns="tabs" role="tab" tabindex="-1" aria-selected="false" aria-controls="tabs-pane-two">
                 <span class="gt-tab-icon">
                   <i class="fas fa-table" role="presentation" aria-label="table icon"></i>
                 </span>
@@ -809,7 +809,7 @@
               <p>First</p>
             </div>
           </div>
-          <div class="gt-tab-pane " id="tabs-pane-two" role="tabpanel" aria-labelledby="tabs-tab-two" aria-hidden="true" inert="" tabindex="-1">
+          <div class="gt-tab-pane" id="tabs-pane-two" role="tabpanel" aria-labelledby="tabs-tab-two" aria-hidden="true" inert="" tabindex="-1">
             <div class="gt-card">
               <p>Second</p>
             </div>
@@ -1384,7 +1384,7 @@
                             "names": {
                               "type": "character",
                               "attributes": {},
-                              "value": ["label", "value", "group", "disabled"]
+                              "value": ["label", "value", "group"]
                             }
                           },
                           "value": [
@@ -1402,11 +1402,6 @@
                               "type": "character",
                               "attributes": {},
                               "value": [""]
-                            },
-                            {
-                              "type": "logical",
-                              "attributes": {},
-                              "value": [false]
                             }
                           ]
                         },
@@ -1416,7 +1411,7 @@
                             "names": {
                               "type": "character",
                               "attributes": {},
-                              "value": ["label", "value", "group", "disabled"]
+                              "value": ["label", "value", "group"]
                             }
                           },
                           "value": [
@@ -1434,11 +1429,6 @@
                               "type": "character",
                               "attributes": {},
                               "value": [""]
-                            },
-                            {
-                              "type": "logical",
-                              "attributes": {},
-                              "value": [false]
                             }
                           ]
                         }
@@ -1515,7 +1505,7 @@
                             "names": {
                               "type": "character",
                               "attributes": {},
-                              "value": ["label", "value", "group", "disabled"]
+                              "value": ["label", "value", "group"]
                             }
                           },
                           "value": [
@@ -1533,11 +1523,6 @@
                               "type": "character",
                               "attributes": {},
                               "value": [""]
-                            },
-                            {
-                              "type": "logical",
-                              "attributes": {},
-                              "value": [false]
                             }
                           ]
                         },
@@ -1547,7 +1532,7 @@
                             "names": {
                               "type": "character",
                               "attributes": {},
-                              "value": ["label", "value", "group", "disabled"]
+                              "value": ["label", "value", "group"]
                             }
                           },
                           "value": [
@@ -1565,11 +1550,6 @@
                               "type": "character",
                               "attributes": {},
                               "value": [""]
-                            },
-                            {
-                              "type": "logical",
-                              "attributes": {},
-                              "value": [false]
                             }
                           ]
                         }
@@ -1760,7 +1740,7 @@
                         "names": {
                           "type": "character",
                           "attributes": {},
-                          "value": ["label", "value", "group", "disabled"]
+                          "value": ["label", "value", "group"]
                         }
                       },
                       "value": [
@@ -1778,11 +1758,6 @@
                           "type": "character",
                           "attributes": {},
                           "value": [""]
-                        },
-                        {
-                          "type": "logical",
-                          "attributes": {},
-                          "value": [false]
                         }
                       ]
                     },
@@ -1792,7 +1767,7 @@
                         "names": {
                           "type": "character",
                           "attributes": {},
-                          "value": ["label", "value", "group", "disabled"]
+                          "value": ["label", "value", "group"]
                         }
                       },
                       "value": [
@@ -1810,11 +1785,6 @@
                           "type": "character",
                           "attributes": {},
                           "value": [""]
-                        },
-                        {
-                          "type": "logical",
-                          "attributes": {},
-                          "value": [false]
                         }
                       ]
                     }
@@ -1869,7 +1839,7 @@
                         "names": {
                           "type": "character",
                           "attributes": {},
-                          "value": ["label", "value", "group", "disabled"]
+                          "value": ["label", "value", "group"]
                         }
                       },
                       "value": [
@@ -1887,11 +1857,6 @@
                           "type": "character",
                           "attributes": {},
                           "value": [""]
-                        },
-                        {
-                          "type": "logical",
-                          "attributes": {},
-                          "value": [false]
                         }
                       ]
                     },
@@ -1901,7 +1866,7 @@
                         "names": {
                           "type": "character",
                           "attributes": {},
-                          "value": ["label", "value", "group", "disabled"]
+                          "value": ["label", "value", "group"]
                         }
                       },
                       "value": [
@@ -1919,11 +1884,6 @@
                           "type": "character",
                           "attributes": {},
                           "value": [""]
-                        },
-                        {
-                          "type": "logical",
-                          "attributes": {},
-                          "value": [false]
                         }
                       ]
                     }

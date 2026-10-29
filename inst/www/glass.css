@@ -237,7 +237,7 @@
 
 /* Dropdown panel */
 .gt-ms-dropdown{
-  position:fixed;min-width:160px;box-sizing:border-box;
+  position:absolute;min-width:160px;box-sizing:border-box;
   border-radius:14px;
   background:var(--ms-bg);
   border:1px solid var(--ms-border);
@@ -613,7 +613,7 @@
 
 /* Dropdown panel */
 .gt-gs-dropdown{
-  position:fixed;
+  position:absolute;
   min-width:160px;
   box-sizing:border-box;
   border-radius:14px;

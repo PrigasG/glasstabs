@@ -101,14 +101,6 @@ test_that("appendGlassTab() error names the bad class", {
 })
 
 
-test_that("glassTabsServer() warning on namespaced id explains the fix", {
-  expect_warning(
-    tryCatch(glassTabsServer("mod-tabs"), error = function(e) NULL),
-    regexp = "ns\\("
-  )
-})
-
-
 test_that("tab theme error on bad string mentions valid options", {
   err <- tryCatch(
     glassTabsUI("x",

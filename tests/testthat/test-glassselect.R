@@ -55,6 +55,21 @@ test_that("glassSelect() supports label size and an optional search ring", {
   )
 })
 
+test_that("glassSelect() supports a custom dark selector in auto theme mode", {
+  html <- as.character(glassSelect(
+    "f",
+    choices,
+    theme = "auto",
+    dark_selector = "body.dark-mode"
+  ))
+
+  expect_match(html, "body.dark-mode #f-field", fixed = TRUE)
+  expect_error(
+    glassSelect("f", choices, theme = "auto", dark_selector = ""),
+    class = "glasstabs_error_bad_argument"
+  )
+})
+
 test_that("glassSelect() enables truncation tooltips by default", {
   default <- as.character(glassSelect("f", choices))
   disabled <- as.character(glassSelect(
@@ -322,6 +337,18 @@ test_that("updateGlassSelect() sends normalized choices", {
   expect_true(is.list(args[[2]]$choices))
   expect_equal(args[[2]]$choices[[1]]$label, "Apple")
   expect_equal(args[[2]]$choices[[1]]$value, "apple")
+  expect_false("disabled" %in% names(args[[2]]$choices[[1]]))
+})
+
+test_that("updateGlassSelect() sends disabled choice state only when requested", {
+  send_mock <- mockery::mock()
+  fake_session <- list(sendInputMessage = send_mock)
+
+  updateGlassSelect(fake_session, "pick", choices = choices, disabled_choices = "banana")
+
+  rows <- mockery::mock_args(send_mock)[[1]][[2]]$choices
+  expect_false(rows[[1]]$disabled)
+  expect_true(rows[[2]]$disabled)
 })
 
 test_that("updateGlassSelect() sends selected value unchanged", {

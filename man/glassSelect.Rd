@@ -30,7 +30,8 @@ glassSelect(
   label_size = "14px",
   search_focus_ring = FALSE,
   overflow_tooltip = c("auto", "never"),
-  search_threshold = 15L
+  search_threshold = 15L,
+  dark_selector = NULL
 )
 }
 \arguments{
@@ -124,6 +125,11 @@ the primary way to inspect the full, wrapped option text.}
 
 \item{search_threshold}{Choice count at which \code{searchable = "auto"}
 shows the search field. Default \code{15}.}
+
+\item{dark_selector}{Optional CSS selector that signals dark mode (e.g.
+\code{"body.dark-mode"} for bs4Dash). When provided, emits an extra
+scoped \code{<style>} block that
+reverts colors to the dark-mode defaults whenever that selector is active.}
 }
 \value{
 An \code{htmltools::tagList} containing the single-select trigger,

@@ -452,9 +452,26 @@ test_that("updateGlassMultiSelect() sends normalized choices", {
   expect_true(is.list(args[[2]]$choices))
   expect_equal(args[[2]]$choices[[1]]$label, "Apple")
   expect_equal(args[[2]]$choices[[1]]$value, "apple")
+  expect_false("disabled" %in% names(args[[2]]$choices[[1]]))
   expect_true(args[[2]]$preserve_selection)
   expect_true(args[[2]]$drop_invalid)
   expect_equal(args[[2]]$notify, "changed")
+})
+
+test_that("updateGlassMultiSelect() sends disabled state only when requested", {
+  send_mock <- mockery::mock()
+  fake_session <- list(sendInputMessage = send_mock)
+
+  updateGlassMultiSelect(
+    fake_session,
+    "pick",
+    choices = choices,
+    disabled_choices = "banana"
+  )
+
+  rows <- mockery::mock_args(send_mock)[[1]][[2]]$choices
+  expect_false(rows[[1]]$disabled)
+  expect_true(rows[[2]]$disabled)
 })
 
 test_that("updateGlassMultiSelect() sends transaction and display settings", {

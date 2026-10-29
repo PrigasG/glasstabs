@@ -73,6 +73,37 @@ test_that("browser: glassSelect automatic search responds to threshold updates",
   })()")
 })
 
+test_that("browser: choice-only updates preserve disabled rows", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-preserve-disabled-choices",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+  app$set_inputs(refresh_disabled_choices = "click")
+  app$wait_for_idle()
+
+  expect_true(app$get_js("(function() {
+    var single = document.querySelector(
+      '#disabled_update_single-options .gt-gs-option[data-value=\"banana\"]'
+    );
+    var multi = document.querySelector(
+      '#disabled_update_multi-options .gt-ms-option[data-value=\"banana\"]'
+    );
+    return single.classList.contains('disabled') &&
+      single.getAttribute('aria-disabled') === 'true' &&
+      multi.classList.contains('disabled') &&
+      multi.getAttribute('aria-disabled') === 'true';
+  })()"))
+})
+
 test_that("browser: glassMultiSelect toggles choices and updates input", {
   skip_on_covr()
   skip_if_not_installed("shinytest2")

@@ -48,6 +48,20 @@ ui <- fluidPage(
     ),
     actionButton("auto_single_show", "Show automatic single search"),
     actionButton("auto_single_hide", "Hide automatic single search"),
+    glassSelect(
+      "disabled_update_single",
+      choices,
+      selected = "apple",
+      disabled_choices = "banana"
+    ),
+    glassMultiSelect(
+      "disabled_update_multi",
+      choices,
+      selected = "apple",
+      disabled_choices = "banana",
+      show_style_switcher = FALSE
+    ),
+    actionButton("refresh_disabled_choices", "Refresh choices without disabled override"),
     glassMultiSelect(
       "cats",
       choices,
@@ -221,6 +235,12 @@ server <- function(input, output, session) {
 
   observeEvent(input$auto_single_hide, {
     updateGlassSelect(session, "auto_single", search_threshold = 6)
+  })
+
+  observeEvent(input$refresh_disabled_choices, {
+    refreshed <- c(Apple = "apple", Banana = "banana", Cherry = "cherry", Date = "date")
+    updateGlassSelect(session, "disabled_update_single", choices = refreshed)
+    updateGlassMultiSelect(session, "disabled_update_multi", choices = refreshed)
   })
 
   output$fruit_open_state <- renderText({
