@@ -121,7 +121,7 @@ glassSelect <- function(
   normalized <- .gt_normalize_choices(choices)
   vals <- normalized$values
   labels <- normalized$labels
-  groups <- normalized$groups %||% rep("", length(vals))
+  groups <- normalized$groups
 
   if (isTRUE(include_all) && !all_choice_value %in% vals) {
     vals <- c(all_choice_value, vals)
@@ -460,7 +460,7 @@ updateGlassSelect <- function(
 
   if (!is.null(choices)) {
     normalized <- .gt_normalize_choices(choices)
-    grps <- normalized$groups %||% rep("", length(normalized$values))
+    grps <- normalized$groups
 
     message$choices <- lapply(seq_along(normalized$values), function(i) {
       choice <- list(

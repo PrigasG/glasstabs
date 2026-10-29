@@ -200,7 +200,7 @@ glassMultiSelect <- function(
   normalized <- .gt_normalize_choices(choices)
   vals <- normalized$values
   labels <- normalized$labels
-  groups <- normalized$groups %||% rep("", length(vals))
+  groups <- normalized$groups
 
 
   selected_is_default <- is.null(selected)
@@ -728,7 +728,7 @@ updateGlassMultiSelect <- function(
 
   if (!is.null(choices)) {
     normalized <- .gt_normalize_choices(choices)
-    grps <- normalized$groups %||% rep("", length(normalized$values))
+    grps <- normalized$groups
 
     message$choices <- lapply(seq_along(normalized$values), function(i) {
       choice <- list(
@@ -1219,7 +1219,7 @@ glassMultiSelectServer <- function(
 
   labels <- normalized$labels
   values <- normalized$values
-  groups <- normalized$groups %||% rep("", length(values))
+  groups <- normalized$groups
   keep <- seq_along(values)
 
   if (nzchar(query)) {

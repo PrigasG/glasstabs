@@ -249,9 +249,6 @@
   backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
   z-index:9001;
 }
-.gt-ms-wrap.theme-light .gt-ms-dropdown{
-  box-shadow:0 12px 40px rgba(0,0,0,0.15),0 0 0 1px rgba(0,0,0,0.06);
-}
 .gt-ms-dropdown.open{
   opacity:1;transform:scaleY(1);pointer-events:auto;
   /* Tongue: panel unfurls from the field, adjoining corners square off so the
@@ -635,12 +632,6 @@
   z-index:9001;
 }
 
-.gt-gs-wrap.theme-light .gt-gs-dropdown{
-  box-shadow:
-    0 12px 40px rgba(0,0,0,0.15),
-    0 0 0 1px rgba(0,0,0,0.06);
-}
-
 .gt-gs-dropdown.open{
   opacity:1;
   transform:scaleY(1);
@@ -859,8 +850,7 @@
    Selectize-style crisp corners (3px) so glassSelect and
    glassMultiSelect sit flush next to native selectizeInput().
    The `shape-square` class lives on the .gt-*-wrap and is
-   also copied onto the teleported dropdown by glass.js, so
-   both the wrap-descendant and teleported selectors match.
+   copied onto the teleported dropdown by glass.js.
  */
 
 /* Trigger button */
@@ -869,28 +859,19 @@
   border-radius:3px;
 }
 
-/* Dropdown panel (matches before and after teleport) */
-.gt-gs-wrap.shape-square .gt-gs-dropdown,
-.gt-ms-wrap.shape-square .gt-ms-dropdown,
+/* Teleported dropdown panel */
 .gt-gs-dropdown.shape-square,
 .gt-ms-dropdown.shape-square{
   border-radius:4px;
 }
 
 /* Search box */
-.gt-gs-wrap.shape-square .gt-gs-search,
-.gt-ms-wrap.shape-square .gt-ms-search,
 .gt-gs-dropdown.shape-square .gt-gs-search,
 .gt-ms-dropdown.shape-square .gt-ms-search{
   border-radius:3px;
 }
 
 /* Option rows, select-all row, style switcher */
-.gt-gs-wrap.shape-square .gt-gs-option,
-.gt-ms-wrap.shape-square .gt-ms-option,
-.gt-ms-wrap.shape-square .gt-ms-all,
-.gt-ms-wrap.shape-square .gt-style-switcher,
-.gt-ms-wrap.shape-square .gt-style-btn,
 .gt-gs-dropdown.shape-square .gt-gs-option,
 .gt-ms-dropdown.shape-square .gt-ms-option,
 .gt-ms-dropdown.shape-square .gt-ms-all,
@@ -900,8 +881,6 @@
 }
 
 /* Check / box marker - keep a subtle 2px so it reads as square */
-.gt-gs-wrap.shape-square .gt-gs-check,
-.gt-ms-wrap.shape-square .gt-ms-check,
 .gt-gs-dropdown.shape-square .gt-gs-check,
 .gt-ms-dropdown.shape-square .gt-ms-check{
   border-radius:2px;
@@ -992,34 +971,15 @@
 }
 
 /* Light theme scrollbar */
-.gt-gs-wrap.theme-light .gt-gs-options-scroll::-webkit-scrollbar-thumb,
-.gt-ms-wrap.theme-light .gt-ms-options-scroll::-webkit-scrollbar-thumb{
+.gt-gs-dropdown.theme-light .gt-gs-options-scroll::-webkit-scrollbar-thumb,
+.gt-ms-dropdown.theme-light .gt-ms-options-scroll::-webkit-scrollbar-thumb{
   background:rgba(0,0,0,0.10);
 }
-.gt-gs-wrap.theme-light .gt-gs-options-scroll::-webkit-scrollbar-thumb:hover,
-.gt-ms-wrap.theme-light .gt-ms-options-scroll::-webkit-scrollbar-thumb:hover{
+.gt-gs-dropdown.theme-light .gt-gs-options-scroll::-webkit-scrollbar-thumb:hover,
+.gt-ms-dropdown.theme-light .gt-ms-options-scroll::-webkit-scrollbar-thumb:hover{
   background:rgba(0,0,0,0.20);
 }
 
-
-/*
-   LOADING / DISABLED STATE -
-   Apply .gt-loading to .gt-gs-wrap or .gt-ms-wrap
-   during choice swaps or async updates
- */
-.gt-gs-wrap.gt-loading,
-.gt-ms-wrap.gt-loading{
-  pointer-events:none;
-}
-.gt-gs-wrap.gt-loading .gt-gs-trigger,
-.gt-ms-wrap.gt-loading .gt-ms-trigger{
-  opacity:0.55;
-}
-.gt-gs-wrap.gt-loading .gt-gs-options-scroll,
-.gt-ms-wrap.gt-loading .gt-ms-options-scroll{
-  opacity:0.35;
-  transition:opacity 150ms ease;
-}
 
 .gt-gs-wrap.gt-disabled,
 .gt-ms-wrap.gt-disabled{
