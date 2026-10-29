@@ -89,11 +89,11 @@
 #' @param search_focus_ring Logical. When \code{TRUE}, focusing the dropdown
 #'   search field adds the accent-colored outline. The default, \code{FALSE},
 #'   uses a quieter background and border change without the outer ring.
-#' @param overflow_tooltip Tooltip behavior for trigger text that is visually
-#'   truncated with an ellipsis. \code{"auto"} (default) shows the complete
-#'   text on pointer hover or keyboard focus only when truncation is detected;
-#'   \code{"never"} disables it. On touch devices, opening the dropdown remains
-#'   the primary way to inspect the full, wrapped option text.
+#' @param overflow_tooltip Tooltip behavior for long option text inside the
+#'   open dropdown. \code{"auto"} (default) shows one tooltip for the truncated
+#'   option currently under the pointer; \code{"never"} disables it. The
+#'   multi-value trigger keeps its complete accessible label without showing a
+#'   combined visual tooltip for every selection.
 #' @param fill_colors Color treatment for \code{check_style = "filled"}.
 #'   \code{"single"} (default) uses the theme accent for every selected row;
 #'   \code{"multi"} keeps the categorical per-option colors.

@@ -316,20 +316,51 @@ test_that("browser: select dropdowns match their fields and stay viewport-safe",
       wrap._gt.close();
       wrap._gt.setValue(['long_words', 'pathological'], {notify:false});
       var trigger = document.querySelector('#short_multi-trigger');
-      var label = document.querySelector('#short_multi-label');
-      label.style.flex = '0 0 40px';
-      label.style.maxWidth = '40px';
       trigger.dispatchEvent(new MouseEvent('mouseenter', {bubbles:true}));
-      return trigger.getAttribute('aria-label').length > 9000 &&
-        label.scrollWidth > label.clientWidth;
+      return trigger.getAttribute('aria-label').length > 9000;
+    })()
+  "))
+  Sys.sleep(0.5)
+  expect_false(app$get_js("
+    document.querySelector('#short_multi-overflow-tooltip') !== null
+  "))
+
+  app$click(selector = "#short_multi-trigger")
+  app$wait_for_js("document.querySelector('#short_multi-dropdown.open') !== null")
+  expect_true(app$get_js("
+    (function() {
+      var option = document.querySelector(
+        '#short_multi-dropdown [data-value=pathological]'
+      );
+      option.dispatchEvent(new MouseEvent('mouseenter', {bubbles:true}));
+      return option.querySelector('span:last-child').scrollHeight >
+        option.querySelector('span:last-child').clientHeight;
     })()
   "))
   app$wait_for_js("
-    document.querySelector('#short_multi-overflow-tooltip.visible') !== null
+    document.querySelector(
+      '#short_multi-option-overflow-tooltip.visible'
+    ) !== null
   ")
   expect_true(app$get_js("
-    document.querySelector('#short_multi-overflow-tooltip').textContent.length > 9000
+    (function() {
+      var option = document.querySelector(
+        '#short_multi-dropdown [data-value=pathological]'
+      );
+      var tip = document.querySelector(
+        '#short_multi-option-overflow-tooltip'
+      );
+      return tip.textContent.length === 601 &&
+        Number(tip.getAttribute('data-full-length')) > 9000 &&
+        option.getAttribute('aria-describedby') === tip.id &&
+        document.querySelectorAll('.gt-option-overflow-tooltip').length === 1;
+    })()
   "))
+  app$click(selector = "#short_multi-dropdown [data-value=pathological]")
+  app$wait_for_js("
+    !document.querySelector('#short_multi-option-overflow-tooltip.visible') &&
+      document.querySelector('#short_multi-dropdown.open') !== null
+  ")
 })
 
 test_that("browser: tongue can be disabled for detached native-like panels", {

@@ -143,10 +143,11 @@ use it like any other Shiny input to filter data, drive outputs, or trigger
 reactives.
 
 For long filter names, give the field more room with `width = "240px"` or
-`width = "100%"`. If selected text is still ellipsized, the default
-`overflow_tooltip = "auto"` reveals it on hover or keyboard focus; touch users
-open the dropdown to read the wrapped option. These controls affect appearance
-only, not the value returned to Shiny.
+`width = "100%"`. With `overflow_tooltip = "auto"`, hovering a truncated
+option inside the open dropdown reveals that option alone. The trigger retains
+the complete accessible selection label without showing one combined tooltip
+for multiple values. These controls affect appearance only, not the value
+returned to Shiny.
 
 ### Optional reactive helper
 

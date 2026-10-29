@@ -23,6 +23,11 @@
 #' @param server Logical. If \code{TRUE}, render only an initial slice of
 #'   choices and use [glassSelectServer()] to search the full choice set from
 #'   the Shiny server. Default \code{FALSE}.
+#' @param overflow_tooltip Tooltip behavior for trigger text that is visually
+#'   truncated with an ellipsis. \code{"auto"} (default) shows the complete
+#'   text on pointer hover or keyboard focus only when truncation is detected;
+#'   \code{"never"} disables it. On touch devices, opening the dropdown remains
+#'   the primary way to inspect the full, wrapped option text.
 #' @inheritParams glassMultiSelect
 #'
 #' @return An \code{htmltools::tagList} containing the single-select trigger,

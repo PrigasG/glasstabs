@@ -124,12 +124,12 @@ glassSelect("industry", industry_choices, width = "240px")
 glassMultiSelect("filters", filter_choices, width = "100%")
 ```
 
-When selected text still has to be shortened with an ellipsis,
-`overflow_tooltip = "auto"` (the default) reveals the full text on pointer
-hover or keyboard focus, but only when the trigger is actually truncated.
-Touch users open the dropdown and read the wrapped option instead. Set
-`overflow_tooltip = "never"` to suppress the visual tooltip; the full
-accessible label remains available to assistive technology.
+With `glassSelect()`, `overflow_tooltip = "auto"` (the default) reveals an
+ellipsized selected label on pointer hover or keyboard focus. With
+`glassMultiSelect()`, it reveals only the truncated option currently hovered
+inside the open dropdown, rather than combining every selected label into one
+tooltip. Touch users read the wrapped option in the open dropdown. Set
+`overflow_tooltip = "never"` to suppress visual tooltips.
 
 The select controls also expose their presentation choices directly:
 

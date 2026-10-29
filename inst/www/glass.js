@@ -256,6 +256,136 @@
     };
   }
 
+  /* Multi-select summaries can represent several values, so a visual tooltip
+     on the trigger quickly becomes noisy (and pathological labels can make it
+     expensive to lay out). Reveal only the truncated option currently under
+     the pointer. One delegated controller owns one tooltip for the panel. */
+  function createOptionOverflowTooltip(dropdown, id, mode) {
+    var enabled = mode === 'auto';
+    var tooltip = null;
+    var activeOption = null;
+    var activeLabel = null;
+    var showTimer = null;
+    var hideTimer = null;
+    var MAX_VISUAL_TEXT = 600;
+
+    function isTruncated(label) {
+      return enabled && label && label.clientWidth > 0 &&
+        (label.scrollWidth > label.clientWidth + 1 ||
+          label.scrollHeight > label.clientHeight + 1);
+    }
+
+    function visualText(text) {
+      if (text.length <= MAX_VISUAL_TEXT) return text;
+      return text.slice(0, MAX_VISUAL_TEXT).trimEnd() + '\u2026';
+    }
+
+    function ensureTooltip() {
+      if (tooltip) return tooltip;
+      tooltip = document.createElement('div');
+      tooltip.id = id;
+      tooltip.className = 'gt-overflow-tooltip gt-option-overflow-tooltip';
+      tooltip.setAttribute('role', 'tooltip');
+      tooltip.setAttribute('aria-hidden', 'true');
+      tooltip.addEventListener('mouseenter', function () {
+        if (hideTimer !== null) {
+          clearTimeout(hideTimer);
+          hideTimer = null;
+        }
+      });
+      tooltip.addEventListener('mouseleave', hide);
+      document.body.appendChild(tooltip);
+      return tooltip;
+    }
+
+    function position() {
+      if (!tooltip || !activeOption) return;
+      var optionRect = activeOption.getBoundingClientRect();
+      var tipRect = tooltip.getBoundingClientRect();
+      var edge = 12;
+      var gap = 6;
+      var left = optionRect.left + (optionRect.width - tipRect.width) / 2;
+      left = Math.max(edge, Math.min(left, window.innerWidth - tipRect.width - edge));
+      var top = optionRect.bottom + gap;
+      var above = top + tipRect.height > window.innerHeight - edge &&
+        optionRect.top - tipRect.height - gap >= edge;
+      if (above) top = optionRect.top - tipRect.height - gap;
+      top = Math.max(edge, Math.min(top, window.innerHeight - tipRect.height - edge));
+      tooltip.classList.toggle('gt-tooltip-above', above);
+      tooltip.style.left = Math.round(left) + 'px';
+      tooltip.style.top = Math.round(top) + 'px';
+    }
+
+    function hide() {
+      if (showTimer !== null) {
+        clearTimeout(showTimer);
+        showTimer = null;
+      }
+      if (hideTimer !== null) {
+        clearTimeout(hideTimer);
+        hideTimer = null;
+      }
+      if (activeOption) activeOption.removeAttribute('aria-describedby');
+      if (tooltip) {
+        tooltip.classList.remove('visible');
+        tooltip.setAttribute('aria-hidden', 'true');
+      }
+      activeOption = null;
+      activeLabel = null;
+    }
+
+    function show() {
+      showTimer = null;
+      if (!activeOption || !activeLabel ||
+          !dropdown.classList.contains('open') || !isTruncated(activeLabel)) return;
+      var text = activeLabel.textContent.trim();
+      if (!text) return;
+      var node = ensureTooltip();
+      node.textContent = visualText(text);
+      node.setAttribute('data-full-length', String(text.length));
+      node.setAttribute('aria-hidden', 'false');
+      node.classList.add('visible');
+      activeOption.setAttribute('aria-describedby', id);
+      position();
+    }
+
+    function enter(option) {
+      hide();
+      if (!enabled || !option) return;
+      var label = option.querySelector('span:last-child');
+      if (!isTruncated(label)) return;
+      activeOption = option;
+      activeLabel = label;
+      showTimer = setTimeout(show, 180);
+    }
+
+    function leave(option) {
+      if (option !== activeOption) return;
+      if (showTimer !== null) {
+        clearTimeout(showTimer);
+        showTimer = null;
+      }
+      hideTimer = setTimeout(hide, 100);
+    }
+
+    function onViewportChange() { hide(); }
+    window.addEventListener('scroll', onViewportChange, true);
+    window.addEventListener('resize', onViewportChange);
+
+    return {
+      enter: enter,
+      leave: leave,
+      hide: hide,
+      destroy: function () {
+        hide();
+        window.removeEventListener('scroll', onViewportChange, true);
+        window.removeEventListener('resize', onViewportChange);
+        if (tooltip && tooltip.parentNode) tooltip.parentNode.removeChild(tooltip);
+        tooltip = null;
+      }
+    };
+  }
+
   /* Keep inactive panels out of both keyboard focus and the accessibility
      tree. `inert` is the behavioral guard; ARIA remains useful to older
      assistive technology and makes the panel state explicit. */
@@ -1883,10 +2013,9 @@
     var optionsBox = wrap.querySelector('[id$="-options"]') || wrap;
 
     wrap._gtDropdown = dropdown;
-    var overflowTip = createOverflowTooltip(
-      trigger,
-      labelEl,
-      inputId + '-overflow-tooltip',
+    var optionOverflowTip = createOptionOverflowTooltip(
+      dropdown,
+      inputId + '-option-overflow-tooltip',
       wrap.getAttribute('data-overflow-tooltip') || 'auto'
     );
 
@@ -2112,8 +2241,9 @@
 
       if (labelEl) {
         labelEl.textContent = selectionLabel(total);
-        overflowTip.refresh(overflowLabel(total));
+        trigger.setAttribute('aria-label', overflowLabel(total));
       }
+      optionOverflowTip.hide();
 
       patchOptionClasses();
       syncSearchVisibility();
@@ -2197,7 +2327,11 @@
       opt._gtBound = true;
 
       opt.addEventListener('mouseenter', function () {
+        optionOverflowTip.enter(opt);
         if (!opt.classList.contains('disabled')) optionNav.set(opt);
+      });
+      opt.addEventListener('mouseleave', function () {
+        optionOverflowTip.leave(opt);
       });
       opt.addEventListener('click', function () {
         if (opt.classList.contains('disabled')) return;
@@ -2365,7 +2499,7 @@
       /* A pending close teleport (panel still retracting under <body>) must
          not yank the panel back mid-reopen. */
       cancelPendingTeleportClose(dropdown);
-      overflowTip.hide();
+      optionOverflowTip.hide();
       closeAllDropdowns(wrap);
       wrap.classList.add('gt-layer-active');
       teleportOpen(wrap, dropdown);
@@ -2398,6 +2532,7 @@
         focusTimer = null;
       }
       wrap.classList.remove('gt-layer-active');
+      optionOverflowTip.hide();
       dropdown.classList.remove('open');
       trigger.classList.remove('open');
       trigger.setAttribute('aria-expanded', 'false');
@@ -2541,7 +2676,7 @@
         wrap._gtScrollHandler = null;
       }
       close();
-      overflowTip.destroy();
+      optionOverflowTip.destroy();
       teleportClose(wrap, dropdown);
       wrap._gtDropdown = null;
       wrap._gt = null;
