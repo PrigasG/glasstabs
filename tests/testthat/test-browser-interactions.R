@@ -196,6 +196,13 @@ test_that("browser: select dropdowns match their fields and stay viewport-safe",
   expect_true(app$get_js("
     (function() {
       var trigger = document.querySelector('#short_single-trigger');
+      var nativeMatchMedia = window.matchMedia.bind(window);
+      window.matchMedia = function(query) {
+        if (query === '(hover: hover) and (pointer: fine)') {
+          return {matches:true};
+        }
+        return nativeMatchMedia(query);
+      };
       trigger.dispatchEvent(new MouseEvent('mouseenter', {bubbles:true}));
       return trigger.getAttribute('aria-label').length > 9000;
     })()
@@ -309,8 +316,12 @@ test_that("browser: select dropdowns match their fields and stay viewport-safe",
       wrap._gt.close();
       wrap._gt.setValue(['long_words', 'pathological'], {notify:false});
       var trigger = document.querySelector('#short_multi-trigger');
+      var label = document.querySelector('#short_multi-label');
+      label.style.flex = '0 0 40px';
+      label.style.maxWidth = '40px';
       trigger.dispatchEvent(new MouseEvent('mouseenter', {bubbles:true}));
-      return trigger.getAttribute('aria-label').length > 9000;
+      return trigger.getAttribute('aria-label').length > 9000 &&
+        label.scrollWidth > label.clientWidth;
     })()
   "))
   app$wait_for_js("
@@ -344,6 +355,10 @@ test_that("browser: tongue can be disabled for detached native-like panels", {
     ).m42) < 0.1
   ")
   expect_true(app$get_js("
+    document.querySelector('#detached_single-dropdown')
+      .classList.contains('gt-no-tongue')
+  "))
+  expect_true(app$get_js("
     (function() {
       var trigger = document.querySelector('#detached_single-trigger');
       var dropdown = document.querySelector('#detached_single-dropdown');
@@ -352,21 +367,33 @@ test_that("browser: tongue can be disabled for detached native-like panels", {
       var gap = dropdown.classList.contains('gt-flip-above')
         ? tr.top - dr.bottom
         : dr.top - tr.bottom;
+      return Math.abs(dr.width - tr.width) <= 1 && gap >= 4.5 && gap <= 7.5;
+    })()
+  "))
+  expect_true(app$get_js("
+    (function() {
+      var dropdown = document.querySelector('#detached_single-dropdown');
       var style = getComputedStyle(dropdown);
-      return dropdown.classList.contains('gt-no-tongue') &&
-        Math.abs(dr.width - tr.width) <= 1 &&
-        gap >= 5 && gap <= 7 &&
-        style.transitionDuration.split(',').some(function(value) {
-          return value.trim() === '0.12s';
-        }) &&
-        parseFloat(style.borderTopLeftRadius) > 0 &&
-        parseFloat(getComputedStyle(trigger).borderBottomLeftRadius) > 0 &&
-        getComputedStyle(
-          document.querySelector('#detached_single-field .gt-input-label')
-        ).fontWeight === '400' &&
-        getComputedStyle(
-          document.querySelector('#detached_single-field .gt-input-label')
-        ).fontSize === '14px';
+      var durations = style.transitionDuration.split(',').map(function(value) {
+        value = value.trim();
+        return value.endsWith('ms')
+          ? parseFloat(value)
+          : parseFloat(value) * 1000;
+      });
+      return Math.max.apply(null, durations) <= 121 &&
+        parseFloat(style.borderTopLeftRadius) > 0;
+    })()
+  "))
+  expect_true(app$get_js("
+    (function() {
+      var trigger = document.querySelector('#detached_single-trigger');
+      var label = document.querySelector(
+        '#detached_single-field .gt-input-label'
+      );
+      return parseFloat(getComputedStyle(trigger).borderBottomLeftRadius) > 0 &&
+        label.classList.contains('gt-label-regular') &&
+        getComputedStyle(label).getPropertyValue('--gt-label-size').trim() ===
+          '14px';
     })()
   "))
 
@@ -379,19 +406,28 @@ test_that("browser: tongue can be disabled for detached native-like panels", {
 
   app$click(selector = "#detached_multi-trigger")
   app$wait_for_js("document.querySelector('#detached_multi-dropdown.open') !== null")
+  app$wait_for_js("
+    Math.abs(new DOMMatrix(
+      getComputedStyle(document.querySelector('#detached_multi-dropdown'))
+        .transform
+    ).m42) < 0.1
+  ")
   expect_true(app$get_js("
     (function() {
       var trigger = document.querySelector('#detached_multi-trigger');
       var dropdown = document.querySelector('#detached_multi-dropdown');
+      var label = document.querySelector('#detached_multi-field .gt-input-label');
+      var durations = getComputedStyle(dropdown).transitionDuration
+        .split(',').map(function(value) {
+          value = value.trim();
+          return value.endsWith('ms')
+            ? parseFloat(value)
+            : parseFloat(value) * 1000;
+        });
       return dropdown.classList.contains('gt-no-tongue') &&
         Math.abs(dropdown.offsetWidth - trigger.offsetWidth) <= 1 &&
-        getComputedStyle(dropdown).transitionDuration
-          .split(',').some(function(value) {
-            return value.trim() === '0.12s';
-          }) &&
-        getComputedStyle(
-          document.querySelector('#detached_multi-field .gt-input-label')
-        ).fontWeight === '600';
+        Math.max.apply(null, durations) <= 121 &&
+        !label.classList.contains('gt-label-regular');
     })()
   "))
 })
