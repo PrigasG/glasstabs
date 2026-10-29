@@ -266,10 +266,8 @@
     };
   }
 
-  /* Multi-select summaries can represent several values, so a visual tooltip
-     on the trigger quickly becomes noisy (and pathological labels can make it
-     expensive to lay out). Reveal only the truncated option currently under
-     the pointer. One delegated controller owns one tooltip for the panel. */
+  /* Reveal only the truncated option currently under the pointer or keyboard
+     active descendant. One controller owns one tooltip for the panel. */
   function createOptionOverflowTooltip(dropdown, id, mode) {
     var enabled = mode === 'auto';
     var tooltip = null;
@@ -1426,6 +1424,11 @@
       inputId + '-overflow-tooltip',
       wrap.getAttribute('data-overflow-tooltip') || 'auto'
     );
+    var optionOverflowTip = createOptionOverflowTooltip(
+      dropdown,
+      inputId + '-option-overflow-tooltip',
+      wrap.getAttribute('data-overflow-tooltip') || 'auto'
+    );
 
     /* Capture check SVG template before any rebuilds */
     var checkTemplate = wrap.querySelector('.gt-gs-check');
@@ -1475,6 +1478,12 @@
       function () { return searchIn && !searchIn.disabled ? searchIn : trigger; },
       inputId + '-option'
     );
+
+    function moveOptionAndReveal(where) {
+      var option = optionNav.move(where);
+      optionOverflowTip.enter(option);
+      return option;
+    }
 
     /* State readers */
     function getValue() {
@@ -1604,7 +1613,11 @@
       opt._gtBound = true;
 
       opt.addEventListener('mouseenter', function () {
+        optionOverflowTip.enter(opt);
         if (!opt.classList.contains('disabled')) optionNav.set(opt);
+      });
+      opt.addEventListener('mouseleave', function () {
+        optionOverflowTip.leave(opt);
       });
       opt.addEventListener('click', function () {
         if (opt.classList.contains('disabled')) return;
@@ -1790,6 +1803,7 @@
         focusTimer = null;
       }
       wrap.classList.remove('gt-layer-active');
+      optionOverflowTip.hide();
       dropdown.classList.remove('open');
       trigger.classList.remove('open');
       trigger.setAttribute('aria-expanded', 'false');
@@ -1831,9 +1845,9 @@
         e.preventDefault();
         if (!dropdown.classList.contains('open')) open();
         setTimeout(function () {
-          if (e.key === 'Home') optionNav.move('first');
-          else if (e.key === 'End') optionNav.move('last');
-          else optionNav.move(e.key === 'ArrowDown' ? 1 : -1);
+          if (e.key === 'Home') moveOptionAndReveal('first');
+          else if (e.key === 'End') moveOptionAndReveal('last');
+          else moveOptionAndReveal(e.key === 'ArrowDown' ? 1 : -1);
         }, 110);
       } else if (e.key === 'Escape' || e.key === 'Tab') {
         closeAndReturnFocus();
@@ -1844,9 +1858,9 @@
       if (e.key === 'ArrowDown' || e.key === 'ArrowUp' ||
           e.key === 'Home' || e.key === 'End') {
         e.preventDefault();
-        if (e.key === 'Home') optionNav.move('first');
-        else if (e.key === 'End') optionNav.move('last');
-        else optionNav.move(e.key === 'ArrowDown' ? 1 : -1);
+        if (e.key === 'Home') moveOptionAndReveal('first');
+        else if (e.key === 'End') moveOptionAndReveal('last');
+        else moveOptionAndReveal(e.key === 'ArrowDown' ? 1 : -1);
       } else if (e.key === 'Enter') {
         var option = optionNav.current();
         if (option) {
@@ -1898,6 +1912,7 @@
       }
       close();
       overflowTip.destroy();
+      optionOverflowTip.destroy();
       teleportClose(wrap, dropdown);
       wrap._gtDropdown = null;
       wrap._gt = null;
@@ -2080,6 +2095,12 @@
       function () { return searchEnabled() && searchIn ? searchIn : trigger; },
       inputId + '-option'
     );
+
+    function moveOptionAndReveal(where) {
+      var option = optionNav.move(where);
+      optionOverflowTip.enter(option);
+      return option;
+    }
 
     /* State readers */
     function getValue() {
@@ -2575,9 +2596,9 @@
         e.preventDefault();
         if (!dropdown.classList.contains('open')) open();
         setTimeout(function () {
-          if (e.key === 'Home') optionNav.move('first');
-          else if (e.key === 'End') optionNav.move('last');
-          else optionNav.move(e.key === 'ArrowDown' ? 1 : -1);
+          if (e.key === 'Home') moveOptionAndReveal('first');
+          else if (e.key === 'End') moveOptionAndReveal('last');
+          else moveOptionAndReveal(e.key === 'ArrowDown' ? 1 : -1);
         }, 110);
       } else if (e.key === 'Escape' || e.key === 'Tab') {
         closeAndReturnFocus();
@@ -2588,9 +2609,9 @@
       if (e.key === 'ArrowDown' || e.key === 'ArrowUp' ||
           e.key === 'Home' || e.key === 'End') {
         e.preventDefault();
-        if (e.key === 'Home') optionNav.move('first');
-        else if (e.key === 'End') optionNav.move('last');
-        else optionNav.move(e.key === 'ArrowDown' ? 1 : -1);
+        if (e.key === 'Home') moveOptionAndReveal('first');
+        else if (e.key === 'End') moveOptionAndReveal('last');
+        else moveOptionAndReveal(e.key === 'ArrowDown' ? 1 : -1);
       } else if (e.key === 'Enter' || e.key === ' ') {
         var option = optionNav.current();
         if (option) {

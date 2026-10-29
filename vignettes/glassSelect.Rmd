@@ -156,10 +156,13 @@ glassSelect("region_dc", fruits, disabled_choices = "banana")
 
 ### Long selected labels
 
-The default `overflow_tooltip = "auto"` adds a full-text tooltip only when the
+The default `overflow_tooltip = "auto"` adds a label preview only when the
 selected trigger text is actually shortened with an ellipsis. It appears on
-pointer hover or keyboard focus. Touch users can open the dropdown to read the
-same label wrapped inside its matching-width panel.
+pointer hover or keyboard focus and is capped for exceptionally large labels;
+the complete accessible name remains available. Touch users can open the
+dropdown to read the label wrapped inside its matching-width panel. Truncated
+options in the open dropdown also reveal a preview on hover or keyboard
+navigation.
 
 ```{r long-labels}
 long_industries <- c(

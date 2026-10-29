@@ -125,11 +125,11 @@ glassMultiSelect("filters", filter_choices, width = "100%")
 ```
 
 With `glassSelect()`, `overflow_tooltip = "auto"` (the default) reveals an
-ellipsized selected label on pointer hover or keyboard focus. With
-`glassMultiSelect()`, it reveals only the truncated option currently hovered
-inside the open dropdown, rather than combining every selected label into one
-tooltip. Touch users read the wrapped option in the open dropdown. Set
-`overflow_tooltip = "never"` to suppress visual tooltips.
+ellipsized selected label on pointer hover or keyboard focus. Inside either open
+dropdown, it reveals only the truncated option currently hovered or reached
+with keyboard navigation. Multi-select never combines every selected label into
+one noisy trigger tooltip. Touch users read the wrapped option in the open
+dropdown. Set `overflow_tooltip = "never"` to suppress visual tooltips.
 
 The select controls also expose their presentation choices directly:
 
@@ -157,7 +157,8 @@ close transition and still honors reduced-motion preferences.
 
 With `theme = "auto"`, all tabs and select widgets default to Bootstrap's
 `[data-bs-theme="dark"]` signal. Supply `dark_selector` when an application
-uses a different class or attribute to announce dark mode.
+uses a different class or attribute to announce dark mode. An explicit selector
+also works with `theme = "light"` for applications that switch modes later.
 
 For a short list, the search box can stay out of the way. Both select widgets
 accept `searchable = "auto"`; search appears only when the list reaches the
@@ -445,6 +446,7 @@ Built-in examples include `basic`, `bs4dash`, `bslib`, `connect-workflow`, `dash
 | `input$<inputId>` | `character vector` | Selected values from `glassMultiSelect()` |
 | `input$<inputId>_style` | `character` | Active selection style from `glassMultiSelect()` |
 | `input$<inputId>_open` | `logical` | Whether a select dropdown is open |
+| `input$<inputId>_ready` | `logical` | Whether the select widget has finished initializing |
 | `input$<inputId>` | `character` or `NULL` | Selected value from `glassSelect()` |
 
 ## Documentation and support

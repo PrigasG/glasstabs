@@ -52,11 +52,11 @@ test_that("shared validators preserve accepted and rejected inputs", {
   }
 })
 
-test_that("integer validators reject fractional and non-finite values", {
+test_that("integer validators reject fractional, non-finite, and overflowing values", {
   expect_identical(.gt_positive_int(2, "count"), 2L)
   expect_identical(.gt_nonnegative_int(0, "count"), 0L)
 
-  for (value in list(1.5, Inf, -Inf, NaN)) {
+  for (value in list(1.5, Inf, -Inf, NaN, .Machine$integer.max + 1)) {
     expect_error(
       .gt_positive_int(value, "count"),
       class = "glasstabs_error_bad_argument"
@@ -66,6 +66,14 @@ test_that("integer validators reject fractional and non-finite values", {
       class = "glasstabs_error_bad_argument"
     )
   }
+})
+
+test_that("search mode errors list every accepted spelling", {
+  expect_error(
+    .gt_search_mode(123),
+    "always.*never",
+    class = "glasstabs_error_bad_argument"
+  )
 })
 
 test_that("select update choice payload preserves groups and optional disabled state", {
@@ -114,6 +122,36 @@ test_that("side-effect helpers return NULL invisibly", {
     expect_null(result$value)
     expect_false(result$visible)
   }
+})
+
+test_that("tab helpers validate sessions and logical controls", {
+  tab <- glassTabPanel("new", "New")
+  tab_calls <- list(
+    function() updateGlassTabsUI(NULL, "tabs", "new"),
+    function() updateGlassTabBadge(NULL, "tabs", "new", 1L),
+    function() showGlassTab(NULL, "tabs", "new"),
+    function() hideGlassTab(NULL, "tabs", "new"),
+    function() disableGlassTab(NULL, "tabs", "new"),
+    function() enableGlassTab(NULL, "tabs", "new"),
+    function() appendGlassTab(NULL, "tabs", tab),
+    function() removeGlassTab(NULL, "tabs", "new")
+  )
+  for (call in tab_calls) {
+    expect_error(call(), class = "glasstabs_error_no_session")
+  }
+
+  session <- list(
+    ns = shiny::NS("mod"),
+    sendCustomMessage = function(...) NULL
+  )
+  expect_error(
+    appendGlassTab(session, "tabs", tab, select = "yes"),
+    class = "glasstabs_error_bad_argument"
+  )
+  expect_error(
+    glassTabsServer("tabs", bookmark = "yes"),
+    class = "glasstabs_error_bad_argument"
+  )
 })
 
 test_that("JSON and JavaScript string serialization cover edge cases", {

@@ -55,6 +55,20 @@ test_that("glassMultiSelect() supports label size and an optional search ring", 
   )
 })
 
+test_that("glassMultiSelect() validates and emits custom dark selectors", {
+  html <- as.character(glassMultiSelect(
+    "f", choices, theme = "light", dark_selector = "body.dark-mode"
+  ))
+
+  expect_match(html, "body.dark-mode #f-field", fixed = TRUE)
+  for (selector in list("", NA_character_, 123)) {
+    expect_error(
+      glassMultiSelect("f", choices, dark_selector = selector),
+      class = "glasstabs_error_bad_argument"
+    )
+  }
+})
+
 test_that("glassMultiSelect() enables truncation tooltips by default", {
   default <- as.character(glassMultiSelect("f", choices))
   disabled <- as.character(glassMultiSelect(
@@ -87,6 +101,17 @@ test_that("glassMultiSelect() renders all option values in HTML", {
 
 test_that("glassMultiSelect() errors when choices is NULL", {
   expect_error(glassMultiSelect("f", NULL), class = "glasstabs_error_bad_choice")
+})
+
+test_that("glassMultiSelect() rejects missing choice values", {
+  expect_error(
+    glassMultiSelect("f", c(Apple = "apple", Missing = NA_character_)),
+    class = "glasstabs_error_bad_choice"
+  )
+  expect_error(
+    glassMultiSelect("f", list(Group = c(Apple = "apple", Missing = NA_character_))),
+    class = "glasstabs_error_bad_choice"
+  )
 })
 
 

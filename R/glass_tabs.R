@@ -44,13 +44,14 @@ glassTabPanel <- function(value, label, ..., icon = NULL, selected = FALSE) {
       expected = "a single character string"
     )
   }
+  .gt_check_flag(selected, "selected")
   structure(
     list(
       value    = value,
       label    = label,
       icon     = icon,
       content  = list(...),
-      selected = isTRUE(selected)
+      selected = selected
     ),
     class = "glassTabPanel"
   )
@@ -150,6 +151,9 @@ glassTabsUI <- function(
 ) {
   ns          <- shiny::NS(id)
   panels      <- list(...)
+  .gt_check_flag(wrap, "wrap")
+  .gt_check_flag(compact, "compact")
+  .gt_check_flag(swipe, "swipe")
   shape       <- .gt_match_arg(shape, c("rounded", "square"), "shape")
   indicator   <- .gt_match_arg(indicator, c("glass", "solid", "underline"), "indicator")
   orientation <- .gt_match_arg(orientation, c("horizontal", "vertical"), "orientation")
@@ -170,15 +174,6 @@ glassTabsUI <- function(
     )
   }
 
-  if (!is.logical(swipe) || length(swipe) != 1L || is.na(swipe)) {
-    .gt_abort(
-      "glassTabsUI(): `swipe` must be either TRUE or FALSE.",
-      class = "glasstabs_error_bad_argument",
-      argument = "swipe",
-      value = swipe,
-      expected = "TRUE or FALSE"
-    )
-  }
   if (!is.null(content_min_height)) {
     content_min_height <- .gt_css_unit(content_min_height, "content_min_height")
   }
@@ -404,11 +399,19 @@ glassTabsUI <- function(
 #' @family glass tabs
 #' @export
 updateGlassTabsUI <- function(session, id, selected) {
+  .gt_check_tab_session(session)
   session$sendCustomMessage(
     "glasstabs_update_tabs",
     list(ns = session$ns(id), selected = selected)
   )
   invisible(NULL)
+}
+
+#' @noRd
+.gt_check_tab_session <- function(session) {
+  .gt_check_session(session, "sendCustomMessage")
+  .gt_check_session(session, "ns")
+  invisible(session)
 }
 
 #' Update the badge count on a glass tab
@@ -450,6 +453,7 @@ updateGlassTabsUI <- function(session, id, selected) {
 #' @family glass tabs
 #' @export
 updateGlassTabBadge <- function(session, id, value, count) {
+  .gt_check_tab_session(session)
   count <- .gt_badge_count(count)
   session$sendCustomMessage(
     "glasstabs_tab_badge",
@@ -520,6 +524,7 @@ updateGlassTabBadge <- function(session, id, value, count) {
 #' @family glass tabs
 #' @export
 showGlassTab <- function(session, id, value) {
+  .gt_check_tab_session(session)
   session$sendCustomMessage(
     "glasstabs_show_tab",
     list(ns = session$ns(id), value = value)
@@ -530,6 +535,7 @@ showGlassTab <- function(session, id, value) {
 #' @rdname showGlassTab
 #' @export
 hideGlassTab <- function(session, id, value) {
+  .gt_check_tab_session(session)
   session$sendCustomMessage(
     "glasstabs_hide_tab",
     list(ns = session$ns(id), value = value)
@@ -574,6 +580,7 @@ hideGlassTab <- function(session, id, value) {
 #' @family glass tabs
 #' @export
 disableGlassTab <- function(session, id, value) {
+  .gt_check_tab_session(session)
   session$sendCustomMessage(
     "glasstabs_disable_tab",
     list(ns = session$ns(id), value = value)
@@ -584,6 +591,7 @@ disableGlassTab <- function(session, id, value) {
 #' @rdname disableGlassTab
 #' @export
 enableGlassTab <- function(session, id, value) {
+  .gt_check_tab_session(session)
   session$sendCustomMessage(
     "glasstabs_enable_tab",
     list(ns = session$ns(id), value = value)
@@ -634,6 +642,8 @@ enableGlassTab <- function(session, id, value) {
 #' @family glass tabs
 #' @export
 appendGlassTab <- function(session, id, tab, select = FALSE) {
+  .gt_check_tab_session(session)
+  .gt_check_flag(select, "select")
   if (!inherits(tab, "glassTabPanel")) {
     .gt_abort(
       sprintf(
@@ -667,7 +677,7 @@ appendGlassTab <- function(session, id, tab, select = FALSE) {
       value     = tab$value,
       link_html = link_html,
       pane_html = pane_html,
-      select    = isTRUE(select)
+      select    = select
     )
   )
   invisible(NULL)
@@ -676,6 +686,7 @@ appendGlassTab <- function(session, id, tab, select = FALSE) {
 #' @rdname appendGlassTab
 #' @export
 removeGlassTab <- function(session, id, value) {
+  .gt_check_tab_session(session)
   session$sendCustomMessage(
     "glasstabs_remove_tab",
     list(ns = session$ns(id), value = value)
@@ -766,12 +777,13 @@ removeGlassTab <- function(session, id, value) {
 #' @family glass tabs
 #' @export
 glassTabsServer <- function(id, bookmark = TRUE) {
+  .gt_check_flag(bookmark, "bookmark")
   shiny::moduleServer(id, function(input, output, session) {
     active <- shiny::reactive({
       input$active_tab
     })
 
-    if (isTRUE(bookmark)) {
+    if (bookmark) {
       session$onBookmark(function(state) {
         state$values$active_tab <- active()
       })

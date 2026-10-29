@@ -90,7 +90,7 @@ glassMultiSelect("f", fruits, check_style = "checkbox")
 glassMultiSelect("f", fruits, check_style = "check-only")
 
 # Solid coloured box — each option gets its own hue
-glassMultiSelect("f", fruits, check_style = "filled")
+glassMultiSelect("f", fruits, check_style = "filled", fill_colors = "multi")
 ```
 
 By default, a style switcher row is shown inside the dropdown so the
@@ -106,9 +106,9 @@ glassMultiSelect("f", fruits,
 
 ### Custom hues for the filled style
 
-When `check_style = "filled"`, hues are auto-assigned evenly around the
-colour wheel. Override them with a named integer vector of HSL hue
-angles (0-360):
+When `check_style = "filled"` and `fill_colors = "multi"`, hues are
+auto-assigned evenly around the colour wheel. Override them with a named
+integer vector of HSL hue angles (0-360):
 
 ```{r hues}
 glassMultiSelect("f", fruits,
@@ -185,9 +185,10 @@ runtime with `updateGlassMultiSelect()`.
 ### Long option labels
 
 The default `overflow_tooltip = "auto"` reveals the label of the truncated
-option currently under the pointer inside an open dropdown. Only one option
-tooltip appears at a time. The multi-select trigger keeps its full accessible
-label but does not show a combined visual tooltip for multiple selections.
+option currently under the pointer or reached with keyboard navigation inside
+an open dropdown. Only one option tooltip appears at a time. The multi-select
+trigger keeps its full accessible label but does not show a combined visual
+tooltip for multiple selections.
 
 ```{r ms-long-labels}
 glassMultiSelect(

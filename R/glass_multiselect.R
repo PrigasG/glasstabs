@@ -79,7 +79,7 @@
 #'   Default \code{"No matches"}.
 #' @param tongue Logical. When \code{TRUE} (default), the dropdown attaches to
 #'   the trigger and uses the signature tongue unfurl/retract animation. Set to
-#'   \code{FALSE} for a detached, immediately opening panel that sits more
+#'   \code{FALSE} for a detached panel with a short fade that sits more
 #'   naturally beside native Shiny inputs.
 #' @param label_bold Logical. Use a semibold field label, matching native Shiny
 #'   inputs, when \code{TRUE} (default). Set to \code{FALSE} for regular-weight
@@ -196,6 +196,7 @@ glassMultiSelect <- function(
   colors <- .ms_resolve_theme(theme)
   is_auto <- .is_auto_theme(theme)
   if (is_auto && is.null(dark_selector)) dark_selector <- '[data-bs-theme="dark"]'
+  if (!is.null(dark_selector)) .gt_check_string(dark_selector, "dark_selector")
 
   normalized <- .gt_normalize_choices(choices)
   vals <- normalized$values
@@ -937,6 +938,16 @@ glassMultiSelectServer <- function(
     ))
   }
 
+  if (anyNA(choices)) {
+    .gt_abort(
+      "`choices` cannot contain `NA`.",
+      class = "glasstabs_error_bad_choice",
+      argument = "choices",
+      value = choices,
+      expected = "non-missing choice values"
+    )
+  }
+
   # Grouped choices: a named list, selectInput()-style. A top-level element is
   # treated as a group (its name becomes the group header) when it is itself a
   # list or a vector of length > 1; a scalar element is a flat, ungrouped
@@ -1114,18 +1125,18 @@ glassMultiSelectServer <- function(
     return(.gt_match_arg(x, c("auto", "always", "never"), "searchable"))
   }
   .gt_abort(
-    "`searchable` must be TRUE, FALSE, or \"auto\".",
+    "`searchable` must be TRUE, FALSE, \"auto\", \"always\", or \"never\".",
     class = "glasstabs_error_bad_argument",
     argument = "searchable",
     value = x,
-    expected = "TRUE, FALSE, or 'auto'"
+    expected = "TRUE, FALSE, 'auto', 'always', or 'never'"
   )
 }
 
 #' @noRd
 .gt_positive_int <- function(x, name) {
   if (!is.numeric(x) || length(x) != 1L || is.na(x) ||
-      !is.finite(x) || x < 1 || x != floor(x)) {
+      !is.finite(x) || x < 1 || x > .Machine$integer.max || x != floor(x)) {
     .gt_abort(
       sprintf("`%s` must be a single positive integer.", name),
       class = "glasstabs_error_bad_argument",
@@ -1140,7 +1151,7 @@ glassMultiSelectServer <- function(
 #' @noRd
 .gt_nonnegative_int <- function(x, name) {
   if (!is.numeric(x) || length(x) != 1L || is.na(x) ||
-      !is.finite(x) || x < 0 || x != floor(x)) {
+      !is.finite(x) || x < 0 || x > .Machine$integer.max || x != floor(x)) {
     .gt_abort(
       sprintf("`%s` must be a single non-negative integer.", name),
       class = "glasstabs_error_bad_argument",

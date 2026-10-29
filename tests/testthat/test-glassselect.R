@@ -55,15 +55,22 @@ test_that("glassSelect() supports label size and an optional search ring", {
   )
 })
 
-test_that("glassSelect() supports a custom dark selector in auto theme mode", {
-  html <- as.character(glassSelect(
+test_that("glassSelect() supports a custom dark selector across theme modes", {
+  automatic <- as.character(glassSelect(
     "f",
     choices,
     theme = "auto",
     dark_selector = "body.dark-mode"
   ))
+  light <- as.character(glassSelect(
+    "f",
+    choices,
+    theme = "light",
+    dark_selector = "body.dark-mode"
+  ))
 
-  expect_match(html, "body.dark-mode #f-field", fixed = TRUE)
+  expect_match(automatic, "body.dark-mode #f-field", fixed = TRUE)
+  expect_match(light, "body.dark-mode #f-field", fixed = TRUE)
   expect_error(
     glassSelect("f", choices, theme = "auto", dark_selector = ""),
     class = "glasstabs_error_bad_argument"
@@ -105,6 +112,13 @@ test_that("glassSelect() renders labels in HTML", {
 
 test_that("glassSelect() errors when choices is NULL", {
   expect_error(glassSelect("f", NULL), class = "glasstabs_error_bad_choice")
+})
+
+test_that("glassSelect() rejects missing choice values", {
+  expect_error(
+    glassSelect("f", c(Apple = "apple", Missing = NA_character_)),
+    class = "glasstabs_error_bad_choice"
+  )
 })
 
 
@@ -175,6 +189,19 @@ test_that("glassSelect() automatic search follows the choice threshold", {
   expect_match(hidden, 'data-search-threshold="6"', fixed = TRUE)
   expect_match(hidden, 'class="gt-gs-search hidden"', fixed = TRUE)
   expect_match(shown, 'class="gt-gs-search"', fixed = TRUE)
+})
+
+test_that("glassSelect() automatic search ignores the synthetic all choice", {
+  fourteen <- stats::setNames(seq_len(14), paste("Category", seq_len(14)))
+  html <- as.character(glassSelect(
+    "f", fourteen,
+    include_all = TRUE,
+    searchable = "auto",
+    search_threshold = 15
+  ))
+
+  expect_match(html, 'data-server-total="14"', fixed = TRUE)
+  expect_match(html, 'class="gt-gs-search hidden"', fixed = TRUE)
 })
 
 test_that("glassSelect() validates search settings", {

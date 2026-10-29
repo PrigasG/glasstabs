@@ -82,6 +82,8 @@ ui <- fluidPage(
     ),
     actionButton("adaptive_expand", "Expand adaptive choices"),
     actionButton("adaptive_silent", "Silently select cherry"),
+    actionButton("adaptive_show_search", "Show adaptive search"),
+    actionButton("adaptive_hide_search", "Hide adaptive search"),
     tags$div(
       style = "width:600px;max-width:100%",
       glassSelect(
@@ -100,6 +102,23 @@ ui <- fluidPage(
         selection_display = "summary",
         selection_max_items = 1,
         show_style_switcher = TRUE
+      )
+    ),
+    tags$div(
+      style = "width:176px",
+      glassSelect(
+        "never_single",
+        short_field_choices,
+        selected = "pathological",
+        searchable = FALSE,
+        overflow_tooltip = "never"
+      ),
+      glassMultiSelect(
+        "never_multi",
+        short_field_choices,
+        selected = "one",
+        show_style_switcher = FALSE,
+        overflow_tooltip = "never"
       )
     ),
     glassSelect(
@@ -282,6 +301,14 @@ server <- function(input, output, session) {
       selected = "cherry",
       notify = "never"
     )
+  })
+
+  observeEvent(input$adaptive_show_search, {
+    updateGlassMultiSelect(session, "adaptive", search_threshold = 3)
+  })
+
+  observeEvent(input$adaptive_hide_search, {
+    updateGlassMultiSelect(session, "adaptive", search_threshold = 4)
   })
 
   race_return_events <- reactiveVal(character())

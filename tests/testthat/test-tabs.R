@@ -18,6 +18,22 @@ test_that("glassTabPanel() selected = TRUE is stored", {
   expect_true(glassTabPanel("a", "A", selected = TRUE)$selected)
 })
 
+test_that("tab logical arguments reject silent coercion", {
+  expect_error(
+    glassTabPanel("a", "A", selected = "yes"),
+    class = "glasstabs_error_bad_argument"
+  )
+  for (argument in c("wrap", "compact", "swipe")) {
+    args <- list(id = "nav", glassTabPanel("a", "A"))
+    args[[argument]] <- "yes"
+    expect_error(
+      do.call(glassTabsUI, args),
+      class = "glasstabs_error_bad_argument",
+      info = argument
+    )
+  }
+})
+
 test_that("glassTabPanel() stores content elements", {
   p <- glassTabPanel("a", "A", shiny::p("Hello"), shiny::p("World"))
   expect_length(p$content, 2)
@@ -233,7 +249,7 @@ test_that("glassTabsUI() explains invalid responsive arguments", {
   )
   expect_error(
     glassTabsUI("tabs", panel, swipe = "yes"),
-    "TRUE or FALSE",
+    "TRUE.*FALSE",
     class = "glasstabs_error_bad_argument"
   )
 })

@@ -131,7 +131,7 @@ Default \code{"No matches"}.}
 
 \item{tongue}{Logical. When \code{TRUE} (default), the dropdown attaches to
 the trigger and uses the signature tongue unfurl/retract animation. Set to
-\code{FALSE} for a detached, immediately opening panel that sits more
+\code{FALSE} for a detached panel with a short fade that sits more
 naturally beside native Shiny inputs.}
 
 \item{label_bold}{Logical. Use a semibold field label, matching native Shiny

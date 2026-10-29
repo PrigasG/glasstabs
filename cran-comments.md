@@ -20,7 +20,10 @@ See NEWS.md for the full list.
 
 ## R CMD check results
 
-0 errors | 0 warnings | 0 notes
+0 errors | 0 warnings | 1 note
 
 Checked with `R CMD check --as-cran` on Windows 11 using R 4.5.1.
+
+The check host could not verify its system clock; this is unrelated to the
+package contents.
 

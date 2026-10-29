@@ -7,22 +7,26 @@
   the search field hidden and reveal it automatically as choices grow. Both
   settings can also be changed with `updateGlassSelect()`.
 
-* Select constructors now reject invalid logical arguments instead of silently
-  treating values such as `"yes"` as `FALSE`; update helpers validate sessions,
-  disabled state, and missing selections consistently.
+* Select and tab constructors now reject invalid logical arguments instead of
+  silently treating values such as `"yes"` as `FALSE`; update helpers validate
+  sessions, disabled state, and missing selections consistently. Choice and
+  integer settings reject missing or out-of-range values before rendering.
 
-* `glassSelect()` now accepts `dark_selector` for parity with tabs and
-  multi-selects. Choice-only updates preserve existing disabled rows unless
-  `disabled_choices` is explicitly supplied, and server-backed selects no
-  longer resend their already-rendered initial page during registration.
+* `glassSelect()` now honors an explicit `dark_selector` in fixed light themes
+  as well as automatic themes, matching tabs and multi-selects. Choice-only
+  updates preserve existing disabled rows unless `disabled_choices` is
+  explicitly supplied, and server-backed selects no longer resend their
+  already-rendered initial page during registration.
 
 * Hyphenated tab ids no longer produce a false namespacing warning. Initial
   and appended tabs now emit the same clean class names, and select dropdown
   base positioning matches the absolute positioning used while teleported.
 
-* Ellipsized select trigger text now exposes its complete value through a
-  viewport-safe hover/keyboard tooltip by default. Set
-  `overflow_tooltip = "never"` to disable the visual tooltip; full accessible
+* Ellipsized single-select trigger text now exposes a viewport-safe label
+  preview through a hover/keyboard tooltip by default. Truncated multi-select
+  options expose the currently hovered or keyboard-active option inside the
+  open dropdown, without combining selected labels into a noisy trigger tip.
+  Set `overflow_tooltip = "never"` to disable visual tooltips; full accessible
   names remain available, and touch users can open the dropdown to read the
   wrapped option. The formerly dark-only built-in examples now include live
   light/dark switches and use `theme = "auto"` consistently. Example apps now

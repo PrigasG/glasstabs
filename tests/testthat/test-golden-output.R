@@ -59,6 +59,20 @@ test_that("representative widget HTML remains byte-stable", {
       )))
       cat("\n")
     }
+    cat("\nSELECT MODES: auto search\n")
+    cat(as.character(glassSelect(
+      "single_auto",
+      choices,
+      searchable = "auto",
+      search_threshold = 3
+    )))
+    cat("\nMULTISELECT MODES: no overflow tooltip\n")
+    cat(as.character(glassMultiSelect(
+      "multi_never",
+      choices,
+      overflow_tooltip = "never"
+    )))
+    cat("\n")
   })
 })
 

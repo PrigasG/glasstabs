@@ -73,6 +73,41 @@ test_that("browser: glassSelect automatic search responds to threshold updates",
   })()")
 })
 
+test_that("browser: glassMultiSelect automatic search responds to threshold updates", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-glassMultiSelect-auto-search",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+  expect_true(app$get_js("(function() {
+    var input = document.querySelector('#adaptive-search');
+    return input.closest('.gt-ms-search').classList.contains('hidden') &&
+      input.disabled;
+  })()"))
+
+  app$set_inputs(adaptive_show_search = "click")
+  app$wait_for_js("(function() {
+    var input = document.querySelector('#adaptive-search');
+    return !input.closest('.gt-ms-search').classList.contains('hidden') &&
+      !input.disabled;
+  })()")
+
+  app$set_inputs(adaptive_hide_search = "click")
+  app$wait_for_js("(function() {
+    var input = document.querySelector('#adaptive-search');
+    return input.closest('.gt-ms-search').classList.contains('hidden') &&
+      input.disabled;
+  })()")
+})
+
 test_that("browser: choice-only updates preserve disabled rows", {
   skip_on_covr()
   skip_if_not_installed("shinytest2")
@@ -376,6 +411,103 @@ test_that("browser: select dropdowns match their fields and stay viewport-safe",
     !document.querySelector('#short_multi-option-overflow-tooltip.visible') &&
       document.querySelector('#short_multi-dropdown.open') !== null
   ")
+})
+
+test_that("browser: overflow tooltips respect mode, truncation, and keyboard navigation", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-overflow-tooltip-modes",
+    height = 900,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+
+  # Short trigger and option labels must not create a visual tooltip.
+  expect_true(app$get_js("(function() {
+    var trigger = document.querySelector('#short_single-trigger');
+    trigger.dispatchEvent(new MouseEvent('mouseenter', {bubbles:true}));
+    trigger.click();
+    var option = document.querySelector(
+      '#short_single-dropdown [data-value=one]'
+    );
+    option.dispatchEvent(new MouseEvent('mouseenter', {bubbles:true}));
+    return true;
+  })()"))
+  Sys.sleep(0.35)
+  expect_false(app$get_js("
+    document.querySelector('#short_single-overflow-tooltip.visible') !== null ||
+      document.querySelector('#short_single-option-overflow-tooltip.visible') !== null
+  "))
+
+  # Both single- and multi-select options reveal clamped text to keyboard users.
+  expect_true(app$get_js("(function() {
+    var dropdown = document.querySelector('#short_single-dropdown');
+    dropdown.dispatchEvent(new KeyboardEvent('keydown', {key:'End', bubbles:true}));
+    return true;
+  })()"))
+  app$wait_for_js("
+    document.querySelector('#short_single-option-overflow-tooltip.visible') !== null
+  ")
+
+  app$click(selector = "#short_multi-trigger")
+  app$wait_for_js("document.querySelector('#short_multi-dropdown.open') !== null")
+  expect_true(app$get_js("(function() {
+    var shortOption = document.querySelector(
+      '#short_multi-dropdown [data-value=one]'
+    );
+    shortOption.dispatchEvent(new MouseEvent('mouseenter', {bubbles:true}));
+    return true;
+  })()"))
+  Sys.sleep(0.35)
+  expect_false(app$get_js("
+    document.querySelector('#short_multi-option-overflow-tooltip.visible') !== null
+  "))
+  expect_true(app$get_js("(function() {
+    var dropdown = document.querySelector('#short_multi-dropdown');
+    dropdown.dispatchEvent(new KeyboardEvent('keydown', {key:'End', bubbles:true}));
+    return true;
+  })()"))
+  app$wait_for_js("
+    document.querySelector('#short_multi-option-overflow-tooltip.visible') !== null
+  ")
+
+  # `never` suppresses both trigger and option tooltips even for extreme text.
+  app$click(selector = "#never_single-trigger")
+  app$wait_for_js("document.querySelector('#never_single-dropdown.open') !== null")
+  expect_true(app$get_js("(function() {
+    var trigger = document.querySelector('#never_single-trigger');
+    var option = document.querySelector(
+      '#never_single-dropdown [data-value=pathological]'
+    );
+    trigger.dispatchEvent(new MouseEvent('mouseenter', {bubbles:true}));
+    option.dispatchEvent(new MouseEvent('mouseenter', {bubbles:true}));
+    return true;
+  })()"))
+  Sys.sleep(0.35)
+  expect_false(app$get_js("
+    document.querySelector('#never_single-overflow-tooltip.visible') !== null ||
+      document.querySelector('#never_single-option-overflow-tooltip.visible') !== null
+  "))
+
+  app$click(selector = "#never_multi-trigger")
+  app$wait_for_js("document.querySelector('#never_multi-dropdown.open') !== null")
+  expect_true(app$get_js("(function() {
+    var option = document.querySelector(
+      '#never_multi-dropdown [data-value=pathological]'
+    );
+    option.dispatchEvent(new MouseEvent('mouseenter', {bubbles:true}));
+    return true;
+  })()"))
+  Sys.sleep(0.35)
+  expect_false(app$get_js("
+    document.querySelector('#never_multi-option-overflow-tooltip.visible') !== null
+  "))
 })
 
 test_that("browser: tongue can be disabled for detached native-like panels", {

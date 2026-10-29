@@ -127,6 +127,7 @@ glassSelect <- function(
   vals <- normalized$values
   labels <- normalized$labels
   groups <- normalized$groups
+  search_choice_count <- length(vals)
 
   if (isTRUE(include_all) && !all_choice_value %in% vals) {
     vals <- c(all_choice_value, vals)
@@ -194,7 +195,7 @@ glassSelect <- function(
     field_id, colors$bg, colors$border, colors$text, colors$accent, colors$focus, colors$label,
     label_size, .to_rgba_vars(colors)
   )
-  dark_override_style <- if (is_auto) {
+  dark_override_style <- if (!is.null(dark_selector)) {
     .select_dark_override_style(dark_selector, field_id)
   } else {
     NULL
@@ -316,7 +317,7 @@ glassSelect <- function(
         `data-all-choice-label` = all_choice_label,
         `data-all-choice-value` = all_choice_value,
         `data-server` = tolower(as.character(server)),
-        `data-server-total` = as.character(length(vals)),
+        `data-server-total` = as.character(search_choice_count),
         `data-server-min-chars` = as.character(server_min_chars),
         `data-overflow-tooltip` = overflow_tooltip,
 
@@ -358,7 +359,7 @@ glassSelect <- function(
             class = trimws(paste(
               "gt-gs-search",
               if (identical(searchable, "never") ||
-                  (identical(searchable, "auto") && length(vals) < search_threshold)) "hidden" else NULL
+                  (identical(searchable, "auto") && search_choice_count < search_threshold)) "hidden" else NULL
             )),
             shiny::tags$svg(
               width = "13",
