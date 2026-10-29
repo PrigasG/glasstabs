@@ -34,6 +34,8 @@ articles:
     navbar: ~
     contents:
       - getting-started
+  - title: Deployment
+    contents:
       - posit-connect
   - title: Widgets
     navbar: Widgets

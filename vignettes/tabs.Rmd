@@ -258,7 +258,7 @@ glassTabsUI("nav",
 )
 ```
 
-All nine handles available in `glass_tab_theme()`:
+All ten handles available in `glass_tab_theme()`:
 
 | Argument | What it controls |
 |---|---|
@@ -271,6 +271,7 @@ All nine handles available in `glass_tab_theme()`:
 | `content_border` | Tab content panel border |
 | `card_bg` | Inner card background |
 | `card_text` | Inner card text colour |
+| `mode` | Theme mode metadata (`"dark"` or `"light"`) |
 
 ## bs4Dash integration
 

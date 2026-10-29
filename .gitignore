@@ -12,3 +12,5 @@ docs
 /Meta/
 dev/
 node_modules/
+coverage.xml
+inst/examples/connect-workflow/rsconnect/

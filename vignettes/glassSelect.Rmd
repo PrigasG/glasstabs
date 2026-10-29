@@ -245,6 +245,8 @@ Field and motion styling can be adjusted without changing the input value:
 glassSelect(
   "f",
   fruits,
+  theme = "auto",
+  dark_selector = "body.app-dark",
   tongue = FALSE,
   label_bold = TRUE,
   label_size = "14px",
@@ -255,6 +257,9 @@ glassSelect(
 `tongue = TRUE` uses the attached glass unfurl. With `FALSE`, the panel is
 detached and uses a short, native-feeling fade. The quiet search focus style is
 the default; set `search_focus_ring = TRUE` for the accent outline.
+When an app uses a custom dark-mode class instead of Bootstrap's
+`data-bs-theme`, pass that class through `dark_selector` while using
+`theme = "auto"`.
 
 
 To always hide the search box:

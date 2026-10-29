@@ -506,7 +506,7 @@ glassMultiSelect("f", fruits,
   )
 )
 
-# All four fields
+# Four commonly customized fields
 glassMultiSelect("f", fruits,
   theme = glass_select_theme(
     bg_color     = "#1a0a2e",
@@ -523,6 +523,9 @@ glassMultiSelect("f", fruits,
 | `border_color` | Border colour                                         |
 | `text_color`   | Main text and label colour                            |
 | `accent_color` | Tick marks, badge, checked highlights, Clear all link |
+| `focus_ring` | Keyboard focus indicator |
+| `label_color` | Field-title colour |
+| `mode` | Theme mode metadata (`"dark"` or `"light"`) |
 
 ## Standalone usage — no tabs required
 

@@ -83,7 +83,7 @@
 \begin{document}
 \begin{multicols*}{4}
 \raggedcolumns
-\sheetheader{tabs and layout}{page 1 of 2}
+\sheetheader{tabs and layout}{page 1 of 3}
 
 \mysection{Setup}
 
@@ -101,8 +101,11 @@ ui <- fluidPage(
 Explore package examples and release notes:
 \begin{lstlisting}
 runGlassExample()        # list apps
+runGlassExample("light-mode")
+runGlassExample("native-comparison")
 runGlassExample("connect-workflow")
 runGlassExample("stress-test")  # dropdown limits: 100k choices, hostile labels
+runGlassExample("theme-switcher")
 glasstabs_news()
 \end{lstlisting}
 
@@ -309,6 +312,7 @@ glassTabsUI(
   \item \gtarg{halo\_bg}, \gtarg{halo\_border}, \gtarg{focus\_ring}
   \item \gtarg{content\_bg}, \gtarg{content\_border}
   \item \gtarg{card\_bg}, \gtarg{card\_text}
+  \item \gtarg{mode} records the dark or light theme mode
 \end{itemize}
 
 \vfill
@@ -321,7 +325,7 @@ glassTabsUI(
 \begin{multicols*}{4}
 \raggedcolumns
 \footnotesize
-\sheetheader{selects and reference}{page 2 of 2}
+\sheetheader{selects}{page 2 of 3}
 
 \mysection{Multi-select -- UI}
 
@@ -352,7 +356,14 @@ glassMultiSelect(
   selection_display = c("auto","count",
                         "summary","labels"),
   selection_max_items = 2L,
-  dropdown_max_height = "260px"
+  dropdown_max_height = "260px",
+  no_matches_text = "No matches",
+  tongue = TRUE,
+  label_bold = TRUE,
+  fill_colors = c("single","multi"),
+  label_size = "14px",
+  search_focus_ring = FALSE,
+  overflow_tooltip = c("auto","never")
 )
 \end{lstlisting}
 
@@ -374,6 +385,7 @@ glassMultiSelect(
 glassFilterTags("metric")
 \end{lstlisting}
 
+\columnbreak
 \mysection{Single-select -- UI}
 
 \begin{lstlisting}
@@ -396,7 +408,15 @@ glassSelect(
   disabled_choices = NULL,
   server = FALSE,
   server_limit = 50L,
-  server_min_chars = 0L
+  server_min_chars = 0L,
+  no_matches_text = "No matches",
+  tongue = TRUE,
+  label_bold = TRUE,
+  label_size = "14px",
+  search_focus_ring = FALSE,
+  overflow_tooltip = c("auto","never"),
+  search_threshold = 15L,
+  dark_selector = NULL
 )
 \end{lstlisting}
 
@@ -471,6 +491,7 @@ open state & \code{\tiny input\$metric\_open} / \code{\tiny input\$region\_open}
 \bottomrule
 \end{tabular}
 
+\columnbreak
 \mysection{Update select widgets}
 
 \begin{lstlisting}
@@ -486,7 +507,9 @@ updateGlassMultiSelect(
   drop_invalid = TRUE,
   notify = "changed",
   searchable = "auto",
+  search_threshold = 15L,
   selection_display = "summary",
+  selection_max_items = 2L,
   dropdown_max_height = "18rem"
 )
 
@@ -497,11 +520,24 @@ updateGlassSelect(
   check_style = "check-only",
   shape = "rounded",
   disabled = FALSE,
-  disabled_choices = "n"
+  disabled_choices = "n",
+  searchable = "auto",
+  search_threshold = 15L
 )
 \end{lstlisting}
 
-\columnbreak
+\vfill
+{\tiny\color{gtgray}
+\href{https://prigasg.github.io/glasstabs/}{prigasg.github.io/glasstabs}
+\hfill MIT \copyright\ glasstabs authors -- Page 2}
+\end{multicols*}
+
+\newpage
+\begin{multicols*}{2}
+\raggedcolumns
+\footnotesize
+\sheetheader{select reference}{page 3 of 3}
+
 \mysection{Close dropdowns}
 
 \begin{lstlisting}
@@ -581,6 +617,8 @@ glass_tab_theme  glass_select_theme
   \item Select dropdowns open attached to the field (no gap): the panel
         unfurls from the trigger edge with squared adjoining corners,
         flipping above the field when space is tight below.
+  \item Set \gtarg{tongue = FALSE} for a detached panel with a short fade.
+        Use \gtarg{overflow\_tooltip = "never"} to suppress long-label tips.
 \end{itemize}
 
 \mysection{Useful links}
@@ -594,6 +632,6 @@ glass_tab_theme  glass_select_theme
 \vfill
 {\tiny\color{gtgray}
 \href{https://prigasg.github.io/glasstabs/}{prigasg.github.io/glasstabs}
-\hfill MIT \copyright\ glasstabs authors -- Page 2}
+\hfill MIT \copyright\ glasstabs authors -- Page 3}
 \end{multicols*}
 \end{document}

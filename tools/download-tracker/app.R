@@ -4,7 +4,22 @@ package_name <- "glasstabs"
   if (is.null(x)) y else x
 }
 
-fetch_downloads <- function(package = package_name, from = Sys.Date() - 180, to = Sys.Date()) {
+empty_downloads <- function() {
+  data.frame(
+    date = as.Date(character()),
+    package = character(),
+    count = numeric(),
+    stringsAsFactors = FALSE
+  )
+}
+
+fetch_downloads <- function(
+  package = package_name,
+  from = Sys.Date() - 180,
+  to = Sys.Date(),
+  attempts = 3L,
+  retry_wait = 1
+) {
   from <- as.Date(from)
   query <- sprintf(
     "https://cranlogs.r-pkg.org/downloads/daily/%s:%s/%s",
@@ -13,25 +28,96 @@ fetch_downloads <- function(package = package_name, from = Sys.Date() - 180, to 
     utils::URLencode(package, reserved = TRUE)
   )
 
-  response <- jsonlite::fromJSON(query, simplifyVector = FALSE)
-  stats <- response[[1]]
-  downloads <- stats$downloads
+  if (attempts < 1L) stop("attempts must be at least 1.", call. = FALSE)
+  errors <- character()
 
-  if (!length(downloads)) {
-    return(data.frame(
-      date = as.Date(character()),
-      package = character(),
-      count = numeric(),
-      stringsAsFactors = FALSE
-    ))
+  for (attempt in seq_len(attempts)) {
+    result <- tryCatch({
+      response <- jsonlite::fromJSON(query, simplifyVector = FALSE)
+      if (length(response) != 1L || !is.list(response[[1]])) {
+        stop("CRAN logs returned an unexpected response.", call. = FALSE)
+      }
+      stats <- response[[1]]
+      downloads <- stats$downloads
+      if (!length(downloads)) {
+        stop("CRAN logs returned no daily download records.", call. = FALSE)
+      }
+      data.frame(
+        date = as.Date(vapply(downloads, function(x) x$day, character(1))),
+        package = stats$package %||% package,
+        count = vapply(downloads, function(x) as.numeric(x$downloads), numeric(1)),
+        stringsAsFactors = FALSE
+      )
+    }, error = identity)
+
+    if (!inherits(result, "error")) return(result)
+    errors <- c(errors, conditionMessage(result))
+    if (attempt < attempts && retry_wait > 0) Sys.sleep(retry_wait)
   }
 
-  data.frame(
-    date = as.Date(vapply(downloads, function(x) x$day, character(1))),
-    package = stats$package %||% package,
-    count = vapply(downloads, function(x) as.numeric(x$downloads), numeric(1)),
-    stringsAsFactors = FALSE
+  stop(
+    sprintf(
+      "Could not fetch CRAN download data after %s attempts: %s",
+      attempts,
+      errors[[length(errors)]]
+    ),
+    call. = FALSE
   )
+}
+
+download_cache_path <- function() {
+  candidates <- c(
+    file.path("data", "downloads-daily.csv"),
+    file.path("tools", "download-tracker", "data", "downloads-daily.csv")
+  )
+  existing <- candidates[file.exists(candidates)]
+  if (length(existing)) existing[[1]] else candidates[[1]]
+}
+
+read_cached_downloads <- function(path = download_cache_path()) {
+  if (!file.exists(path)) return(empty_downloads())
+  cached <- utils::read.csv(path, stringsAsFactors = FALSE)
+  required <- c("date", "package", "count")
+  if (!all(required %in% names(cached))) {
+    stop("Cached download data is missing required columns.", call. = FALSE)
+  }
+  cached <- cached[required]
+  cached$date <- as.Date(cached$date)
+  cached$count <- as.numeric(cached$count)
+  cached
+}
+
+load_downloads <- function(
+  package = package_name,
+  from = Sys.Date() - 180,
+  to = Sys.Date(),
+  fetcher = fetch_downloads,
+  cache_path = download_cache_path()
+) {
+  live <- tryCatch(
+    fetcher(package = package, from = from, to = to),
+    error = identity
+  )
+  if (!inherits(live, "error")) {
+    attr(live, "data_source") <- "live"
+    return(live)
+  }
+
+  cached <- read_cached_downloads(cache_path)
+  cached <- cached[
+    cached$package == package & cached$date >= as.Date(from) & cached$date <= as.Date(to),
+    ,
+    drop = FALSE
+  ]
+  if (!nrow(cached)) {
+    stop(
+      sprintf("Live download data failed and no matching cache is available: %s", conditionMessage(live)),
+      call. = FALSE
+    )
+  }
+  attr(cached, "data_source") <- "cache"
+  attr(cached, "live_error") <- conditionMessage(live)
+  cached
 }
 
 counts_cols <- function(x) {
@@ -117,7 +203,8 @@ ui <- bs4Dash::bs4DashPage(
           shiny::tags$p(
             style = "color: #6b7280;",
             "Data source: cranlogs daily download feed."
-          )
+          ),
+          shiny::textOutput("data_status")
         )
       )
     ),
@@ -165,7 +252,19 @@ server <- function(input, output, session) {
 
   stats_data <- shiny::reactive({
     trigger()
-    fetch_downloads(from = input$from_date)
+    load_downloads(from = input$from_date)
+  })
+
+  output$data_status <- shiny::renderText({
+    stats <- stats_data()
+    if (identical(attr(stats, "data_source"), "cache")) {
+      sprintf(
+        "Showing cached data through %s because the live feed is unavailable.",
+        format(max(stats$date, na.rm = TRUE), "%Y-%m-%d")
+      )
+    } else {
+      sprintf("Showing live data through %s.", format(max(stats$date, na.rm = TRUE), "%Y-%m-%d"))
+    }
   })
 
   stats_summary <- shiny::reactive({

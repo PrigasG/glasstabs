@@ -4,6 +4,15 @@ This is the working plan for upcoming releases. It records what is promised,
 what is experimental, and what is still only an idea. A feature moves to
 `NEWS.md` when it ships.
 
+## v0.4.1 — select resilience and connected layouts
+
+The 0.4.1 line makes select inputs dependable with long labels, narrow and
+mobile layouts, light or dark themes, server-backed choices, and native Shiny
+controls used alongside glasstabs. It also connects the tab bar and content
+area more clearly while keeping detached dropdown motion available as an
+option. The shipped API and examples are documented in `NEWS.md`; remaining
+work in this roadmap is forward-looking rather than a second release log.
+
 ## v0.4.0 — responsive and accessible navigation
 
 The 0.4.0 release is about making tabs feel dependable on small screens and
@@ -78,6 +87,7 @@ These remain worthwhile, but they are outside the focused 0.4.0 release:
 
 | Version | Highlights |
 |---|---|
+| 0.4.1 | Viewport-safe select sizing, attached or detached dropdown motion, long-label tooltips, configurable labels/search/fill styling, automatic search, light-mode examples, connected tab layouts, and broader browser coverage |
 | 0.4.0 | Responsive overflow, optional swipe gestures, accessible tab semantics, reduced-motion and contrast fallbacks, independent tab and text alignment, themeable focus rings, and experimental `glassPage()` |
 | 0.3.4 | Indicator styles, vertical tabs, automatic bslib theming, square controls, server-side select search, dynamic tab management, close helpers, improved diagnostics, and broader accessibility fallbacks |
 | 0.3.1 | `glassTabCondition()`, `glasstabs_news()`, clearer errors, and container/theme fixes |

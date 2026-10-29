@@ -136,6 +136,8 @@ The select controls also expose their presentation choices directly:
 ``` r
 glassSelect(
   "industry", industry_choices,
+  theme = "auto",
+  dark_selector = "body.app-dark", # optional custom dark-mode hook
   tongue = FALSE,              # detached panel with a short fade
   label_bold = TRUE,
   label_size = "14px",
@@ -152,6 +154,10 @@ glassMultiSelect(
 `tongue = TRUE` keeps the signature attached unfurl animation. Turning it off
 does not remove motion entirely: the detached panel uses a restrained open and
 close transition and still honors reduced-motion preferences.
+
+With `theme = "auto"`, all tabs and select widgets default to Bootstrap's
+`[data-bs-theme="dark"]` signal. Supply `dark_selector` when an application
+uses a different class or attribute to announce dark mode.
 
 For a short list, the search box can stay out of the way. Both select widgets
 accept `searchable = "auto"`; search appears only when the list reaches the
