@@ -1,6 +1,10 @@
 tracker_path <- test_path("..", "..", "tools", "download-tracker", "app.R")
 
 test_that("download tracker falls back to a valid cache when cranlogs fails", {
+  skip_if(
+    !file.exists(tracker_path),
+    "download tracker source is intentionally excluded from the package tarball"
+  )
   skip_if_not_installed("bs4Dash")
   tracker <- new.env(parent = globalenv())
   sys.source(tracker_path, envir = tracker)
@@ -31,6 +35,10 @@ test_that("download tracker falls back to a valid cache when cranlogs fails", {
 })
 
 test_that("download tracker reports failure when live and cached data are unavailable", {
+  skip_if(
+    !file.exists(tracker_path),
+    "download tracker source is intentionally excluded from the package tarball"
+  )
   skip_if_not_installed("bs4Dash")
   tracker <- new.env(parent = globalenv())
   sys.source(tracker_path, envir = tracker)
