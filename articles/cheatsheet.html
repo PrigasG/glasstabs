@@ -42,7 +42,6 @@
     <li><h6 class="dropdown-header" data-toc-skip>Cheatsheet</h6></li>
     <li><a class="dropdown-item" href="../articles/cheatsheet.html">glasstabs Cheatsheet</a></li>
     <li><a class="dropdown-item" href="../articles/getting-started.html">Getting Started with glasstabs</a></li>
-    <li><a class="dropdown-item" href="../articles/posit-connect.html">Publishing a glasstabs Workflow to Posit Connect</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Widgets</h6></li>
     <li><a class="dropdown-item" href="../articles/tabs.html">Animated Tabs with glasstabs</a></li>
@@ -50,6 +49,8 @@
     <li><a class="dropdown-item" href="../articles/indicators.html">Indicator Styles, Vertical Tabs, and Auto Theming</a></li>
     <li><a class="dropdown-item" href="../articles/glassSelect.html">Single-Select Dropdown with glasstabs</a></li>
     <li><a class="dropdown-item" href="../articles/multiselect.html">Multi-Select Filter with glasstabs</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="../articles/index.html">More articles...</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -212,7 +213,7 @@ strings; they do not need to match labels.</p>
 <span>  selected <span class="op">=</span> <span class="st">"a"</span>,</span>
 <span>  wrap <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  compact <span class="op">=</span> <span class="cn">FALSE</span>,      <span class="co"># set TRUE inside dashboard cards for tighter layout</span></span>
-<span>  content_min_height <span class="op">=</span> <span class="cn">NULL</span>,  <span class="co"># default: 120px (60px when compact = TRUE); "0" for no minimum</span></span>
+<span>  content_min_height <span class="op">=</span> <span class="cn">NULL</span>,  <span class="co"># layout default: 120px (60px when compact); "0" for no minimum</span></span>
 <span>  extra_ui <span class="op">=</span> <span class="va">tags</span><span class="op">$</span><span class="fu">div</span><span class="op">(</span><span class="st">"Right side UI"</span><span class="op">)</span>,</span>
 <span>  theme <span class="op">=</span> <span class="st">"light"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -367,7 +368,8 @@ follows tab order.</p>
 <span>  selected <span class="op">=</span> <span class="st">"all"</span>,</span>
 <span>  label <span class="op">=</span> <span class="st">"Region"</span>,</span>
 <span>  placeholder <span class="op">=</span> <span class="st">"Pick a region"</span>,</span>
-<span>  searchable <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  searchable <span class="op">=</span> <span class="st">"auto"</span>,</span>
+<span>  search_threshold <span class="op">=</span> <span class="fl">6</span>,</span>
 <span>  clearable <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  include_all <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  check_style <span class="op">=</span> <span class="st">"checkbox"</span>,</span>

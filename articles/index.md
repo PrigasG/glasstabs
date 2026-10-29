@@ -9,6 +9,9 @@
 
 - [Getting Started with
   glasstabs](https://prigasg.github.io/glasstabs/articles/getting-started.md):
+
+### Deployment
+
 - [Publishing a glasstabs Workflow to Posit
   Connect](https://prigasg.github.io/glasstabs/articles/posit-connect.md):
 

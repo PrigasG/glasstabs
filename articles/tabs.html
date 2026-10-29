@@ -42,7 +42,6 @@
     <li><h6 class="dropdown-header" data-toc-skip>Cheatsheet</h6></li>
     <li><a class="dropdown-item" href="../articles/cheatsheet.html">glasstabs Cheatsheet</a></li>
     <li><a class="dropdown-item" href="../articles/getting-started.html">Getting Started with glasstabs</a></li>
-    <li><a class="dropdown-item" href="../articles/posit-connect.html">Publishing a glasstabs Workflow to Posit Connect</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Widgets</h6></li>
     <li><a class="dropdown-item" href="../articles/tabs.html">Animated Tabs with glasstabs</a></li>
@@ -50,6 +49,8 @@
     <li><a class="dropdown-item" href="../articles/indicators.html">Indicator Styles, Vertical Tabs, and Auto Theming</a></li>
     <li><a class="dropdown-item" href="../articles/glassSelect.html">Single-Select Dropdown with glasstabs</a></li>
     <li><a class="dropdown-item" href="../articles/multiselect.html">Multi-Select Filter with glasstabs</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="../articles/index.html">More articles...</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -326,7 +327,7 @@ back to the dark preset:</p>
 <span>  <span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"Tab"</span>, selected <span class="op">=</span> <span class="cn">TRUE</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"Content"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>All nine handles available in <code><a href="../reference/glass_tab_theme.html">glass_tab_theme()</a></code>:</p>
+<p>All ten handles available in <code><a href="../reference/glass_tab_theme.html">glass_tab_theme()</a></code>:</p>
 <table class="table">
 <thead><tr class="header">
 <th>Argument</th>
@@ -368,6 +369,11 @@ back to the dark preset:</p>
 <tr class="odd">
 <td><code>card_text</code></td>
 <td>Inner card text colour</td>
+</tr>
+<tr class="even">
+<td><code>mode</code></td>
+<td>Theme mode metadata (<code>"dark"</code> or
+<code>"light"</code>)</td>
 </tr>
 </tbody>
 </table>

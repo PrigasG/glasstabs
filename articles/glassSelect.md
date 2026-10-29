@@ -208,7 +208,9 @@ dropdown in the current session.
 
 ## Searchable and clearable
 
-Search is enabled by default. You can also enable a clear control.
+Search is enabled by default. Use `searchable = "auto"` when short lists
+should stay simple and search should appear only after the choices reach
+a threshold. You can also enable a clear control.
 
 ``` r
 
@@ -220,6 +222,31 @@ glassSelect(
 )
 ```
 
+For example, five categories do not need a search field when the
+threshold is six:
+
+``` r
+
+glassSelect(
+  "category",
+  c(Alpha = "alpha", Beta = "beta", Gamma = "gamma", Delta = "delta", Epsilon = "epsilon"),
+  searchable = "auto",
+  search_threshold = 6
+)
+```
+
+The same settings can change at runtime:
+
+``` r
+
+updateGlassSelect(
+  session,
+  "category",
+  searchable = "auto",
+  search_threshold = 5
+)
+```
+
 Field and motion styling can be adjusted without changing the input
 value:
 
@@ -228,6 +255,8 @@ value:
 glassSelect(
   "f",
   fruits,
+  theme = "auto",
+  dark_selector = "body.app-dark",
   tongue = FALSE,
   label_bold = TRUE,
   label_size = "14px",
@@ -238,9 +267,11 @@ glassSelect(
 `tongue = TRUE` uses the attached glass unfurl. With `FALSE`, the panel
 is detached and uses a short, native-feeling fade. The quiet search
 focus style is the default; set `search_focus_ring = TRUE` for the
-accent outline.
+accent outline. When an app uses a custom dark-mode class instead of
+Bootstrap’s `data-bs-theme`, pass that class through `dark_selector`
+while using `theme = "auto"`.
 
-To hide the search box:
+To always hide the search box:
 
 ``` r
 

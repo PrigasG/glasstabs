@@ -89,7 +89,7 @@ ui <- fluidPage(
 )
 ```
 
-On screens narrower than 600px the rail stacks back above the content
+On screens narrower than 760px the rail stacks back above the content
 automatically.
 
 ## Auto theming with bslib

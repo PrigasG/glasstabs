@@ -144,7 +144,7 @@ glassTabsUI(
   selected = "a",
   wrap = TRUE,
   compact = FALSE,      # set TRUE inside dashboard cards for tighter layout
-  content_min_height = NULL,  # default: 120px (60px when compact = TRUE); "0" for no minimum
+  content_min_height = NULL,  # layout default: 120px (60px when compact); "0" for no minimum
   extra_ui = tags$div("Right side UI"),
   theme = "light"
 )
@@ -312,7 +312,8 @@ glassSelect(
   selected = "all",
   label = "Region",
   placeholder = "Pick a region",
-  searchable = TRUE,
+  searchable = "auto",
+  search_threshold = 6,
   clearable = TRUE,
   include_all = FALSE,
   check_style = "checkbox",

@@ -269,20 +269,21 @@ glassTabsUI("nav",
 )
 ```
 
-All nine handles available in
+All ten handles available in
 [`glass_tab_theme()`](https://prigasg.github.io/glasstabs/reference/glass_tab_theme.md):
 
-| Argument          | What it controls             |
-|-------------------|------------------------------|
-| `tab_text`        | Inactive tab label colour    |
-| `tab_active_text` | Active tab label colour      |
-| `halo_bg`         | Sliding glass halo fill      |
-| `halo_border`     | Sliding glass halo border    |
-| `focus_ring`      | Keyboard focus indicator     |
-| `content_bg`      | Tab content panel background |
-| `content_border`  | Tab content panel border     |
-| `card_bg`         | Inner card background        |
-| `card_text`       | Inner card text colour       |
+| Argument          | What it controls                            |
+|-------------------|---------------------------------------------|
+| `tab_text`        | Inactive tab label colour                   |
+| `tab_active_text` | Active tab label colour                     |
+| `halo_bg`         | Sliding glass halo fill                     |
+| `halo_border`     | Sliding glass halo border                   |
+| `focus_ring`      | Keyboard focus indicator                    |
+| `content_bg`      | Tab content panel background                |
+| `content_border`  | Tab content panel border                    |
+| `card_bg`         | Inner card background                       |
+| `card_text`       | Inner card text colour                      |
+| `mode`            | Theme mode metadata (`"dark"` or `"light"`) |
 
 ## bs4Dash integration
 

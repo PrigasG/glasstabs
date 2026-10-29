@@ -32,7 +32,9 @@ glassSelect(
   label_bold = TRUE,
   label_size = "14px",
   search_focus_ring = FALSE,
-  overflow_tooltip = c("auto", "never")
+  overflow_tooltip = c("auto", "never"),
+  search_threshold = 15L,
+  dark_selector = NULL
 )
 ```
 
@@ -64,7 +66,9 @@ glassSelect(
 
 - searchable:
 
-  Logical. Show search input inside dropdown? Default `TRUE`.
+  Search visibility. Use `TRUE` (default) to always show search, `FALSE`
+  to hide it, or `"auto"` to show it only when the choice count reaches
+  `search_threshold`.
 
 - clearable:
 
@@ -173,6 +177,18 @@ glassSelect(
   or keyboard focus only when truncation is detected; `"never"` disables
   it. On touch devices, opening the dropdown remains the primary way to
   inspect the full, wrapped option text.
+
+- search_threshold:
+
+  Choice count at which `searchable = "auto"` shows the search field.
+  Default `15`.
+
+- dark_selector:
+
+  Optional CSS selector that signals dark mode (e.g. `"body.dark-mode"`
+  for bs4Dash). When provided, emits an extra scoped `<style>` block
+  that reverts colors to the dark-mode defaults whenever that selector
+  is active.
 
 ## Value
 

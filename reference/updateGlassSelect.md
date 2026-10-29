@@ -16,7 +16,9 @@ updateGlassSelect(
   check_style = NULL,
   shape = NULL,
   disabled = NULL,
-  disabled_choices = NULL
+  disabled_choices = NULL,
+  searchable = NULL,
+  search_threshold = NULL
 )
 ```
 
@@ -59,6 +61,16 @@ updateGlassSelect(
 
   Optional character vector of choice values to render as disabled.
   Defaults to `NULL`, which leaves disabled choices unchanged.
+
+- searchable:
+
+  Optional new search visibility: `TRUE`, `FALSE`, or `"auto"`. `NULL`
+  keeps the current setting.
+
+- search_threshold:
+
+  Optional new choice-count threshold used when `searchable = "auto"`.
+  `NULL` keeps the current threshold.
 
 ## Value
 

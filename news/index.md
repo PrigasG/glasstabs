@@ -4,6 +4,30 @@
 
 ### Fixes
 
+- [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md)
+  now supports `searchable = "auto"` with a configurable
+  `search_threshold`, matching the multi-select behavior. Short lists
+  can keep the search field hidden and reveal it automatically as
+  choices grow. Both settings can also be changed with
+  [`updateGlassSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassSelect.md).
+
+- Select constructors now reject invalid logical arguments instead of
+  silently treating values such as `"yes"` as `FALSE`; update helpers
+  validate sessions, disabled state, and missing selections
+  consistently.
+
+- [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md)
+  now accepts `dark_selector` for parity with tabs and multi-selects.
+  Choice-only updates preserve existing disabled rows unless
+  `disabled_choices` is explicitly supplied, and server-backed selects
+  no longer resend their already-rendered initial page during
+  registration.
+
+- Hyphenated tab ids no longer produce a false namespacing warning.
+  Initial and appended tabs now emit the same clean class names, and
+  select dropdown base positioning matches the absolute positioning used
+  while teleported.
+
 - Ellipsized select trigger text now exposes its complete value through
   a viewport-safe hover/keyboard tooltip by default. Set
   `overflow_tooltip = "never"` to disable the visual tooltip; full
@@ -20,11 +44,11 @@
   opts into the accent outline. The native-comparison lab groups shared
   settings separately from the feature controls for each demonstration.
 
-- Select dropdowns now grow beyond narrow triggers when their controls
-  or longer option labels need more room, up to a comfortable
-  viewport-aware cap. The multi-select Check / Box / Fill switcher also
-  falls back to compact text-only buttons on extremely narrow screens,
-  so Fill is never clipped.
+- Select dropdowns match their trigger width, wrap longer option labels
+  inside that shared width, and clamp safely to narrow viewports. The
+  multi-select Check / Box / Fill switcher also falls back to compact
+  text-only buttons on extremely narrow screens, so Fill is never
+  clipped.
 
 - Added `runGlassExample("light-mode")`, a dedicated light-interface
   example covering tabs, single-select, multi-select, and intentionally
@@ -172,8 +196,9 @@
   of 44px) and the tab bar sits slightly closer to the content.
 
 - [`glassTabsUI()`](https://prigasg.github.io/glasstabs/reference/glassTabsUI.md)
-  gains `content_min_height` (default `"120px"`, was a fixed 200px) to
-  control the content area’s minimum height; use `"0"` for none.
+  gains `content_min_height` (default `NULL`, using the regular 120px or
+  compact 60px layout minimum) in place of the fixed 200px minimum; use
+  `"0"` for none, and an explicitly supplied value always wins.
 
 - Tabs feel connected to their content: the active tab now shows a
   subtle inner light on its content-facing edge (bottom for horizontal
@@ -200,8 +225,8 @@
 - Fixed stale `v0.4.0` references, a placeholder GitHub username in the
   getting-started vignette, mojibake em dashes in the dashboard/bs4dash
   examples, and a wrong input id in the basic example’s narrative.
-- The pkgdown reference now indexes `closeGlassMultiSelect`,
-  `closeAllGlassSelects`, and the newly exported `%||%`.
+- The pkgdown reference now indexes `closeGlassMultiSelect` and
+  `closeAllGlassSelects`; `%||%` remains an internal helper.
 - CI now installs stable Chrome so the shinytest2 browser suite actually
   runs instead of failing on a missing browser.
 

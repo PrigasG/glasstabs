@@ -228,6 +228,11 @@ transition, or match native Shiny labels without changing server code.
 Multi-selects add `fill_colors = "single"` (default) or `"multi"` for
 filled markers.
 
+They also share automatic search. With `searchable = "auto"`, the search
+field is hidden until the number of choices reaches `search_threshold`;
+this keeps a five-category field simple while still supporting a list
+that grows later.
+
 ### Updating from the server
 
 ``` r
