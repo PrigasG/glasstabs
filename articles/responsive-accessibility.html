@@ -43,12 +43,14 @@
     <li><a class="dropdown-item" href="../articles/cheatsheet.html">glasstabs Cheatsheet</a></li>
     <li><a class="dropdown-item" href="../articles/getting-started.html">Getting Started with glasstabs</a></li>
     <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Widgets</h6></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Tabs</h6></li>
     <li><a class="dropdown-item" href="../articles/tabs.html">Animated Tabs with glasstabs</a></li>
     <li><a class="dropdown-item" href="../articles/responsive-accessibility.html">Responsive and Accessible Tabs</a></li>
     <li><a class="dropdown-item" href="../articles/indicators.html">Indicator Styles, Vertical Tabs, and Auto Theming</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Selects</h6></li>
+    <li><a class="dropdown-item" href="../articles/multiselect.html">Multi-Select with glasstabs</a></li>
     <li><a class="dropdown-item" href="../articles/glassSelect.html">Single-Select Dropdown with glasstabs</a></li>
-    <li><a class="dropdown-item" href="../articles/multiselect.html">Multi-Select Filter with glasstabs</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../articles/index.html">More articles...</a></li>
   </ul>
@@ -136,9 +138,9 @@ field only where the content needs it:</p>
 <span>  overflow_tooltip <span class="op">=</span> <span class="st">"auto"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>For <code><a href="../reference/glassSelect.html">glassSelect()</a></code>, an automatic overflow tooltip appears
-only when selected trigger text is ellipsized. For
-<code><a href="../reference/glassMultiSelect.html">glassMultiSelect()</a></code>, it appears for only the truncated
-option currently hovered inside the open dropdown, avoiding a single
+only when selected trigger text is ellipsized. Inside either open
+dropdown, a truncated option reveals a capped preview when hovered or
+reached with keyboard navigation. The multi-select avoids a single
 combined tooltip for several selections. A tap keeps its normal
 job—opening the dropdown—where option text wraps inside the
 viewport.</p>

@@ -143,6 +143,11 @@ if (interactive()) shinyApp(ui, server)
 values — use it like any other Shiny input to filter data, drive
 outputs, or trigger reactives.
 
+For the complete selection model, summaries, linked-filter pattern,
+server search, transactional updates, and migration notes, continue with
+the [multi-select
+guide](https://prigasg.github.io/glasstabs/articles/multiselect.md).
+
 For long filter names, give the field more room with `width = "240px"`
 or `width = "100%"`. With `overflow_tooltip = "auto"`, hovering a
 truncated option inside the open dropdown reveals that option alone. The
@@ -189,6 +194,9 @@ server <- function(input, output, session) {
 ------------------------------------------------------------------------
 
 ## Single-select dropdown
+
+For the full single-value API and examples, see the [single-select
+guide](https://prigasg.github.io/glasstabs/articles/glassSelect.md).
 
 ### Step 1: add a single-select input
 

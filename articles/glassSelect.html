@@ -43,12 +43,14 @@
     <li><a class="dropdown-item" href="../articles/cheatsheet.html">glasstabs Cheatsheet</a></li>
     <li><a class="dropdown-item" href="../articles/getting-started.html">Getting Started with glasstabs</a></li>
     <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Widgets</h6></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Tabs</h6></li>
     <li><a class="dropdown-item" href="../articles/tabs.html">Animated Tabs with glasstabs</a></li>
     <li><a class="dropdown-item" href="../articles/responsive-accessibility.html">Responsive and Accessible Tabs</a></li>
     <li><a class="dropdown-item" href="../articles/indicators.html">Indicator Styles, Vertical Tabs, and Auto Theming</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Selects</h6></li>
+    <li><a class="dropdown-item" href="../articles/multiselect.html">Multi-Select with glasstabs</a></li>
     <li><a class="dropdown-item" href="../articles/glassSelect.html">Single-Select Dropdown with glasstabs</a></li>
-    <li><a class="dropdown-item" href="../articles/multiselect.html">Multi-Select Filter with glasstabs</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../articles/index.html">More articles...</a></li>
   </ul>
@@ -86,6 +88,7 @@
 </h2>
 <p><code><a href="../reference/glassSelect.html">glassSelect()</a></code> is an animated single-select dropdown for
 Shiny.</p>
+<p>For filters that accept several values, see the <a href="multiselect.html">multi-select guide</a>.</p>
 <p>It behaves like a standard Shiny input:
 <code>input$&lt;inputId&gt;</code> stores the selected value as a single
 character string, or <code>NULL</code> when nothing is selected.</p>
@@ -226,11 +229,13 @@ toggled at runtime with <code><a href="../reference/updateGlassSelect.html">upda
 <div class="section level3">
 <h3 id="long-selected-labels">Long selected labels<a class="anchor" aria-label="anchor" href="#long-selected-labels"></a>
 </h3>
-<p>The default <code>overflow_tooltip = "auto"</code> adds a full-text
-tooltip only when the selected trigger text is actually shortened with
-an ellipsis. It appears on pointer hover or keyboard focus. Touch users
-can open the dropdown to read the same label wrapped inside its
-matching-width panel.</p>
+<p>The default <code>overflow_tooltip = "auto"</code> adds a label
+preview only when the selected trigger text is actually shortened with
+an ellipsis. It appears on pointer hover or keyboard focus and is capped
+for exceptionally large labels; the complete accessible name remains
+available. Touch users can open the dropdown to read the label wrapped
+inside its matching-width panel. Truncated options in the open dropdown
+also reveal a preview on hover or keyboard navigation.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">long_industries</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">"Renewable energy generation, storage, and grid-scale distribution networks"</span> <span class="op">=</span> <span class="st">"energy"</span>,</span>

@@ -144,7 +144,7 @@ glassTabsUI(
   selected = "a",
   wrap = TRUE,
   compact = FALSE,      # set TRUE inside dashboard cards for tighter layout
-  content_min_height = NULL,  # layout default: 120px (60px when compact); "0" for no minimum
+  content_min_height = NULL,  # default: 120px (60px when compact = TRUE); "0" for no minimum
   extra_ui = tags$div("Right side UI"),
   theme = "light"
 )
@@ -330,11 +330,12 @@ glassSelect(
 
 For
 [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md),
-the overflow tooltip appears for an ellipsized trigger. For
-[`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md),
-it appears only for the truncated option currently hovered inside the
-open dropdown. On touch, wrapped option text is the full-text fallback.
-Use `overflow_tooltip = "never"` to disable visual tips.
+the overflow tooltip appears for an ellipsized trigger. Inside either
+open dropdown, it appears for the truncated option currently hovered or
+reached with the keyboard; the multi-select trigger does not combine
+selected labels into a tooltip. On touch, wrapped option text is the
+full-text fallback. Use `overflow_tooltip = "never"` to disable visual
+tips.
 
 ## Tabs: inside bs4Dash
 

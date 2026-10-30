@@ -254,7 +254,8 @@ glassTabsUI("nav", theme = "auto", ...)
 ### Custom theme with `glass_tab_theme()`
 
 Supply only the values you want to change — everything else falls back
-to the dark preset:
+to the selected mode’s preset (dark by default, or light with
+`mode = "light"`):
 
 ``` r
 

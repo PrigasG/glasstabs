@@ -48,12 +48,14 @@
     <li><a class="dropdown-item" href="articles/cheatsheet.html">glasstabs Cheatsheet</a></li>
     <li><a class="dropdown-item" href="articles/getting-started.html">Getting Started with glasstabs</a></li>
     <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Widgets</h6></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Tabs</h6></li>
     <li><a class="dropdown-item" href="articles/tabs.html">Animated Tabs with glasstabs</a></li>
     <li><a class="dropdown-item" href="articles/responsive-accessibility.html">Responsive and Accessible Tabs</a></li>
     <li><a class="dropdown-item" href="articles/indicators.html">Indicator Styles, Vertical Tabs, and Auto Theming</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Selects</h6></li>
+    <li><a class="dropdown-item" href="articles/multiselect.html">Multi-Select with glasstabs</a></li>
     <li><a class="dropdown-item" href="articles/glassSelect.html">Single-Select Dropdown with glasstabs</a></li>
-    <li><a class="dropdown-item" href="articles/multiselect.html">Multi-Select Filter with glasstabs</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="articles/index.html">More articles...</a></li>
   </ul>
@@ -179,11 +181,12 @@
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="reference/glassFilterTags.html">glassFilterTags</a></span><span class="op">(</span><span class="st">"status"</span><span class="op">)</span></span></code></pre></div>
+<p>The <a href="https://prigasg.github.io/glasstabs/articles/multiselect.html">multi-select guide</a> covers selection semantics, summaries, search, linked filters, server updates, and migration from <code>selectizeInput(multiple = TRUE)</code>. The corresponding <a href="https://prigasg.github.io/glasstabs/articles/glassSelect.html">single-select guide</a> covers one-value controls.</p>
 <p>Select dropdowns always match their trigger width. The standard width is a compact <code>160px</code>; use the optional <code>width</code> argument only when an app needs more room for long labels. Both fixed and fluid CSS widths are supported and remain capped by the containing layout, so <code>width = "240px"</code> works well for a wider filter while <code>width = "100%"</code> fills the available column. Exceptionally long labels still wrap safely inside the matching panel.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/glassSelect.html">glassSelect</a></span><span class="op">(</span><span class="st">"industry"</span>, <span class="va">industry_choices</span>, width <span class="op">=</span> <span class="st">"240px"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span><span class="st">"filters"</span>, <span class="va">filter_choices</span>, width <span class="op">=</span> <span class="st">"100%"</span><span class="op">)</span></span></code></pre></div>
-<p>With <code><a href="reference/glassSelect.html">glassSelect()</a></code>, <code>overflow_tooltip = "auto"</code> (the default) reveals an ellipsized selected label on pointer hover or keyboard focus. With <code><a href="reference/glassMultiSelect.html">glassMultiSelect()</a></code>, it reveals only the truncated option currently hovered inside the open dropdown, rather than combining every selected label into one tooltip. Touch users read the wrapped option in the open dropdown. Set <code>overflow_tooltip = "never"</code> to suppress visual tooltips.</p>
+<p>With <code><a href="reference/glassSelect.html">glassSelect()</a></code>, <code>overflow_tooltip = "auto"</code> (the default) reveals an ellipsized selected label on pointer hover or keyboard focus. Inside either open dropdown, it reveals only the truncated option currently hovered or reached with keyboard navigation. Multi-select never combines every selected label into one noisy trigger tooltip. Touch users read the wrapped option in the open dropdown. Set <code>overflow_tooltip = "never"</code> to suppress visual tooltips.</p>
 <p>The select controls also expose their presentation choices directly:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/glassSelect.html">glassSelect</a></span><span class="op">(</span></span>
@@ -202,7 +205,7 @@
 <span>  fill_colors <span class="op">=</span> <span class="st">"single"</span>       <span class="co"># use "multi" for per-choice hues</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><code>tongue = TRUE</code> keeps the signature attached unfurl animation. Turning it off does not remove motion entirely: the detached panel uses a restrained open and close transition and still honors reduced-motion preferences.</p>
-<p>With <code>theme = "auto"</code>, all tabs and select widgets default to Bootstrap’s <code>[data-bs-theme="dark"]</code> signal. Supply <code>dark_selector</code> when an application uses a different class or attribute to announce dark mode.</p>
+<p>With <code>theme = "auto"</code>, all tabs and select widgets default to Bootstrap’s <code>[data-bs-theme="dark"]</code> signal. Supply <code>dark_selector</code> when an application uses a different class or attribute to announce dark mode. An explicit selector also works with <code>theme = "light"</code> for applications that switch modes later.</p>
 <p>For a short list, the search box can stay out of the way. Both select widgets accept <code>searchable = "auto"</code>; search appears only when the list reaches the chosen threshold. Five categories, for example, remain uncluttered when the threshold is six.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/glassSelect.html">glassSelect</a></span><span class="op">(</span></span>
@@ -633,6 +636,11 @@
 <td><code>input$&lt;inputId&gt;_open</code></td>
 <td><code>logical</code></td>
 <td>Whether a select dropdown is open</td>
+</tr>
+<tr>
+<td><code>input$&lt;inputId&gt;_ready</code></td>
+<td><code>logical</code></td>
+<td>Whether the select widget has finished initializing</td>
 </tr>
 <tr>
 <td><code>input$&lt;inputId&gt;</code></td>

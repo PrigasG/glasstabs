@@ -43,12 +43,14 @@
     <li><a class="dropdown-item" href="../articles/cheatsheet.html">glasstabs Cheatsheet</a></li>
     <li><a class="dropdown-item" href="../articles/getting-started.html">Getting Started with glasstabs</a></li>
     <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Widgets</h6></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Tabs</h6></li>
     <li><a class="dropdown-item" href="../articles/tabs.html">Animated Tabs with glasstabs</a></li>
     <li><a class="dropdown-item" href="../articles/responsive-accessibility.html">Responsive and Accessible Tabs</a></li>
     <li><a class="dropdown-item" href="../articles/indicators.html">Indicator Styles, Vertical Tabs, and Auto Theming</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Selects</h6></li>
+    <li><a class="dropdown-item" href="../articles/multiselect.html">Multi-Select with glasstabs</a></li>
     <li><a class="dropdown-item" href="../articles/glassSelect.html">Single-Select Dropdown with glasstabs</a></li>
-    <li><a class="dropdown-item" href="../articles/multiselect.html">Multi-Select Filter with glasstabs</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../articles/index.html">More articles...</a></li>
   </ul>
@@ -316,7 +318,8 @@ filter:</p>
 <h3 id="custom-theme-with-glass_tab_theme">Custom theme with <code>glass_tab_theme()</code><a class="anchor" aria-label="anchor" href="#custom-theme-with-glass_tab_theme"></a>
 </h3>
 <p>Supply only the values you want to change — everything else falls
-back to the dark preset:</p>
+back to the selected mode’s preset (dark by default, or light with
+<code>mode = "light"</code>):</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Change only the halo colour</span></span>
 <span><span class="fu"><a href="../reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span><span class="st">"nav"</span>,</span>

@@ -4,6 +4,13 @@
 
 ### Fixes
 
+- The pkgdown articles now give multi-select its own prominent Selects
+  entry, backed by a complete guide to selection semantics, search,
+  summaries, tag pills, linked filters, server search, transactional
+  updates, accessibility, and migration from native Shiny multi-selects.
+  Cross-links keep the single-select and multi-select documentation
+  equally discoverable.
+
 - [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md)
   now supports `searchable = "auto"` with a configurable
   `search_threshold`, matching the multi-select behavior. Short lists
@@ -11,32 +18,35 @@
   choices grow. Both settings can also be changed with
   [`updateGlassSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassSelect.md).
 
-- Select constructors now reject invalid logical arguments instead of
-  silently treating values such as `"yes"` as `FALSE`; update helpers
-  validate sessions, disabled state, and missing selections
-  consistently.
+- Select and tab constructors now reject invalid logical arguments
+  instead of silently treating values such as `"yes"` as `FALSE`; update
+  helpers validate sessions, disabled state, and missing selections
+  consistently. Choice and integer settings reject missing or
+  out-of-range values before rendering.
 
 - [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md)
-  now accepts `dark_selector` for parity with tabs and multi-selects.
-  Choice-only updates preserve existing disabled rows unless
-  `disabled_choices` is explicitly supplied, and server-backed selects
-  no longer resend their already-rendered initial page during
-  registration.
+  now honors an explicit `dark_selector` in fixed light themes as well
+  as automatic themes, matching tabs and multi-selects. Choice-only
+  updates preserve existing disabled rows unless `disabled_choices` is
+  explicitly supplied, and server-backed selects no longer resend their
+  already-rendered initial page during registration.
 
 - Hyphenated tab ids no longer produce a false namespacing warning.
   Initial and appended tabs now emit the same clean class names, and
   select dropdown base positioning matches the absolute positioning used
   while teleported.
 
-- Ellipsized select trigger text now exposes its complete value through
-  a viewport-safe hover/keyboard tooltip by default. Set
-  `overflow_tooltip = "never"` to disable the visual tooltip; full
-  accessible names remain available, and touch users can open the
-  dropdown to read the wrapped option. The formerly dark-only built-in
-  examples now include live light/dark switches and use `theme = "auto"`
-  consistently. Example apps now return standard Shiny app objects for
-  automated launchers, and an obsolete `shinyjs` scratch app was removed
-  from the installed examples.
+- Ellipsized single-select trigger text now exposes a viewport-safe
+  label preview through a hover/keyboard tooltip by default. Truncated
+  multi-select options expose the currently hovered or keyboard-active
+  option inside the open dropdown, without combining selected labels
+  into a noisy trigger tip. Set `overflow_tooltip = "never"` to disable
+  visual tooltips; full accessible names remain available, and touch
+  users can open the dropdown to read the wrapped option. The formerly
+  dark-only built-in examples now include live light/dark switches and
+  use `theme = "auto"` consistently. Example apps now return standard
+  Shiny app objects for automated launchers, and an obsolete `shinyjs`
+  scratch app was removed from the installed examples.
 
 - Select field titles now default to a distinct 14px semibold treatment
   and accept `label_size` alongside `label_bold`. Dropdown search uses a

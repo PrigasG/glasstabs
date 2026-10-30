@@ -15,7 +15,7 @@
 - [Publishing a glasstabs Workflow to Posit
   Connect](https://prigasg.github.io/glasstabs/articles/posit-connect.md):
 
-### Widgets
+### Tabs and layout
 
 - [Animated Tabs with
   glasstabs](https://prigasg.github.io/glasstabs/articles/tabs.md):
@@ -23,7 +23,10 @@
   Tabs](https://prigasg.github.io/glasstabs/articles/responsive-accessibility.md):
 - [Indicator Styles, Vertical Tabs, and Auto
   Theming](https://prigasg.github.io/glasstabs/articles/indicators.md):
+
+### Select widgets
+
+- [Multi-Select with
+  glasstabs](https://prigasg.github.io/glasstabs/articles/multiselect.md):
 - [Single-Select Dropdown with
   glasstabs](https://prigasg.github.io/glasstabs/articles/glassSelect.md):
-- [Multi-Select Filter with
-  glasstabs](https://prigasg.github.io/glasstabs/articles/multiselect.md):

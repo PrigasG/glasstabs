@@ -63,12 +63,11 @@ glassSelect(
 For
 [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md),
 an automatic overflow tooltip appears only when selected trigger text is
-ellipsized. For
-[`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md),
-it appears for only the truncated option currently hovered inside the
-open dropdown, avoiding a single combined tooltip for several
-selections. A tap keeps its normal job—opening the dropdown—where option
-text wraps inside the viewport.
+ellipsized. Inside either open dropdown, a truncated option reveals a
+capped preview when hovered or reached with keyboard navigation. The
+multi-select avoids a single combined tooltip for several selections. A
+tap keeps its normal job—opening the dropdown—where option text wraps
+inside the viewport.
 
 ## Choosing the overflow style
 

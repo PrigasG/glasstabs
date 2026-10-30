@@ -189,8 +189,8 @@ glassMultiSelect(
 
   Logical. When `TRUE` (default), the dropdown attaches to the trigger
   and uses the signature tongue unfurl/retract animation. Set to `FALSE`
-  for a detached, immediately opening panel that sits more naturally
-  beside native Shiny inputs.
+  for a detached panel with a short fade that sits more naturally beside
+  native Shiny inputs.
 
 - label_bold:
 

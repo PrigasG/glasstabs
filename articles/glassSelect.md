@@ -5,6 +5,9 @@
 [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md)
 is an animated single-select dropdown for Shiny.
 
+For filters that accept several values, see the [multi-select
+guide](https://prigasg.github.io/glasstabs/articles/multiselect.md).
+
 It behaves like a standard Shiny input: `input$<inputId>` stores the
 selected value as a single character string, or `NULL` when nothing is
 selected.
@@ -157,10 +160,13 @@ glassSelect("region_dc", fruits, disabled_choices = "banana")
 
 ### Long selected labels
 
-The default `overflow_tooltip = "auto"` adds a full-text tooltip only
-when the selected trigger text is actually shortened with an ellipsis.
-It appears on pointer hover or keyboard focus. Touch users can open the
-dropdown to read the same label wrapped inside its matching-width panel.
+The default `overflow_tooltip = "auto"` adds a label preview only when
+the selected trigger text is actually shortened with an ellipsis. It
+appears on pointer hover or keyboard focus and is capped for
+exceptionally large labels; the complete accessible name remains
+available. Touch users can open the dropdown to read the label wrapped
+inside its matching-width panel. Truncated options in the open dropdown
+also reveal a preview on hover or keyboard navigation.
 
 ``` r
 
