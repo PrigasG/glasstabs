@@ -52,6 +52,13 @@ articles:
     contents:
       - modules
       - linked-filters
+      - migrating
+  - title: Troubleshooting
+    contents:
+      - troubleshooting
+  - title: Examples
+    contents:
+      - examples-gallery
 
 reference:
   - title: Setup

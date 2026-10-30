@@ -33,6 +33,80 @@ packageVersion("glasstabs")
 
 Installing from GitHub replaces the installed copy on your machine. For most people, the CRAN installation above is the simpler choice.
 
+## Quick starts
+
+One widget at a time. Each example below is a complete app; the
+[website](https://prigasg.github.io/glasstabs/) has a focused guide
+for each widget, and the example gallery lists every built-in demo.
+
+Tabs only:
+
+``` r
+library(shiny)
+library(glasstabs)
+
+ui <- fluidPage(
+  useGlassTabs(),
+  glassTabsUI(
+    "main",
+    glassTabPanel("overview", "Overview", selected = TRUE, h3("Overview")),
+    glassTabPanel("details", "Details", h3("Details"))
+  )
+)
+
+server <- function(input, output, session) {
+  active_tab <- glassTabsServer("main")
+}
+
+shinyApp(ui, server)
+```
+
+Single-select only:
+
+``` r
+library(shiny)
+library(glasstabs)
+
+ui <- fluidPage(
+  useGlassTabs(),
+  glassSelect(
+    "fruit",
+    c(Apple = "apple", Banana = "banana", Cherry = "cherry"),
+    label = "Fruit"
+  ),
+  verbatimTextOutput("out")
+)
+
+server <- function(input, output, session) {
+  output$out <- renderPrint(input$fruit)
+}
+
+shinyApp(ui, server)
+```
+
+Multi-select only:
+
+``` r
+library(shiny)
+library(glasstabs)
+
+ui <- fluidPage(
+  useGlassTabs(),
+  glassMultiSelect(
+    "fruit",
+    c(Apple = "apple", Banana = "banana", Cherry = "cherry"),
+    label = "Fruit"
+  ),
+  verbatimTextOutput("out")
+)
+
+server <- function(input, output, session) {
+  output$out <- renderPrint(input$fruit)
+}
+
+shinyApp(ui, server)
+```
+
 ## A complete app
 
 Call `useGlassTabs()` once in the UI, then compose the widgets like ordinary Shiny controls. This app places a filter beside two tabs and displays the current tab and selection.

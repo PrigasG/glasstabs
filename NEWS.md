@@ -1,5 +1,16 @@
 # glasstabs 0.4.1
 
+0.4.1 is a stabilization release: the dropdowns keep their look and
+gain predictable behavior. Highlights: the tongue dropdown (the panel
+unfurls flush from the field), accessible chrome controls (real
+buttons with arrow-key navigation and full ARIA semantics), selection
+correctness (one Select-all scope, server disabled choices, an "All"
+row that survives updates), server reliability (value search,
+sequenced responses, a stuck-search guard, indexed filtering), and a
+documentation reorganization (selection semantics, server precision,
+module and linked-filter recipes, troubleshooting, migration, and an
+example gallery). The detailed fixes follow.
+
 ## Fixes
 
 * The pkgdown articles now give multi-select its own prominent Selects entry,

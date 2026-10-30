@@ -109,3 +109,25 @@ test_that("server-limit wording agrees across roxygen, Rd, and guides", {
   expect_match(guide, "bounded, not paginated", fixed = TRUE)
   expect_match(guide, "server_limit", fixed = TRUE)
 })
+
+test_that("pkgdown exposes the troubleshooting, migration, and gallery articles", {
+  pkgdown_path <- test_path("..", "..", "_pkgdown.yml")
+  skip_if_not(file.exists(pkgdown_path), "pkgdown config is excluded from the package tarball")
+  pkgdown <- paste(
+    readLines(pkgdown_path, warn = FALSE),
+    collapse = "\n"
+  )
+  expect_match(pkgdown, "troubleshooting", fixed = TRUE)
+  expect_match(pkgdown, "migrating", fixed = TRUE)
+  expect_match(pkgdown, "examples-gallery", fixed = TRUE)
+})
+
+test_that("README offers one quick start per widget", {
+  readme_path <- test_path("..", "..", "README.md")
+  skip_if_not(file.exists(readme_path), "README is excluded from the installed test bundle")
+  readme <- paste(readLines(readme_path, warn = FALSE), collapse = "\n")
+  expect_match(readme, "## Quick starts", fixed = TRUE)
+  expect_match(readme, "glassTabsUI(", fixed = TRUE)
+  expect_match(readme, "glassSelect(", fixed = TRUE)
+  expect_match(readme, "glassMultiSelect(", fixed = TRUE)
+})

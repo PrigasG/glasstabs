@@ -25,6 +25,13 @@ selection controls:
 
 All widgets work in plain `fluidPage()` and in bs4Dash. They can be used
 together or independently.
+
+**Start here, by task.** Only need tabs? Read the tabs article.
+Only need a dropdown? Read the single-select or multi-select guide.
+Building reusable filters? Read the modules and linked-filters
+recipes. Something broken? Read troubleshooting first — most entries
+are configuration choices, not bugs. The example gallery lists a
+runnable demo for each question above.
 ---
 
 ## Installation

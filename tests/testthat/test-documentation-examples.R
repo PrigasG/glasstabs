@@ -33,7 +33,14 @@ extract_rmd_chunks <- function(path) {
 }
 
 test_that("documentation example chunks parse and runnable chunks execute", {
-  articles <- c("modules.Rmd", "linked-filters.Rmd", "multiselect.Rmd")
+  articles <- c(
+    "modules.Rmd",
+    "linked-filters.Rmd",
+    "multiselect.Rmd",
+    "troubleshooting.Rmd",
+    "migrating.Rmd",
+    "examples-gallery.Rmd"
+  )
   paths <- test_path("..", "..", "vignettes", articles)
   skip_if_not(
     all(file.exists(paths)),
