@@ -26,11 +26,8 @@ The GitHub Actions R CMD check matrix passes on macOS, Windows, and three
 Linux R versions.
 
 On Windows 11 with R 4.5.1, `R CMD check --as-cran --no-manual` reports
-0 errors, 0 warnings, and 0 notes with remote CRAN incoming checks disabled.
+0 errors, 0 warnings, and 0 notes with remote CRAN incoming checks enabled
+after the updated pkgdown site was published.
 The PDF manual check passed separately. The local HTML manual check was
 blocked by an unavailable Rtools `tidy.exe`, rather than a package finding.
-
-Before CRAN submission, deploy the updated pkgdown site and rerun the full
-remote URL check: five newly linked articles currently return 404 on the
-pre-release site.
 
