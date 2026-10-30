@@ -101,7 +101,7 @@
 <p>Install the CRAN release:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"glasstabs"</span><span class="op">)</span></span></code></pre></div>
-<p>Install the development version from GitHub when you want changes that are not yet available in the CRAN release:</p>
+<p>To install directly from the current GitHub source:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"PrigasG/glasstabs@main"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"glasstabs"</span><span class="op">)</span></span></code></pre></div>
@@ -396,7 +396,7 @@
 <div class="section level2">
 <h2 id="large-choice-sets">Large choice sets<a class="anchor" aria-label="anchor" href="#large-choice-sets"></a>
 </h2>
-<p>For hundreds or thousands of choices, keep the full vector on the server and send a small page of matches to the browser.</p>
+<p>For hundreds or thousands of choices, keep the full vector on the server and send up to <code>server_limit</code> matching choices to the browser for each search.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">many_choices</span> <span class="op">&lt;-</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"value-%04d"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">2000</span><span class="op">)</span>,</span>
@@ -448,7 +448,7 @@
 </tr>
 </tbody>
 </table>
-<p>Built-in examples include <code>basic</code>, <code>bs4dash</code>, <code>bslib</code>, <code>connect-workflow</code>, <code>dashboard</code>, <code>indicators</code>, <code>light-mode</code>, <code>native-comparison</code>, <code>server-select</code>, <code>smoke-test</code>, <code>square-corners</code>, <code>stress-test</code>, and <code>theme-switcher</code>. The <code>native-comparison</code> lab places native Shiny and glasstabs fields side by side, including an intentionally truncated selected label and live controls for width, tongue motion, labels, search focus, filled colors, and overflow tooltips. The dedicated light-mode example includes long select labels for checking adaptive dropdown sizing. The theme-switcher example flips every select between dark and light with one switch, and exercises long category names, wide text in a narrow phone frame, and a bottom-of-page dropdown that must flip above the field. The Connect workflow doubles as a v0.4.1 test lab, with the responsive, keyboard, touch, dynamic-tab, badge, theme, and page-wrapper checks collected in one app.</p>
+<p>Built-in examples include <code>basic</code>, <code>bs4dash</code>, <code>bslib</code>, <code>connect-workflow</code>, <code>dashboard</code>, <code>indicators</code>, <code>light-mode</code>, <code>native-comparison</code>, <code>server-select</code>, <code>smoke-test</code>, <code>square-corners</code>, <code>stress-test</code>, and <code>theme-switcher</code>. The <code>native-comparison</code> lab places native Shiny and glasstabs fields side by side, including an intentionally truncated selected label and live controls for width, tongue motion, labels, search focus, filled colors, and overflow tooltips. The dedicated light-mode example includes long select labels for checking adaptive dropdown sizing. The theme-switcher example flips every select between dark and light with one switch, and exercises long category names, wide text in a narrow phone frame, and a bottom-of-page dropdown that must flip above the field. The Connect workflow brings responsive, keyboard, touch, dynamic-tab, badge, theme, and page-wrapper features together in one app.</p>
 </div>
 <div class="section level3">
 <h3 id="tab-widget">Tab widget<a class="anchor" aria-label="anchor" href="#tab-widget"></a>

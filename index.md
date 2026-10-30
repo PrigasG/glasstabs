@@ -26,8 +26,7 @@ Install the CRAN release:
 install.packages("glasstabs")
 ```
 
-Install the development version from GitHub when you want changes that
-are not yet available in the CRAN release:
+To install directly from the current GitHub source:
 
 ``` r
 
@@ -456,7 +455,8 @@ conditionalPanel(
 ## Large choice sets
 
 For hundreds or thousands of choices, keep the full vector on the server
-and send a small page of matches to the browser.
+and send up to `server_limit` matching choices to the browser for each
+search.
 
 ``` r
 
@@ -499,9 +499,9 @@ tooltips. The dedicated light-mode example includes long select labels
 for checking adaptive dropdown sizing. The theme-switcher example flips
 every select between dark and light with one switch, and exercises long
 category names, wide text in a narrow phone frame, and a bottom-of-page
-dropdown that must flip above the field. The Connect workflow doubles as
-a v0.4.1 test lab, with the responsive, keyboard, touch, dynamic-tab,
-badge, theme, and page-wrapper checks collected in one app.
+dropdown that must flip above the field. The Connect workflow brings
+responsive, keyboard, touch, dynamic-tab, badge, theme, and page-wrapper
+features together in one app.
 
 ### Tab widget
 
