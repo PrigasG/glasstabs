@@ -1874,11 +1874,25 @@ test_that("browser: keyboard navigation reaches chrome rows and activates them",
   app$wait_for_js("document.activeElement.getAttribute('data-style') === 'filled'")
   press("ArrowDown")
   app$wait_for_js("document.activeElement.id === 'short_multi-all'")
-  # A synthetic keydown does not trigger a native button click, so activation
-  # itself is exercised with .click(); native Enter/Space activation is the
-  # browser's contract for a real <button>. Focus reachability above is what
-  # only keyboard navigation can prove.
-  app$get_js("document.activeElement.click(); return true;")
+  # Activation clicks the explicit target, not activeElement: focus is
+  # already proven by the await above, and an explicit target keeps a
+  # focus drift from silently activating the wrong control. The DOM
+  # assertion comes first: it distinguishes a click-handler failure (DOM
+  # unchanged) from a Shiny-sync failure (DOM changed, value stale).
+  # NOTE: shinytest2 wraps get_js scripts in a bare block, so a bare
+  # `return` outside a function is a syntax error that get_js swallows
+  # as NULL — the previous version's clicks never ran, which is why
+  # both value assertions failed with unchanged values on CI run
+  # 40996074673. Every get_js script here is an IIFE for that reason.
+  app$get_js("
+    (function() {
+      document.querySelector('#short_multi-all').click();
+      return true;
+    })()
+  ")
+  app$wait_for_js("
+    document.querySelector('#short_multi-all').getAttribute('aria-checked') === 'true'
+  ")
   app$wait_for_idle()
   expect_setequal(
     app$get_value(input = "short_multi"),
@@ -1902,7 +1916,15 @@ test_that("browser: keyboard navigation reaches chrome rows and activates them",
   active_option_is("#fruit-dropdown", "cherry")
   key_to("#fruit-trigger", "ArrowDown")
   app$wait_for_js("document.activeElement.id === 'fruit-clear'")
-  app$get_js("document.activeElement.click(); return true;")
+  app$get_js("
+    (function() {
+      document.querySelector('#fruit-clear').click();
+      return true;
+    })()
+  ")
+  app$wait_for_js("
+    document.querySelector('#fruit-label').textContent === 'Select an option'
+  ")
   app$wait_for_idle()
   expect_null(app$get_value(input = "fruit"))
 })
