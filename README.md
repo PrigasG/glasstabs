@@ -16,12 +16,6 @@ glasstabs gives Shiny apps polished navigation and filtering without asking you 
 - `glassSelect()` for a searchable single-select input
 - `glassMultiSelect()` for multi-select filters with optional tag pills
 
-## Preview
-
-![glasstabs dropdown unfurling from its field](man/figures/demo.gif)
-
-A select panel unfurls from its field like a tongue: attached flush, squared off at the join, and flipping above when there is no room below.
-
 ## Installation
 
 Install the CRAN release:
@@ -73,7 +67,7 @@ The selected value is available at `input$fruit` (`NULL` when nothing is selecte
 ``` r
 glassTabsUI(
   "reports",
-  glassTabPanel("summary", "Summary", selected = TRUE, summary_ui),
+  glassTabPanel("summary", "Summary", selected = TRUE, p("Summary content")),
   glassTabPanel("table", "Table", tableOutput("results")),
   glassTabPanel("notes", "Notes", textAreaInput("notes", NULL)),
   indicator = "underline",
@@ -83,7 +77,7 @@ glassTabsUI(
 
 The active tab is available at `input[["reports-active_tab"]]`, and `glassTabsServer("reports")` returns it as a reactive.
 
-**Single-select.** `glassSelect()` behaves like a standard Shiny input with search, an optional clear button, and a panel that always matches the trigger width (long labels wrap inside it). An empty-string value is an ordinary choice value, distinct from clearing to `NULL`.
+**Single-select.** `glassSelect()` behaves like a standard Shiny input with search, an optional clear button, and a panel that always matches the trigger width (long labels wrap inside it). The panel unfurls from its field like a tongue: attached flush, squared off at the join, and flipping above when there is no room below. An empty-string value is an ordinary choice value, distinct from clearing to `NULL`.
 
 ``` r
 glassSelect(
@@ -110,14 +104,37 @@ glassFilterTags("status")
 **Server-side search.** For hundreds or thousands of choices, keep the full vector on the server and send a small bounded slice of matches to the browser. The widget takes `server = TRUE` and a matching helper answers each search:
 
 ``` r
+library(shiny)
+library(glasstabs)
+
+many_choices <- stats::setNames(
+  sprintf("value-%04d", 1:2000),
+  sprintf("Choice %04d", 1:2000)
+)
+
 ui <- fluidPage(
   useGlassTabs(),
-  glassSelect("item", many_choices, server = TRUE, server_limit = 30)
+  glassSelect(
+    "item",
+    many_choices,
+    server = TRUE,
+    server_limit = 30
+  ),
+  verbatimTextOutput("selected")
 )
 
 server <- function(input, output, session) {
-  glassSelectServer("item", many_choices, session = session, limit = 30)
+  glassSelectServer(
+    "item",
+    many_choices,
+    session = session,
+    limit = 30
+  )
+
+  output$selected <- renderPrint(input$item)
 }
+
+shinyApp(ui, server)
 ```
 
 `glassMultiSelectServer()` is the multi-select counterpart. Results are bounded, not paginated.
@@ -149,7 +166,7 @@ Shared by both select widgets:
 - `shape = "rounded"` (`"square"` sits better next to native inputs)
 - `check_style = "checkbox"` (`"check-only"`, `"filled"`)
 - `searchable = TRUE` (always show search; `"auto"` shows it only at `search_threshold = 15` choices, `FALSE` hides it)
-- `width = NULL` (trigger width, floored at 160px; the panel always matches it)
+- `width = NULL` (trigger width; uses a compact 160px default width; the panel always matches it)
 - `tongue = TRUE` (attached unfurl animation; `FALSE` is a detached fade)
 - `label_size = "14px"`, `label_bold = TRUE`, `search_focus_ring = FALSE`, `overflow_tooltip = "auto"`
 - `server = FALSE`, `server_limit = 50`, `server_min_chars = 0`
