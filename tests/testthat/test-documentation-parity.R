@@ -143,11 +143,11 @@ test_that("pkgdown exposes the troubleshooting, migration, and gallery articles"
   expect_match(pkgdown, "examples-gallery", fixed = TRUE)
 })
 
-test_that("README offers one quick start per widget", {
+test_that("README offers a quick start and names all three widgets", {
   readme_path <- test_path("..", "..", "README.md")
   skip_if_not(file.exists(readme_path), "README is excluded from the installed test bundle")
   readme <- paste(readLines(readme_path, warn = FALSE), collapse = "\n")
-  expect_match(readme, "## Quick starts", fixed = TRUE)
+  expect_match(readme, "## Quick Start", fixed = TRUE)
   expect_match(readme, "glassTabsUI(", fixed = TRUE)
   expect_match(readme, "glassSelect(", fixed = TRUE)
   expect_match(readme, "glassMultiSelect(", fixed = TRUE)
