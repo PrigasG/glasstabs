@@ -24,7 +24,7 @@ Install the CRAN release:
 install.packages("glasstabs")
 ```
 
-Install the development version from GitHub when you want changes that are not yet available in the CRAN release:
+To install directly from the current GitHub source:
 
 ``` r
 pak::pak("PrigasG/glasstabs@main")
@@ -355,7 +355,7 @@ conditionalPanel(
 
 ## Large choice sets
 
-For hundreds or thousands of choices, keep the full vector on the server and send a small page of matches to the browser.
+For hundreds or thousands of choices, keep the full vector on the server and send up to `server_limit` matching choices to the browser for each search.
 
 ``` r
 many_choices <- stats::setNames(
@@ -386,7 +386,7 @@ server <- function(input, output, session) {
 | `runGlassExample(example)` | Launch a built-in example app (`runGlassExample()` lists all available apps) |
 | `glasstabs_news()` | Print the package changelog to the R console |
 
-Built-in examples include `basic`, `bs4dash`, `bslib`, `connect-workflow`, `dashboard`, `indicators`, `light-mode`, `native-comparison`, `server-select`, `smoke-test`, `square-corners`, `stress-test`, and `theme-switcher`. The `native-comparison` lab places native Shiny and glasstabs fields side by side, including an intentionally truncated selected label and live controls for width, tongue motion, labels, search focus, filled colors, and overflow tooltips. The dedicated light-mode example includes long select labels for checking adaptive dropdown sizing. The theme-switcher example flips every select between dark and light with one switch, and exercises long category names, wide text in a narrow phone frame, and a bottom-of-page dropdown that must flip above the field. The Connect workflow doubles as a v0.4.1 test lab, with the responsive, keyboard, touch, dynamic-tab, badge, theme, and page-wrapper checks collected in one app.
+Built-in examples include `basic`, `bs4dash`, `bslib`, `connect-workflow`, `dashboard`, `indicators`, `light-mode`, `native-comparison`, `server-select`, `smoke-test`, `square-corners`, `stress-test`, and `theme-switcher`. The `native-comparison` lab places native Shiny and glasstabs fields side by side, including an intentionally truncated selected label and live controls for width, tongue motion, labels, search focus, filled colors, and overflow tooltips. The dedicated light-mode example includes long select labels for checking adaptive dropdown sizing. The theme-switcher example flips every select between dark and light with one switch, and exercises long category names, wide text in a narrow phone frame, and a bottom-of-page dropdown that must flip above the field. The Connect workflow brings responsive, keyboard, touch, dynamic-tab, badge, theme, and page-wrapper features together in one app.
 
 ### Tab widget
 
