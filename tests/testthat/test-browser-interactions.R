@@ -2123,7 +2123,7 @@ test_that("browser: real Enter and Space activate chrome controls", {
 
   # Single-select: real Enter clears, then real Space clears after
   # re-selecting, each time reaching the placeholder and NULL.
-  key_to("#fruit-trigger", "Enter")
+  app$click(selector = "#fruit-trigger")
   app$wait_for_js("document.querySelector('#fruit-dropdown.open') !== null")
   key_to("#fruit-trigger", "ArrowDown")
   active_option_is("#fruit-dropdown", "banana")
@@ -2138,12 +2138,12 @@ test_that("browser: real Enter and Space activate chrome controls", {
   app$wait_for_idle()
   expect_null(app$get_value(input = "fruit"))
 
-  app$click(selector = "#fruit-trigger")
+  # Clearing keeps the panel open; clicking its trigger here would close it.
   app$wait_for_js("document.querySelector('#fruit-dropdown.open') !== null")
   app$click(selector = "#fruit-dropdown .gt-gs-option[data-value='apple']")
   app$wait_for_idle()
   expect_equal(app$get_value(input = "fruit"), "apple")
-  key_to("#fruit-trigger", "Enter")
+  app$click(selector = "#fruit-trigger")
   app$wait_for_js("document.querySelector('#fruit-dropdown.open') !== null")
   key_to("#fruit-trigger", "ArrowDown")
   active_option_is("#fruit-dropdown", "banana")
