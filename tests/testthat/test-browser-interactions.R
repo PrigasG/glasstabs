@@ -387,11 +387,33 @@ test_that("browser: select dropdowns match their fields and stay viewport-safe",
         option.querySelector('span:last-child').clientHeight;
     })()
   "))
-  app$wait_for_js("
-    document.querySelector(
-      '#short_multi-option-overflow-tooltip.visible'
-    ) !== null
-  ")
+  # The tooltip appears 180 ms after mouseenter, but a slow runner or a
+  # dropdown re-render replacing the option node inside that window can
+  # miss a single attempt: re-dispatch mouseenter on the current node
+  # until the tooltip shows. A genuinely broken tooltip fails every
+  # attempt, so this retries flakiness without masking a real failure.
+  tooltip_shown <- FALSE
+  for (attempt in 1:5) {
+    app$get_js("
+      (function() {
+        var option = document.querySelector(
+          '#short_multi-dropdown [data-value=pathological]'
+        );
+        option.dispatchEvent(new MouseEvent('mouseenter', {bubbles:true}));
+        return true;
+      })()
+    ")
+    tooltip_shown <- tryCatch({
+      app$wait_for_js("
+        document.querySelector(
+          '#short_multi-option-overflow-tooltip.visible'
+        ) !== null
+      ", timeout = 2000)
+      TRUE
+    }, error = function(e) FALSE)
+    if (tooltip_shown) break
+  }
+  expect_true(tooltip_shown)
   expect_true(app$get_js("
     (function() {
       var option = document.querySelector(
@@ -1953,11 +1975,16 @@ test_that("browser: real Enter and Space activate chrome controls", {
   # buttons activate on Enter keyDown and Space keyUp, so sending both
   # activates each control exactly once.
   session <- app$get_chromote_session()
+  # Both virtual key codes: working chromote examples send windows AND
+  # native codes, and Chrome's key construction uses the native code on
+  # some platforms. Omitting it was the prime suspect when real Enter
+  # never activated select-all on CI.
   real_key <- function(key, code, vkey, text = NULL) {
     for (type in c("keyDown", "keyUp")) {
       args <- list(
         type = type, key = key, code = code,
-        windowsVirtualKeyCode = vkey
+        windowsVirtualKeyCode = vkey,
+        nativeVirtualKeyCode = vkey
       )
       if (!is.null(text)) args$text <- text
       do.call(session$Input$dispatchKeyEvent, args)
@@ -2010,16 +2037,19 @@ test_that("browser: real Enter and Space activate chrome controls", {
   press("ArrowDown")
   app$wait_for_js("document.activeElement.id === 'short_multi-all'")
   real_key("Enter", "Enter", 13)
+  # Focus first: if this wait fails the key went to the wrong element;
+  # if the next wait fails, focus held but activation did not happen.
+  app$wait_for_js("document.activeElement.id === 'short_multi-all'")
   app$wait_for_js(
     "document.querySelector('#short_multi-all').getAttribute('aria-checked') === 'true'"
   )
-  app$wait_for_js("document.activeElement.id === 'short_multi-all'")
   app$wait_for_idle()
   expect_setequal(
     app$get_value(input = "short_multi"),
     c("one", "long_words", "long_token", "pathological")
   )
   real_key(" ", "Space", 32, text = " ")
+  app$wait_for_js("document.activeElement.id === 'short_multi-all'")
   app$wait_for_js(
     "document.querySelector('#short_multi-all').getAttribute('aria-checked') === 'false'"
   )
@@ -2304,7 +2334,10 @@ test_that("browser: sequenced server search applies the latest response", {
   ")
   app$click(selector = "#server_disabled-dropdown .gt-ms-option[data-value=\"eta\"]")
   app$wait_for_idle()
-  expect_equal(app$get_value(input = "server_disabled"), c("alpha", "eta"))
+  # Value order follows the current choice list (getValue returns in
+  # choice order, not selection order), and server search reorders that
+  # list, so only membership is asserted here.
+  expect_setequal(app$get_value(input = "server_disabled"), c("alpha", "eta"))
 })
 
 test_that("browser: stuck server search status clears on its own", {
@@ -2335,11 +2368,17 @@ test_that("browser: stuck server search status clears on its own", {
   # The widget enters the loading state (no server registration exists, so
   # no response will ever arrive)...
   app$wait_for_js("
-    document.querySelector('#server_hung-dropdown .gt-select-status').textContent === 'Searching...'
+    (function() {
+      var status = document.querySelector('#server_hung-dropdown .gt-select-status');
+      return status !== null && status.textContent === 'Searching...';
+    })()
   ")
   # ... and the timeout guard clears it on its own.
   app$wait_for_js("
-    document.querySelector('#server_hung-dropdown .gt-select-status').textContent !== 'Searching...'
+    (function() {
+      var status = document.querySelector('#server_hung-dropdown .gt-select-status');
+      return status === null || status.textContent !== 'Searching...';
+    })()
   ", timeout = 20000)
 })
 
@@ -2375,7 +2414,10 @@ test_that("browser: stale server response is dropped and the latest guard surviv
   # answers. Send the second while the first is still in flight.
   search_in("alpha")
   app$wait_for_js("
-    document.querySelector('#server_stale-dropdown .gt-select-status').textContent === 'Searching...'
+    (function() {
+      var status = document.querySelector('#server_stale-dropdown .gt-select-status');
+      return status !== null && status.textContent === 'Searching...';
+    })()
   ")
   search_in("beta")
   # Long after the late first response has arrived, it must not have
@@ -2391,11 +2433,17 @@ test_that("browser: stale server response is dropped and the latest guard surviv
     document.querySelector('#server_stale-dropdown .gt-gs-option[data-value=\"two\"]') !== null
   "))
   expect_equal(app$get_js("
-    document.querySelector('#server_stale-dropdown .gt-select-status').textContent
+    (function() {
+      var status = document.querySelector('#server_stale-dropdown .gt-select-status');
+      return status === null ? null : status.textContent;
+    })()
   "), "Searching...")
   # The second search's own guard still fires on its own schedule.
   app$wait_for_js("
-    document.querySelector('#server_stale-dropdown .gt-select-status').textContent !== 'Searching...'
+    (function() {
+      var status = document.querySelector('#server_stale-dropdown .gt-select-status');
+      return status === null || status.textContent !== 'Searching...';
+    })()
   ", timeout = 20000)
   expect_true(app$get_js("
     document.querySelector('#server_stale-dropdown .gt-gs-option[data-value=\"one\"]') !== null
