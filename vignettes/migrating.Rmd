@@ -66,6 +66,8 @@ server <- function(input, output, session) {
     data[data$region %in% input$region, , drop = FALSE]
   })
 }
+
+shinyApp(ui, server)
 ```
 
 After, with glasstabs. The downstream filter is untouched:
@@ -73,6 +75,12 @@ After, with glasstabs. The downstream filter is untouched:
 ```{r run-glasstabs-after}
 library(shiny)
 library(glasstabs)
+
+regions <- c(North = "north", South = "south", East = "east")
+data <- data.frame(
+  region = c("north", "south", "east", "north"),
+  cases = c(12, 8, 5, 3)
+)
 
 ui <- fluidPage(
   useGlassTabs(),

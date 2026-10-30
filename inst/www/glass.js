@@ -3155,7 +3155,8 @@
     if (hasOwn(data, 'selected')) {
       var sel = data.selected;
       if (Array.isArray(sel)) sel = sel.length ? sel[0] : null;
-      if (sel === '') sel = null;
+      /* "" is an ordinary choice value, not "cleared": the cleared state
+         is null (or an empty array from the R updater's character(0)). */
       ctrl.setValue(sel, { notify: false });
       shouldCommit = true;
     }

@@ -2303,3 +2303,40 @@ test_that("browser: empty-string choice value is distinct from cleared", {
     document.querySelector('#empty_val-label').textContent
   "), "Select an option")
 })
+
+test_that("browser: updateGlassSelect can select an empty-string value", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-empty-value-update",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+  app$click(selector = "#empty_val-trigger")
+  app$wait_for_js("document.querySelector('#empty_val-dropdown.open') !== null")
+  app$click(selector = "#empty_val-dropdown .gt-gs-option[data-value=\"active\"]")
+  app$wait_for_idle()
+  expect_equal(app$get_value(input = "empty_val"), "active")
+  # Select the empty-string choice through the server update path, not a
+  # click: the update handler used to convert "" to NULL before the
+  # controller ever saw it.
+  app$click(selector = "#empty_val_update_empty")
+  app$wait_for_idle()
+  expect_equal(app$get_value(input = "empty_val"), "")
+  expect_equal(app$get_js("
+    document.querySelector('#empty_val-label').textContent
+  "), "All statuses")
+  # Clearing is still a distinct state.
+  app$click(selector = "#empty_val-clear")
+  app$wait_for_idle()
+  expect_null(app$get_value(input = "empty_val"))
+  expect_equal(app$get_js("
+    document.querySelector('#empty_val-label').textContent
+  "), "Select an option")
+})

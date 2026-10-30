@@ -124,6 +124,7 @@ ui <- fluidPage(
       selected = "",
       clearable = TRUE
     ),
+    actionButton("empty_val_update_empty", "Set empty via update"),
     glassMultiSelect(
       "cats",
       choices,
@@ -364,6 +365,10 @@ server <- function(input, output, session) {
       )
     )
   }, ignoreInit = TRUE)
+
+  observeEvent(input$empty_val_update_empty, {
+    updateGlassSelect(session, "empty_val", selected = "")
+  })
 
   output$fruit_open_state <- renderText({
     if (isTRUE(input$fruit_open)) "open" else "closed"

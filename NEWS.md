@@ -219,6 +219,9 @@ example gallery). The detailed fixes follow.
   current results or disarm the latest search's loading guard.
 * Empty-string choice values are now ordinary values in `glassSelect()`:
   selecting one reports `""`, while clearing the field reports `NULL`.
+* `updateGlassSelect()` with `selected = ""` now selects the
+  empty-string choice instead of clearing: the server-update path
+  still converted `""` to `NULL` before the controller saw it.
 
 ## Docs and examples
 
@@ -234,6 +237,9 @@ example gallery). The detailed fixes follow.
   needs its own notification.
 * The migration guide now defines its sample dataset, and its final
   example runs end to end.
+* Both migration examples are now individually runnable: the native
+  example ends in `shinyApp()` and the glasstabs example defines its
+  own dataset instead of reusing the before example's objects.
 * Server search wording now says bounded, not paged, everywhere.
 
 ## Select dropdown sizing
