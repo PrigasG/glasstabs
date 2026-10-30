@@ -1815,10 +1815,28 @@ test_that("browser: keyboard navigation reaches chrome rows and activates them",
   on.exit(app$stop(), add = TRUE)
 
   app$wait_for_idle()
+  # Keys are dispatched straight to the element whose handler must receive
+  # them, and every move is awaited before the next key is sent. The
+  # previous version focused the trigger in one JS call and dispatched to
+  # document.activeElement in the next, which never opened the dropdown on
+  # CI (PR #8 check run 40989737973), and it fired its arrows in a tight
+  # loop while the trigger handler defers navigation by 110 ms, so the
+  # landing positions were timing-dependent. DOM focus never enters the
+  # option list (combobox pattern: the trigger keeps focus and
+  # aria-activedescendant tracks the active option), so option moves are
+  # awaited on the active option's data-value and chrome moves on
+  # document.activeElement, which enterChrome() really focuses.
+  key_to <- function(selector, key) {
+    app$get_js(sprintf(
+      "(function() {
+        document.querySelector('%s').dispatchEvent(
+          new KeyboardEvent('keydown', {key:'%s', bubbles:true}));
+        return true;
+      })()",
+      selector, key
+    ))
+  }
   press <- function(key) {
-    # Keys go to the focused element, as in real use: the trigger handler
-    # (110 ms delayed moves) while focus sits on the trigger, the dropdown
-    # handler once focus reaches a chrome button.
     app$get_js(sprintf(
       "(function() {
         document.activeElement.dispatchEvent(
@@ -1828,14 +1846,30 @@ test_that("browser: keyboard navigation reaches chrome rows and activates them",
       key
     ))
   }
+  active_option_is <- function(dropdown, value) {
+    app$wait_for_js(sprintf(
+      "document.querySelector('%s .gt-option-active') !== null &&
+        document.querySelector('%s .gt-option-active').getAttribute('data-value') === '%s'",
+      dropdown, dropdown, value
+    ))
+  }
 
   # Multi-select: 4 options, then 3 style buttons, select-all, clear.
-  app$get_js("document.querySelector('#short_multi-trigger').focus(); return true;")
-  press("Enter")
+  # open()'s 100 ms timer sets the current option to the selection ("one")
+  # before the trigger handler's 110 ms deferred navigation runs, so the
+  # first arrow from the trigger lands on the second option.
+  key_to("#short_multi-trigger", "Enter")
   app$wait_for_js("document.querySelector('#short_multi-dropdown.open') !== null")
-  for (i in 1:5) press("ArrowDown")
+  key_to("#short_multi-trigger", "ArrowDown")
+  active_option_is("#short_multi-dropdown", "long_words")
+  key_to("#short_multi-trigger", "ArrowDown")
+  active_option_is("#short_multi-dropdown", "long_token")
+  key_to("#short_multi-trigger", "ArrowDown")
+  active_option_is("#short_multi-dropdown", "pathological")
+  key_to("#short_multi-trigger", "ArrowDown")
   app$wait_for_js("document.activeElement.getAttribute('data-style') === 'check-only'")
   press("ArrowDown")
+  app$wait_for_js("document.activeElement.getAttribute('data-style') === 'checkbox'")
   press("ArrowDown")
   app$wait_for_js("document.activeElement.getAttribute('data-style') === 'filled'")
   press("ArrowDown")
@@ -1860,10 +1894,13 @@ test_that("browser: keyboard navigation reaches chrome rows and activates them",
 
   # Single-select: arrows past the last option land on Clear, and clearing
   # empties the value.
-  app$get_js("document.querySelector('#fruit-trigger').focus(); return true;")
-  press("Enter")
+  key_to("#fruit-trigger", "Enter")
   app$wait_for_js("document.querySelector('#fruit-dropdown.open') !== null")
-  for (i in 1:4) press("ArrowDown")
+  key_to("#fruit-trigger", "ArrowDown")
+  active_option_is("#fruit-dropdown", "banana")
+  key_to("#fruit-trigger", "ArrowDown")
+  active_option_is("#fruit-dropdown", "cherry")
+  key_to("#fruit-trigger", "ArrowDown")
   app$wait_for_js("document.activeElement.id === 'fruit-clear'")
   app$get_js("document.activeElement.click(); return true;")
   app$wait_for_idle()
