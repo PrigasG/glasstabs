@@ -111,6 +111,7 @@ ui <- fluidPage(
         "metric_filter",
         c(Revenue = "revenue", Orders = "orders", Returns = "returns"),
         selected = c("revenue", "orders", "returns"),
+        searchable = "auto",
         show_style_switcher = FALSE,
         theme = "auto"
       ),
