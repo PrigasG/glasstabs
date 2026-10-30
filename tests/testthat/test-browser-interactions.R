@@ -1874,11 +1874,25 @@ test_that("browser: keyboard navigation reaches chrome rows and activates them",
   app$wait_for_js("document.activeElement.getAttribute('data-style') === 'filled'")
   press("ArrowDown")
   app$wait_for_js("document.activeElement.id === 'short_multi-all'")
-  # A synthetic keydown does not trigger a native button click, so activation
-  # itself is exercised with .click(); native Enter/Space activation is the
-  # browser's contract for a real <button>. Focus reachability above is what
-  # only keyboard navigation can prove.
-  app$get_js("document.activeElement.click(); return true;")
+  # Activation clicks the explicit target, not activeElement: focus is
+  # already proven by the await above, and an explicit target keeps a
+  # focus drift from silently activating the wrong control. The DOM
+  # assertion comes first: it distinguishes a click-handler failure (DOM
+  # unchanged) from a Shiny-sync failure (DOM changed, value stale).
+  # NOTE: shinytest2 wraps get_js scripts in a bare block, so a bare
+  # `return` outside a function is a syntax error that get_js swallows
+  # as NULL — the previous version's clicks never ran, which is why
+  # both value assertions failed with unchanged values on CI run
+  # 40996074673. Every get_js script here is an IIFE for that reason.
+  app$get_js("
+    (function() {
+      document.querySelector('#short_multi-all').click();
+      return true;
+    })()
+  ")
+  app$wait_for_js("
+    document.querySelector('#short_multi-all').getAttribute('aria-checked') === 'true'
+  ")
   app$wait_for_idle()
   expect_setequal(
     app$get_value(input = "short_multi"),
@@ -1902,7 +1916,390 @@ test_that("browser: keyboard navigation reaches chrome rows and activates them",
   active_option_is("#fruit-dropdown", "cherry")
   key_to("#fruit-trigger", "ArrowDown")
   app$wait_for_js("document.activeElement.id === 'fruit-clear'")
-  app$get_js("document.activeElement.click(); return true;")
+  app$get_js("
+    (function() {
+      document.querySelector('#fruit-clear').click();
+      return true;
+    })()
+  ")
+  app$wait_for_js("
+    document.querySelector('#fruit-label').textContent === 'Select an option'
+  ")
   app$wait_for_idle()
   expect_null(app$get_value(input = "fruit"))
+})
+
+test_that("browser: select-all indicator agrees with the select-all click", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-select-all-scope",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+  app$click(selector = "#scope_check-trigger")
+  app$wait_for_js("document.querySelector('#scope_check-dropdown.open') !== null")
+
+  # Four enabled options selected, one disabled: the indicator must read
+  # checked (the toggle set is complete), not indeterminate.
+  expect_true(app$get_js("
+    (function() {
+      var all = document.querySelector('#scope_check-all');
+      return all.classList.contains('checked') &&
+        all.getAttribute('aria-checked') === 'true';
+    })()
+  "))
+  # And the click must agree with it: everything enabled clears.
+  app$click(selector = "#scope_check-all")
+  app$wait_for_idle()
+  expect_length(app$get_value(input = "scope_check"), 0)
+
+  # Search-filtered scope: only "a" visible and unselected, so the
+  # indicator reads unchecked and the click selects just "a".
+  app$get_js("
+    (function() {
+      var search = document.querySelector('#scope_check-dropdown input[type=text]');
+      search.focus();
+      search.value = 'a';
+      search.dispatchEvent(new Event('input', {bubbles: true}));
+      return true;
+    })()
+  ")
+  app$wait_for_js("
+    [...document.querySelectorAll('#scope_check-dropdown .gt-ms-option')]
+      .filter(function (o) { return !o.classList.contains('hidden'); }).length === 1
+  ")
+  expect_true(app$get_js("
+    document.querySelector('#scope_check-all').getAttribute('aria-checked') === 'false'
+  "))
+  app$click(selector = "#scope_check-all")
+  app$wait_for_idle()
+  expect_equal(app$get_value(input = "scope_check"), "a")
+})
+
+test_that("browser: server search responses carry disabled choices", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-server-disabled",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+  app$click(selector = "#server_disabled-trigger")
+  app$wait_for_js("document.querySelector('#server_disabled-dropdown.open') !== null")
+
+  # The initial page is the first three choices; zeta is not among them.
+  expect_true(app$get_js("
+    document.querySelector('#server_disabled-dropdown .gt-ms-option[data-value=\"zeta\"]') === null
+  "))
+  app$get_js("
+    (function() {
+      var search = document.querySelector('#server_disabled-dropdown input[type=text]');
+      search.focus();
+      search.value = 'zeta';
+      search.dispatchEvent(new Event('input', {bubbles: true}));
+      return true;
+    })()
+  ")
+  app$wait_for_js("
+    document.querySelector('#server_disabled-dropdown .gt-ms-option[data-value=\"zeta\"]') !== null
+  ")
+
+  # The late-arriving disabled row renders disabled ...
+  expect_true(app$get_js("
+    (function() {
+      var row = document.querySelector('#server_disabled-dropdown .gt-ms-option[data-value=\"zeta\"]');
+      return row.classList.contains('disabled') &&
+        row.getAttribute('aria-disabled') === 'true';
+    })()
+  "))
+  # ... and clicking it does not select it.
+  app$click(selector = "#server_disabled-dropdown .gt-ms-option[data-value=\"zeta\"]")
+  app$wait_for_idle()
+  expect_equal(app$get_value(input = "server_disabled"), "alpha")
+})
+
+test_that("browser: single-select All row survives choices updates", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-all-row-update",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+  app$click(selector = "#all_update_single-trigger")
+  app$wait_for_js("document.querySelector('#all_update_single-dropdown.open') !== null")
+  expect_equal(app$get_js("
+    document.querySelectorAll('#all_update_single-dropdown .gt-gs-option[data-value=\"__all__\"]').length
+  "), 1)
+  expect_equal(app$get_js("
+    document.querySelectorAll('#all_update_single-dropdown .gt-gs-option').length
+  "), 4)
+
+  # Select "All", then update the choices: the row must survive the
+  # rebuild and the active "All" selection must survive with it.
+  app$click(selector = "#all_update_single-dropdown .gt-gs-option[data-value=\"__all__\"]")
+  app$wait_for_idle()
+  expect_equal(app$get_value(input = "all_update_single"), "__all__")
+  app$click(selector = "#all_update_single_change")
+  app$wait_for_js("
+    document.querySelectorAll('#all_update_single-dropdown .gt-gs-option').length === 4 &&
+    document.querySelectorAll('#all_update_single-dropdown .gt-gs-option[data-value=\"__all__\"]').length === 1
+  ")
+  app$wait_for_idle()
+  expect_equal(app$get_value(input = "all_update_single"), "__all__")
+
+  # A second identical update must not duplicate the row.
+  app$click(selector = "#all_update_single_change")
+  app$wait_for_js("
+    document.querySelectorAll('#all_update_single-dropdown .gt-gs-option').length === 4 &&
+    document.querySelectorAll('#all_update_single-dropdown .gt-gs-option[data-value=\"__all__\"]').length === 1
+  ")
+  app$wait_for_idle()
+  expect_equal(app$get_value(input = "all_update_single"), "__all__")
+})
+
+test_that("browser: client search matches option values as well as labels", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-value-search",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  search_for <- function(dropdown, option_class, query) {
+    app$get_js(sprintf("
+      (function() {
+        var search = document.querySelector('#%s-dropdown input[type=text]');
+        search.focus();
+        search.value = '%s';
+        search.dispatchEvent(new Event('input', {bubbles: true}));
+        return true;
+      })()
+    ", dropdown, query))
+    app$wait_for_js(sprintf("
+      [...document.querySelectorAll('#%s-dropdown .%s')]
+        .filter(function (o) { return !o.classList.contains('hidden'); }).length === 1
+    ", dropdown, option_class))
+  }
+
+  # Single-select: "banana" matches no label, only the value.
+  app$wait_for_idle()
+  app$click(selector = "#value_search-trigger")
+  app$wait_for_js("document.querySelector('#value_search-dropdown.open') !== null")
+  search_for("value_search", "gt-gs-option", "banana")
+  expect_true(app$get_js("
+    (function() {
+      var visible = [...document.querySelectorAll('#value_search-dropdown .gt-gs-option')]
+        .filter(function (o) { return !o.classList.contains('hidden'); });
+      return visible.length === 1 && visible[0].getAttribute('data-value') === 'banana';
+    })()
+  "))
+
+  # Multi-select: same value-only match.
+  app$click(selector = "#value_search_multi-trigger")
+  app$wait_for_js("document.querySelector('#value_search_multi-dropdown.open') !== null")
+  search_for("value_search_multi", "gt-ms-option", "cherry")
+  expect_true(app$get_js("
+    (function() {
+      var visible = [...document.querySelectorAll('#value_search_multi-dropdown .gt-ms-option')]
+        .filter(function (o) { return !o.classList.contains('hidden'); });
+      return visible.length === 1 && visible[0].getAttribute('data-value') === 'cherry';
+    })()
+  "))
+})
+
+test_that("browser: sequenced server search applies the latest response", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-server-seq",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+  app$click(selector = "#server_disabled-trigger")
+  app$wait_for_js("document.querySelector('#server_disabled-dropdown.open') !== null")
+  app$get_js("
+    (function() {
+      var search = document.querySelector('#server_disabled-dropdown input[type=text]');
+      search.focus();
+      search.value = 'eta';
+      search.dispatchEvent(new Event('input', {bubbles: true}));
+      return true;
+    })()
+  ")
+  app$wait_for_js("
+    document.querySelector('#server_disabled-dropdown .gt-ms-option[data-value=\"eta\"]') !== null
+  ")
+  app$click(selector = "#server_disabled-dropdown .gt-ms-option[data-value=\"eta\"]")
+  app$wait_for_idle()
+  expect_equal(app$get_value(input = "server_disabled"), c("alpha", "eta"))
+})
+
+test_that("browser: stuck server search status clears on its own", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-search-timeout",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+  app$click(selector = "#server_hung-trigger")
+  app$wait_for_js("document.querySelector('#server_hung-dropdown.open') !== null")
+  app$get_js("
+    (function() {
+      var search = document.querySelector('#server_hung-dropdown input[type=text]');
+      search.focus();
+      search.value = 'zzz';
+      search.dispatchEvent(new Event('input', {bubbles: true}));
+      return true;
+    })()
+  ")
+  # The widget enters the loading state (no server registration exists, so
+  # no response will ever arrive)...
+  app$wait_for_js("
+    document.querySelector('#server_hung-dropdown .gt-select-status').textContent === 'Searching...'
+  ")
+  # ... and the timeout guard clears it on its own.
+  app$wait_for_js("
+    document.querySelector('#server_hung-dropdown .gt-select-status').textContent !== 'Searching...'
+  ", timeout = 20000)
+})
+
+test_that("browser: stale server response is dropped and the latest guard survives", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-server-stale",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+  app$click(selector = "#server_stale-trigger")
+  app$wait_for_js("document.querySelector('#server_stale-dropdown.open') !== null")
+  search_in <- function(value) {
+    app$get_js(sprintf(
+      "(function() {
+        var search = document.querySelector('#server_stale-dropdown input[type=text]');
+        search.focus();
+        search.value = '%s';
+        search.dispatchEvent(new Event('input', {bubbles: true}));
+        return true;
+      })()",
+      value
+    ))
+  }
+  # The first search answers late (2 s server sleep); the second never
+  # answers. Send the second while the first is still in flight.
+  search_in("alpha")
+  app$wait_for_js("
+    document.querySelector('#server_stale-dropdown .gt-select-status').textContent === 'Searching...'
+  ")
+  search_in("beta")
+  # Long after the late first response has arrived, it must not have
+  # replaced the results, and the second search must still be loading:
+  # under the old >= logic the stale response applied and disarmed the
+  # guard, so both assertions below fail on it.
+  Sys.sleep(4)
+  expect_true(app$get_js("
+    document.querySelector('#server_stale-dropdown .gt-gs-option[data-value=\"alpha_stale\"]') === null
+  "))
+  expect_true(app$get_js("
+    document.querySelector('#server_stale-dropdown .gt-gs-option[data-value=\"one\"]') !== null &&
+    document.querySelector('#server_stale-dropdown .gt-gs-option[data-value=\"two\"]') !== null
+  "))
+  expect_equal(app$get_js("
+    document.querySelector('#server_stale-dropdown .gt-select-status').textContent
+  "), "Searching...")
+  # The second search's own guard still fires on its own schedule.
+  app$wait_for_js("
+    document.querySelector('#server_stale-dropdown .gt-select-status').textContent !== 'Searching...'
+  ", timeout = 20000)
+  expect_true(app$get_js("
+    document.querySelector('#server_stale-dropdown .gt-gs-option[data-value=\"one\"]') !== null
+  "))
+})
+
+test_that("browser: empty-string choice value is distinct from cleared", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-empty-value",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+  # Initially selected: the empty-string choice, not "nothing selected".
+  expect_equal(app$get_value(input = "empty_val"), "")
+  expect_equal(app$get_js("
+    document.querySelector('#empty_val-label').textContent
+  "), "All statuses")
+  app$click(selector = "#empty_val-trigger")
+  app$wait_for_js("document.querySelector('#empty_val-dropdown.open') !== null")
+  app$click(selector = "#empty_val-dropdown .gt-gs-option[data-value=\"active\"]")
+  app$wait_for_idle()
+  expect_equal(app$get_value(input = "empty_val"), "active")
+  expect_equal(app$get_js("
+    document.querySelector('#empty_val-label').textContent
+  "), "Active")
+  app$click(selector = "#empty_val-trigger")
+  app$wait_for_js("document.querySelector('#empty_val-dropdown.open') !== null")
+  app$click(selector = "#empty_val-dropdown .gt-gs-option[data-value=\"\"]")
+  app$wait_for_idle()
+  expect_equal(app$get_value(input = "empty_val"), "")
+  expect_equal(app$get_js("
+    document.querySelector('#empty_val-label').textContent
+  "), "All statuses")
+  # Clearing is a different state: NULL value and the placeholder label.
+  app$click(selector = "#empty_val-clear")
+  app$wait_for_idle()
+  expect_null(app$get_value(input = "empty_val"))
+  expect_equal(app$get_js("
+    document.querySelector('#empty_val-label').textContent
+  "), "Select an option")
 })
