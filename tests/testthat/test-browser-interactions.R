@@ -2121,6 +2121,19 @@ test_that("browser: real Enter and Space activate chrome controls", {
     document.activeElement.id === 'short_multi-trigger'"
   )
 
+  # Start the single-select checks in a fresh page. On macOS, switching
+  # controls immediately after the real Escape can race the old panel's
+  # closing animation and leave the next trigger click ineffective.
+  app$stop()
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-chrome-real-keys-single",
+    height = 800,
+    width = 1000
+  )
+  app$wait_for_idle()
+  session <- app$get_chromote_session()
+
   # Single-select: real Enter clears, then real Space clears after
   # re-selecting, each time reaching the placeholder and NULL.
   app$click(selector = "#fruit-trigger")
