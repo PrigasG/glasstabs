@@ -2,6 +2,18 @@
   'use strict';
 
   /* UTILITIES */
+
+  /* Monotonic sequence for server searches, shared by every select
+     controller. Each search takes the next value; the server echoes it and
+     the response handler drops anything older than the latest applied
+     response for that widget. One shared counter (rather than one per
+     widget) also stays monotonic if a widget is replaced via renderUI,
+     so a re-created widget's first response can never look stale next to
+     a response in flight from its predecessor. The sequence also replaces
+     the old Date.now() nonce: every send differs, so Shiny still
+     retriggers on a repeated query. */
+  var serverSearchSeq = 0;
+
   function px(n) { return Math.round(n) + 'px'; }
   function exactPx(n) { return (Math.round(n * 100) / 100) + 'px'; }
 
@@ -1456,6 +1468,18 @@
       query: ''
     };
 
+    /* Value -> choice index for patchVisibility(): without it, every search
+       keystroke scans all choices for every visible row (O(n^2)). Rebuilt
+       whenever state.choices is replaced; first occurrence wins, matching
+       the old linear findChoice() on duplicate values. */
+    var choiceByValue = new Map();
+    function rebuildChoiceIndex() {
+      choiceByValue = new Map();
+      state.choices.forEach(function (ch) {
+        if (!choiceByValue.has(ch.value)) choiceByValue.set(ch.value, ch);
+      });
+    }
+
     /* Read initial state from R-generated DOM */
     Array.from(wrap.querySelectorAll('.gt-gs-option')).forEach(function (el) {
       var value = el.getAttribute('data-value');
@@ -1467,7 +1491,8 @@
         hidden: false,
         disabled: el.classList.contains('disabled'),
         group: el.getAttribute('data-group') || '',
-        _labelLower: label.toLowerCase()
+        _labelLower: label.toLowerCase(),
+        _valueLower: value.toLowerCase()
       });
       if (el.classList.contains('selected')) {
         state.selected = value;
@@ -1475,6 +1500,7 @@
       }
       bindOption(el);
     });
+    rebuildChoiceIndex();
 
     var optionNav = createOptionNavigator(
       dropdown,
@@ -1637,7 +1663,7 @@
     function patchVisibility() {
       Array.from(dropdown.querySelectorAll('.gt-gs-option')).forEach(function (el) {
         var v = el.getAttribute('data-value');
-        var ch = findChoice(v);
+        var ch = choiceByValue.get(v) || null;
         el.classList.toggle('hidden', ch ? ch.hidden : false);
       });
       syncOptgroupHeaders(optionsBox);
@@ -1743,6 +1769,10 @@
       }));
       choices = asChoiceArray(choices);
       state.loading = false;
+      if (state.searchTimeoutId) {
+        clearTimeout(state.searchTimeoutId);
+        state.searchTimeoutId = null;
+      }
 
       /* The synthetic "All" row is a client-side prepend, not part of any
          update payload: without this it vanishes on the first choices
@@ -1761,7 +1791,8 @@
           hidden: false,
           disabled: typeof ch.disabled === 'boolean' ? ch.disabled : oldDisabled.has(String(ch.value)),
           group: ch.group ? String(ch.group) : '',
-          _labelLower: String(ch.label).toLowerCase()
+          _labelLower: String(ch.label).toLowerCase(),
+          _valueLower: String(ch.value).toLowerCase()
         };
       });
       if (hadAll && !state.choices.some(function (ch) { return ch.value === allValue; })) {
@@ -1771,7 +1802,8 @@
           hidden: false,
           disabled: oldDisabled.has(allValue),
           group: '',
-          _labelLower: (wrap.getAttribute('data-all-choice-label') || 'All').toLowerCase()
+          _labelLower: (wrap.getAttribute('data-all-choice-label') || 'All').toLowerCase(),
+          _valueLower: String(allValue).toLowerCase()
         });
       }
       /* state.total excludes the All row (it is a UI affordance, not a data
@@ -1780,6 +1812,7 @@
          threshold keeps counting real choices. */
       state.total = total === null ?
         (hadAll ? state.choices.length - 1 : state.choices.length) : total;
+      rebuildChoiceIndex();
 
       /* Intersect selection */
       if (oldSelected !== null && findChoice(oldSelected)) {
@@ -1826,7 +1859,7 @@
       state.query = qq;
 
       state.choices.forEach(function (ch) {
-        ch.hidden = qq !== '' && ch._labelLower.indexOf(qq) === -1;
+        ch.hidden = qq !== '' && ch._labelLower.indexOf(qq) === -1 && ch._valueLower.indexOf(qq) === -1;
       });
 
       patchVisibility();
@@ -1841,9 +1874,21 @@
       if (query.length < serverMinChars) query = '';
       state.loading = true;
       updateStatus();
+      if (state.searchTimeoutId) clearTimeout(state.searchTimeoutId);
+      /* A response normally lands in milliseconds. If none arrives, the
+         "Searching..." status must not stick forever (e.g. the session
+         stopped responding). Clearing here is benign: a late response
+         still applies through setChoices(). */
+      state.searchTimeoutId = setTimeout(function () {
+        state.searchTimeoutId = null;
+        if (state.loading) {
+          state.loading = false;
+          updateStatus();
+        }
+      }, 10000);
       Shiny.setInputValue(inputId + '_search', {
         query: query,
-        nonce: Date.now()
+        seq: ++serverSearchSeq
       }, { priority: 'event' });
     }
 
@@ -2196,6 +2241,18 @@
       query: ''
     };
 
+    /* Value -> choice index for patchVisibility(): without it, every search
+       keystroke scans all choices for every visible row (O(n^2)). Rebuilt
+       whenever state.choices is replaced; first occurrence wins, matching
+       the old linear scan on duplicate values. */
+    var choiceByValue = new Map();
+    function rebuildChoiceIndex() {
+      choiceByValue = new Map();
+      state.choices.forEach(function (ch) {
+        if (!choiceByValue.has(ch.value)) choiceByValue.set(ch.value, ch);
+      });
+    }
+
     /* Read initial state from R-generated DOM */
     Array.from(wrap.querySelectorAll('.gt-ms-option')).forEach(function (el) {
       var value = el.getAttribute('data-value');
@@ -2210,7 +2267,8 @@
         disabled: el.classList.contains('disabled'),
         group: el.getAttribute('data-group') || '',
         hue: parseInt(hue, 10) || 210,
-        _labelLower: label.toLowerCase()
+        _labelLower: label.toLowerCase(),
+        _valueLower: value.toLowerCase()
       });
 
       if (el.classList.contains('checked')) {
@@ -2219,6 +2277,7 @@
 
       bindOption(el);
     });
+    rebuildChoiceIndex();
 
     parseJsonArrayAttr(wrap, 'data-selected-values').forEach(function (v) {
       state.selected.add(v);
@@ -2438,12 +2497,8 @@
     function patchVisibility() {
       Array.from(dropdown.querySelectorAll('.gt-ms-option')).forEach(function (el) {
         var v = el.getAttribute('data-value');
-        for (var i = 0; i < state.choices.length; i++) {
-          if (state.choices[i].value === v) {
-            el.classList.toggle('hidden', state.choices[i].hidden);
-            break;
-          }
-        }
+        var ch = choiceByValue.get(v);
+        if (ch) el.classList.toggle('hidden', ch.hidden);
       });
       syncOptgroupHeaders(optionsBox);
     }
@@ -2629,6 +2684,10 @@
       }));
       choices = asChoiceArray(choices);
       state.loading = false;
+      if (state.searchTimeoutId) {
+        clearTimeout(state.searchTimeoutId);
+        state.searchTimeoutId = null;
+      }
 
       /* Update state */
       var n = choices.length;
@@ -2640,10 +2699,12 @@
           disabled: typeof ch.disabled === 'boolean' ? ch.disabled : oldDisabled.has(String(ch.value)),
           group: ch.group ? String(ch.group) : '',
           hue: ch.hue || Math.round((200 + 360 * i / Math.max(1, n)) % 360),
-          _labelLower: String(ch.label).toLowerCase()
+          _labelLower: String(ch.label).toLowerCase(),
+          _valueLower: String(ch.value).toLowerCase()
         };
       });
       state.total = total === null ? state.choices.length : total;
+      rebuildChoiceIndex();
 
       /* Intersect selection */
       var newValues = new Set(state.choices.map(function (ch) { return ch.value; }));
@@ -2685,7 +2746,7 @@
       state.query = qq;
 
       state.choices.forEach(function (ch) {
-        ch.hidden = qq !== '' && ch._labelLower.indexOf(qq) === -1;
+        ch.hidden = qq !== '' && ch._labelLower.indexOf(qq) === -1 && ch._valueLower.indexOf(qq) === -1;
       });
 
       patchVisibility();
@@ -2716,9 +2777,21 @@
       if (query.length < serverMinChars) query = '';
       state.loading = true;
       updateStatus();
+      if (state.searchTimeoutId) clearTimeout(state.searchTimeoutId);
+      /* A response normally lands in milliseconds. If none arrives, the
+         "Searching..." status must not stick forever (e.g. the session
+         stopped responding). Clearing here is benign: a late response
+         still applies through setChoices(). */
+      state.searchTimeoutId = setTimeout(function () {
+        state.searchTimeoutId = null;
+        if (state.loading) {
+          state.loading = false;
+          updateStatus();
+        }
+      }, 10000);
       Shiny.setInputValue(inputId + '_search', {
         query: query,
-        nonce: Date.now()
+        seq: ++serverSearchSeq
       }, { priority: 'event' });
     }
 
@@ -3600,6 +3673,14 @@
       if (!msg || !msg.inputId) return;
       var selector = msg.type === 'multi' ? '.gt-ms-wrap' : '.gt-gs-wrap';
       var wrap = document.querySelector(selector + attrEquals('data-input-id', msg.inputId));
+      /* Responses carry the sequence of the search they answer. A stale
+         response (older than the latest one already applied for this
+         widget) is dropped, so with rapid typing only the newest search
+         wins. Messages without a sequence (older servers) always apply. */
+      if (wrap && typeof msg.seq === 'number') {
+        if (wrap._gtServerSeq !== undefined && msg.seq < wrap._gtServerSeq) return;
+        wrap._gtServerSeq = msg.seq;
+      }
       var ctrl = wrap ? ensureInit(wrap) : null;
       if (!ctrl || !ctrl.setChoices) return;
 

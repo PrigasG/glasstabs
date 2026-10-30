@@ -88,6 +88,25 @@ ui <- fluidPage(
       disabled_choices = "e",
       show_style_switcher = FALSE
     ),
+    glassSelect(
+      "value_search",
+      c("Red fruit" = "apple", "Yellow fruit" = "banana", "Green fruit" = "cherry"),
+      selected = "apple"
+    ),
+    glassMultiSelect(
+      "value_search_multi",
+      c("Red fruit" = "apple", "Yellow fruit" = "banana", "Green fruit" = "cherry"),
+      selected = "apple",
+      show_style_switcher = FALSE
+    ),
+    # Intentionally unregistered: searches for this widget never receive a
+    # response, which exercises the loading-timeout guard (the "Searching..."
+    # status must clear on its own instead of sticking forever).
+    glassSelect(
+      "server_hung",
+      choices,
+      server = TRUE
+    ),
     glassMultiSelect(
       "cats",
       choices,

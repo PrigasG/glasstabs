@@ -64,6 +64,20 @@
 * `glassSelect()` choices updates no longer drop the synthetic "All" row:
   widgets created with `include_all = TRUE` keep the row — and an active
   "All" selection — across `updateGlassSelect()` calls.
+* Client-side search now matches option values as well as labels, matching
+  server-side search: typing a value finds its option even when the label
+  does not contain it.
+* Server search responses now carry the sequence of the search they answer,
+  and the browser ignores a response older than the latest one already
+  applied, so rapid typing cannot leave stale results on screen. The
+  sequence replaces the old timestamp nonce, which served the same
+  retriggering purpose.
+* A server search that never receives a response no longer leaves the
+  "Searching..." status stuck: it clears on its own after ten seconds. A
+  late response still applies normally.
+* Search filtering no longer scans all choices for every visible row: the
+  option-visibility pass uses a value-to-choice index rebuilt on every
+  choices update.
 * Select field titles now default to a distinct 14px semibold treatment and
   accept `label_size` alongside `label_bold`. Dropdown search uses a quieter
   neutral focus treatment by default; `search_focus_ring = TRUE` opts into the

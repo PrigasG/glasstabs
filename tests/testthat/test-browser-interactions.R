@@ -2017,3 +2017,127 @@ test_that("browser: single-select All row survives choices updates", {
   app$wait_for_idle()
   expect_equal(app$get_value(input = "all_update_single"), "__all__")
 })
+
+test_that("browser: client search matches option values as well as labels", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-value-search",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  search_for <- function(dropdown, option_class, query) {
+    app$get_js(sprintf("
+      (function() {
+        var search = document.querySelector('#%s-dropdown input[type=text]');
+        search.focus();
+        search.value = '%s';
+        search.dispatchEvent(new Event('input', {bubbles: true}));
+        return true;
+      })()
+    ", dropdown, query))
+    app$wait_for_js(sprintf("
+      [...document.querySelectorAll('#%s-dropdown .%s')]
+        .filter(function (o) { return !o.classList.contains('hidden'); }).length === 1
+    ", dropdown, option_class))
+  }
+
+  # Single-select: "banana" matches no label, only the value.
+  app$wait_for_idle()
+  app$click(selector = "#value_search-trigger")
+  app$wait_for_js("document.querySelector('#value_search-dropdown.open') !== null")
+  search_for("value_search", "gt-gs-option", "banana")
+  expect_true(app$get_js("
+    (function() {
+      var visible = [...document.querySelectorAll('#value_search-dropdown .gt-gs-option')]
+        .filter(function (o) { return !o.classList.contains('hidden'); });
+      return visible.length === 1 && visible[0].getAttribute('data-value') === 'banana';
+    })()
+  "))
+
+  # Multi-select: same value-only match.
+  app$click(selector = "#value_search_multi-trigger")
+  app$wait_for_js("document.querySelector('#value_search_multi-dropdown.open') !== null")
+  search_for("value_search_multi", "gt-ms-option", "cherry")
+  expect_true(app$get_js("
+    (function() {
+      var visible = [...document.querySelectorAll('#value_search_multi-dropdown .gt-ms-option')]
+        .filter(function (o) { return !o.classList.contains('hidden'); });
+      return visible.length === 1 && visible[0].getAttribute('data-value') === 'cherry';
+    })()
+  "))
+})
+
+test_that("browser: sequenced server search applies the latest response", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-server-seq",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+  app$click(selector = "#server_disabled-trigger")
+  app$wait_for_js("document.querySelector('#server_disabled-dropdown.open') !== null")
+  app$get_js("
+    (function() {
+      var search = document.querySelector('#server_disabled-dropdown input[type=text]');
+      search.focus();
+      search.value = 'eta';
+      search.dispatchEvent(new Event('input', {bubbles: true}));
+      return true;
+    })()
+  ")
+  app$wait_for_js("
+    document.querySelector('#server_disabled-dropdown .gt-ms-option[data-value=\"eta\"]') !== null
+  ")
+  app$click(selector = "#server_disabled-dropdown .gt-ms-option[data-value=\"eta\"]")
+  app$wait_for_idle()
+  expect_equal(app$get_value(input = "server_disabled"), c("alpha", "eta"))
+})
+
+test_that("browser: stuck server search status clears on its own", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-search-timeout",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+  app$click(selector = "#server_hung-trigger")
+  app$wait_for_js("document.querySelector('#server_hung-dropdown.open') !== null")
+  app$get_js("
+    (function() {
+      var search = document.querySelector('#server_hung-dropdown input[type=text]');
+      search.focus();
+      search.value = 'zzz';
+      search.dispatchEvent(new Event('input', {bubbles: true}));
+      return true;
+    })()
+  ")
+  # The widget enters the loading state (no server registration exists, so
+  # no response will ever arrive)...
+  app$wait_for_js("
+    document.querySelector('#server_hung-dropdown .gt-select-status').textContent === 'Searching...'
+  ")
+  # ... and the timeout guard clears it on its own.
+  app$wait_for_js("
+    document.querySelector('#server_hung-dropdown .gt-select-status').textContent !== 'Searching...'
+  ", timeout = 20000)
+})
