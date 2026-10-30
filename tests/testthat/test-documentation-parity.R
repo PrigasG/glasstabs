@@ -20,14 +20,18 @@ test_that("pkgdown exposes both select guides with multi-select first", {
 
 test_that("select documentation keeps both widget families discoverable", {
   root <- test_path("..", "..")
-  skip_if_not(
-    file.exists(file.path(root, "README.md")),
-    "repository documentation is excluded from the package tarball"
-  )
   shared_docs <- c(
     "README.md",
     file.path("vignettes", "getting-started.Rmd"),
     file.path("vignettes", "cheatsheet.Rmd")
+  )
+  guide_docs <- file.path(
+    "vignettes",
+    c("glassSelect.Rmd", "multiselect.Rmd")
+  )
+  skip_if_not(
+    all(file.exists(file.path(root, c(shared_docs, guide_docs)))),
+    "repository documentation is excluded from the installed test bundle"
   )
 
   for (relative in shared_docs) {
@@ -37,11 +41,11 @@ test_that("select documentation keeps both widget families discoverable", {
   }
 
   single <- paste(
-    readLines(file.path(root, "vignettes", "glassSelect.Rmd"), warn = FALSE),
+    readLines(file.path(root, guide_docs[[1]]), warn = FALSE),
     collapse = "\n"
   )
   multi <- paste(
-    readLines(file.path(root, "vignettes", "multiselect.Rmd"), warn = FALSE),
+    readLines(file.path(root, guide_docs[[2]]), warn = FALSE),
     collapse = "\n"
   )
   expect_match(single, "multiselect.html", fixed = TRUE)
