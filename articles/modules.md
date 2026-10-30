@@ -1,0 +1,154 @@
+# Using glasstabs in Shiny modules
+
+Modules are how larger Shiny apps stay maintainable, and glasstabs
+widgets follow the same namespacing rule as every other input: apply
+`NS(id)` to the widget IDs in the module UI, and pass the module’s
+session plus bare input IDs everywhere else. The one mistake to avoid is
+namespacing twice — never pass an already-namespaced ID to an update
+function or a server helper.
+
+## The rule, stated once
+
+``` r
+
+ns <- shiny::NS("filters")
+stopifnot(ns("region") == "filters-region")
+stopifnot(ns("status") == "filters-status")
+```
+
+`NS("filters")("region")` is `"filters-region"`. The module UI creates
+widgets under those namespaced IDs; the module server talks about
+`"region"` and `"status"` with its own session, and Shiny resolves them
+to the same inputs.
+
+## A complete filter module
+
+Both select controls, their update functions, and a value shared with
+the parent:
+
+``` r
+
+filterUI <- function(id) {
+  ns <- NS(id)
+
+  tagList(
+    glassSelect(
+      ns("region"),
+      c(North = "north", South = "south"),
+      label = "Region",
+      selected = "north"
+    ),
+
+    glassMultiSelect(
+      ns("status"),
+      c(Active = "active", Closed = "closed"),
+      label = "Status",
+      selected = "active",
+      show_style_switcher = FALSE
+    ),
+
+    actionButton(ns("clear"), "Clear filters")
+  )
+}
+
+filterServer <- function(id) {
+  moduleServer(id, function(input, output, session) {
+
+    observeEvent(input$clear, {
+      updateGlassSelect(
+        session, "region",
+        selected = character(0)
+      )
+
+      updateGlassMultiSelect(
+        session, "status",
+        selected = character(0)
+      )
+    })
+
+    reactive({
+      list(
+        region = input$region,
+        status = input$status
+      )
+    })
+  })
+}
+
+ui <- fluidPage(
+  useGlassTabs(),
+  filterUI("filters"),
+  verbatimTextOutput("current")
+)
+
+server <- function(input, output, session) {
+  filters <- filterServer("filters")
+
+  output$current <- renderPrint(filters())
+}
+
+if (interactive()) shinyApp(ui, server)
+```
+
+Three things to notice. First, the update calls take the module session
+and the bare IDs (`"region"`, `"status"`): passing `ns("region")` here
+would address a nonexistent `"filters-filters-region"` input. Second,
+`character(0)` clears both widgets — for the single-select it means “no
+selection” (the value becomes `NULL`), for the multi-select it means an
+empty selection. Third, the parent never touches `input$filters-region`
+directly; it reads the module’s returned reactive, which keeps the
+module’s inputs an implementation detail.
+
+## Server-backed dropdowns in a module
+
+The same rule covers
+[`glassMultiSelectServer()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelectServer.md)
+and
+[`glassSelectServer()`](https://prigasg.github.io/glasstabs/reference/glassSelectServer.md):
+register them inside `moduleServer` with the bare ID and the module
+session, and the helper searches the module’s input:
+
+``` r
+
+filterServerWithSearch <- function(id, choices) {
+  moduleServer(id, function(input, output, session) {
+    glassMultiSelectServer("status", choices, session = session)
+
+    reactive({
+      input$status
+    })
+  })
+}
+```
+
+The widget itself still takes the namespaced ID in the module UI
+(`glassMultiSelect(ns("status"), ..., server = TRUE)`); only the server
+side uses the bare ID. The same holds for controls created by
+[`renderUI()`](https://rdrr.io/pkg/shiny/man/renderUI.html) inside a
+module: register the server helper once in the module server for that
+input ID, and the newly rendered control receives search results through
+Shiny.
+
+## Two modules, one filter
+
+Because every ID is namespaced at the UI boundary, the same module can
+be instantiated twice with no collision:
+
+``` r
+
+ui <- fluidPage(
+  useGlassTabs(),
+  filterUI("left"),
+  filterUI("right")
+)
+
+server <- function(input, output, session) {
+  left <- filterServer("left")
+  right <- filterServer("right")
+}
+```
+
+Each instance keeps its own selection, its own server registration, and
+its own update scope. If an update in one module ever seems to reach the
+other, the cause is almost always a hardcoded full ID somewhere in the
+UI — check that every widget ID goes through `ns()`.

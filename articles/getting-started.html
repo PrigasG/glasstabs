@@ -102,7 +102,13 @@ styles</li>
 input with optional search and clear support</li>
 </ul>
 <p>All widgets work in plain <code><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage()</a></code> and in bs4Dash.
-They can be used together or independently. —</p>
+They can be used together or independently.</p>
+<p><strong>Start here, by task.</strong> Only need tabs? Read the tabs
+article. Only need a dropdown? Read the single-select or multi-select
+guide. Building reusable filters? Read the modules and linked-filters
+recipes. Something broken? Read troubleshooting first — most entries are
+configuration choices, not bugs. The example gallery lists a runnable
+demo for each question above. —</p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -470,6 +476,12 @@ adapt:</p>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"Tab: "</span>, <span class="fu">active_tab</span><span class="op">(</span><span class="op">)</span>, <span class="st">"; region: "</span>, <span class="va">region</span><span class="op">)</span></span>
 <span>  <span class="op">}</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
+<p>Note that mapping an empty single-select to <code>"all"</code> here
+is an explicit app choice, not the widget’s behavior: a cleared
+single-select returns <code>NULL</code>, and this app deliberately reads
+<code>NULL</code> as “all”. The multi-select guide’s “Understanding
+selection behavior” section works through the same decision for
+multi-selects, where the trap is Clear all restoring every record.</p>
 <p>From here, add only the options the app actually needs. Every widget
 keeps the usual Shiny model: place it in the UI, read its value from
 <code>input</code>, and use an update helper when the server needs to

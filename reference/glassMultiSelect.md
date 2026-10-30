@@ -145,10 +145,11 @@ glassMultiSelect(
 
 - server_limit:
 
-  Maximum number of choices rendered initially and returned for each
-  server-side search. Default `50`. Explicitly selected values that fall
-  outside the initial slice are still rendered as extra rows so they
-  stay visible and checked.
+  Maximum number of choices rendered initially. Search results are
+  bounded separately by the `limit` argument of the `*Server()` helper.
+  Default `50`. Explicitly selected values that fall outside the initial
+  slice are still rendered as extra rows so they stay visible and
+  checked.
 
 - server_min_chars:
 

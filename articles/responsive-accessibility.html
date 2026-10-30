@@ -170,6 +170,115 @@ dedicated rail, so compact menu mode is not available there.</p>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
+<h2 id="select-keyboard-and-screen-reader-behavior">Select keyboard and screen-reader behavior<a class="anchor" aria-label="anchor" href="#select-keyboard-and-screen-reader-behavior"></a>
+</h2>
+<p>Tabs have their own keyboard story; selects have a different one, and
+it is worth stating plainly because the two widgets differ.</p>
+<p><strong>Keyboard.</strong> Tab reaches the trigger. Enter or Space
+opens the dropdown; arrows then move through options and chrome rows —
+the Select-all row, the Clear row, the style switcher — as one wrapping
+cycle that skips hidden and disabled rows. Home and End jump to the
+first and last rows. Enter or Space activates the focused row (selecting
+and closing for a single-select, toggling for a multi-select). Escape
+closes and returns focus to the trigger. Tab while open closes the
+dropdown and exits: it never steps through options one by one. The
+single-select clear button answers keys only while its dropdown is open.
+Focus is always visible: chrome controls carry visible focus rings, and
+<code>search_focus_ring = TRUE</code> strengthens the search field’s
+ring when the quiet default is not enough.</p>
+<p><strong>Screen reader.</strong> The trigger is a
+<code>combobox</code> labeled by its field label, with
+<code>aria-expanded</code> tracking the open state and
+<code>aria-haspopup="listbox"</code>. The dropdown is a
+<code>listbox</code> (multi-selects add
+<code>aria-multiselectable="true"</code>); options are
+<code>option</code> rows with <code>aria-selected</code>, and the active
+row is exposed through <code>aria-activedescendant</code> so
+announcements follow arrow-key movement without moving DOM focus. The
+Select-all row is a <code>checkbox</code> with tri-state
+<code>aria-checked</code> (<code>true</code>, <code>false</code>, or
+<code>mixed</code> for a partial selection); style switcher buttons
+carry <code>aria-pressed</code>; search inputs carry an
+<code>aria-label</code>. The status row (<code>role="status"</code>,
+<code>aria-live="polite"</code>) announces “Searching…” and no-match
+states. Disabled rows carry <code>aria-disabled="true"</code>, are
+skipped by keyboard navigation, and ignore clicks.</p>
+<p><strong>What this does not claim.</strong> The matrix below separates
+what automated tests cover from what nobody has verified yet. In
+particular, no screen-reader pass (NVDA or VoiceOver) has been run:
+until one is, the screen-reader rows stay “not yet verified” no matter
+how complete the ARIA markup looks.</p>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="27%">
+<col width="22%">
+</colgroup>
+<thead><tr class="header">
+<th>Environment</th>
+<th>Status</th>
+<th>Notes</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>Chrome on Linux, macOS, Windows</td>
+<td>Tested</td>
+<td>Automated browser tests on CI: keyboard, pointer, positioning</td>
+</tr>
+<tr class="even">
+<td>Edge on Windows</td>
+<td>Not yet verified</td>
+<td>Chromium-based, but no CI run</td>
+</tr>
+<tr class="odd">
+<td>Firefox</td>
+<td>Not yet verified</td>
+<td>Styling and keyboard behavior unconfirmed</td>
+</tr>
+<tr class="even">
+<td>Safari on macOS</td>
+<td>Not yet verified</td>
+<td>Focus and dropdown interaction unconfirmed</td>
+</tr>
+<tr class="odd">
+<td>Android browsers</td>
+<td>Not yet verified</td>
+<td>Touch, scrolling, and viewport changes unconfirmed</td>
+</tr>
+<tr class="even">
+<td>iOS Safari</td>
+<td>Not yet verified</td>
+<td>Virtual keyboard and touch interactions unconfirmed</td>
+</tr>
+<tr class="odd">
+<td>NVDA</td>
+<td>Not yet verified</td>
+<td>Manual screen-reader pass outstanding</td>
+</tr>
+<tr class="even">
+<td>VoiceOver</td>
+<td>Not yet verified</td>
+<td>Manual screen-reader pass outstanding</td>
+</tr>
+<tr class="odd">
+<td>Reduced motion</td>
+<td>Partially tested</td>
+<td>Stylesheet rule plus automated tests for the dropdown close path;
+full manual pass pending</td>
+</tr>
+<tr class="even">
+<td>High contrast / forced colors</td>
+<td>Partially tested</td>
+<td>Stylesheet uses system colors and visible focus outlines; manual
+verification pending</td>
+</tr>
+</tbody>
+</table>
+<p>Supported dependency versions are exactly what
+<code>DESCRIPTION</code> states; anything beyond that table is
+theoretically compatible, not tested.</p>
+</div>
+<div class="section level2">
 <h2 id="touch-swipes-without-surprises">Touch swipes without surprises<a class="anchor" aria-label="anchor" href="#touch-swipes-without-surprises"></a>
 </h2>
 <p><code>swipe = TRUE</code> adds left and right gestures to ordinary

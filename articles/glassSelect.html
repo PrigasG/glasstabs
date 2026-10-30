@@ -144,6 +144,16 @@ initialized)</li>
 <span></span>
 <span><span class="co"># Pre-select one value</span></span>
 <span><span class="fu"><a href="../reference/glassSelect.html">glassSelect</a></span><span class="op">(</span><span class="st">"f"</span>, <span class="va">fruits</span>, selected <span class="op">=</span> <span class="st">"banana"</span><span class="op">)</span></span></code></pre></div>
+<div class="section level3">
+<h3 id="empty-string-values-are-ordinary-values">Empty-string values are ordinary values<a class="anchor" aria-label="anchor" href="#empty-string-values-are-ordinary-values"></a>
+</h3>
+<p>An empty string is a valid choice value, distinct from nothing
+selected:
+<code>glassSelect("status", c("All statuses" = "", "Active" = "active"), selected = "")</code>
+starts on “All statuses” and reports <code>""</code>, while clearing the
+field reports <code>NULL</code>. The same holds for
+<code>updateGlassSelect(..., selected = "")</code>.</p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="optional-label">Optional label<a class="anchor" aria-label="anchor" href="#optional-label"></a>
@@ -284,6 +294,10 @@ the choices reach a threshold. You can also enable a clear control.</p>
 <span>  searchable <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  clearable <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
+<p>The Clear button is keyboard-reachable too: with the dropdown open,
+Arrow Down past the last option moves focus to it (Arrow Up returns to
+the options), and Enter or Space clears the selection. Tab and Escape
+close the panel as usual.</p>
 <p>For example, five categories do not need a search field when the
 threshold is six:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
@@ -364,6 +378,16 @@ Shiny for matching choices as the user types.</p>
 <p>This pattern also works when the control is created dynamically with
 <code><a href="https://rdrr.io/pkg/shiny/man/renderUI.html" class="external-link">renderUI()</a></code>. Keep the <code><a href="../reference/glassSelectServer.html">glassSelectServer()</a></code> call
 in the server function for the same <code>inputId</code>.</p>
+<p>The two limits are independent — see the multi-select guide’s
+server-search section for the full table: <code>server_limit</code>
+bounds the initial slice, while the helper’s <code>limit</code> bounds
+each search’s matches. Results are bounded, not paginated: each search
+returns the first N matches, with no next-page cursor. And as with the
+multi-select, <code>server = TRUE</code> with search disabled is
+unsupported: without a search input the user cannot reach choices
+outside the initial slice. The explicit “All” option works in server
+mode (see below); it sits first in the initial slice and is restored
+across search responses.</p>
 </div>
 <div class="section level2">
 <h2 id="explicit-all-option">Explicit “All” option<a class="anchor" aria-label="anchor" href="#explicit-all-option"></a>
@@ -379,6 +403,17 @@ in the server function for the same <code>inputId</code>.</p>
 <span><span class="op">)</span></span></code></pre></div>
 <p>This is useful when you want the UI to distinguish between: - no
 selection - a deliberate “All” selection</p>
+<p>The option is off by default (<code>include_all = FALSE</code>). When
+on, the widget prepends one row with label <code>all_choice_label</code>
+(default <code>"All categories"</code>) and value
+<code>all_choice_value</code> (default <code>"__all__"</code>); choosing
+it returns that value, not the full choice list, so the app decides what
+“All” means downstream. The row is a client-side affordance, not a data
+row: it survives choices updates (the row and an active “All” selection
+are both preserved across <code><a href="../reference/updateGlassSelect.html">updateGlassSelect()</a></code> calls) and it
+works in server mode too, where it sits first in the initial slice and
+is restored across search responses. The search threshold counts real
+choices only — the All row is excluded from it.</p>
 </div>
 <div class="section level2">
 <h2 id="server-side-access">Server-side access<a class="anchor" aria-label="anchor" href="#server-side-access"></a>
@@ -470,7 +505,17 @@ current selection - selection marker style</p>
 <span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/shinyApp.html" class="external-link">shinyApp</a></span><span class="op">(</span><span class="va">ui</span>, <span class="va">server</span><span class="op">)</span></span></code></pre></div>
 <p>When <code>choices</code> is updated without <code>selected</code>,
 the widget keeps the current value if it still exists in the new set of
-choices.</p>
+choices. If it no longer exists, the selection clears and the value
+becomes <code>NULL</code> — there is no stale-value state, and no
+separate “invalid” marker. To keep a selection that is temporarily
+absent instead, do not remove it from the choice set; the multi-select
+updater’s <code>drop_invalid = FALSE</code> has no single-select
+equivalent. Two more update rules: passing more than one value to
+<code>selected</code> is an error (use the multi-select updater for
+multiple values), and the label cannot be updated — there is no
+<code>label</code> argument on <code><a href="../reference/updateGlassSelect.html">updateGlassSelect()</a></code>, so a
+label change means recreating the widget with
+<code><a href="https://rdrr.io/pkg/shiny/man/renderUI.html" class="external-link">renderUI()</a></code>.</p>
 </div>
 <div class="section level2">
 <h2 id="theming">Theming<a class="anchor" aria-label="anchor" href="#theming"></a>

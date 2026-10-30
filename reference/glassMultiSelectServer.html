@@ -66,7 +66,8 @@ bounded list of matching choices.</p>
 <span>  <span class="va">choices</span>,</span>
 <span>  session <span class="op">=</span> <span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/domains.html" class="external-link">getDefaultReactiveDomain</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  limit <span class="op">=</span> <span class="fl">50L</span>,</span>
-<span>  ignore_case <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  ignore_case <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  disabled_choices <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -97,6 +98,14 @@ Default <code>50</code>.</p></dd>
 <dt id="arg-ignore-case">ignore_case<a class="anchor" aria-label="anchor" href="#arg-ignore-case"></a></dt>
 <dd><p>Logical. Match labels and values case-insensitively.
 Default <code>TRUE</code>.</p></dd>
+
+
+<dt id="arg-disabled-choices">disabled_choices<a class="anchor" aria-label="anchor" href="#arg-disabled-choices"></a></dt>
+<dd><p>Optional character vector of choice values to
+render as disabled in search responses. Default <code>NULL</code>, which
+leaves previously loaded disabled state unchanged. A disabled value
+need not appear in any rendered page yet; it takes effect when it
+first arrives in a response.</p></dd>
 
 </dl></div>
     <div class="section level2">

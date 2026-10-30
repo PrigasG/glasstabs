@@ -146,6 +146,44 @@ caching or session-reconnect problems.</li>
 </ol>
 </div>
 <div class="section level2">
+<h2 id="versions-dependencies-and-csp">Versions, dependencies, and CSP<a class="anchor" aria-label="anchor" href="#versions-dependencies-and-csp"></a>
+</h2>
+<p><strong>Pin the version you tested.</strong> Install the CRAN release
+for stability, or a GitHub commit for development — but record which one
+the deployment uses, because the development version moves. The
+installed version is visible from R with
+<code>packageVersion("glasstabs")</code> and in the app with
+<code><a href="../reference/glasstabs_news.html">glasstabs_news()</a></code>; if a deployed app behaves differently
+from local, the version is the first thing to compare.</p>
+<p><strong>Confirm the assets published.</strong> After the first
+deploy, open the app and confirm the dropdowns render styled. Unstyled
+controls after publishing mean the HTML dependencies did not travel with
+the app: check that <code><a href="../reference/useGlassTabs.html">useGlassTabs()</a></code> is called once at the UI
+root (or that the app uses <code><a href="../reference/glassPage.html">glassPage()</a></code>, which loads the
+dependency automatically), and check the manifest includes the package’s
+dependencies. The “What to test” list above catches this on the first
+pass, but only if someone actually opens a dropdown.</p>
+<p><strong>The <code><a href="../reference/useGlassTabs.html">useGlassTabs()</a></code> exception, stated
+once.</strong> The getting-started rule is “exactly one
+<code><a href="../reference/useGlassTabs.html">useGlassTabs()</a></code> call.” <code><a href="../reference/glassPage.html">glassPage()</a></code> is the
+exception: it loads the dependency itself, so an app built on
+<code><a href="../reference/glassPage.html">glassPage()</a></code> must not also call <code><a href="../reference/useGlassTabs.html">useGlassTabs()</a></code>.
+One or the other, never both, never neither.</p>
+<p><strong>Content Security Policy.</strong> If the deployment serves a
+strict CSP, set the <code>glasstabs.csp_nonce</code> option to the
+page’s nonce and the package’s generated <code>&lt;style&gt;</code>
+elements will carry it. That covers style elements only: it is not a
+general strict-CSP guarantee, and scripts, inline handlers, and other
+sources need their own testing under the deployment’s actual policy
+before claiming compatibility.</p>
+<p><strong>Theming check.</strong> Before shipping a themed deployment,
+run the theme-switcher example
+(<code>runGlassExample("theme-switcher")</code>): one switch flips every
+select between dark and light, including long labels, wide text in a
+narrow phone frame, and a bottom-of-page dropdown that must flip above
+the field. If those survive, the deployment’s theme wiring is sound.</p>
+</div>
+<div class="section level2">
 <h2 id="run-locally">Run locally<a class="anchor" aria-label="anchor" href="#run-locally"></a>
 </h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">

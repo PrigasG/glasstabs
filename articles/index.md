@@ -30,3 +30,21 @@
   glasstabs](https://prigasg.github.io/glasstabs/articles/multiselect.md):
 - [Single-Select Dropdown with
   glasstabs](https://prigasg.github.io/glasstabs/articles/glassSelect.md):
+
+### Recipes
+
+- [Using glasstabs in Shiny
+  modules](https://prigasg.github.io/glasstabs/articles/modules.md):
+- [Dependent dropdowns and dynamic
+  UI](https://prigasg.github.io/glasstabs/articles/linked-filters.md):
+- [Migrating from native Shiny
+  controls](https://prigasg.github.io/glasstabs/articles/migrating.md):
+
+### Troubleshooting
+
+- [Troubleshooting](https://prigasg.github.io/glasstabs/articles/troubleshooting.md):
+
+### Examples
+
+- [Example
+  gallery](https://prigasg.github.io/glasstabs/articles/examples-gallery.md):

@@ -356,7 +356,11 @@ toggleable (all default <code>TRUE</code>):</p>
 <p>The select-all row acts only on <strong>enabled, visible</strong>
 options: it selects everything currently matching the search (skipping
 disabled rows), or clears them if all are already selected, and it shows
-an indeterminate state for a partial selection. “Clear all” clears the
+an indeterminate state for a partial selection. In server mode the row
+acts on the currently loaded page: options that have not arrived from
+the server yet are not part of the toggle set, and
+<code>glassMultiSelectServer(..., disabled_choices)</code> marks values
+disabled as they arrive in search responses. “Clear all” clears the
 whole selection. Note there is no <code>clearable</code> argument on
 <code><a href="../reference/glassMultiSelect.html">glassMultiSelect()</a></code> — clearing is
 <code>show_clear_all</code>, which is <code>TRUE</code> by default.
@@ -473,13 +477,97 @@ messages or validation.</p>
 </div>
 </div>
 <div class="section level2">
+<h2 id="understanding-selection-behavior-all-some-and-none">Understanding selection behavior: All, Some, and None<a class="anchor" aria-label="anchor" href="#understanding-selection-behavior-all-some-and-none"></a>
+</h2>
+<p>The multi-select default surprises developers who expect an empty
+starting state: <code>selected = NULL</code> selects <strong>every
+enabled choice</strong> initially. Disabled choices are never in that
+default, and they are never part of the Select-all set either — the
+Select-all row and its indicator act on enabled, visible choices only
+(see the server-mode note below for how that scope works with bounded
+results). Three states, three meanings:</p>
+<table class="table">
+<colgroup>
+<col width="10%">
+<col width="24%">
+<col width="66%">
+</colgroup>
+<thead><tr class="header">
+<th>State</th>
+<th>Widget value</th>
+<th>What the app usually does with it</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>All choices selected</td>
+<td>Character vector of all selected values</td>
+<td>Show all matching records</td>
+</tr>
+<tr class="even">
+<td>Some choices selected</td>
+<td>Character vector of those values</td>
+<td>Show matching records only</td>
+</tr>
+<tr class="odd">
+<td>Nothing selected</td>
+<td><code>character(0)</code></td>
+<td>Show no records — or, if the app chooses, no filter</td>
+</tr>
+</tbody>
+</table>
+<p>The last row is where bugs hide. An app that treats empty as “no
+filter” is valid when chosen deliberately — but if the example is copied
+without that choice, pressing Clear all makes every record reappear even
+though the dropdown visibly holds no selection. Decide which meaning
+empty has, and write it down in the filter:</p>
+<p>Approach A: empty means no records. Note that <code><a href="https://rdrr.io/pkg/shiny/man/req.html" class="external-link">req()</a></code> on
+an empty selection also stops the calculation, so the explicit version
+below is the one to copy:</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">rows</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  fruit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"apple"</span>, <span class="st">"banana"</span>, <span class="st">"cherry"</span><span class="op">)</span>,</span>
+<span>  n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">12</span>, <span class="fl">7</span>, <span class="fl">9</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">filter_none</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">selected</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">selected</span><span class="op">)</span> <span class="op">||</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">selected</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0L</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">rows</span><span class="op">[</span><span class="fl">0</span>, , drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="va">rows</span><span class="op">[</span><span class="va">rows</span><span class="op">$</span><span class="va">fruit</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">selected</span>, , drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="fu">filter_none</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0L</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="fu">filter_none</span><span class="op">(</span><span class="st">"apple"</span><span class="op">)</span><span class="op">)</span> <span class="op">==</span> <span class="fl">1L</span><span class="op">)</span></span></code></pre></div>
+<p>Approach B: empty means all records:</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">filter_all</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">selected</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">selected</span><span class="op">)</span> <span class="op">||</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">selected</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0L</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">rows</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="va">rows</span><span class="op">[</span><span class="va">rows</span><span class="op">$</span><span class="va">fruit</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">selected</span>, , drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="fu">filter_all</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">==</span> <span class="fl">3L</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="fu">filter_all</span><span class="op">(</span><span class="st">"banana"</span><span class="op">)</span><span class="op">)</span> <span class="op">==</span> <span class="fl">1L</span><span class="op">)</span></span></code></pre></div>
+<p>The same decision applies at three moments: on initial load (default
+<code>selected = NULL</code> starts at All, while
+<code>selected = character(0)</code> starts at None), after Clear all
+(the widget returns <code>character(0)</code>), and after a reset
+(whatever the reset writes back — see the linked-filters article for the
+three reset meanings). The
+<code>glassMultiSelectValue(..., empty_behavior = "all")</code> helper
+changes how the <em>app</em> resolves an empty selection; it does not
+change what the widget returns, which is always
+<code>character(0)</code> when empty.</p>
+</div>
+<div class="section level2">
 <h2 id="server-side-search-for-large-choice-sets">Server-side search for large choice sets<a class="anchor" aria-label="anchor" href="#server-side-search-for-large-choice-sets"></a>
 </h2>
 <p>For hundreds or thousands of choices, keep the full vector on the
-server and send a small page of matches to the browser. Set
+server and send a small bounded set of matches to the browser. Set
 <code>server = TRUE</code> in the UI and register
 <code><a href="../reference/glassMultiSelectServer.html">glassMultiSelectServer()</a></code> in the server function:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">many_choices</span> <span class="op">&lt;-</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"value-%04d"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">2000</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Choice %04d"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">2000</span><span class="op">)</span></span>
@@ -503,8 +591,43 @@ server and send a small page of matches to the browser. Set
 <span><span class="op">}</span></span>
 <span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/shinyApp.html" class="external-link">shinyApp</a></span><span class="op">(</span><span class="va">ui</span>, <span class="va">server</span><span class="op">)</span></span></code></pre></div>
-<p><code>server_limit</code> (default <code>50</code>) bounds both the
-initial slice and each page of search results.
+<p>Two independent limits bound what the browser renders. They are set
+in different places and nothing ties them together — setting one does
+not change the other:</p>
+<table class="table">
+<colgroup>
+<col width="20%">
+<col width="40%">
+<col width="40%">
+</colgroup>
+<thead><tr class="header">
+<th>Setting</th>
+<th>Where it lives</th>
+<th>What it bounds</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>
+<code>server_limit</code> (default <code>50</code>)</td>
+<td>
+<code><a href="../reference/glassMultiSelect.html">glassMultiSelect()</a></code> / <code><a href="../reference/glassSelect.html">glassSelect()</a></code>
+</td>
+<td>Choices rendered initially, excluding explicitly included
+selections</td>
+</tr>
+<tr class="even">
+<td>
+<code>limit</code> (default <code>50</code>)</td>
+<td>
+<code><a href="../reference/glassMultiSelectServer.html">glassMultiSelectServer()</a></code> /
+<code><a href="../reference/glassSelectServer.html">glassSelectServer()</a></code>
+</td>
+<td>Matches returned for each search</td>
+</tr>
+</tbody>
+</table>
+<p>So <code>server_limit = 25</code> with <code>limit = 100</code> shows
+25 choices on open and up to 100 per search.
 <code>server_min_chars</code> (default <code>0</code>) sets how many
 characters must be typed before server-side matching filters choices,
 and <code>ignore_case = TRUE</code> (the default in
@@ -512,12 +635,40 @@ and <code>ignore_case = TRUE</code> (the default in
 case-insensitively. Two details that make this safe: explicitly selected
 values that fall outside the initial slice are still rendered as extra
 rows, so they stay visible and checked; and the control keeps the
-selected values on the client while only the current page of matches is
-rendered.</p>
+selected values on the client while only the current bounded set of
+matches is rendered.</p>
+<p>Results are bounded, not paginated: the helper returns the first N
+matches for each search. There is no next-page cursor and no built-in
+Load more mechanism, so “page” is the wrong word for what comes
+back.</p>
+<p>In server mode the Select-all row acts on the currently loaded page:
+with 20,000 facilities and 30 matches on screen, Select all selects
+those 30, not all 20,000. The full selection stays represented in Shiny
+— selected values persist on the client across searches — but only the
+current matches are rendered. The same scope rule applies to the
+indicator: it reports the enabled, visible set, not the whole
+dataset.</p>
+<div class="section level3">
+<h3 id="performance-and-limitations">Performance and limitations<a class="anchor" aria-label="anchor" href="#performance-and-limitations"></a>
+</h3>
+<p>Server mode reduces what is rendered in the browser, not what R
+holds: the complete choices vector is still supplied to the constructor
+and to the server helper, so this is not database-backed lazy search.
+And because the default multi-select selection contains all enabled
+choice values, a large selection still creates a large input payload
+even with bounded DOM rendering — pass
+<code>selected = character(0)</code> when the app does not need
+everything selected up front.</p>
+<p>One unsupported configuration: <code>server = TRUE</code> with search
+disabled (<code>searchable = FALSE</code> or <code>"never"</code>).
+Without a search input the user cannot query beyond the initial slice,
+so choices outside it are unreachable through the dropdown. Keep search
+enabled in server mode.</p>
 <p>This pattern also suits controls inserted by <code><a href="https://rdrr.io/pkg/shiny/man/renderUI.html" class="external-link">renderUI()</a></code>:
 register <code><a href="../reference/glassMultiSelectServer.html">glassMultiSelectServer()</a></code> once for the same
 <code>inputId</code>, and the newly rendered control receives search
 results through Shiny.</p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="updating-from-the-server">Updating from the server<a class="anchor" aria-label="anchor" href="#updating-from-the-server"></a>
@@ -525,7 +676,7 @@ results through Shiny.</p>
 <p><code><a href="../reference/updateGlassMultiSelect.html">updateGlassMultiSelect()</a></code> updates choices, selection,
 style, shape, disabled state, search visibility and threshold, summary
 mode, and dropdown height — in one transaction:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="../reference/useGlassTabs.html">useGlassTabs</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/actionButton.html" class="external-link">actionButton</a></span><span class="op">(</span><span class="st">"subset"</span>, <span class="st">"Keep first 3 fruits"</span><span class="op">)</span>,</span>
@@ -573,7 +724,7 @@ keeps the intersection of the current selection and the new choice
 set.</li>
 </ul>
 <p>Three arguments control the transaction itself:</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/observeEvent.html" class="external-link">observeEvent</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">region</span>, <span class="op">{</span></span>
 <span>    <span class="fu"><a href="../reference/updateGlassMultiSelect.html">updateGlassMultiSelect</a></span><span class="op">(</span></span>
@@ -596,13 +747,14 @@ explicitly.</li>
 <li>
 <code>drop_invalid = TRUE</code> (the default) drops selected values
 absent from the new choices; <code>FALSE</code> keeps them around for
-when they reappear, which is what a paged server search wants.</li>
+when they reappear, which is what a bounded server search wants.</li>
 <li>
 <code>notify = "changed"</code> (the default) avoids rerunning
 observers when the effective selection and style did not change;
 <code>"always"</code> forces an event; <code>"never"</code> makes a
-quiet intermediate update — useful when several linked filters are
-settling and only the final update should reach the server.</li>
+quiet update for one input only — it does not sync other inputs, so
+every input whose server value must sync needs its own notification (see
+the linked-filters recipe).</li>
 </ul>
 </div>
 <div class="section level2">
@@ -610,7 +762,7 @@ settling and only the final update should reach the server.</li>
 </h2>
 <p>For dynamic layouts, modals, sidebars, or tab changes, close an open
 dropdown explicitly from the server:</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/observeEvent.html" class="external-link">observeEvent</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">change_layout</span>, <span class="op">{</span></span>
 <span>    <span class="fu"><a href="../reference/closeGlassSelect.html">closeGlassMultiSelect</a></span><span class="op">(</span><span class="va">session</span>, <span class="st">"pick"</span><span class="op">)</span></span>
@@ -627,7 +779,7 @@ hand-rolled overlay — so an open panel never floats above a dialog.</p>
 <div class="section level3">
 <h3 id="built-in-presets">Built-in presets<a class="anchor" aria-label="anchor" href="#built-in-presets"></a>
 </h3>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span><span class="st">"f"</span>, <span class="va">fruits</span>, theme <span class="op">=</span> <span class="st">"dark"</span><span class="op">)</span>   <span class="co"># default</span></span>
 <span><span class="fu"><a href="../reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span><span class="st">"f"</span>, <span class="va">fruits</span>, theme <span class="op">=</span> <span class="st">"light"</span><span class="op">)</span>  <span class="co"># white panel, dark text</span></span>
 <span><span class="fu"><a href="../reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span><span class="st">"f"</span>, <span class="va">fruits</span>, theme <span class="op">=</span> <span class="st">"auto"</span><span class="op">)</span>   <span class="co"># follows Bootstrap/bslib color mode</span></span></code></pre></div>
@@ -639,7 +791,7 @@ in bs4Dash, for example — pass that selector as
 <code>dark_selector</code>, and the widget emits an extra scoped style
 block that reverts colors to the dark defaults whenever the selector is
 active:</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span><span class="st">"f"</span>, <span class="va">fruits</span>,</span>
 <span>  theme <span class="op">=</span> <span class="st">"auto"</span>,</span>
 <span>  dark_selector <span class="op">=</span> <span class="st">"body.dark-mode"</span></span>
@@ -650,7 +802,7 @@ active:</p>
 </h3>
 <p>Supply only the colors you want to change; everything else inherits
 from the <code>mode</code> base preset:</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># One field — accent colour only</span></span>
 <span><span class="fu"><a href="../reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span><span class="st">"f"</span>, <span class="va">fruits</span>,</span>
 <span>  theme <span class="op">=</span> <span class="fu"><a href="../reference/glass_select_theme.html">glass_select_theme</a></span><span class="op">(</span>accent_color <span class="op">=</span> <span class="st">"#f59e0b"</span><span class="op">)</span></span>
@@ -718,7 +870,7 @@ from the <code>mode</code> base preset:</p>
 <div class="section level3">
 <h3 id="presentation-tongue-labels-corners-width">Presentation: tongue, labels, corners, width<a class="anchor" aria-label="anchor" href="#presentation-tongue-labels-corners-width"></a>
 </h3>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span><span class="st">"f"</span>, <span class="va">fruits</span>,</span>
 <span>  tongue <span class="op">=</span> <span class="cn">TRUE</span>,              <span class="co"># attached unfurl (default); FALSE = detached short fade</span></span>
 <span>  label_bold <span class="op">=</span> <span class="cn">TRUE</span>,          <span class="co"># semibold field label, matching native inputs</span></span>
@@ -745,7 +897,7 @@ works inside a <code><a href="../reference/glassTabsUI.html">glassTabsUI()</a></
 with <code>dark_selector</code> for the dashboard’s dark-mode class.
 Each instance is scoped to its own <code>inputId</code> and works
 independently; when one dropdown is open it floats above the others:</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="../reference/useGlassTabs.html">useGlassTabs</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="../reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>X <span class="op">=</span> <span class="st">"x"</span>, Y <span class="op">=</span> <span class="st">"y"</span>, Z <span class="op">=</span> <span class="st">"z"</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -769,6 +921,12 @@ move between options; Enter or Space toggles the active option; Escape
 returns focus to the trigger, while Tab closes the panel and moves
 onward.</li>
 <li>
+<strong>Chrome rows:</strong> Arrow Down past the last option moves
+focus to the style switcher, then the “Select all” row, then “Clear all”
+(Arrow Up reverses); Enter or Space activates the focused button. Tab
+and Escape behave as above from any focused row. The rows are buttons,
+not Tab stops, so Tab never gets trapped inside the dropdown.</li>
+<li>
 <strong>Search:</strong> typing filters options (debounced); the
 “Select all” row follows the filtered, enabled set.</li>
 <li>
@@ -787,7 +945,7 @@ assistive technology.</li>
 </h2>
 <p>This is the pattern most apps end up with — two filters, one driving
 the other, tags beside the results, and a reset that clears both:</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny.posit.co/" class="external-link">shiny</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/PrigasG/glasstabs" class="external-link">glasstabs</a></span><span class="op">)</span></span>
 <span></span>

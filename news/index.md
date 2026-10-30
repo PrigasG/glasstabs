@@ -2,6 +2,17 @@
 
 ## glasstabs 0.4.1
 
+0.4.1 is a stabilization release: the dropdowns keep their look and gain
+predictable behavior. Highlights: the tongue dropdown (the panel unfurls
+flush from the field), accessible chrome controls (real buttons with
+arrow-key navigation and full ARIA semantics), selection correctness
+(one Select-all scope, server disabled choices, an “All” row that
+survives updates), server reliability (value search, sequenced
+responses, a stuck-search guard, indexed filtering), and a documentation
+reorganization (selection semantics, server precision, module and
+linked-filter recipes, troubleshooting, migration, and an example
+gallery). The detailed fixes follow.
+
 ### Fixes
 
 - The pkgdown articles now give multi-select its own prominent Selects
@@ -17,6 +28,11 @@
   can keep the search field hidden and reveal it automatically as
   choices grow. Both settings can also be changed with
   [`updateGlassSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassSelect.md).
+
+- [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md)
+  automatic search no longer counts the synthetic “All” row toward
+  `search_threshold`: with `include_all = TRUE`, the search box appears
+  only once the real choice count reaches the threshold.
 
 - Select and tab constructors now reject invalid logical arguments
   instead of silently treating values such as `"yes"` as `FALSE`; update
@@ -40,13 +56,75 @@
   label preview through a hover/keyboard tooltip by default. Truncated
   multi-select options expose the currently hovered or keyboard-active
   option inside the open dropdown, without combining selected labels
-  into a noisy trigger tip. Set `overflow_tooltip = "never"` to disable
-  visual tooltips; full accessible names remain available, and touch
-  users can open the dropdown to read the wrapped option. The formerly
-  dark-only built-in examples now include live light/dark switches and
-  use `theme = "auto"` consistently. Example apps now return standard
-  Shiny app objects for automated launchers, and an obsolete `shinyjs`
-  scratch app was removed from the installed examples.
+  into a noisy trigger tip. Single-select options expose the same
+  hover/keyboard preview inside the open dropdown. Set
+  `overflow_tooltip = "never"` to disable visual tooltips; full
+  accessible names remain available, and touch users can open the
+  dropdown to read the wrapped option. The formerly dark-only built-in
+  examples now include live light/dark switches and use `theme = "auto"`
+  consistently. Example apps now return standard Shiny app objects for
+  automated launchers, and an obsolete `shinyjs` scratch app was removed
+  from the installed examples.
+
+- Select chrome controls are now real buttons reachable by keyboard: the
+  multi-select style switcher, Select-all row, and Clear-all button, and
+  the single-select Clear button, all take arrow-key focus inside the
+  open dropdown (Tab still closes and exits). Multi-select listboxes now
+  report `aria-multiselectable`, field labels are associated with their
+  triggers, search fields have accessible names, and the Select-all row
+  reports its tri-state (`true` / `mixed` / `false`) instead of a plain
+  selected flag.
+
+- The multi-select Select-all indicator now uses the same
+  enabled-and-visible scope as the Select-all click: a disabled option
+  no longer makes the indicator read partial when every selectable
+  option is selected, and the initial indicator uses the same scope.
+  Previously the indicator counted visible options including disabled
+  ones while the click skipped them.
+
+- [`glassSelectServer()`](https://prigasg.github.io/glasstabs/reference/glassSelectServer.md)
+  and
+  [`glassMultiSelectServer()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelectServer.md)
+  now accept `disabled_choices`, so a disabled value takes effect when
+  it first arrives in a server search response instead of only when it
+  was already rendered. `NULL` (the default) preserves the previous
+  behavior of keeping already-loaded disabled state.
+
+- [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md)
+  choices updates no longer drop the synthetic “All” row: widgets
+  created with `include_all = TRUE` keep the row — and an active “All”
+  selection — across
+  [`updateGlassSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassSelect.md)
+  calls.
+
+- Client-side search now matches option values as well as labels,
+  matching server-side search: typing a value finds its option even when
+  the label does not contain it.
+
+- Server search responses now carry the sequence of the search they
+  answer, and the browser ignores a response older than the latest
+  search issued for that widget, so rapid typing cannot leave stale
+  results on screen. The sequence replaces the old timestamp nonce,
+  which served the same retriggering purpose.
+
+- A server search that never receives a response no longer leaves the
+  “Searching…” status stuck: it clears on its own after ten seconds. A
+  late response still applies normally.
+
+- Search filtering no longer scans all choices for every visible row:
+  the option-visibility pass uses a value-to-choice index rebuilt on
+  every choices update.
+
+- Documentation: the multi-select guide gains an “All, Some, and None”
+  selection section with explicit empty-means-none and empty-means-all
+  patterns, and the server-search section now states the two independent
+  limits (`server_limit` for the initial slice, the `*Server()` helper’s
+  `limit` per search) and the bounded-not-paginated result model; the
+  wrong `server_limit` wording (“returned for each server-side search”)
+  is corrected in both roxygen blocks and both help files. New recipe
+  articles cover Shiny modules and dependent dropdowns / dynamic UI, and
+  the single-select guide documents the “All” option’s behavior,
+  invalid-selection clearing, and server edge cases.
 
 - Select field titles now default to a distinct 14px semibold treatment
   and accept `label_size` alongside `label_bold`. Dropdown search uses a
@@ -230,6 +308,19 @@
   widget instead of on every keystroke, making search over large choice
   sets noticeably snappier.
 
+- Server search responses now apply only when they answer the latest
+  issued search for the widget: a stale response can no longer replace
+  current results or disarm the latest search’s loading guard.
+
+- Empty-string choice values are now ordinary values in
+  [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md):
+  selecting one reports `""`, while clearing the field reports `NULL`.
+
+- [`updateGlassSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassSelect.md)
+  with `selected = ""` now selects the empty-string choice instead of
+  clearing: the server-update path still converted `""` to `NULL` before
+  the controller saw it.
+
 ### Docs and examples
 
 - Fixed stale `v0.4.0` references, a placeholder GitHub username in the
@@ -239,6 +330,17 @@
   `closeAllGlassSelects`; `%||%` remains an internal helper.
 - CI now installs stable Chrome so the shinytest2 browser suite actually
   runs instead of failing on a missing browser.
+- The linked-filter recipe no longer teaches silencing intermediates
+  behind a single notification: every input whose server value must sync
+  needs its own notification.
+- The migration guide now defines its sample dataset, and its final
+  example runs end to end.
+- Both migration examples are now individually runnable: the native
+  example ends in
+  [`shinyApp()`](https://rdrr.io/pkg/shiny/man/shinyApp.html) and the
+  glasstabs example defines its own dataset instead of reusing the
+  before example’s objects.
+- Server search wording now says bounded, not paged, everywhere.
 
 ### Select dropdown sizing
 

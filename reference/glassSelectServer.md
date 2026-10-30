@@ -12,7 +12,8 @@ glassSelectServer(
   choices,
   session = shiny::getDefaultReactiveDomain(),
   limit = 50L,
-  ignore_case = TRUE
+  ignore_case = TRUE,
+  disabled_choices = NULL
 )
 ```
 
@@ -38,6 +39,14 @@ glassSelectServer(
 - ignore_case:
 
   Logical. Match labels and values case-insensitively. Default `TRUE`.
+
+- disabled_choices:
+
+  Optional character vector of choice values to render as disabled in
+  search responses. Default `NULL`, which leaves previously loaded
+  disabled state unchanged. A disabled value need not appear in any
+  rendered page yet; it takes effect when it first arrives in a
+  response.
 
 ## Value
 

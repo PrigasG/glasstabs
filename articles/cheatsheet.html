@@ -384,12 +384,35 @@ follows tab order.</p>
 <span>  theme <span class="op">=</span> <span class="st">"light"</span>,</span>
 <span>  no_matches_text <span class="op">=</span> <span class="st">"No matches"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
+<p>For <code><a href="../reference/glassSelect.html">glassSelect()</a></code>, an empty-string value is an ordinary
+choice: selecting one reports <code>""</code>, while clearing reports
+<code>NULL</code>.</p>
 <p>For <code><a href="../reference/glassSelect.html">glassSelect()</a></code>, the overflow tooltip appears for an
 ellipsized trigger. Inside either open dropdown, it appears for the
 truncated option currently hovered or reached with the keyboard; the
 multi-select trigger does not combine selected labels into a tooltip. On
 touch, wrapped option text is the full-text fallback. Use
 <code>overflow_tooltip = "never"</code> to disable visual tips.</p>
+<p>Select chrome rows are real buttons, not Tab stops: inside an open
+dropdown, arrow keys move between options and the style switcher,
+Select-all row, and Clear controls, and Enter or Space activates the
+focused button.</p>
+</div>
+<div class="section level2">
+<h2 id="selects-modules-and-server-recipes">Selects: modules and server recipes<a class="anchor" aria-label="anchor" href="#selects-modules-and-server-recipes"></a>
+</h2>
+<p>The patterns above cover one widget. For the rest, read the recipe
+articles instead of duplicating code here:</p>
+<ul>
+<li>Shiny modules (namespaced widget IDs, bare IDs with the module
+session, server helpers in modules): the modules article.</li>
+<li>Dependent dropdowns and dynamic UI (linked filters, renderUI
+rebuilds, settling filters, reset meanings): the linked-filters
+article.</li>
+<li>Server search limits, bounded results, and the performance model:
+the multi-select guide’s server-search section.</li>
+<li>When something breaks: troubleshooting.</li>
+</ul>
 </div>
 <div class="section level2">
 <h2 id="tabs-inside-bs4dash">Tabs: inside bs4Dash<a class="anchor" aria-label="anchor" href="#tabs-inside-bs4dash"></a>

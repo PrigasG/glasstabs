@@ -195,8 +195,9 @@ from the Shiny server. Default <code>FALSE</code>.</p></dd>
 
 
 <dt id="arg-server-limit">server_limit<a class="anchor" aria-label="anchor" href="#arg-server-limit"></a></dt>
-<dd><p>Maximum number of choices rendered initially and returned
-for each server-side search. Default <code>50</code>. Explicitly selected
+<dd><p>Maximum number of choices rendered initially.
+Search results are bounded separately by the <code>limit</code> argument of
+the <code>*Server()</code> helper. Default <code>50</code>. Explicitly selected
 values that fall outside the initial slice are still rendered as extra
 rows so they stay visible and checked.</p></dd>
 

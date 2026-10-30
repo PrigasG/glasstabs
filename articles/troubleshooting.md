@@ -1,0 +1,166 @@
+# Troubleshooting
+
+Each entry states the expected behavior first. Several of these are
+intentional design decisions, not bugs — the fix is usually a
+configuration choice, and the entry says so.
+
+## Dropdown does not look styled
+
+**Expected:** glass surfaces, rounded panels, animated markers. **You
+see:** a plain browser select, or unstyled lists and buttons.
+
+**Likely cause:** the package’s CSS and JavaScript never loaded. Every
+app needs exactly one
+[`useGlassTabs()`](https://prigasg.github.io/glasstabs/reference/useGlassTabs.md)
+call at the UI root — except apps built with
+[`glassPage()`](https://prigasg.github.io/glasstabs/reference/glassPage.md),
+which loads the dependency automatically.
+
+**Fix:** add
+[`useGlassTabs()`](https://prigasg.github.io/glasstabs/reference/useGlassTabs.md)
+to the top-level UI (not inside
+[`renderUI()`](https://rdrr.io/pkg/shiny/man/renderUI.html), not inside
+a module UI). On Posit Connect, if the app looks styled locally but
+plain after publishing, check the manifest and the deployed assets: the
+dependency must publish with the app.
+
+## Server-backed search never returns results
+
+**Expected:** typing queries the server and shows matches. **You see:**
+“Searching…” that never resolves, or an empty list for queries that
+should match.
+
+**Likely causes, in order:** (1) the matching helper was never
+registered —
+[`glassMultiSelectServer()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelectServer.md)
+for a multi-select,
+[`glassSelectServer()`](https://prigasg.github.io/glasstabs/reference/glassSelectServer.md)
+for a single-select, with the same `inputId`; (2) the helper is
+registered for a different ID than the widget; (3) in a module, the
+helper got a namespaced ID instead of the bare ID with the module
+session (see the modules article).
+
+**Fix:** register the helper in the server function, once per input ID,
+with the session the widget belongs to. A minimal reproduction is one
+widget, one helper, one search: if that works, the difference between it
+and the broken app is the cause.
+
+## Multi-select starts with everything checked
+
+**Expected:** this is the default, not a bug. `selected = NULL` selects
+every enabled choice initially.
+
+**Fix:** pass `selected = character(0)` for an empty start. See the
+multi-select guide’s “Understanding selection behavior” section for the
+All/Some/None decision that follows from this choice.
+
+## Clearing a selection shows all records
+
+**Expected:** after Clear all, the widget returns `character(0)`.
+
+**Likely cause:** the app treats empty as “no filter.” That is a valid
+app policy, but it must be chosen deliberately — otherwise clearing a
+filter restores every record while the dropdown looks empty.
+
+**Fix:** decide what empty means and write it in the filter (see the
+selection section), or use
+`glassMultiSelectValue(..., empty_behavior = "all")` / `"none"` to
+resolve empty consistently. The helper changes how the app resolves
+empty, not what the widget returns.
+
+## Selection disappears after a choices update
+
+**Expected:** updating `choices` without `selected` keeps the current
+value when it still exists.
+
+**Likely cause:** the value is absent from the new choice set. For the
+multi-select, `drop_invalid = TRUE` (the default) drops it; `FALSE`
+keeps it for when it reappears. For the single-select there are no
+knobs: a vanished selection clears to `NULL`.
+
+**Fix:** choose the policy explicitly (`preserve_selection` /
+`drop_invalid` for multi-select; see the linked-filters article for the
+full scenario table). If the UI must show that an item vanished,
+remember the old value before updating — neither widget marks invalid
+selections.
+
+## Dropdown is too narrow
+
+**Expected:** the panel matches the trigger width, long labels wrap, and
+the panel stays inside the viewport.
+
+**Likely cause:** the trigger itself is narrow. The panel matching the
+trigger is the design, not a bug: widening the panel past the field was
+tried and rejected (long text wraps inside the panel instead).
+
+**Fix:** set `width` on the widget (for example `width = "100%"` inside
+a wide container, or an explicit pixel width), and check the parent
+container — a narrow column or a fixed-width card caps the trigger
+before glasstabs ever sees it. If a panel still escapes the viewport,
+that is a bug: report it with the container layout.
+
+## Theme differs from the surrounding dashboard
+
+**Expected:** the widget follows the app’s theme.
+
+**Likely cause:** `theme` disagrees with the page. `theme = "dark"` and
+`"light"` are fixed; `"auto"` follows the page’s own signal. Dashboards
+with their own dark-mode toggle (bs4Dash, bslib) need `dark_selector`
+pointed at that toggle’s marker, so the widget flips when the dashboard
+does.
+
+**Fix:** set `theme = "auto"` for plain pages, or `theme = "auto"` plus
+the dashboard’s `dark_selector` for themed dashboards. Compare all three
+modes in the theme-switcher example before shipping.
+
+## Server update does not reach a module control
+
+**Expected:** an update inside a module changes that module’s widget.
+
+**Likely cause:** a namespaced ID reached an update function or a server
+helper. Module UI takes `ns("region")`; module server code takes the
+module session and the bare `"region"`. Passing `ns("region")` to an
+updater addresses a nonexistent `"filters-filters-region"` input,
+silently.
+
+**Fix:** audit every update and helper call in the module server for
+bare IDs (see the modules article). If the update reaches the wrong
+module instance, a hardcoded full ID somewhere in the UI is the cause.
+
+## Dropdown closes when a modal opens
+
+**Expected:** this is the lifecycle working as designed. When a
+full-screen overlay or modal opens, open dropdowns close rather than
+stranding above the modal.
+
+**Fix:** none needed for the close itself. If the app opens modals
+programmatically and the close looks abrupt, close dropdowns
+deliberately first with
+[`closeAllGlassSelects()`](https://prigasg.github.io/glasstabs/reference/closeGlassSelect.md)
+(or
+[`closeGlassSelect()`](https://prigasg.github.io/glasstabs/reference/closeGlassSelect.md)
+/
+[`closeGlassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/closeGlassSelect.md)
+for one widget), so the transition is intentional. There is no “reopen”
+helper: the user reopens with a click, like any other dropdown.
+
+## Widget appears unstyled or unbound after renderUI()
+
+**Expected:** a widget created by
+[`renderUI()`](https://rdrr.io/pkg/shiny/man/renderUI.html) binds fresh
+with the arguments it was created with.
+
+**Likely causes:** (1)
+[`useGlassTabs()`](https://prigasg.github.io/glasstabs/reference/useGlassTabs.md)
+was placed inside the rendered UI instead of at the root — dependencies
+must load once at the top level; (2) a server-backed widget’s helper was
+registered inside the render instead of once in the server function, so
+the new control has no search backend; (3) the app expected the previous
+control’s selection to survive — a rebuilt widget starts from its UI
+arguments, so re-apply the intended selection after the render.
+
+**Fix:** keep
+[`useGlassTabs()`](https://prigasg.github.io/glasstabs/reference/useGlassTabs.md)
+at the root and server registration in the server function, and treat a
+[`renderUI()`](https://rdrr.io/pkg/shiny/man/renderUI.html) rebuild as a
+fresh widget (see the linked-filters article’s renderUI section).

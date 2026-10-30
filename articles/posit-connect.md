@@ -52,6 +52,54 @@ instructions.
 10. Refresh the Connect app and repeat a few controls to catch asset
     caching or session-reconnect problems.
 
+## Versions, dependencies, and CSP
+
+**Pin the version you tested.** Install the CRAN release for stability,
+or a GitHub commit for development — but record which one the deployment
+uses, because the development version moves. The installed version is
+visible from R with `packageVersion("glasstabs")` and in the app with
+[`glasstabs_news()`](https://prigasg.github.io/glasstabs/reference/glasstabs_news.md);
+if a deployed app behaves differently from local, the version is the
+first thing to compare.
+
+**Confirm the assets published.** After the first deploy, open the app
+and confirm the dropdowns render styled. Unstyled controls after
+publishing mean the HTML dependencies did not travel with the app: check
+that
+[`useGlassTabs()`](https://prigasg.github.io/glasstabs/reference/useGlassTabs.md)
+is called once at the UI root (or that the app uses
+[`glassPage()`](https://prigasg.github.io/glasstabs/reference/glassPage.md),
+which loads the dependency automatically), and check the manifest
+includes the package’s dependencies. The “What to test” list above
+catches this on the first pass, but only if someone actually opens a
+dropdown.
+
+**The
+[`useGlassTabs()`](https://prigasg.github.io/glasstabs/reference/useGlassTabs.md)
+exception, stated once.** The getting-started rule is “exactly one
+[`useGlassTabs()`](https://prigasg.github.io/glasstabs/reference/useGlassTabs.md)
+call.”
+[`glassPage()`](https://prigasg.github.io/glasstabs/reference/glassPage.md)
+is the exception: it loads the dependency itself, so an app built on
+[`glassPage()`](https://prigasg.github.io/glasstabs/reference/glassPage.md)
+must not also call
+[`useGlassTabs()`](https://prigasg.github.io/glasstabs/reference/useGlassTabs.md).
+One or the other, never both, never neither.
+
+**Content Security Policy.** If the deployment serves a strict CSP, set
+the `glasstabs.csp_nonce` option to the page’s nonce and the package’s
+generated `<style>` elements will carry it. That covers style elements
+only: it is not a general strict-CSP guarantee, and scripts, inline
+handlers, and other sources need their own testing under the
+deployment’s actual policy before claiming compatibility.
+
+**Theming check.** Before shipping a themed deployment, run the
+theme-switcher example (`runGlassExample("theme-switcher")`): one switch
+flips every select between dark and light, including long labels, wide
+text in a narrow phone frame, and a bottom-of-page dropdown that must
+flip above the field. If those survive, the deployment’s theme wiring is
+sound.
+
 ## Run locally
 
 ``` r
