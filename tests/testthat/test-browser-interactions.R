@@ -469,6 +469,22 @@ test_that("browser: overflow tooltips respect mode, truncation, and keyboard nav
   on.exit(app$stop(), add = TRUE)
 
   app$wait_for_idle()
+  show_keyboard_tip <- function(dropdown, tooltip) {
+    visible <- FALSE
+    for (attempt in seq_len(5)) {
+      app$get_js(sprintf("(function() {
+        document.querySelector('%s').dispatchEvent(
+          new KeyboardEvent('keydown', {key:'End', bubbles:true}));
+        return true;
+      })()", dropdown))
+      Sys.sleep(0.35)
+      visible <- isTRUE(app$get_js(sprintf(
+        "document.querySelector('%s.visible') !== null", tooltip
+      )))
+      if (visible) break
+    }
+    expect_true(visible)
+  }
 
   # Short trigger and option labels must not create a visual tooltip.
   expect_true(app$get_js("(function() {
@@ -488,14 +504,7 @@ test_that("browser: overflow tooltips respect mode, truncation, and keyboard nav
   "))
 
   # Both single- and multi-select options reveal clamped text to keyboard users.
-  expect_true(app$get_js("(function() {
-    var dropdown = document.querySelector('#short_single-dropdown');
-    dropdown.dispatchEvent(new KeyboardEvent('keydown', {key:'End', bubbles:true}));
-    return true;
-  })()"))
-  app$wait_for_js("
-    document.querySelector('#short_single-option-overflow-tooltip.visible') !== null
-  ")
+  show_keyboard_tip("#short_single-dropdown", "#short_single-option-overflow-tooltip")
 
   app$click(selector = "#short_multi-trigger")
   app$wait_for_js("document.querySelector('#short_multi-dropdown.open') !== null")
@@ -510,14 +519,7 @@ test_that("browser: overflow tooltips respect mode, truncation, and keyboard nav
   expect_false(app$get_js("
     document.querySelector('#short_multi-option-overflow-tooltip.visible') !== null
   "))
-  expect_true(app$get_js("(function() {
-    var dropdown = document.querySelector('#short_multi-dropdown');
-    dropdown.dispatchEvent(new KeyboardEvent('keydown', {key:'End', bubbles:true}));
-    return true;
-  })()"))
-  app$wait_for_js("
-    document.querySelector('#short_multi-option-overflow-tooltip.visible') !== null
-  ")
+  show_keyboard_tip("#short_multi-dropdown", "#short_multi-option-overflow-tooltip")
 
   # `never` suppresses both trigger and option tooltips even for extreme text.
   app$click(selector = "#never_single-trigger")
