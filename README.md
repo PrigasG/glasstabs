@@ -24,7 +24,7 @@ Install the CRAN release:
 install.packages("glasstabs")
 ```
 
-Install the development version from GitHub when you want changes that are not yet available in the CRAN release:
+To install directly from the current GitHub source:
 
 ``` r
 pak::pak("PrigasG/glasstabs@main")

@@ -254,8 +254,8 @@ page_body <- function() {
         class = "connect-header",
         div(
           class = "connect-title",
-          h1("Connect workflow and v0.4.1 test lab"),
-          p("A real review workflow with the new responsive, touch, keyboard, accessibility, and dynamic-tab features ready to test together.")
+          h1("Connect workflow showcase"),
+          p("A review workflow showing responsive, touch, keyboard, accessibility, and dynamic-tab features together.")
         ),
         div(
           class = "connect-status",

@@ -40,7 +40,7 @@ is specific.
 | `indicators` | Indicator styles, vertical orientation, and automatic theming | `runGlassExample("indicators")` |
 | `light-mode` | Light themes and long labels: a bright, everyday app showing adaptive dropdown sizing | `runGlassExample("light-mode")` |
 | `theme-switcher` | Dynamic theming: one switch flips every select between dark and light, with long labels, wide text in a narrow phone frame, and a bottom-of-page dropdown that must flip above the field | `runGlassExample("theme-switcher")` |
-| `connect-workflow` | A deployable Posit Connect workflow page, doubling as a v0.4.1 test lab with the responsive, keyboard, touch, dynamic-tab, badge, theme, and page-wrapper checks collected in one app | `runGlassExample("connect-workflow")` |
+| `connect-workflow` | A deployable Posit Connect workflow showing responsive layouts, keyboard and touch interaction, dynamic tabs, badges, themes, and the page wrapper | `runGlassExample("connect-workflow")` |
 | `smoke-test` | A broad widget smoke test across Overview, Details, Admin, and Compare panels | `runGlassExample("smoke-test")` |
 | `square-corners` | Square-corner styling as a smoke test | `runGlassExample("square-corners")` |
 | `stress-test` | **Diagnostic, not a starter template.** Pushes both selects to their limits, including a 100,000-choice set and complex interaction scenarios — use it to check performance and edge cases, not to copy for ordinary apps | `runGlassExample("stress-test")` |
