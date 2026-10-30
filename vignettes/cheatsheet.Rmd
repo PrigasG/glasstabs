@@ -164,18 +164,11 @@ bs4Card(
 
 ## Tabs: connected styling
 
-The active tab and its content are visually linked automatically: the active
-tab carries a subtle inner light on its content-facing edge (bottom for
-horizontal tabs, the rail side for vertical, RTL-aware) in the halo color,
-and the content box's top edge picks up the same color to bridge the gap.
-The `underline` indicator keeps its own connection cue instead. No parameters
-needed - to restyle the link, theme `halo_border` via `glass_tab_theme()`.
+The active tab and its content are visually linked automatically: the active tab carries a subtle inner light on its content-facing edge (bottom for horizontal tabs, the rail side for vertical, RTL-aware) in the halo color, and the content box's top edge picks up the same color to bridge the gap. The `underline` indicator keeps its own connection cue instead. No parameters needed - to restyle the link, theme `halo_border` via `glass_tab_theme()`.
 
 ## Tabs: attached style and slide transition
 
-Use `style = "attached"` for a single unified card where the tab bar docks
-onto the content box, and `transition = "slide"` for directional pane
-movement that follows tab order.
+Use `style = "attached"` for a single unified card where the tab bar docks onto the content box, and `transition = "slide"` for directional pane movement that follows tab order.
 
 ```{r}
 glassTabsUI(
@@ -309,32 +302,7 @@ glassSelect(
 )
 ```
 
-For `glassSelect()`, an empty-string value is an ordinary choice:
-selecting one reports `""`, while clearing reports `NULL`.
-
-For `glassSelect()`, the overflow tooltip appears for an ellipsized trigger.
-Inside either open dropdown, it appears for the truncated option currently
-hovered or reached with the keyboard; the multi-select trigger does not combine
-selected labels into a tooltip. On touch, wrapped option text is the full-text
-fallback. Use `overflow_tooltip = "never"` to disable visual tips.
-
-Select chrome rows are real buttons, not Tab stops: inside an open dropdown,
-arrow keys move between options and the style switcher, Select-all row, and
-Clear controls, and Enter or Space activates the focused button.
-
-## Selects: modules and server recipes
-
-The patterns above cover one widget. For the rest, read the recipe
-articles instead of duplicating code here:
-
-- Shiny modules (namespaced widget IDs, bare IDs with the module
-  session, server helpers in modules): the modules article.
-- Dependent dropdowns and dynamic UI (linked filters, renderUI
-  rebuilds, settling filters, reset meanings): the linked-filters
-  article.
-- Server search limits, bounded results, and the performance model:
-  the multi-select guide's server-search section.
-- When something breaks: troubleshooting.
+For `glassSelect()`, the overflow tooltip appears for an ellipsized trigger. Inside either open dropdown, it appears for the truncated option currently hovered or reached with the keyboard; the multi-select trigger does not combine selected labels into a tooltip. On touch, wrapped option text is the full-text fallback. Use `overflow_tooltip = "never"` to disable visual tips.
 
 ## Tabs: inside bs4Dash
 
@@ -452,8 +420,7 @@ glasstabs_news()      # prints changelog to the console
 - `glassTabPanel()` values must be unique within a `glassTabsUI()` call — duplicates cause an error naming the offending value.
 - `selected` in `glassTabsUI()` refers to the tab **value**, not the label.
 - `glassSelectValue()` returns a reactive function, not a list.
-- `glassMultiSelectValue()` returns raw `selected()`, `resolved()`,
-  `is_empty()`, and `style()` reactives.
+- `glassMultiSelectValue()` returns raw `selected()`, `resolved()`, `is_empty()`, and `style()` reactives.
 - For `glassMultiSelect()`, `selected` should use choice values, not labels.
 - Use `compact = TRUE` inside bs4Dash cards or any tight layout to reduce widget spacing.
 - If you add new JS/CSS behavior during development, reinstall or `load_all()` before retesting.
