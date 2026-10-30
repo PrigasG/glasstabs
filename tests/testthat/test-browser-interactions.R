@@ -242,9 +242,29 @@ test_that("browser: select dropdowns match their fields and stay viewport-safe",
       return trigger.getAttribute('aria-label').length > 9000;
     })()
   "))
-  app$wait_for_js("
-    document.querySelector('#short_single-overflow-tooltip.visible') !== null
-  ")
+  # Same retry treatment as the option tooltip below: the trigger
+  # tooltip shows 420 ms after mouseenter, and a slow runner can miss
+  # a single 4 s wait. Re-dispatching is idempotent (schedule() clears
+  # the previous timer first), and a genuinely broken tooltip fails
+  # every attempt.
+  trigger_tip_shown <- FALSE
+  for (attempt in 1:5) {
+    app$get_js("
+      (function() {
+        var trigger = document.querySelector('#short_single-trigger');
+        trigger.dispatchEvent(new MouseEvent('mouseenter', {bubbles:true}));
+        return true;
+      })()
+    ")
+    trigger_tip_shown <- tryCatch({
+      app$wait_for_js("
+        document.querySelector('#short_single-overflow-tooltip.visible') !== null
+      ", timeout = 2000)
+      TRUE
+    }, error = function(e) FALSE)
+    if (trigger_tip_shown) break
+  }
+  expect_true(trigger_tip_shown)
   expect_true(app$get_js("
     (function() {
       var tip = document.querySelector('#short_single-overflow-tooltip');
@@ -1975,6 +1995,24 @@ test_that("browser: real Enter and Space activate chrome controls", {
   # buttons activate on Enter keyDown and Space keyUp, so sending both
   # activates each control exactly once.
   session <- app$get_chromote_session()
+  # Diagnostic probe: record every keydown reaching the page, capture
+  # phase so nothing can swallow it first. A trusted event here can
+  # only come from the CDP dispatch (synthetic test events are
+  # untrusted), so the assertions below distinguish "the dispatched key
+  # never reached the page" from "it arrived but did not activate".
+  app$get_js("
+    (function() {
+      window._gtKeyProbe = [];
+      document.addEventListener('keydown', function(e) {
+        window._gtKeyProbe.push({
+          key: e.key, code: e.code,
+          target: (e.target && e.target.id) || '',
+          trusted: e.isTrusted
+        });
+      }, true);
+      return true;
+    })()
+  ")
   # Both virtual key codes: working chromote examples send windows AND
   # native codes, and Chrome's key construction uses the native code on
   # some platforms. Omitting it was the prime suspect when real Enter
@@ -1988,6 +2026,10 @@ test_that("browser: real Enter and Space activate chrome controls", {
       )
       if (!is.null(text)) args$text <- text
       do.call(session$Input$dispatchKeyEvent, args)
+      # A real key is held briefly; back-to-back dispatches also rule
+      # out nothing, but a 100 ms hold matches physical input and costs
+      # nothing.
+      if (type == "keyDown") Sys.sleep(0.1)
     }
   }
   key_to <- function(selector, key) {
@@ -2036,10 +2078,19 @@ test_that("browser: real Enter and Space activate chrome controls", {
   app$wait_for_js("document.activeElement.getAttribute('data-style') === 'filled'")
   press("ArrowDown")
   app$wait_for_js("document.activeElement.id === 'short_multi-all'")
-  real_key("Enter", "Enter", 13)
+  real_key("Enter", "Enter", 13, text = "\r")
   # Focus first: if this wait fails the key went to the wrong element;
   # if the next wait fails, focus held but activation did not happen.
   app$wait_for_js("document.activeElement.id === 'short_multi-all'")
+  # The dispatched Enter must have reached the page as a trusted event
+  # on the button; if this fails, the dispatch itself is the problem.
+  expect_true(app$get_js("
+    (function() {
+      return window._gtKeyProbe.some(function(ev) {
+        return ev.key === 'Enter' && ev.target === 'short_multi-all' && ev.trusted;
+      });
+    })()
+  "))
   app$wait_for_js(
     "document.querySelector('#short_multi-all').getAttribute('aria-checked') === 'true'"
   )
@@ -2050,6 +2101,13 @@ test_that("browser: real Enter and Space activate chrome controls", {
   )
   real_key(" ", "Space", 32, text = " ")
   app$wait_for_js("document.activeElement.id === 'short_multi-all'")
+  expect_true(app$get_js("
+    (function() {
+      return window._gtKeyProbe.some(function(ev) {
+        return ev.key === ' ' && ev.target === 'short_multi-all' && ev.trusted;
+      });
+    })()
+  "))
   app$wait_for_js(
     "document.querySelector('#short_multi-all').getAttribute('aria-checked') === 'false'"
   )
@@ -2073,7 +2131,7 @@ test_that("browser: real Enter and Space activate chrome controls", {
   active_option_is("#fruit-dropdown", "cherry")
   key_to("#fruit-trigger", "ArrowDown")
   app$wait_for_js("document.activeElement.id === 'fruit-clear'")
-  real_key("Enter", "Enter", 13)
+  real_key("Enter", "Enter", 13, text = "\r")
   app$wait_for_js(
     "document.querySelector('#fruit-label').textContent === 'Select an option'"
   )
