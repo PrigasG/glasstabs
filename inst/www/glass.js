@@ -5,7 +5,7 @@
 
   /* Monotonic sequence for server searches, shared by every select
      controller. Each search takes the next value; the server echoes it and
-     the response handler drops anything older than the latest applied
+     the response handler drops anything older than the latest issued
      response for that widget. One shared counter (rather than one per
      widget) also stays monotonic if a widget is replaced via renderUI,
      so a re-created widget's first response can never look stale next to
