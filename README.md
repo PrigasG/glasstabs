@@ -117,6 +117,12 @@ glassMultiSelect(
 glassFilterTags("status")
 ```
 
+The [multi-select guide](https://prigasg.github.io/glasstabs/articles/multiselect.html)
+covers selection semantics, summaries, search, linked filters, server updates,
+and migration from `selectizeInput(multiple = TRUE)`. The corresponding
+[single-select guide](https://prigasg.github.io/glasstabs/articles/glassSelect.html)
+covers one-value controls.
+
 Select dropdowns always match their trigger width. The standard width is a compact `160px`; use the optional `width` argument only when an app needs more room for long labels. Both fixed and fluid CSS widths are supported and remain capped by the containing layout, so `width = "240px"` works well for a wider filter while `width = "100%"` fills the available column. Exceptionally long labels still wrap safely inside the matching panel.
 
 ``` r

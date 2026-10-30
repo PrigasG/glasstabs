@@ -19,6 +19,9 @@ knitr::opts_chunk$set(eval = FALSE)
 
 `glassSelect()` is an animated single-select dropdown for Shiny.
 
+For filters that accept several values, see the
+[multi-select guide](multiselect.html).
+
 It behaves like a standard Shiny input:
 `input$<inputId>` stores the selected value as a single character string,
 or `NULL` when nothing is selected.

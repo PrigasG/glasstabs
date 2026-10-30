@@ -28,9 +28,11 @@ conditionalPanel
 debounced
 deduplicated
 deployable
+discoverable
 dismissible
 dropdown
 dropdowns
+ellipsized
 fallbacks
 fillable
 glassMultiSelect
@@ -58,6 +60,7 @@ namespacing
 nav
 offcanvas
 pkgdown
+placeable
 pre
 px
 reactively
@@ -76,6 +79,7 @@ scrollers
 selectInput
 selectable
 selectize
+semibold
 shinytest
 stylesheet
 subtree
@@ -83,7 +87,10 @@ tablist
 teleported
 themeable
 theming
+toggleable
+transactional
 ungrouped
+unselected
 walkthrough
 widget's
 wordlist

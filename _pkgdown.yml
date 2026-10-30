@@ -37,14 +37,17 @@ articles:
   - title: Deployment
     contents:
       - posit-connect
-  - title: Widgets
-    navbar: Widgets
+  - title: Tabs and layout
+    navbar: Tabs
     contents:
       - tabs
       - responsive-accessibility
       - indicators
-      - glassSelect
+  - title: Select widgets
+    navbar: Selects
+    contents:
       - multiselect
+      - glassSelect
 
 reference:
   - title: Setup

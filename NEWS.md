@@ -2,6 +2,12 @@
 
 ## Fixes
 
+* The pkgdown articles now give multi-select its own prominent Selects entry,
+  backed by a complete guide to selection semantics, search, summaries, tag
+  pills, linked filters, server search, transactional updates, accessibility,
+  and migration from native Shiny multi-selects. Cross-links keep the
+  single-select and multi-select documentation equally discoverable.
+
 * `glassSelect()` now supports `searchable = "auto"` with a configurable
   `search_threshold`, matching the multi-select behavior. Short lists can keep
   the search field hidden and reveal it automatically as choices grow. Both
