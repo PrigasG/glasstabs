@@ -78,6 +78,17 @@
 * Search filtering no longer scans all choices for every visible row: the
   option-visibility pass uses a value-to-choice index rebuilt on every
   choices update.
+* Documentation: the multi-select guide gains an "All, Some, and None"
+  selection section with explicit empty-means-none and empty-means-all
+  patterns, and the server-search section now states the two
+  independent limits (`server_limit` for the initial slice, the
+  `*Server()` helper's `limit` per search) and the bounded-not-paginated
+  result model; the wrong `server_limit` wording ("returned for each
+  server-side search") is corrected in both roxygen blocks and both
+  help files. New recipe articles cover Shiny modules and dependent
+  dropdowns / dynamic UI, and the single-select guide documents the
+  "All" option's behavior, invalid-selection clearing, and server
+  edge cases.
 * Select field titles now default to a distinct 14px semibold treatment and
   accept `label_size` alongside `label_bold`. Dropdown search uses a quieter
   neutral focus treatment by default; `search_focus_ring = TRUE` opts into the

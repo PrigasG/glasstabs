@@ -407,6 +407,13 @@ server <- function(input, output, session) {
 }
 ```
 
+Note that mapping an empty single-select to `"all"` here is an
+explicit app choice, not the widget's behavior: a cleared
+single-select returns `NULL`, and this app deliberately reads `NULL`
+as "all". The multi-select guide's "Understanding selection
+behavior" section works through the same decision for multi-selects,
+where the trap is Clear all restoring every record.
+
 From here, add only the options the app actually needs. Every widget keeps the
 usual Shiny model: place it in the UI, read its value from `input`, and use an
 update helper when the server needs to change it.

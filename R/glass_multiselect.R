@@ -56,8 +56,9 @@
 #' @param server Logical. If \code{TRUE}, render only an initial slice of
 #'   choices and use [glassMultiSelectServer()] to search the full choice set
 #'   from the Shiny server. Default \code{FALSE}.
-#' @param server_limit Maximum number of choices rendered initially and returned
-#'   for each server-side search. Default \code{50}. Explicitly selected
+#' @param server_limit Maximum number of choices rendered initially.
+#'   Search results are bounded separately by the \code{limit} argument of
+#'   the \code{*Server()} helper. Default \code{50}. Explicitly selected
 #'   values that fall outside the initial slice are still rendered as extra
 #'   rows so they stay visible and checked.
 #' @param server_min_chars Minimum search characters required before server-side

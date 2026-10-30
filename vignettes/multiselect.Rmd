@@ -401,10 +401,76 @@ to `NULL`, for downstream code that expects it). `empty_behavior =
 `glassMultiSelect()`, or a reactive returning them. `is_empty()` is
 also available for UI messages or validation.
 
+## Understanding selection behavior: All, Some, and None
+
+The multi-select default surprises developers who expect an empty
+starting state: `selected = NULL` selects **every enabled choice**
+initially. Disabled choices are never in that default, and they are
+never part of the Select-all set either — the Select-all row and its
+indicator act on enabled, visible choices only (see the server-mode
+note below for how that scope works with bounded results). Three
+states, three meanings:
+
+| State | Widget value | What the app usually does with it |
+| ----- | ------------ | --------------------------------- |
+| All choices selected | Character vector of all selected values | Show all matching records |
+| Some choices selected | Character vector of those values | Show matching records only |
+| Nothing selected | `character(0)` | Show no records — or, if the app chooses, no filter |
+
+The last row is where bugs hide. An app that treats empty as "no
+filter" is valid when chosen deliberately — but if the example is
+copied without that choice, pressing Clear all makes every record
+reappear even though the dropdown visibly holds no selection. Decide
+which meaning empty has, and write it down in the filter:
+
+Approach A: empty means no records. Note that `req()` on an empty
+selection also stops the calculation, so the explicit version below is
+the one to copy:
+
+```{r run-filter-empty-none}
+rows <- data.frame(
+  fruit = c("apple", "banana", "cherry"),
+  n = c(12, 7, 9)
+)
+
+filter_none <- function(selected) {
+  if (is.null(selected) || length(selected) == 0L) {
+    return(rows[0, , drop = FALSE])
+  }
+  rows[rows$fruit %in% selected, , drop = FALSE]
+}
+
+stopifnot(nrow(filter_none(character(0))) == 0L)
+stopifnot(nrow(filter_none("apple")) == 1L)
+```
+
+Approach B: empty means all records:
+
+```{r run-filter-empty-all}
+filter_all <- function(selected) {
+  if (is.null(selected) || length(selected) == 0L) {
+    return(rows)
+  }
+  rows[rows$fruit %in% selected, , drop = FALSE]
+}
+
+stopifnot(nrow(filter_all(character(0))) == 3L)
+stopifnot(nrow(filter_all("banana")) == 1L)
+```
+
+The same decision applies at three moments: on initial load (default
+`selected = NULL` starts at All, while `selected = character(0)`
+starts at None), after Clear all (the widget returns `character(0)`),
+and after a reset (whatever the reset writes back — see the
+linked-filters article for the three reset meanings). The
+`glassMultiSelectValue(..., empty_behavior = "all")` helper changes
+how the *app* resolves an empty selection; it does not change what
+the widget returns, which is always `character(0)` when empty.
+
 ## Server-side search for large choice sets
 
 For hundreds or thousands of choices, keep the full vector on the
-server and send a small page of matches to the browser. Set
+server and send a small bounded set of matches to the browser. Set
 `server = TRUE` in the UI and register `glassMultiSelectServer()` in the
 server function:
 
@@ -434,15 +500,51 @@ server <- function(input, output, session) {
 if (interactive()) shinyApp(ui, server)
 ```
 
-`server_limit` (default `50`) bounds both the initial slice and each
-page of search results. `server_min_chars` (default `0`) sets how many
+Two independent limits bound what the browser renders. They are set in
+different places and nothing ties them together — setting one does not
+change the other:
+
+| Setting | Where it lives | What it bounds |
+| ------- | -------------- | -------------- |
+| `server_limit` (default `50`) | `glassMultiSelect()` / `glassSelect()` | Choices rendered initially, excluding explicitly included selections |
+| `limit` (default `50`) | `glassMultiSelectServer()` / `glassSelectServer()` | Matches returned for each search |
+
+So `server_limit = 25` with `limit = 100` shows 25 choices on open and
+up to 100 per search. `server_min_chars` (default `0`) sets how many
 characters must be typed before server-side matching filters choices,
 and `ignore_case = TRUE` (the default in `glassMultiSelectServer()`)
 matches labels and values case-insensitively. Two details that make
 this safe: explicitly selected values that fall outside the initial
 slice are still rendered as extra rows, so they stay visible and
 checked; and the control keeps the selected values on the client while
-only the current page of matches is rendered.
+only the current bounded set of matches is rendered.
+
+Results are bounded, not paginated: the helper returns the first N
+matches for each search. There is no next-page cursor and no built-in
+Load more mechanism, so "page" is the wrong word for what comes back.
+
+In server mode the Select-all row acts on the currently loaded page:
+with 20,000 facilities and 30 matches on screen, Select all selects
+those 30, not all 20,000. The full selection stays represented in
+Shiny — selected values persist on the client across searches — but
+only the current matches are rendered. The same scope rule applies to
+the indicator: it reports the enabled, visible set, not the whole
+dataset.
+
+### Performance and limitations
+
+Server mode reduces what is rendered in the browser, not what R holds:
+the complete choices vector is still supplied to the constructor and
+to the server helper, so this is not database-backed lazy search. And
+because the default multi-select selection contains all enabled choice
+values, a large selection still creates a large input payload even
+with bounded DOM rendering — pass `selected = character(0)` when the
+app does not need everything selected up front.
+
+One unsupported configuration: `server = TRUE` with search disabled
+(`searchable = FALSE` or `"never"`). Without a search input the user
+cannot query beyond the initial slice, so choices outside it are
+unreachable through the dropdown. Keep search enabled in server mode.
 
 This pattern also suits controls inserted by `renderUI()`: register
 `glassMultiSelectServer()` once for the same `inputId`, and the newly

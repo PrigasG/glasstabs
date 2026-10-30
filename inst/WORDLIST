@@ -1,6 +1,7 @@
 ArrowDown
 ArrowUp
 aria
+affordance
 CMD
 CSP
 Cheatsheet
@@ -69,7 +70,8 @@ reactively
 reactives
 reinitialised
 reinitialises
-renderGlassTabs
+reselects
+renderUI
 renderer
 rlang
 roxygen

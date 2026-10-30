@@ -48,6 +48,10 @@ articles:
     contents:
       - multiselect
       - glassSelect
+  - title: Recipes
+    contents:
+      - modules
+      - linked-filters
 
 reference:
   - title: Setup

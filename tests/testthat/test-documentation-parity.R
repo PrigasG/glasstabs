@@ -69,3 +69,43 @@ test_that("pkgdown reference lists the complete multi-select API", {
     expect_match(pkgdown, name, fixed = TRUE, info = name)
   }
 })
+
+test_that("pkgdown exposes the recipe articles", {
+  pkgdown_path <- test_path("..", "..", "_pkgdown.yml")
+  skip_if_not(file.exists(pkgdown_path), "pkgdown config is excluded from the package tarball")
+  pkgdown <- paste(
+    readLines(pkgdown_path, warn = FALSE),
+    collapse = "\n"
+  )
+  expect_match(pkgdown, "modules", fixed = TRUE)
+  expect_match(pkgdown, "linked-filters", fixed = TRUE)
+})
+
+test_that("server-limit wording agrees across roxygen, Rd, and guides", {
+  wrong <- "returned for each server-side search"
+  files <- c(
+    test_path("..", "..", "R", "glass_multiselect.R"),
+    test_path("..", "..", "R", "glassSelect.R"),
+    test_path("..", "..", "man", "glassSelect.Rd"),
+    test_path("..", "..", "man", "glassMultiSelect.Rd"),
+    test_path("..", "..", "vignettes", "multiselect.Rmd"),
+    test_path("..", "..", "vignettes", "glassSelect.Rmd")
+  )
+  skip_if_not(
+    all(file.exists(files)),
+    "repository sources are excluded from the installed test bundle"
+  )
+  for (file in files) {
+    text <- paste(readLines(file, warn = FALSE), collapse = "\n")
+    expect_no_match(text, wrong, fixed = TRUE, label = basename(file))
+  }
+  guide <- paste(
+    readLines(
+      test_path("..", "..", "vignettes", "multiselect.Rmd"),
+      warn = FALSE
+    ),
+    collapse = "\n"
+  )
+  expect_match(guide, "bounded, not paginated", fixed = TRUE)
+  expect_match(guide, "server_limit", fixed = TRUE)
+})
