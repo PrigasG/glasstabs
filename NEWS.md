@@ -79,8 +79,8 @@ example gallery). The detailed fixes follow.
   server-side search: typing a value finds its option even when the label
   does not contain it.
 * Server search responses now carry the sequence of the search they answer,
-  and the browser ignores a response older than the latest one already
-  applied, so rapid typing cannot leave stale results on screen. The
+  and the browser ignores a response older than the latest search issued
+  for that widget, so rapid typing cannot leave stale results on screen. The
   sequence replaces the old timestamp nonce, which served the same
   retriggering purpose.
 * A server search that never receives a response no longer leaves the

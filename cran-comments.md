@@ -4,26 +4,33 @@ This is glasstabs 0.4.1. The previous CRAN version is 0.4.0.
 
 ## Changes in this version (0.4.1)
 
-This update improves select sizing, display options, and tab presentation.
+This update stabilizes select input behavior and accessibility. It improves
+keyboard access and ARIA state for dropdown controls, corrects selection and
+server-search behavior, and adds guidance for selection semantics, modules,
+linked filters, migration, and troubleshooting.
 
-- Select fields and dropdowns now stay the same width and remain inside the
-  viewport. Long labels wrap in dropdowns and show accessible overflow tips.
-- Select widgets add automatic search visibility, optional tongue animation,
-  configurable field width, label styling, and search-focus styling.
-- Multi-selects add compact summaries, configurable list height, and single-
-  or multi-color fills.
-- Tab content adds attached styling and directional slide transitions.
-- Examples now demonstrate the new options in both light and dark modes and
-  compare glasstabs selects with native Shiny selects.
+- Select chrome controls are real keyboard-accessible buttons with complete
+  ARIA state; select-all uses one consistent enabled-and-visible scope.
+- Server search ignores stale responses, guards unanswered searches, and
+  supports disabled choices as they arrive.
+- Single-select preserves the synthetic All row on updates and distinguishes
+  an empty-string choice from clearing the input.
+- Documentation adds runnable module, linked-filter, migration, gallery,
+  troubleshooting, and deployment guides.
 
 See NEWS.md for the full list.
 
 ## R CMD check results
 
-0 errors | 0 warnings | 1 note
+The GitHub Actions R CMD check matrix passes on macOS, Windows, and three
+Linux R versions.
 
-Checked with `R CMD check --as-cran` on Windows 11 using R 4.5.1.
+On Windows 11 with R 4.5.1, `R CMD check --as-cran --no-manual` reports
+0 errors, 0 warnings, and 0 notes with remote CRAN incoming checks disabled.
+The PDF manual check passed separately. The local HTML manual check was
+blocked by an unavailable Rtools `tidy.exe`, rather than a package finding.
 
-The check host could not verify its system clock; this is unrelated to the
-package contents.
+Before CRAN submission, deploy the updated pkgdown site and rerun the full
+remote URL check: five newly linked articles currently return 404 on the
+pre-release site.
 
