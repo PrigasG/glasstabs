@@ -305,6 +305,10 @@
   color:var(--ms-tx-50);
   font-size:11px;font-weight:600;letter-spacing:.02em;
   transition:background 130ms,color 130ms;white-space:nowrap;
+  /* <button> reset: the previous div had no UA chrome, so neutralize the
+     button defaults (background, border, font) without changing visuals. */
+  background:transparent;border:0;margin:0;font-family:inherit;
+  appearance:none;-webkit-appearance:none;
 }
 .gt-style-btn:hover{
   background:var(--ms-tx-08);
@@ -333,6 +337,11 @@
   color:var(--ms-ac-tx-75);
   font-size:12px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;
   border-bottom:1px solid var(--ms-border);margin-bottom:4px;transition:background 120ms;
+  /* <button> reset: keep the separator border-bottom and the 4px bottom
+     margin, neutralize only the other UA button sides/defaults. */
+  background:transparent;border-top:0;border-right:0;border-left:0;
+  margin-top:0;margin-right:0;margin-left:0;font-family:inherit;
+  appearance:none;-webkit-appearance:none;
 }
 .gt-ms-all:hover{background:var(--ms-tx-05);}
 
@@ -443,6 +452,9 @@
 .gt-ms-clear{
   font-size:12px;color:var(--ms-accent);cursor:pointer;font-weight:600;
   opacity:.7;transition:opacity 120ms;
+  /* <button> reset: the previous span had no UA chrome. */
+  background:transparent;border:0;padding:0;margin:0;font-family:inherit;
+  text-align:left;appearance:none;-webkit-appearance:none;
 }
 .gt-ms-clear:hover{opacity:1;}
 
@@ -574,6 +586,17 @@
   outline-offset:3px;
 }
 
+/* Keyboard focus must be visible on the chrome buttons. They are reached
+   by arrow keys, not Tab, so :focus-visible is the right selector; mouse
+   clicks do not show the ring, matching the triggers above. */
+.gt-style-btn:focus-visible,
+.gt-ms-all:focus-visible,
+.gt-ms-clear:focus-visible,
+.gt-gs-clear:focus-visible{
+  outline:3px solid var(--ms-focus-ring,#7ec3f7);
+  outline-offset:3px;
+}
+
 .gt-gs-wrap.theme-light .gt-gs-trigger{
   background:rgba(0,0,0,0.04);
   box-shadow:0 1px 4px rgba(0,0,0,0.08);
@@ -602,6 +625,9 @@
   font-weight:600;
   opacity:.7;
   transition:opacity 120ms;
+  /* <button> reset: the previous span had no UA chrome. */
+  background:transparent;border:0;padding:0;margin:0;font-family:inherit;
+  text-align:left;appearance:none;-webkit-appearance:none;
 }
 
 .gt-gs-clear:hover{

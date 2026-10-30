@@ -315,6 +315,10 @@ hovered or reached with the keyboard; the multi-select trigger does not combine
 selected labels into a tooltip. On touch, wrapped option text is the full-text
 fallback. Use `overflow_tooltip = "never"` to disable visual tips.
 
+Select chrome rows are real buttons, not Tab stops: inside an open dropdown,
+arrow keys move between options and the style switcher, Select-all row, and
+Clear controls, and Enter or Space activates the focused button.
+
 ## Tabs: inside bs4Dash
 
 `glassTabsUI()` works inside `bs4Dash::tabItem()`. Place `useGlassTabs()` in the `dashboardBody()` (or anywhere before the first widget — once is enough).

@@ -222,6 +222,11 @@ glassSelect(
 )
 ```
 
+The Clear button is keyboard-reachable too: with the dropdown open, Arrow
+Down past the last option moves focus to it (Arrow Up returns to the
+options), and Enter or Space clears the selection. Tab and Escape close
+the panel as usual.
+
 For example, five categories do not need a search field when the threshold is
 six:
 

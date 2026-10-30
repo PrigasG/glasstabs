@@ -478,7 +478,11 @@
       move: move,
       prepare: prepare,
       clear: function () { setActive(null); },
-      set: setActive
+      set: setActive,
+      /* Visible options (hidden/disabled skipped), for chrome-boundary
+         checks in the controllers. Identity comparison only; move()
+         remains the place that prepares ids. */
+      options: options
     };
   }
 
@@ -1485,6 +1489,80 @@
       return option;
     }
 
+    /* Chrome-row keyboard navigation. The clear button is a real button, but
+       it is not a Tab stop: Tab closes the dropdown and exits, per the
+       combobox pattern, so arrow keys carry chrome navigation instead.
+       Options (DOM order, skipping hidden/disabled) and chrome rows (DOM
+       order, skipping hidden) form one cycle in both directions, matching
+       the option navigator's existing wrap behavior. chromeIndex is -1
+       while navigation sits on options. The focus/blur listeners on the
+       button keep chromeIndex in step when it is reached by mouse/touch. */
+    var chromeIndex = -1;
+
+    function chromeItems() {
+      var items = [];
+      if (clearBtn && clearBtn.offsetParent !== null) items.push(clearBtn);
+      return items;
+    }
+
+    function focusOwnerElement() {
+      return (searchIn && !searchIn.disabled) ? searchIn : trigger;
+    }
+
+    function enterChrome(index) {
+      var items = chromeItems();
+      if (!items.length) return;
+      index = ((index % items.length) + items.length) % items.length;
+      optionNav.clear();
+      optionOverflowTip.hide();
+      chromeIndex = index;
+      items[index].focus();
+    }
+
+    function exitChrome(where) {
+      chromeIndex = -1;
+      var owner = focusOwnerElement();
+      if (owner) owner.focus();
+      moveOptionAndReveal(where);
+    }
+
+    function handleChromeAwareNav(key) {
+      var items = chromeItems();
+      if (chromeIndex >= 0 && !items.length) chromeIndex = -1;
+      if (chromeIndex >= 0) {
+        if (key === 'Home') { enterChrome(0); return; }
+        if (key === 'End') { enterChrome(items.length - 1); return; }
+        if (key === 'ArrowDown') {
+          if (chromeIndex < items.length - 1) enterChrome(chromeIndex + 1);
+          else exitChrome('first');
+          return;
+        }
+        if (chromeIndex > 0) enterChrome(chromeIndex - 1);
+        else exitChrome('last');
+        return;
+      }
+      if (!items.length) {
+        if (key === 'Home') moveOptionAndReveal('first');
+        else if (key === 'End') moveOptionAndReveal('last');
+        else moveOptionAndReveal(key === 'ArrowDown' ? 1 : -1);
+        return;
+      }
+      var before = optionNav.current();
+      var opts = optionNav.options();
+      if (key === 'Home') { moveOptionAndReveal('first'); return; }
+      if (key === 'End') { moveOptionAndReveal('last'); return; }
+      if (key === 'ArrowDown' && before && opts.length &&
+          before === opts[opts.length - 1]) {
+        enterChrome(0);
+        return;
+      }
+      if (key === 'ArrowUp' && before && opts.length && before === opts[0]) {
+        enterChrome(items.length - 1);
+        return;
+      }
+      moveOptionAndReveal(key === 'ArrowDown' ? 1 : -1);
+    }
+
     /* State readers */
     function getValue() {
       return state.selected;
@@ -1813,6 +1891,7 @@
       scheduleTeleportClose(wrap, dropdown);
       setDropdownOpenState(wrap, inputId, false);
       optionNav.clear();
+      chromeIndex = -1;
     }
 
     function closeAndReturnFocus() {
@@ -1845,9 +1924,7 @@
         e.preventDefault();
         if (!dropdown.classList.contains('open')) open();
         setTimeout(function () {
-          if (e.key === 'Home') moveOptionAndReveal('first');
-          else if (e.key === 'End') moveOptionAndReveal('last');
-          else moveOptionAndReveal(e.key === 'ArrowDown' ? 1 : -1);
+          handleChromeAwareNav(e.key);
         }, 110);
       } else if (e.key === 'Escape' || e.key === 'Tab') {
         closeAndReturnFocus();
@@ -1858,9 +1935,7 @@
       if (e.key === 'ArrowDown' || e.key === 'ArrowUp' ||
           e.key === 'Home' || e.key === 'End') {
         e.preventDefault();
-        if (e.key === 'Home') moveOptionAndReveal('first');
-        else if (e.key === 'End') moveOptionAndReveal('last');
-        else moveOptionAndReveal(e.key === 'ArrowDown' ? 1 : -1);
+        handleChromeAwareNav(e.key);
       } else if (e.key === 'Enter') {
         var option = optionNav.current();
         if (option) {
@@ -1896,6 +1971,42 @@
       clearBtn.addEventListener('click', function (e) {
         e.stopPropagation();
         setValue(null, { notify: true });
+      });
+      /* The clear button lives in the trigger, not the dropdown, so its keys
+         never reach the dropdown handler and would bubble to the trigger
+         handler, whose Enter/Space branch would open or close the panel
+         instead of clearing. Shield it here: Enter/Space keep their native
+         button activation in every state (only propagation is stopped, the
+         default is not); arrows and Escape/Tab act only while the panel is
+         open, since there is nothing to navigate or close otherwise.
+         Focus/blur keep chromeIndex in step when the button is reached by
+         mouse/touch. */
+      clearBtn.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.stopPropagation();
+          return;
+        }
+        if (!dropdown.classList.contains('open')) return;
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp' ||
+            e.key === 'Home' || e.key === 'End') {
+          e.preventDefault();
+          e.stopPropagation();
+          handleChromeAwareNav(e.key);
+        } else if (e.key === 'Escape' || e.key === 'Tab') {
+          e.stopPropagation();
+          closeAndReturnFocus();
+        }
+      });
+      clearBtn.addEventListener('focus', function () {
+        var idx = chromeItems().indexOf(clearBtn);
+        if (idx >= 0) {
+          optionNav.clear();
+          optionOverflowTip.hide();
+          chromeIndex = idx;
+        }
+      });
+      clearBtn.addEventListener('blur', function () {
+        chromeIndex = -1;
       });
     }
 
@@ -2102,6 +2213,85 @@
       return option;
     }
 
+    /* Chrome-row keyboard navigation. The chrome rows are real buttons, but
+       they are not Tab stops: Tab closes the dropdown and exits, per the
+       combobox pattern, so arrow keys carry chrome navigation instead.
+       Options (DOM order, skipping hidden/disabled) and chrome rows (DOM
+       order: style switcher, select-all, clear; skipping hidden) form one
+       cycle in both directions, matching the option navigator's existing
+       wrap behavior. chromeIndex is -1 while navigation sits on options.
+       The focus/blur listeners on the chrome buttons keep chromeIndex in
+       step when a row is reached by mouse/touch. */
+    var chromeIndex = -1;
+
+    function chromeItems() {
+      var items = [];
+      styleBtns.forEach(function (btn) {
+        if (btn.offsetParent !== null) items.push(btn);
+      });
+      if (allRow && allRow.offsetParent !== null) items.push(allRow);
+      if (clearBtn && clearBtn.offsetParent !== null) items.push(clearBtn);
+      return items;
+    }
+
+    function focusOwnerElement() {
+      return (searchEnabled() && searchIn) ? searchIn : trigger;
+    }
+
+    function enterChrome(index) {
+      var items = chromeItems();
+      if (!items.length) return;
+      index = ((index % items.length) + items.length) % items.length;
+      optionNav.clear();
+      optionOverflowTip.hide();
+      chromeIndex = index;
+      items[index].focus();
+    }
+
+    function exitChrome(where) {
+      chromeIndex = -1;
+      var owner = focusOwnerElement();
+      if (owner) owner.focus();
+      moveOptionAndReveal(where);
+    }
+
+    function handleChromeAwareNav(key) {
+      var items = chromeItems();
+      if (chromeIndex >= 0 && !items.length) chromeIndex = -1;
+      if (chromeIndex >= 0) {
+        if (key === 'Home') { enterChrome(0); return; }
+        if (key === 'End') { enterChrome(items.length - 1); return; }
+        if (key === 'ArrowDown') {
+          if (chromeIndex < items.length - 1) enterChrome(chromeIndex + 1);
+          else exitChrome('first');
+          return;
+        }
+        if (chromeIndex > 0) enterChrome(chromeIndex - 1);
+        else exitChrome('last');
+        return;
+      }
+      if (!items.length) {
+        if (key === 'Home') moveOptionAndReveal('first');
+        else if (key === 'End') moveOptionAndReveal('last');
+        else moveOptionAndReveal(key === 'ArrowDown' ? 1 : -1);
+        return;
+      }
+      var before = optionNav.current();
+      var opts = optionNav.options();
+      if (key === 'Home') { moveOptionAndReveal('first'); return; }
+      if (key === 'End') { moveOptionAndReveal('last'); return; }
+      if (key === 'ArrowDown' && before && opts.length &&
+          before === opts[opts.length - 1]) {
+        enterChrome(0);
+        return;
+      }
+      if (key === 'ArrowUp' && before && opts.length && before === opts[0]) {
+        enterChrome(items.length - 1);
+        return;
+      }
+      moveOptionAndReveal(key === 'ArrowDown' ? 1 : -1);
+    }
+
     /* State readers */
     function getValue() {
       /* Return in choice order, not Set insertion order */
@@ -2246,7 +2436,7 @@
         } else if (visSel > 0) {
           allRow.classList.add('indeterminate');
         }
-        allRow.setAttribute('aria-selected', vis > 0 && visSel === vis ? 'true' : 'false');
+        allRow.setAttribute('aria-checked', vis > 0 && visSel === vis ? 'true' : (visSel > 0 ? 'mixed' : 'false'));
       }
 
       /* Badge */
@@ -2481,7 +2671,7 @@
         } else if (visSel > 0) {
           allRow.classList.add('indeterminate');
         }
-        allRow.setAttribute('aria-selected', vis > 0 && visSel === vis ? 'true' : 'false');
+        allRow.setAttribute('aria-checked', vis > 0 && visSel === vis ? 'true' : (visSel > 0 ? 'mixed' : 'false'));
       }
       updateStatus();
     }
@@ -2564,6 +2754,7 @@
       scheduleTeleportClose(wrap, dropdown);
       setDropdownOpenState(wrap, inputId, false);
       optionNav.clear();
+      chromeIndex = -1;
     }
 
     function closeAndReturnFocus() {
@@ -2596,9 +2787,7 @@
         e.preventDefault();
         if (!dropdown.classList.contains('open')) open();
         setTimeout(function () {
-          if (e.key === 'Home') moveOptionAndReveal('first');
-          else if (e.key === 'End') moveOptionAndReveal('last');
-          else moveOptionAndReveal(e.key === 'ArrowDown' ? 1 : -1);
+          handleChromeAwareNav(e.key);
         }, 110);
       } else if (e.key === 'Escape' || e.key === 'Tab') {
         closeAndReturnFocus();
@@ -2609,9 +2798,7 @@
       if (e.key === 'ArrowDown' || e.key === 'ArrowUp' ||
           e.key === 'Home' || e.key === 'End') {
         e.preventDefault();
-        if (e.key === 'Home') moveOptionAndReveal('first');
-        else if (e.key === 'End') moveOptionAndReveal('last');
-        else moveOptionAndReveal(e.key === 'ArrowDown' ? 1 : -1);
+        handleChromeAwareNav(e.key);
       } else if (e.key === 'Enter' || e.key === ' ') {
         var option = optionNav.current();
         if (option) {
@@ -2648,6 +2835,9 @@
 
         styleBtns.forEach(function (b) { b.classList.remove('active'); });
         btn.classList.add('active');
+        styleBtns.forEach(function (b) {
+          b.setAttribute('aria-pressed', b === btn ? 'true' : 'false');
+        });
 
         STYLES.forEach(function (st) { wrap.classList.remove('style-' + st); dropdown.classList.remove('style-' + st); });
         wrap.classList.add('style-' + s);
@@ -2685,6 +2875,28 @@
         commitSelection();
       });
     }
+
+    /* Keep chrome navigation state in step with DOM focus: a mouse or touch
+       tap on a chrome row puts focus there without going through arrow
+       navigation, and leaving it must drop chrome mode. The dropdown
+       handler covers arrows/Escape/Tab for these buttons (they live inside
+       the dropdown), so only focus/blur sync is needed here. */
+    var allChromeButtons = styleBtns.slice();
+    if (allRow) allChromeButtons.push(allRow);
+    if (clearBtn) allChromeButtons.push(clearBtn);
+    allChromeButtons.forEach(function (btn) {
+      btn.addEventListener('focus', function () {
+        var idx = chromeItems().indexOf(btn);
+        if (idx >= 0) {
+          optionNav.clear();
+          optionOverflowTip.hide();
+          chromeIndex = idx;
+        }
+      });
+      btn.addEventListener('blur', function () {
+        chromeIndex = -1;
+      });
+    });
 
     if (searchIn) {
       searchIn.addEventListener('input', debouncedSearch);
@@ -2736,6 +2948,7 @@
 
         styleBtns.forEach(function (b) {
           b.classList.toggle('active', b.getAttribute('data-style') === s);
+          b.setAttribute('aria-pressed', b.getAttribute('data-style') === s ? 'true' : 'false');
         });
 
         STYLES.forEach(function (st) { wrap.classList.remove('style-' + st); dropdown.classList.remove('style-' + st); });

@@ -655,6 +655,11 @@ ui <- fluidPage(
 - **Open dropdown:** Arrow Down / Arrow Up / Home / End move between
   options; Enter or Space toggles the active option; Escape returns focus to
   the trigger, while Tab closes the panel and moves onward.
+- **Chrome rows:** Arrow Down past the last option moves focus to the
+  style switcher, then the "Select all" row, then "Clear all" (Arrow Up
+  reverses); Enter or Space activates the focused button. Tab and Escape
+  behave as above from any focused row. The rows are buttons, not Tab
+  stops, so Tab never gets trapped inside the dropdown.
 - **Search:** typing filters options (debounced); the "Select all" row
   follows the filtered, enabled set.
 - **Pointer and keyboard:** a truncated active option reveals a capped text

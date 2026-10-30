@@ -1,5 +1,6 @@
 ArrowDown
 ArrowUp
+aria
 CMD
 CSP
 Cheatsheet
@@ -55,6 +56,7 @@ listbox
 mojibake
 morphism
 multiline
+multiselectable
 namespaced
 namespacing
 nav

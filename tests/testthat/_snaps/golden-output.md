@@ -56,7 +56,7 @@
       <style>#multi-field{--ms-bg:rgba(9,20,42,0.97);--ms-border:rgba(255,255,255,0.10);--ms-text:#cfe6ff;--ms-accent:#7ec3f7;--ms-focus-ring:#7ec3f7;--ms-label:#cfe6ff;--gt-label-size:14px;--ms-dropdown-max-height:260px;--ms-ac-12:rgba(126,195,247,0.120);--ms-ac-16:rgba(126,195,247,0.160);--ms-ac-18:rgba(126,195,247,0.180);--ms-ac-22:rgba(126,195,247,0.220);--ms-ac-28:rgba(126,195,247,0.280);--ms-ac-32:rgba(126,195,247,0.320);--ms-ac-40:rgba(126,195,247,0.400);--ms-ac-55:rgba(126,195,247,0.550);--ms-ac-60:rgba(126,195,247,0.600);--ms-ac-75:rgba(126,195,247,0.750);--ms-tx-03:rgba(207,230,255,0.030);--ms-tx-04:rgba(207,230,255,0.040);--ms-tx-05:rgba(207,230,255,0.050);--ms-tx-06:rgba(207,230,255,0.060);--ms-tx-08:rgba(207,230,255,0.080);--ms-tx-35:rgba(207,230,255,0.350);--ms-tx-45:rgba(207,230,255,0.450);--ms-tx-50:rgba(207,230,255,0.500);--ms-tx-80:rgba(207,230,255,0.800);--ms-ac-tx-75:rgba(146,204,249,1.000);}</style>
       <div class="gt-ms-field" id="multi-field">
         <div class="gt-ms-wrap style-checkbox fill-single" id="multi-wrap" data-input-id="multi" data-placeholder="Filter by Category" data-no-matches-text="No matches" data-all-label="All categories" data-server="false" data-server-total="2" data-server-min-chars="0" data-searchable="always" data-search-threshold="15" data-selection-display="auto" data-selection-max-items="2" data-overflow-tooltip="auto" data-selected-values="[&quot;apple&quot;]">
-          <div class="gt-ms-trigger" id="multi-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="multi-dropdown">
+          <div class="gt-ms-trigger" id="multi-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="multi-dropdown" aria-labelledby="multi-label">
             <span id="multi-label">Apple</span>
             <div style="display:flex;align-items:center;gap:6px;">
               <span class="gt-ms-badge hidden" id="multi-badge">1</span>
@@ -65,43 +65,43 @@
               </svg>
             </div>
           </div>
-          <div class="gt-ms-dropdown" id="multi-dropdown" role="listbox">
+          <div class="gt-ms-dropdown" id="multi-dropdown" role="listbox" aria-multiselectable="true">
             <div class="gt-ms-search">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7ec3f7" stroke-width="2.2">
                 <circle cx="11" cy="11" r="8"></circle>
                 <path stroke-linecap="round" d="M21 21l-4.35-4.35"></path>
               </svg>
-              <input type="text" id="multi-search" placeholder="Search options..." autocomplete="off"/>
+              <input type="text" id="multi-search" placeholder="Search options..." aria-label="Search options" autocomplete="off"/>
             </div>
-            <div class="gt-style-switcher">
-              <div class="gt-style-btn " data-style="check-only">
+            <div class="gt-style-switcher" role="group" aria-label="Selection style">
+              <button type="button" tabindex="-1" class="gt-style-btn " data-style="check-only" aria-pressed="false">
                 <svg class="gt-sb-icon" viewBox="0 0 14 14" fill="none">
                   <path d="M2 7l3.5 4L12 3" stroke="#7ec3f7" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path>
                 </svg>
                 <span>Check</span>
-              </div>
-              <div class="gt-style-btn active" data-style="checkbox">
+              </button>
+              <button type="button" tabindex="-1" class="gt-style-btn active" data-style="checkbox" aria-pressed="true">
                 <svg class="gt-sb-icon" viewBox="0 0 14 14" fill="none">
                   <rect x="1.5" y="1.5" width="11" height="11" rx="3" stroke="#7ec3f7" stroke-width="1.6"></rect>
                   <path d="M3.5 7l2.8 3L10.5 4" stroke="#7ec3f7" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
                 </svg>
                 <span>Box</span>
-              </div>
-              <div class="gt-style-btn " data-style="filled">
+              </button>
+              <button type="button" tabindex="-1" class="gt-style-btn " data-style="filled" aria-pressed="false">
                 <svg class="gt-sb-icon" viewBox="0 0 14 14" fill="none">
                   <rect x="1.5" y="1.5" width="11" height="11" rx="3" fill="#7ec3f7" fill-opacity="0.45" stroke="#7ec3f7" stroke-opacity="0.75" stroke-width="1.4"></rect>
                 </svg>
                 <span>Fill</span>
-              </div>
+              </button>
             </div>
-            <div class="gt-ms-all indeterminate" id="multi-all" role="option" aria-selected="false">
+            <button type="button" tabindex="-1" class="gt-ms-all indeterminate" id="multi-all" role="checkbox" aria-checked="mixed">
               <div class="gt-ms-check">
                 <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
                   <path d="M1 4l2.8 3L9 1" stroke="#7ec3f7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
                 </svg>
               </div>
               <span>Select all</span>
-            </div>
+            </button>
             <div id="multi-options">
               <div class="gt-ms-option checked" data-value="apple" style="--opt-hue:200;" role="option" aria-selected="true">
                 <div class="gt-ms-check">
@@ -122,7 +122,7 @@
             </div>
             <div class="gt-ms-footer">
               <span class="gt-ms-count" id="multi-count">1 / 2 selected</span>
-              <span class="gt-ms-clear" id="multi-clear">Clear all</span>
+              <button type="button" tabindex="-1" class="gt-ms-clear" id="multi-clear">Clear all</button>
             </div>
           </div>
         </div>
@@ -131,10 +131,10 @@
       <style>#single-field{--ms-bg:rgba(9,20,42,0.97);--ms-border:rgba(255,255,255,0.10);--ms-text:#cfe6ff;--ms-accent:#7ec3f7;--ms-focus-ring:#7ec3f7;--ms-label:#cfe6ff;--gt-label-size:14px;--ms-ac-12:rgba(126,195,247,0.120);--ms-ac-16:rgba(126,195,247,0.160);--ms-ac-18:rgba(126,195,247,0.180);--ms-ac-22:rgba(126,195,247,0.220);--ms-ac-28:rgba(126,195,247,0.280);--ms-ac-32:rgba(126,195,247,0.320);--ms-ac-40:rgba(126,195,247,0.400);--ms-ac-55:rgba(126,195,247,0.550);--ms-ac-60:rgba(126,195,247,0.600);--ms-ac-75:rgba(126,195,247,0.750);--ms-tx-03:rgba(207,230,255,0.030);--ms-tx-04:rgba(207,230,255,0.040);--ms-tx-05:rgba(207,230,255,0.050);--ms-tx-06:rgba(207,230,255,0.060);--ms-tx-08:rgba(207,230,255,0.080);--ms-tx-35:rgba(207,230,255,0.350);--ms-tx-45:rgba(207,230,255,0.450);--ms-tx-50:rgba(207,230,255,0.500);--ms-tx-80:rgba(207,230,255,0.800);--ms-ac-tx-75:rgba(146,204,249,1.000);}</style>
       <div class="gt-gs-field" id="single-field">
         <div class="gt-gs-wrap style-checkbox" id="single-wrap" data-input-id="single" data-placeholder="Select an option" data-no-matches-text="No matches" data-searchable="always" data-search-threshold="15" data-clearable="false" data-all-choice-label="All categories" data-all-choice-value="__all__" data-server="false" data-server-total="2" data-server-min-chars="0" data-overflow-tooltip="auto">
-          <div class="gt-gs-trigger" id="single-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="single-dropdown">
+          <div class="gt-gs-trigger" id="single-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="single-dropdown" aria-labelledby="single-label">
             <span id="single-label">Banana</span>
             <div style="display:flex;align-items:center;gap:6px;">
-              <span class="gt-gs-clear" id="single-clear" style="display:none;">Clear</span>
+              <button type="button" tabindex="-1" class="gt-gs-clear" id="single-clear" style="display:none;">Clear</button>
               <svg class="gt-gs-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
               </svg>
@@ -146,7 +146,7 @@
                 <circle cx="11" cy="11" r="8"></circle>
                 <path stroke-linecap="round" d="M21 21l-4.35-4.35"></path>
               </svg>
-              <input type="text" id="single-search" placeholder="Search options..." autocomplete="off"/>
+              <input type="text" id="single-search" placeholder="Search options..." aria-label="Search options" autocomplete="off"/>
             </div>
             <div id="single-options">
               <div class="gt-gs-option" data-value="apple" role="option" aria-selected="false">
@@ -208,7 +208,7 @@
       <style>#multi-field{--ms-bg:rgba(255,255,255,0.98);--ms-border:rgba(0,0,0,0.12);--ms-text:#111111;--ms-accent:#2563eb;--ms-focus-ring:#1d4ed8;--ms-label:#111111;--gt-label-size:14px;--ms-dropdown-max-height:260px;--ms-ac-12:rgba(37,99,235,0.120);--ms-ac-16:rgba(37,99,235,0.160);--ms-ac-18:rgba(37,99,235,0.180);--ms-ac-22:rgba(37,99,235,0.220);--ms-ac-28:rgba(37,99,235,0.280);--ms-ac-32:rgba(37,99,235,0.320);--ms-ac-40:rgba(37,99,235,0.400);--ms-ac-55:rgba(37,99,235,0.550);--ms-ac-60:rgba(37,99,235,0.600);--ms-ac-75:rgba(37,99,235,0.750);--ms-tx-03:rgba(17,17,17,0.030);--ms-tx-04:rgba(17,17,17,0.040);--ms-tx-05:rgba(17,17,17,0.050);--ms-tx-06:rgba(17,17,17,0.060);--ms-tx-08:rgba(17,17,17,0.080);--ms-tx-35:rgba(17,17,17,0.350);--ms-tx-45:rgba(17,17,17,0.450);--ms-tx-50:rgba(17,17,17,0.500);--ms-tx-80:rgba(17,17,17,0.800);--ms-ac-tx-75:rgba(32,78,180,1.000);}</style>
       <div class="gt-ms-field" id="multi-field">
         <div class="gt-ms-wrap style-checkbox fill-single theme-light" id="multi-wrap" data-input-id="multi" data-placeholder="Filter by Category" data-no-matches-text="No matches" data-all-label="All categories" data-server="false" data-server-total="2" data-server-min-chars="0" data-searchable="always" data-search-threshold="15" data-selection-display="auto" data-selection-max-items="2" data-overflow-tooltip="auto" data-selected-values="[&quot;apple&quot;]">
-          <div class="gt-ms-trigger" id="multi-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="multi-dropdown">
+          <div class="gt-ms-trigger" id="multi-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="multi-dropdown" aria-labelledby="multi-label">
             <span id="multi-label">Apple</span>
             <div style="display:flex;align-items:center;gap:6px;">
               <span class="gt-ms-badge hidden" id="multi-badge">1</span>
@@ -217,43 +217,43 @@
               </svg>
             </div>
           </div>
-          <div class="gt-ms-dropdown" id="multi-dropdown" role="listbox">
+          <div class="gt-ms-dropdown" id="multi-dropdown" role="listbox" aria-multiselectable="true">
             <div class="gt-ms-search">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.2">
                 <circle cx="11" cy="11" r="8"></circle>
                 <path stroke-linecap="round" d="M21 21l-4.35-4.35"></path>
               </svg>
-              <input type="text" id="multi-search" placeholder="Search options..." autocomplete="off"/>
+              <input type="text" id="multi-search" placeholder="Search options..." aria-label="Search options" autocomplete="off"/>
             </div>
-            <div class="gt-style-switcher">
-              <div class="gt-style-btn " data-style="check-only">
+            <div class="gt-style-switcher" role="group" aria-label="Selection style">
+              <button type="button" tabindex="-1" class="gt-style-btn " data-style="check-only" aria-pressed="false">
                 <svg class="gt-sb-icon" viewBox="0 0 14 14" fill="none">
                   <path d="M2 7l3.5 4L12 3" stroke="#2563eb" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path>
                 </svg>
                 <span>Check</span>
-              </div>
-              <div class="gt-style-btn active" data-style="checkbox">
+              </button>
+              <button type="button" tabindex="-1" class="gt-style-btn active" data-style="checkbox" aria-pressed="true">
                 <svg class="gt-sb-icon" viewBox="0 0 14 14" fill="none">
                   <rect x="1.5" y="1.5" width="11" height="11" rx="3" stroke="#2563eb" stroke-width="1.6"></rect>
                   <path d="M3.5 7l2.8 3L10.5 4" stroke="#2563eb" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
                 </svg>
                 <span>Box</span>
-              </div>
-              <div class="gt-style-btn " data-style="filled">
+              </button>
+              <button type="button" tabindex="-1" class="gt-style-btn " data-style="filled" aria-pressed="false">
                 <svg class="gt-sb-icon" viewBox="0 0 14 14" fill="none">
                   <rect x="1.5" y="1.5" width="11" height="11" rx="3" fill="#2563eb" fill-opacity="0.45" stroke="#2563eb" stroke-opacity="0.75" stroke-width="1.4"></rect>
                 </svg>
                 <span>Fill</span>
-              </div>
+              </button>
             </div>
-            <div class="gt-ms-all indeterminate" id="multi-all" role="option" aria-selected="false">
+            <button type="button" tabindex="-1" class="gt-ms-all indeterminate" id="multi-all" role="checkbox" aria-checked="mixed">
               <div class="gt-ms-check">
                 <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
                   <path d="M1 4l2.8 3L9 1" stroke="#2563eb" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
                 </svg>
               </div>
               <span>Select all</span>
-            </div>
+            </button>
             <div id="multi-options">
               <div class="gt-ms-option checked" data-value="apple" style="--opt-hue:200;" role="option" aria-selected="true">
                 <div class="gt-ms-check">
@@ -274,7 +274,7 @@
             </div>
             <div class="gt-ms-footer">
               <span class="gt-ms-count" id="multi-count">1 / 2 selected</span>
-              <span class="gt-ms-clear" id="multi-clear">Clear all</span>
+              <button type="button" tabindex="-1" class="gt-ms-clear" id="multi-clear">Clear all</button>
             </div>
           </div>
         </div>
@@ -283,10 +283,10 @@
       <style>#single-field{--ms-bg:rgba(255,255,255,0.98);--ms-border:rgba(0,0,0,0.12);--ms-text:#111111;--ms-accent:#2563eb;--ms-focus-ring:#1d4ed8;--ms-label:#111111;--gt-label-size:14px;--ms-ac-12:rgba(37,99,235,0.120);--ms-ac-16:rgba(37,99,235,0.160);--ms-ac-18:rgba(37,99,235,0.180);--ms-ac-22:rgba(37,99,235,0.220);--ms-ac-28:rgba(37,99,235,0.280);--ms-ac-32:rgba(37,99,235,0.320);--ms-ac-40:rgba(37,99,235,0.400);--ms-ac-55:rgba(37,99,235,0.550);--ms-ac-60:rgba(37,99,235,0.600);--ms-ac-75:rgba(37,99,235,0.750);--ms-tx-03:rgba(17,17,17,0.030);--ms-tx-04:rgba(17,17,17,0.040);--ms-tx-05:rgba(17,17,17,0.050);--ms-tx-06:rgba(17,17,17,0.060);--ms-tx-08:rgba(17,17,17,0.080);--ms-tx-35:rgba(17,17,17,0.350);--ms-tx-45:rgba(17,17,17,0.450);--ms-tx-50:rgba(17,17,17,0.500);--ms-tx-80:rgba(17,17,17,0.800);--ms-ac-tx-75:rgba(32,78,180,1.000);}</style>
       <div class="gt-gs-field" id="single-field">
         <div class="gt-gs-wrap style-checkbox theme-light" id="single-wrap" data-input-id="single" data-placeholder="Select an option" data-no-matches-text="No matches" data-searchable="always" data-search-threshold="15" data-clearable="false" data-all-choice-label="All categories" data-all-choice-value="__all__" data-server="false" data-server-total="2" data-server-min-chars="0" data-overflow-tooltip="auto">
-          <div class="gt-gs-trigger" id="single-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="single-dropdown">
+          <div class="gt-gs-trigger" id="single-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="single-dropdown" aria-labelledby="single-label">
             <span id="single-label">Banana</span>
             <div style="display:flex;align-items:center;gap:6px;">
-              <span class="gt-gs-clear" id="single-clear" style="display:none;">Clear</span>
+              <button type="button" tabindex="-1" class="gt-gs-clear" id="single-clear" style="display:none;">Clear</button>
               <svg class="gt-gs-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
               </svg>
@@ -298,7 +298,7 @@
                 <circle cx="11" cy="11" r="8"></circle>
                 <path stroke-linecap="round" d="M21 21l-4.35-4.35"></path>
               </svg>
-              <input type="text" id="single-search" placeholder="Search options..." autocomplete="off"/>
+              <input type="text" id="single-search" placeholder="Search options..." aria-label="Search options" autocomplete="off"/>
             </div>
             <div id="single-options">
               <div class="gt-gs-option" data-value="apple" role="option" aria-selected="false">
@@ -362,7 +362,7 @@
       <style>[data-bs-theme="dark"] #multi-field{--ms-bg:rgba(9,20,42,0.97);--ms-border:rgba(255,255,255,0.10);--ms-text:#cfe6ff;--ms-accent:#7ec3f7;--ms-focus-ring:#7ec3f7;--ms-label:#cfe6ff;--ms-ac-12:rgba(126,195,247,0.120);--ms-ac-16:rgba(126,195,247,0.160);--ms-ac-18:rgba(126,195,247,0.180);--ms-ac-22:rgba(126,195,247,0.220);--ms-ac-28:rgba(126,195,247,0.280);--ms-ac-32:rgba(126,195,247,0.320);--ms-ac-40:rgba(126,195,247,0.400);--ms-ac-55:rgba(126,195,247,0.550);--ms-ac-60:rgba(126,195,247,0.600);--ms-ac-75:rgba(126,195,247,0.750);--ms-tx-03:rgba(207,230,255,0.030);--ms-tx-04:rgba(207,230,255,0.040);--ms-tx-05:rgba(207,230,255,0.050);--ms-tx-06:rgba(207,230,255,0.060);--ms-tx-08:rgba(207,230,255,0.080);--ms-tx-35:rgba(207,230,255,0.350);--ms-tx-45:rgba(207,230,255,0.450);--ms-tx-50:rgba(207,230,255,0.500);--ms-tx-80:rgba(207,230,255,0.800);--ms-ac-tx-75:rgba(146,204,249,1.000);}</style>
       <div class="gt-ms-field" id="multi-field">
         <div class="gt-ms-wrap style-checkbox fill-single theme-auto theme-light" id="multi-wrap" data-input-id="multi" data-placeholder="Filter by Category" data-no-matches-text="No matches" data-all-label="All categories" data-server="false" data-server-total="2" data-server-min-chars="0" data-searchable="always" data-search-threshold="15" data-selection-display="auto" data-selection-max-items="2" data-overflow-tooltip="auto" data-selected-values="[&quot;apple&quot;]">
-          <div class="gt-ms-trigger" id="multi-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="multi-dropdown">
+          <div class="gt-ms-trigger" id="multi-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="multi-dropdown" aria-labelledby="multi-label">
             <span id="multi-label">Apple</span>
             <div style="display:flex;align-items:center;gap:6px;">
               <span class="gt-ms-badge hidden" id="multi-badge">1</span>
@@ -371,43 +371,43 @@
               </svg>
             </div>
           </div>
-          <div class="gt-ms-dropdown" id="multi-dropdown" role="listbox">
+          <div class="gt-ms-dropdown" id="multi-dropdown" role="listbox" aria-multiselectable="true">
             <div class="gt-ms-search">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.2">
                 <circle cx="11" cy="11" r="8"></circle>
                 <path stroke-linecap="round" d="M21 21l-4.35-4.35"></path>
               </svg>
-              <input type="text" id="multi-search" placeholder="Search options..." autocomplete="off"/>
+              <input type="text" id="multi-search" placeholder="Search options..." aria-label="Search options" autocomplete="off"/>
             </div>
-            <div class="gt-style-switcher">
-              <div class="gt-style-btn " data-style="check-only">
+            <div class="gt-style-switcher" role="group" aria-label="Selection style">
+              <button type="button" tabindex="-1" class="gt-style-btn " data-style="check-only" aria-pressed="false">
                 <svg class="gt-sb-icon" viewBox="0 0 14 14" fill="none">
                   <path d="M2 7l3.5 4L12 3" stroke="#2563eb" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path>
                 </svg>
                 <span>Check</span>
-              </div>
-              <div class="gt-style-btn active" data-style="checkbox">
+              </button>
+              <button type="button" tabindex="-1" class="gt-style-btn active" data-style="checkbox" aria-pressed="true">
                 <svg class="gt-sb-icon" viewBox="0 0 14 14" fill="none">
                   <rect x="1.5" y="1.5" width="11" height="11" rx="3" stroke="#2563eb" stroke-width="1.6"></rect>
                   <path d="M3.5 7l2.8 3L10.5 4" stroke="#2563eb" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
                 </svg>
                 <span>Box</span>
-              </div>
-              <div class="gt-style-btn " data-style="filled">
+              </button>
+              <button type="button" tabindex="-1" class="gt-style-btn " data-style="filled" aria-pressed="false">
                 <svg class="gt-sb-icon" viewBox="0 0 14 14" fill="none">
                   <rect x="1.5" y="1.5" width="11" height="11" rx="3" fill="#2563eb" fill-opacity="0.45" stroke="#2563eb" stroke-opacity="0.75" stroke-width="1.4"></rect>
                 </svg>
                 <span>Fill</span>
-              </div>
+              </button>
             </div>
-            <div class="gt-ms-all indeterminate" id="multi-all" role="option" aria-selected="false">
+            <button type="button" tabindex="-1" class="gt-ms-all indeterminate" id="multi-all" role="checkbox" aria-checked="mixed">
               <div class="gt-ms-check">
                 <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
                   <path d="M1 4l2.8 3L9 1" stroke="#2563eb" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
                 </svg>
               </div>
               <span>Select all</span>
-            </div>
+            </button>
             <div id="multi-options">
               <div class="gt-ms-option checked" data-value="apple" style="--opt-hue:200;" role="option" aria-selected="true">
                 <div class="gt-ms-check">
@@ -428,7 +428,7 @@
             </div>
             <div class="gt-ms-footer">
               <span class="gt-ms-count" id="multi-count">1 / 2 selected</span>
-              <span class="gt-ms-clear" id="multi-clear">Clear all</span>
+              <button type="button" tabindex="-1" class="gt-ms-clear" id="multi-clear">Clear all</button>
             </div>
           </div>
         </div>
@@ -438,10 +438,10 @@
       <style>[data-bs-theme="dark"] #single-field{--ms-bg:rgba(9,20,42,0.97);--ms-border:rgba(255,255,255,0.10);--ms-text:#cfe6ff;--ms-accent:#7ec3f7;--ms-focus-ring:#7ec3f7;--ms-label:#cfe6ff;--ms-ac-12:rgba(126,195,247,0.120);--ms-ac-16:rgba(126,195,247,0.160);--ms-ac-18:rgba(126,195,247,0.180);--ms-ac-22:rgba(126,195,247,0.220);--ms-ac-28:rgba(126,195,247,0.280);--ms-ac-32:rgba(126,195,247,0.320);--ms-ac-40:rgba(126,195,247,0.400);--ms-ac-55:rgba(126,195,247,0.550);--ms-ac-60:rgba(126,195,247,0.600);--ms-ac-75:rgba(126,195,247,0.750);--ms-tx-03:rgba(207,230,255,0.030);--ms-tx-04:rgba(207,230,255,0.040);--ms-tx-05:rgba(207,230,255,0.050);--ms-tx-06:rgba(207,230,255,0.060);--ms-tx-08:rgba(207,230,255,0.080);--ms-tx-35:rgba(207,230,255,0.350);--ms-tx-45:rgba(207,230,255,0.450);--ms-tx-50:rgba(207,230,255,0.500);--ms-tx-80:rgba(207,230,255,0.800);--ms-ac-tx-75:rgba(146,204,249,1.000);}</style>
       <div class="gt-gs-field" id="single-field">
         <div class="gt-gs-wrap style-checkbox theme-auto theme-light" id="single-wrap" data-input-id="single" data-placeholder="Select an option" data-no-matches-text="No matches" data-searchable="always" data-search-threshold="15" data-clearable="false" data-all-choice-label="All categories" data-all-choice-value="__all__" data-server="false" data-server-total="2" data-server-min-chars="0" data-overflow-tooltip="auto">
-          <div class="gt-gs-trigger" id="single-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="single-dropdown">
+          <div class="gt-gs-trigger" id="single-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="single-dropdown" aria-labelledby="single-label">
             <span id="single-label">Banana</span>
             <div style="display:flex;align-items:center;gap:6px;">
-              <span class="gt-gs-clear" id="single-clear" style="display:none;">Clear</span>
+              <button type="button" tabindex="-1" class="gt-gs-clear" id="single-clear" style="display:none;">Clear</button>
               <svg class="gt-gs-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
               </svg>
@@ -453,7 +453,7 @@
                 <circle cx="11" cy="11" r="8"></circle>
                 <path stroke-linecap="round" d="M21 21l-4.35-4.35"></path>
               </svg>
-              <input type="text" id="single-search" placeholder="Search options..." autocomplete="off"/>
+              <input type="text" id="single-search" placeholder="Search options..." aria-label="Search options" autocomplete="off"/>
             </div>
             <div id="single-options">
               <div class="gt-gs-option" data-value="apple" role="option" aria-selected="false">
@@ -515,7 +515,7 @@
       <style>#multi-field{--ms-bg:rgba(9,20,42,0.97);--ms-border:rgba(255,255,255,0.10);--ms-text:#cfe6ff;--ms-accent:#7ec3f7;--ms-focus-ring:#7ec3f7;--ms-label:#cfe6ff;--gt-label-size:14px;--ms-dropdown-max-height:260px;--ms-ac-12:rgba(126,195,247,0.120);--ms-ac-16:rgba(126,195,247,0.160);--ms-ac-18:rgba(126,195,247,0.180);--ms-ac-22:rgba(126,195,247,0.220);--ms-ac-28:rgba(126,195,247,0.280);--ms-ac-32:rgba(126,195,247,0.320);--ms-ac-40:rgba(126,195,247,0.400);--ms-ac-55:rgba(126,195,247,0.550);--ms-ac-60:rgba(126,195,247,0.600);--ms-ac-75:rgba(126,195,247,0.750);--ms-tx-03:rgba(207,230,255,0.030);--ms-tx-04:rgba(207,230,255,0.040);--ms-tx-05:rgba(207,230,255,0.050);--ms-tx-06:rgba(207,230,255,0.060);--ms-tx-08:rgba(207,230,255,0.080);--ms-tx-35:rgba(207,230,255,0.350);--ms-tx-45:rgba(207,230,255,0.450);--ms-tx-50:rgba(207,230,255,0.500);--ms-tx-80:rgba(207,230,255,0.800);--ms-ac-tx-75:rgba(146,204,249,1.000);}</style>
       <div class="gt-ms-field" id="multi-field">
         <div class="gt-ms-wrap style-checkbox fill-single shape-square" id="multi-wrap" data-input-id="multi" data-placeholder="Filter by Category" data-no-matches-text="No matches" data-all-label="All categories" data-server="false" data-server-total="2" data-server-min-chars="0" data-searchable="always" data-search-threshold="15" data-selection-display="auto" data-selection-max-items="2" data-overflow-tooltip="auto" data-selected-values="[&quot;apple&quot;]">
-          <div class="gt-ms-trigger" id="multi-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="multi-dropdown">
+          <div class="gt-ms-trigger" id="multi-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="multi-dropdown" aria-labelledby="multi-label">
             <span id="multi-label">Apple</span>
             <div style="display:flex;align-items:center;gap:6px;">
               <span class="gt-ms-badge hidden" id="multi-badge">1</span>
@@ -524,43 +524,43 @@
               </svg>
             </div>
           </div>
-          <div class="gt-ms-dropdown" id="multi-dropdown" role="listbox">
+          <div class="gt-ms-dropdown" id="multi-dropdown" role="listbox" aria-multiselectable="true">
             <div class="gt-ms-search">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7ec3f7" stroke-width="2.2">
                 <circle cx="11" cy="11" r="8"></circle>
                 <path stroke-linecap="round" d="M21 21l-4.35-4.35"></path>
               </svg>
-              <input type="text" id="multi-search" placeholder="Search options..." autocomplete="off"/>
+              <input type="text" id="multi-search" placeholder="Search options..." aria-label="Search options" autocomplete="off"/>
             </div>
-            <div class="gt-style-switcher">
-              <div class="gt-style-btn " data-style="check-only">
+            <div class="gt-style-switcher" role="group" aria-label="Selection style">
+              <button type="button" tabindex="-1" class="gt-style-btn " data-style="check-only" aria-pressed="false">
                 <svg class="gt-sb-icon" viewBox="0 0 14 14" fill="none">
                   <path d="M2 7l3.5 4L12 3" stroke="#7ec3f7" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path>
                 </svg>
                 <span>Check</span>
-              </div>
-              <div class="gt-style-btn active" data-style="checkbox">
+              </button>
+              <button type="button" tabindex="-1" class="gt-style-btn active" data-style="checkbox" aria-pressed="true">
                 <svg class="gt-sb-icon" viewBox="0 0 14 14" fill="none">
                   <rect x="1.5" y="1.5" width="11" height="11" rx="3" stroke="#7ec3f7" stroke-width="1.6"></rect>
                   <path d="M3.5 7l2.8 3L10.5 4" stroke="#7ec3f7" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
                 </svg>
                 <span>Box</span>
-              </div>
-              <div class="gt-style-btn " data-style="filled">
+              </button>
+              <button type="button" tabindex="-1" class="gt-style-btn " data-style="filled" aria-pressed="false">
                 <svg class="gt-sb-icon" viewBox="0 0 14 14" fill="none">
                   <rect x="1.5" y="1.5" width="11" height="11" rx="3" fill="#7ec3f7" fill-opacity="0.45" stroke="#7ec3f7" stroke-opacity="0.75" stroke-width="1.4"></rect>
                 </svg>
                 <span>Fill</span>
-              </div>
+              </button>
             </div>
-            <div class="gt-ms-all indeterminate" id="multi-all" role="option" aria-selected="false">
+            <button type="button" tabindex="-1" class="gt-ms-all indeterminate" id="multi-all" role="checkbox" aria-checked="mixed">
               <div class="gt-ms-check">
                 <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
                   <path d="M1 4l2.8 3L9 1" stroke="#7ec3f7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
                 </svg>
               </div>
               <span>Select all</span>
-            </div>
+            </button>
             <div id="multi-options">
               <div class="gt-ms-option checked" data-value="apple" style="--opt-hue:200;" role="option" aria-selected="true">
                 <div class="gt-ms-check">
@@ -581,7 +581,7 @@
             </div>
             <div class="gt-ms-footer">
               <span class="gt-ms-count" id="multi-count">1 / 2 selected</span>
-              <span class="gt-ms-clear" id="multi-clear">Clear all</span>
+              <button type="button" tabindex="-1" class="gt-ms-clear" id="multi-clear">Clear all</button>
             </div>
           </div>
         </div>
@@ -590,10 +590,10 @@
       <style>#single-field{--ms-bg:rgba(9,20,42,0.97);--ms-border:rgba(255,255,255,0.10);--ms-text:#cfe6ff;--ms-accent:#7ec3f7;--ms-focus-ring:#7ec3f7;--ms-label:#cfe6ff;--gt-label-size:14px;--ms-ac-12:rgba(126,195,247,0.120);--ms-ac-16:rgba(126,195,247,0.160);--ms-ac-18:rgba(126,195,247,0.180);--ms-ac-22:rgba(126,195,247,0.220);--ms-ac-28:rgba(126,195,247,0.280);--ms-ac-32:rgba(126,195,247,0.320);--ms-ac-40:rgba(126,195,247,0.400);--ms-ac-55:rgba(126,195,247,0.550);--ms-ac-60:rgba(126,195,247,0.600);--ms-ac-75:rgba(126,195,247,0.750);--ms-tx-03:rgba(207,230,255,0.030);--ms-tx-04:rgba(207,230,255,0.040);--ms-tx-05:rgba(207,230,255,0.050);--ms-tx-06:rgba(207,230,255,0.060);--ms-tx-08:rgba(207,230,255,0.080);--ms-tx-35:rgba(207,230,255,0.350);--ms-tx-45:rgba(207,230,255,0.450);--ms-tx-50:rgba(207,230,255,0.500);--ms-tx-80:rgba(207,230,255,0.800);--ms-ac-tx-75:rgba(146,204,249,1.000);}</style>
       <div class="gt-gs-field" id="single-field">
         <div class="gt-gs-wrap style-checkbox shape-square" id="single-wrap" data-input-id="single" data-placeholder="Select an option" data-no-matches-text="No matches" data-searchable="always" data-search-threshold="15" data-clearable="false" data-all-choice-label="All categories" data-all-choice-value="__all__" data-server="false" data-server-total="2" data-server-min-chars="0" data-overflow-tooltip="auto">
-          <div class="gt-gs-trigger" id="single-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="single-dropdown">
+          <div class="gt-gs-trigger" id="single-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="single-dropdown" aria-labelledby="single-label">
             <span id="single-label">Banana</span>
             <div style="display:flex;align-items:center;gap:6px;">
-              <span class="gt-gs-clear" id="single-clear" style="display:none;">Clear</span>
+              <button type="button" tabindex="-1" class="gt-gs-clear" id="single-clear" style="display:none;">Clear</button>
               <svg class="gt-gs-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
               </svg>
@@ -605,7 +605,7 @@
                 <circle cx="11" cy="11" r="8"></circle>
                 <path stroke-linecap="round" d="M21 21l-4.35-4.35"></path>
               </svg>
-              <input type="text" id="single-search" placeholder="Search options..." autocomplete="off"/>
+              <input type="text" id="single-search" placeholder="Search options..." aria-label="Search options" autocomplete="off"/>
             </div>
             <div id="single-options">
               <div class="gt-gs-option" data-value="apple" role="option" aria-selected="false">
@@ -667,7 +667,7 @@
       <style>#multi-field{--ms-bg:rgba(255,255,255,0.98);--ms-border:rgba(0,0,0,0.12);--ms-text:#111111;--ms-accent:#2563eb;--ms-focus-ring:#1d4ed8;--ms-label:#111111;--gt-label-size:14px;--ms-dropdown-max-height:260px;--ms-ac-12:rgba(37,99,235,0.120);--ms-ac-16:rgba(37,99,235,0.160);--ms-ac-18:rgba(37,99,235,0.180);--ms-ac-22:rgba(37,99,235,0.220);--ms-ac-28:rgba(37,99,235,0.280);--ms-ac-32:rgba(37,99,235,0.320);--ms-ac-40:rgba(37,99,235,0.400);--ms-ac-55:rgba(37,99,235,0.550);--ms-ac-60:rgba(37,99,235,0.600);--ms-ac-75:rgba(37,99,235,0.750);--ms-tx-03:rgba(17,17,17,0.030);--ms-tx-04:rgba(17,17,17,0.040);--ms-tx-05:rgba(17,17,17,0.050);--ms-tx-06:rgba(17,17,17,0.060);--ms-tx-08:rgba(17,17,17,0.080);--ms-tx-35:rgba(17,17,17,0.350);--ms-tx-45:rgba(17,17,17,0.450);--ms-tx-50:rgba(17,17,17,0.500);--ms-tx-80:rgba(17,17,17,0.800);--ms-ac-tx-75:rgba(32,78,180,1.000);}</style>
       <div class="gt-ms-field" id="multi-field">
         <div class="gt-ms-wrap style-checkbox fill-single shape-square theme-light" id="multi-wrap" data-input-id="multi" data-placeholder="Filter by Category" data-no-matches-text="No matches" data-all-label="All categories" data-server="false" data-server-total="2" data-server-min-chars="0" data-searchable="always" data-search-threshold="15" data-selection-display="auto" data-selection-max-items="2" data-overflow-tooltip="auto" data-selected-values="[&quot;apple&quot;]">
-          <div class="gt-ms-trigger" id="multi-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="multi-dropdown">
+          <div class="gt-ms-trigger" id="multi-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="multi-dropdown" aria-labelledby="multi-label">
             <span id="multi-label">Apple</span>
             <div style="display:flex;align-items:center;gap:6px;">
               <span class="gt-ms-badge hidden" id="multi-badge">1</span>
@@ -676,43 +676,43 @@
               </svg>
             </div>
           </div>
-          <div class="gt-ms-dropdown" id="multi-dropdown" role="listbox">
+          <div class="gt-ms-dropdown" id="multi-dropdown" role="listbox" aria-multiselectable="true">
             <div class="gt-ms-search">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.2">
                 <circle cx="11" cy="11" r="8"></circle>
                 <path stroke-linecap="round" d="M21 21l-4.35-4.35"></path>
               </svg>
-              <input type="text" id="multi-search" placeholder="Search options..." autocomplete="off"/>
+              <input type="text" id="multi-search" placeholder="Search options..." aria-label="Search options" autocomplete="off"/>
             </div>
-            <div class="gt-style-switcher">
-              <div class="gt-style-btn " data-style="check-only">
+            <div class="gt-style-switcher" role="group" aria-label="Selection style">
+              <button type="button" tabindex="-1" class="gt-style-btn " data-style="check-only" aria-pressed="false">
                 <svg class="gt-sb-icon" viewBox="0 0 14 14" fill="none">
                   <path d="M2 7l3.5 4L12 3" stroke="#2563eb" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path>
                 </svg>
                 <span>Check</span>
-              </div>
-              <div class="gt-style-btn active" data-style="checkbox">
+              </button>
+              <button type="button" tabindex="-1" class="gt-style-btn active" data-style="checkbox" aria-pressed="true">
                 <svg class="gt-sb-icon" viewBox="0 0 14 14" fill="none">
                   <rect x="1.5" y="1.5" width="11" height="11" rx="3" stroke="#2563eb" stroke-width="1.6"></rect>
                   <path d="M3.5 7l2.8 3L10.5 4" stroke="#2563eb" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
                 </svg>
                 <span>Box</span>
-              </div>
-              <div class="gt-style-btn " data-style="filled">
+              </button>
+              <button type="button" tabindex="-1" class="gt-style-btn " data-style="filled" aria-pressed="false">
                 <svg class="gt-sb-icon" viewBox="0 0 14 14" fill="none">
                   <rect x="1.5" y="1.5" width="11" height="11" rx="3" fill="#2563eb" fill-opacity="0.45" stroke="#2563eb" stroke-opacity="0.75" stroke-width="1.4"></rect>
                 </svg>
                 <span>Fill</span>
-              </div>
+              </button>
             </div>
-            <div class="gt-ms-all indeterminate" id="multi-all" role="option" aria-selected="false">
+            <button type="button" tabindex="-1" class="gt-ms-all indeterminate" id="multi-all" role="checkbox" aria-checked="mixed">
               <div class="gt-ms-check">
                 <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
                   <path d="M1 4l2.8 3L9 1" stroke="#2563eb" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
                 </svg>
               </div>
               <span>Select all</span>
-            </div>
+            </button>
             <div id="multi-options">
               <div class="gt-ms-option checked" data-value="apple" style="--opt-hue:200;" role="option" aria-selected="true">
                 <div class="gt-ms-check">
@@ -733,7 +733,7 @@
             </div>
             <div class="gt-ms-footer">
               <span class="gt-ms-count" id="multi-count">1 / 2 selected</span>
-              <span class="gt-ms-clear" id="multi-clear">Clear all</span>
+              <button type="button" tabindex="-1" class="gt-ms-clear" id="multi-clear">Clear all</button>
             </div>
           </div>
         </div>
@@ -742,10 +742,10 @@
       <style>#single-field{--ms-bg:rgba(255,255,255,0.98);--ms-border:rgba(0,0,0,0.12);--ms-text:#111111;--ms-accent:#2563eb;--ms-focus-ring:#1d4ed8;--ms-label:#111111;--gt-label-size:14px;--ms-ac-12:rgba(37,99,235,0.120);--ms-ac-16:rgba(37,99,235,0.160);--ms-ac-18:rgba(37,99,235,0.180);--ms-ac-22:rgba(37,99,235,0.220);--ms-ac-28:rgba(37,99,235,0.280);--ms-ac-32:rgba(37,99,235,0.320);--ms-ac-40:rgba(37,99,235,0.400);--ms-ac-55:rgba(37,99,235,0.550);--ms-ac-60:rgba(37,99,235,0.600);--ms-ac-75:rgba(37,99,235,0.750);--ms-tx-03:rgba(17,17,17,0.030);--ms-tx-04:rgba(17,17,17,0.040);--ms-tx-05:rgba(17,17,17,0.050);--ms-tx-06:rgba(17,17,17,0.060);--ms-tx-08:rgba(17,17,17,0.080);--ms-tx-35:rgba(17,17,17,0.350);--ms-tx-45:rgba(17,17,17,0.450);--ms-tx-50:rgba(17,17,17,0.500);--ms-tx-80:rgba(17,17,17,0.800);--ms-ac-tx-75:rgba(32,78,180,1.000);}</style>
       <div class="gt-gs-field" id="single-field">
         <div class="gt-gs-wrap style-checkbox shape-square theme-light" id="single-wrap" data-input-id="single" data-placeholder="Select an option" data-no-matches-text="No matches" data-searchable="always" data-search-threshold="15" data-clearable="false" data-all-choice-label="All categories" data-all-choice-value="__all__" data-server="false" data-server-total="2" data-server-min-chars="0" data-overflow-tooltip="auto">
-          <div class="gt-gs-trigger" id="single-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="single-dropdown">
+          <div class="gt-gs-trigger" id="single-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="single-dropdown" aria-labelledby="single-label">
             <span id="single-label">Banana</span>
             <div style="display:flex;align-items:center;gap:6px;">
-              <span class="gt-gs-clear" id="single-clear" style="display:none;">Clear</span>
+              <button type="button" tabindex="-1" class="gt-gs-clear" id="single-clear" style="display:none;">Clear</button>
               <svg class="gt-gs-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
               </svg>
@@ -757,7 +757,7 @@
                 <circle cx="11" cy="11" r="8"></circle>
                 <path stroke-linecap="round" d="M21 21l-4.35-4.35"></path>
               </svg>
-              <input type="text" id="single-search" placeholder="Search options..." autocomplete="off"/>
+              <input type="text" id="single-search" placeholder="Search options..." aria-label="Search options" autocomplete="off"/>
             </div>
             <div id="single-options">
               <div class="gt-gs-option" data-value="apple" role="option" aria-selected="false">
@@ -821,7 +821,7 @@
       <style>[data-bs-theme="dark"] #multi-field{--ms-bg:rgba(9,20,42,0.97);--ms-border:rgba(255,255,255,0.10);--ms-text:#cfe6ff;--ms-accent:#7ec3f7;--ms-focus-ring:#7ec3f7;--ms-label:#cfe6ff;--ms-ac-12:rgba(126,195,247,0.120);--ms-ac-16:rgba(126,195,247,0.160);--ms-ac-18:rgba(126,195,247,0.180);--ms-ac-22:rgba(126,195,247,0.220);--ms-ac-28:rgba(126,195,247,0.280);--ms-ac-32:rgba(126,195,247,0.320);--ms-ac-40:rgba(126,195,247,0.400);--ms-ac-55:rgba(126,195,247,0.550);--ms-ac-60:rgba(126,195,247,0.600);--ms-ac-75:rgba(126,195,247,0.750);--ms-tx-03:rgba(207,230,255,0.030);--ms-tx-04:rgba(207,230,255,0.040);--ms-tx-05:rgba(207,230,255,0.050);--ms-tx-06:rgba(207,230,255,0.060);--ms-tx-08:rgba(207,230,255,0.080);--ms-tx-35:rgba(207,230,255,0.350);--ms-tx-45:rgba(207,230,255,0.450);--ms-tx-50:rgba(207,230,255,0.500);--ms-tx-80:rgba(207,230,255,0.800);--ms-ac-tx-75:rgba(146,204,249,1.000);}</style>
       <div class="gt-ms-field" id="multi-field">
         <div class="gt-ms-wrap style-checkbox fill-single shape-square theme-auto theme-light" id="multi-wrap" data-input-id="multi" data-placeholder="Filter by Category" data-no-matches-text="No matches" data-all-label="All categories" data-server="false" data-server-total="2" data-server-min-chars="0" data-searchable="always" data-search-threshold="15" data-selection-display="auto" data-selection-max-items="2" data-overflow-tooltip="auto" data-selected-values="[&quot;apple&quot;]">
-          <div class="gt-ms-trigger" id="multi-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="multi-dropdown">
+          <div class="gt-ms-trigger" id="multi-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="multi-dropdown" aria-labelledby="multi-label">
             <span id="multi-label">Apple</span>
             <div style="display:flex;align-items:center;gap:6px;">
               <span class="gt-ms-badge hidden" id="multi-badge">1</span>
@@ -830,43 +830,43 @@
               </svg>
             </div>
           </div>
-          <div class="gt-ms-dropdown" id="multi-dropdown" role="listbox">
+          <div class="gt-ms-dropdown" id="multi-dropdown" role="listbox" aria-multiselectable="true">
             <div class="gt-ms-search">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.2">
                 <circle cx="11" cy="11" r="8"></circle>
                 <path stroke-linecap="round" d="M21 21l-4.35-4.35"></path>
               </svg>
-              <input type="text" id="multi-search" placeholder="Search options..." autocomplete="off"/>
+              <input type="text" id="multi-search" placeholder="Search options..." aria-label="Search options" autocomplete="off"/>
             </div>
-            <div class="gt-style-switcher">
-              <div class="gt-style-btn " data-style="check-only">
+            <div class="gt-style-switcher" role="group" aria-label="Selection style">
+              <button type="button" tabindex="-1" class="gt-style-btn " data-style="check-only" aria-pressed="false">
                 <svg class="gt-sb-icon" viewBox="0 0 14 14" fill="none">
                   <path d="M2 7l3.5 4L12 3" stroke="#2563eb" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path>
                 </svg>
                 <span>Check</span>
-              </div>
-              <div class="gt-style-btn active" data-style="checkbox">
+              </button>
+              <button type="button" tabindex="-1" class="gt-style-btn active" data-style="checkbox" aria-pressed="true">
                 <svg class="gt-sb-icon" viewBox="0 0 14 14" fill="none">
                   <rect x="1.5" y="1.5" width="11" height="11" rx="3" stroke="#2563eb" stroke-width="1.6"></rect>
                   <path d="M3.5 7l2.8 3L10.5 4" stroke="#2563eb" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
                 </svg>
                 <span>Box</span>
-              </div>
-              <div class="gt-style-btn " data-style="filled">
+              </button>
+              <button type="button" tabindex="-1" class="gt-style-btn " data-style="filled" aria-pressed="false">
                 <svg class="gt-sb-icon" viewBox="0 0 14 14" fill="none">
                   <rect x="1.5" y="1.5" width="11" height="11" rx="3" fill="#2563eb" fill-opacity="0.45" stroke="#2563eb" stroke-opacity="0.75" stroke-width="1.4"></rect>
                 </svg>
                 <span>Fill</span>
-              </div>
+              </button>
             </div>
-            <div class="gt-ms-all indeterminate" id="multi-all" role="option" aria-selected="false">
+            <button type="button" tabindex="-1" class="gt-ms-all indeterminate" id="multi-all" role="checkbox" aria-checked="mixed">
               <div class="gt-ms-check">
                 <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
                   <path d="M1 4l2.8 3L9 1" stroke="#2563eb" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
                 </svg>
               </div>
               <span>Select all</span>
-            </div>
+            </button>
             <div id="multi-options">
               <div class="gt-ms-option checked" data-value="apple" style="--opt-hue:200;" role="option" aria-selected="true">
                 <div class="gt-ms-check">
@@ -887,7 +887,7 @@
             </div>
             <div class="gt-ms-footer">
               <span class="gt-ms-count" id="multi-count">1 / 2 selected</span>
-              <span class="gt-ms-clear" id="multi-clear">Clear all</span>
+              <button type="button" tabindex="-1" class="gt-ms-clear" id="multi-clear">Clear all</button>
             </div>
           </div>
         </div>
@@ -897,10 +897,10 @@
       <style>[data-bs-theme="dark"] #single-field{--ms-bg:rgba(9,20,42,0.97);--ms-border:rgba(255,255,255,0.10);--ms-text:#cfe6ff;--ms-accent:#7ec3f7;--ms-focus-ring:#7ec3f7;--ms-label:#cfe6ff;--ms-ac-12:rgba(126,195,247,0.120);--ms-ac-16:rgba(126,195,247,0.160);--ms-ac-18:rgba(126,195,247,0.180);--ms-ac-22:rgba(126,195,247,0.220);--ms-ac-28:rgba(126,195,247,0.280);--ms-ac-32:rgba(126,195,247,0.320);--ms-ac-40:rgba(126,195,247,0.400);--ms-ac-55:rgba(126,195,247,0.550);--ms-ac-60:rgba(126,195,247,0.600);--ms-ac-75:rgba(126,195,247,0.750);--ms-tx-03:rgba(207,230,255,0.030);--ms-tx-04:rgba(207,230,255,0.040);--ms-tx-05:rgba(207,230,255,0.050);--ms-tx-06:rgba(207,230,255,0.060);--ms-tx-08:rgba(207,230,255,0.080);--ms-tx-35:rgba(207,230,255,0.350);--ms-tx-45:rgba(207,230,255,0.450);--ms-tx-50:rgba(207,230,255,0.500);--ms-tx-80:rgba(207,230,255,0.800);--ms-ac-tx-75:rgba(146,204,249,1.000);}</style>
       <div class="gt-gs-field" id="single-field">
         <div class="gt-gs-wrap style-checkbox shape-square theme-auto theme-light" id="single-wrap" data-input-id="single" data-placeholder="Select an option" data-no-matches-text="No matches" data-searchable="always" data-search-threshold="15" data-clearable="false" data-all-choice-label="All categories" data-all-choice-value="__all__" data-server="false" data-server-total="2" data-server-min-chars="0" data-overflow-tooltip="auto">
-          <div class="gt-gs-trigger" id="single-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="single-dropdown">
+          <div class="gt-gs-trigger" id="single-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="single-dropdown" aria-labelledby="single-label">
             <span id="single-label">Banana</span>
             <div style="display:flex;align-items:center;gap:6px;">
-              <span class="gt-gs-clear" id="single-clear" style="display:none;">Clear</span>
+              <button type="button" tabindex="-1" class="gt-gs-clear" id="single-clear" style="display:none;">Clear</button>
               <svg class="gt-gs-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
               </svg>
@@ -912,7 +912,7 @@
                 <circle cx="11" cy="11" r="8"></circle>
                 <path stroke-linecap="round" d="M21 21l-4.35-4.35"></path>
               </svg>
-              <input type="text" id="single-search" placeholder="Search options..." autocomplete="off"/>
+              <input type="text" id="single-search" placeholder="Search options..." aria-label="Search options" autocomplete="off"/>
             </div>
             <div id="single-options">
               <div class="gt-gs-option" data-value="apple" role="option" aria-selected="false">
@@ -947,10 +947,10 @@
       <style>#single_auto-field{--ms-bg:rgba(9,20,42,0.97);--ms-border:rgba(255,255,255,0.10);--ms-text:#cfe6ff;--ms-accent:#7ec3f7;--ms-focus-ring:#7ec3f7;--ms-label:#cfe6ff;--gt-label-size:14px;--ms-ac-12:rgba(126,195,247,0.120);--ms-ac-16:rgba(126,195,247,0.160);--ms-ac-18:rgba(126,195,247,0.180);--ms-ac-22:rgba(126,195,247,0.220);--ms-ac-28:rgba(126,195,247,0.280);--ms-ac-32:rgba(126,195,247,0.320);--ms-ac-40:rgba(126,195,247,0.400);--ms-ac-55:rgba(126,195,247,0.550);--ms-ac-60:rgba(126,195,247,0.600);--ms-ac-75:rgba(126,195,247,0.750);--ms-tx-03:rgba(207,230,255,0.030);--ms-tx-04:rgba(207,230,255,0.040);--ms-tx-05:rgba(207,230,255,0.050);--ms-tx-06:rgba(207,230,255,0.060);--ms-tx-08:rgba(207,230,255,0.080);--ms-tx-35:rgba(207,230,255,0.350);--ms-tx-45:rgba(207,230,255,0.450);--ms-tx-50:rgba(207,230,255,0.500);--ms-tx-80:rgba(207,230,255,0.800);--ms-ac-tx-75:rgba(146,204,249,1.000);}</style>
       <div class="gt-gs-field" id="single_auto-field">
         <div class="gt-gs-wrap style-checkbox" id="single_auto-wrap" data-input-id="single_auto" data-placeholder="Select an option" data-no-matches-text="No matches" data-searchable="auto" data-search-threshold="3" data-clearable="false" data-all-choice-label="All categories" data-all-choice-value="__all__" data-server="false" data-server-total="2" data-server-min-chars="0" data-overflow-tooltip="auto">
-          <div class="gt-gs-trigger" id="single_auto-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="single_auto-dropdown">
+          <div class="gt-gs-trigger" id="single_auto-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="single_auto-dropdown" aria-labelledby="single_auto-label">
             <span id="single_auto-label">Select an option</span>
             <div style="display:flex;align-items:center;gap:6px;">
-              <span class="gt-gs-clear" id="single_auto-clear" style="display:none;">Clear</span>
+              <button type="button" tabindex="-1" class="gt-gs-clear" id="single_auto-clear" style="display:none;">Clear</button>
               <svg class="gt-gs-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
               </svg>
@@ -962,7 +962,7 @@
                 <circle cx="11" cy="11" r="8"></circle>
                 <path stroke-linecap="round" d="M21 21l-4.35-4.35"></path>
               </svg>
-              <input type="text" id="single_auto-search" placeholder="Search options..." autocomplete="off"/>
+              <input type="text" id="single_auto-search" placeholder="Search options..." aria-label="Search options" autocomplete="off"/>
             </div>
             <div id="single_auto-options">
               <div class="gt-gs-option" data-value="apple" role="option" aria-selected="false">
@@ -996,7 +996,7 @@
       <style>#multi_never-field{--ms-bg:rgba(9,20,42,0.97);--ms-border:rgba(255,255,255,0.10);--ms-text:#cfe6ff;--ms-accent:#7ec3f7;--ms-focus-ring:#7ec3f7;--ms-label:#cfe6ff;--gt-label-size:14px;--ms-dropdown-max-height:260px;--ms-ac-12:rgba(126,195,247,0.120);--ms-ac-16:rgba(126,195,247,0.160);--ms-ac-18:rgba(126,195,247,0.180);--ms-ac-22:rgba(126,195,247,0.220);--ms-ac-28:rgba(126,195,247,0.280);--ms-ac-32:rgba(126,195,247,0.320);--ms-ac-40:rgba(126,195,247,0.400);--ms-ac-55:rgba(126,195,247,0.550);--ms-ac-60:rgba(126,195,247,0.600);--ms-ac-75:rgba(126,195,247,0.750);--ms-tx-03:rgba(207,230,255,0.030);--ms-tx-04:rgba(207,230,255,0.040);--ms-tx-05:rgba(207,230,255,0.050);--ms-tx-06:rgba(207,230,255,0.060);--ms-tx-08:rgba(207,230,255,0.080);--ms-tx-35:rgba(207,230,255,0.350);--ms-tx-45:rgba(207,230,255,0.450);--ms-tx-50:rgba(207,230,255,0.500);--ms-tx-80:rgba(207,230,255,0.800);--ms-ac-tx-75:rgba(146,204,249,1.000);}</style>
       <div class="gt-ms-field" id="multi_never-field">
         <div class="gt-ms-wrap style-checkbox fill-single" id="multi_never-wrap" data-input-id="multi_never" data-placeholder="Filter by Category" data-no-matches-text="No matches" data-all-label="All categories" data-server="false" data-server-total="2" data-server-min-chars="0" data-searchable="always" data-search-threshold="15" data-selection-display="auto" data-selection-max-items="2" data-overflow-tooltip="never" data-selected-values="[&quot;apple&quot;,&quot;banana&quot;]">
-          <div class="gt-ms-trigger" id="multi_never-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="multi_never-dropdown">
+          <div class="gt-ms-trigger" id="multi_never-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="multi_never-dropdown" aria-labelledby="multi_never-label">
             <span id="multi_never-label">All categories</span>
             <div style="display:flex;align-items:center;gap:6px;">
               <span class="gt-ms-badge hidden" id="multi_never-badge">2</span>
@@ -1005,43 +1005,43 @@
               </svg>
             </div>
           </div>
-          <div class="gt-ms-dropdown" id="multi_never-dropdown" role="listbox">
+          <div class="gt-ms-dropdown" id="multi_never-dropdown" role="listbox" aria-multiselectable="true">
             <div class="gt-ms-search">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7ec3f7" stroke-width="2.2">
                 <circle cx="11" cy="11" r="8"></circle>
                 <path stroke-linecap="round" d="M21 21l-4.35-4.35"></path>
               </svg>
-              <input type="text" id="multi_never-search" placeholder="Search options..." autocomplete="off"/>
+              <input type="text" id="multi_never-search" placeholder="Search options..." aria-label="Search options" autocomplete="off"/>
             </div>
-            <div class="gt-style-switcher">
-              <div class="gt-style-btn " data-style="check-only">
+            <div class="gt-style-switcher" role="group" aria-label="Selection style">
+              <button type="button" tabindex="-1" class="gt-style-btn " data-style="check-only" aria-pressed="false">
                 <svg class="gt-sb-icon" viewBox="0 0 14 14" fill="none">
                   <path d="M2 7l3.5 4L12 3" stroke="#7ec3f7" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path>
                 </svg>
                 <span>Check</span>
-              </div>
-              <div class="gt-style-btn active" data-style="checkbox">
+              </button>
+              <button type="button" tabindex="-1" class="gt-style-btn active" data-style="checkbox" aria-pressed="true">
                 <svg class="gt-sb-icon" viewBox="0 0 14 14" fill="none">
                   <rect x="1.5" y="1.5" width="11" height="11" rx="3" stroke="#7ec3f7" stroke-width="1.6"></rect>
                   <path d="M3.5 7l2.8 3L10.5 4" stroke="#7ec3f7" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
                 </svg>
                 <span>Box</span>
-              </div>
-              <div class="gt-style-btn " data-style="filled">
+              </button>
+              <button type="button" tabindex="-1" class="gt-style-btn " data-style="filled" aria-pressed="false">
                 <svg class="gt-sb-icon" viewBox="0 0 14 14" fill="none">
                   <rect x="1.5" y="1.5" width="11" height="11" rx="3" fill="#7ec3f7" fill-opacity="0.45" stroke="#7ec3f7" stroke-opacity="0.75" stroke-width="1.4"></rect>
                 </svg>
                 <span>Fill</span>
-              </div>
+              </button>
             </div>
-            <div class="gt-ms-all checked" id="multi_never-all" role="option" aria-selected="true">
+            <button type="button" tabindex="-1" class="gt-ms-all checked" id="multi_never-all" role="checkbox" aria-checked="true">
               <div class="gt-ms-check">
                 <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
                   <path d="M1 4l2.8 3L9 1" stroke="#7ec3f7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
                 </svg>
               </div>
               <span>Select all</span>
-            </div>
+            </button>
             <div id="multi_never-options">
               <div class="gt-ms-option checked" data-value="apple" style="--opt-hue:200;" role="option" aria-selected="true">
                 <div class="gt-ms-check">
@@ -1062,7 +1062,7 @@
             </div>
             <div class="gt-ms-footer">
               <span class="gt-ms-count" id="multi_never-count">2 / 2 selected</span>
-              <span class="gt-ms-clear" id="multi_never-clear">Clear all</span>
+              <button type="button" tabindex="-1" class="gt-ms-clear" id="multi_never-clear">Clear all</button>
             </div>
           </div>
         </div>

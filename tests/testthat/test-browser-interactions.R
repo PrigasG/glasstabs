@@ -1800,3 +1800,72 @@ test_that("browser: flipped light dropdown keeps its upward light shadow", {
     })()
   "))
 })
+
+test_that("browser: keyboard navigation reaches chrome rows and activates them", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-chrome-keyboard",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+  press <- function(key) {
+    # Keys go to the focused element, as in real use: the trigger handler
+    # (110 ms delayed moves) while focus sits on the trigger, the dropdown
+    # handler once focus reaches a chrome button.
+    app$get_js(sprintf(
+      "(function() {
+        document.activeElement.dispatchEvent(
+          new KeyboardEvent('keydown', {key:'%s', bubbles:true}));
+        return true;
+      })()",
+      key
+    ))
+  }
+
+  # Multi-select: 4 options, then 3 style buttons, select-all, clear.
+  app$get_js("document.querySelector('#short_multi-trigger').focus(); return true;")
+  press("Enter")
+  app$wait_for_js("document.querySelector('#short_multi-dropdown.open') !== null")
+  for (i in 1:5) press("ArrowDown")
+  app$wait_for_js("document.activeElement.getAttribute('data-style') === 'check-only'")
+  press("ArrowDown")
+  press("ArrowDown")
+  app$wait_for_js("document.activeElement.getAttribute('data-style') === 'filled'")
+  press("ArrowDown")
+  app$wait_for_js("document.activeElement.id === 'short_multi-all'")
+  # A synthetic keydown does not trigger a native button click, so activation
+  # itself is exercised with .click(); native Enter/Space activation is the
+  # browser's contract for a real <button>. Focus reachability above is what
+  # only keyboard navigation can prove.
+  app$get_js("document.activeElement.click(); return true;")
+  app$wait_for_idle()
+  expect_setequal(
+    app$get_value(input = "short_multi"),
+    c("one", "long_words", "long_token", "pathological")
+  )
+  press("ArrowDown")
+  app$wait_for_js("document.activeElement.id === 'short_multi-clear'")
+  press("Escape")
+  app$wait_for_js("
+    document.querySelector('#short_multi-dropdown.open') === null &&
+    document.activeElement.id === 'short_multi-trigger'
+  ")
+
+  # Single-select: arrows past the last option land on Clear, and clearing
+  # empties the value.
+  app$get_js("document.querySelector('#fruit-trigger').focus(); return true;")
+  press("Enter")
+  app$wait_for_js("document.querySelector('#fruit-dropdown.open') !== null")
+  for (i in 1:4) press("ArrowDown")
+  app$wait_for_js("document.activeElement.id === 'fruit-clear'")
+  app$get_js("document.activeElement.click(); return true;")
+  app$wait_for_idle()
+  expect_null(app$get_value(input = "fruit"))
+})

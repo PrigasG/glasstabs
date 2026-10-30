@@ -228,3 +228,98 @@ test_that("glass.js does not ship debug-only message handlers", {
   expect_false(grepl("glasstabs_debug_ping", js, fixed = TRUE))
   expect_false(grepl("glasstabs_debug_handlers_registered", js, fixed = TRUE))
 })
+
+test_that("select chrome controls are real buttons with keyboard semantics", {
+  # Single-select: label association, search name, clear button.
+  gs <- as.character(glassSelect(
+    "pick",
+    c(Apple = "apple", Banana = "banana"),
+    label = "Fruit",
+    selected = "apple",
+    clearable = TRUE
+  ))
+  expect_true(grepl('id="pick-field-label"', gs, fixed = TRUE))
+  expect_true(grepl('aria-labelledby="pick-field-label"', gs, fixed = TRUE))
+  expect_true(grepl('aria-label="Search options"', gs, fixed = TRUE))
+  expect_true(grepl(
+    '<button type="button" tabindex="-1" class="gt-gs-clear"',
+    gs, fixed = TRUE
+  ))
+  expect_false(grepl('<span class="gt-gs-clear"', gs, fixed = TRUE))
+  # No label: the trigger falls back to its own text span as its name.
+  gs_no_label <- as.character(glassSelect(
+    "pick2",
+    c(Apple = "apple"),
+    selected = "apple",
+    clearable = TRUE
+  ))
+  expect_false(grepl('id="pick2-field-label"', gs_no_label, fixed = TRUE))
+  expect_true(grepl('aria-labelledby="pick2-label"', gs_no_label, fixed = TRUE))
+
+  # Multi-select: multiselectable listbox, switcher buttons, tri-state
+  # select-all, clear button.
+  ms <- as.character(glassMultiSelect(
+    "filter",
+    c(Apple = "apple", Banana = "banana"),
+    label = "Fruit",
+    selected = "apple"
+  ))
+  expect_true(grepl('id="filter-field-label"', ms, fixed = TRUE))
+  expect_true(grepl('aria-labelledby="filter-field-label"', ms, fixed = TRUE))
+  expect_true(grepl('aria-multiselectable="true"', ms, fixed = TRUE))
+  expect_true(grepl('aria-label="Search options"', ms, fixed = TRUE))
+  expect_true(grepl('role="group"', ms, fixed = TRUE))
+  expect_true(grepl(
+    '<button type="button" tabindex="-1" class="gt-style-btn',
+    ms, fixed = TRUE
+  ))
+  expect_true(grepl('aria-pressed="true"', ms, fixed = TRUE))
+  expect_true(grepl('aria-pressed="false"', ms, fixed = TRUE))
+  # One of two selected: the select-all row reports mixed, and it is a
+  # checkbox now, not an option carrying aria-selected.
+  expect_true(grepl('role="checkbox"', ms, fixed = TRUE))
+  expect_true(grepl('aria-checked="mixed"', ms, fixed = TRUE))
+  expect_false(grepl('gt-ms-all"[^>]*aria-selected', ms))
+  expect_true(grepl(
+    '<button type="button" tabindex="-1" class="gt-ms-clear"',
+    ms, fixed = TRUE
+  ))
+  expect_false(grepl('<span class="gt-ms-clear"', ms, fixed = TRUE))
+  expect_false(grepl('<div class="gt-style-btn"', ms, fixed = TRUE))
+
+  # All selected / none selected: checked true / false.
+  ms_all <- as.character(glassMultiSelect(
+    "fall",
+    c(Apple = "apple", Banana = "banana"),
+    selected = c("apple", "banana")
+  ))
+  expect_true(grepl('aria-checked="true"', ms_all, fixed = TRUE))
+  ms_none <- as.character(glassMultiSelect(
+    "fnone",
+    c(Apple = "apple", Banana = "banana"),
+    selected = character(0)
+  ))
+  expect_true(grepl('aria-checked="false"', ms_none, fixed = TRUE))
+
+  # Chrome buttons carry a visible keyboard focus ring, and the JS keeps
+  # chrome navigation state (focus index, pressed/checked attributes).
+  css_path <- file.path("inst", "www", "glass.css")
+  if (!file.exists(css_path)) {
+    css_path <- system.file("www", "glass.css", package = "glasstabs")
+  }
+  css <- paste(readLines(css_path, warn = FALSE), collapse = "\n")
+  expect_true(grepl(".gt-style-btn:focus-visible", css, fixed = TRUE))
+  expect_true(grepl(".gt-ms-all:focus-visible", css, fixed = TRUE))
+  expect_true(grepl(".gt-ms-clear:focus-visible", css, fixed = TRUE))
+  expect_true(grepl(".gt-gs-clear:focus-visible", css, fixed = TRUE))
+
+  js_path <- file.path("inst", "www", "glass.js")
+  if (!file.exists(js_path)) {
+    js_path <- system.file("www", "glass.js", package = "glasstabs")
+  }
+  js <- paste(readLines(js_path, warn = FALSE), collapse = "\n")
+  expect_true(grepl("handleChromeAwareNav", js, fixed = TRUE))
+  expect_true(grepl("aria-checked", js, fixed = TRUE))
+  expect_true(grepl("aria-pressed", js, fixed = TRUE))
+  expect_true(grepl("chromeIndex", js, fixed = TRUE))
+})

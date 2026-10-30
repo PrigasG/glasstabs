@@ -235,6 +235,7 @@ glassSelect <- function(
         "gt-input-label",
         if (!label_bold) "gt-label-regular" else NULL
       )),
+      id = paste0(inputId, "-field-label"),
       `for` = paste0(inputId, "-trigger"),
       label
     )
@@ -282,13 +283,17 @@ glassSelect <- function(
   }
 
   clear_btn <- if (isTRUE(clearable)) {
-    shiny::tags$span(
+    shiny::tags$button(
+      type = "button",
+      tabindex = "-1",
       class = "gt-gs-clear",
       id = paste0(inputId, "-clear"),
       "Clear"
     )
   } else {
-    shiny::tags$span(
+    shiny::tags$button(
+      type = "button",
+      tabindex = "-1",
       class = "gt-gs-clear",
       id = paste0(inputId, "-clear"),
       style = "display:none;",
@@ -331,6 +336,11 @@ glassSelect <- function(
           `aria-expanded` = "false",
           `aria-disabled` = if (disabled) "true" else NULL,
           `aria-controls` = paste0(inputId, "-dropdown"),
+          `aria-labelledby` = if (!is.null(label)) {
+            paste0(inputId, "-field-label")
+          } else {
+            paste0(inputId, "-label")
+          },
           shiny::tags$span(id = paste0(inputId, "-label"), init_label),
           shiny::div(
             style = "display:flex;align-items:center;gap:6px;",
@@ -375,6 +385,7 @@ glassSelect <- function(
               type = "text",
               id = paste0(inputId, "-search"),
               placeholder = "Search options...",
+              `aria-label` = "Search options",
               autocomplete = "off"
             )
           ),

@@ -285,6 +285,7 @@ glassMultiSelect <- function(
         "gt-input-label",
         if (!label_bold) "gt-label-regular" else NULL
       )),
+      id = paste0(inputId, "-field-label"),
       `for` = paste0(inputId, "-trigger"),
       label
     )
@@ -295,9 +296,14 @@ glassMultiSelect <- function(
   style_btns <- if (isTRUE(show_style_switcher)) {
     shiny::div(
       class = "gt-style-switcher",
-      shiny::div(
+      role = "group",
+      `aria-label` = "Selection style",
+      shiny::tags$button(
+        type = "button",
+        tabindex = "-1",
         class = paste("gt-style-btn", if (check_style == "check-only") "active" else ""),
         `data-style` = "check-only",
+        `aria-pressed` = if (check_style == "check-only") "true" else "false",
         shiny::tags$svg(
           class = "gt-sb-icon",
           viewBox = "0 0 14 14",
@@ -312,9 +318,12 @@ glassMultiSelect <- function(
         ),
         shiny::tags$span("Check")
       ),
-      shiny::div(
+      shiny::tags$button(
+        type = "button",
+        tabindex = "-1",
         class = paste("gt-style-btn", if (check_style == "checkbox") "active" else ""),
         `data-style` = "checkbox",
+        `aria-pressed` = if (check_style == "checkbox") "true" else "false",
         shiny::tags$svg(
           class = "gt-sb-icon",
           viewBox = "0 0 14 14",
@@ -338,9 +347,12 @@ glassMultiSelect <- function(
         ),
         shiny::tags$span("Box")
       ),
-      shiny::div(
+      shiny::tags$button(
+        type = "button",
+        tabindex = "-1",
         class = paste("gt-style-btn", if (check_style == "filled") "active" else ""),
         `data-style` = "filled",
+        `aria-pressed` = if (check_style == "filled") "true" else "false",
         shiny::tags$svg(
           class = "gt-sb-icon",
           viewBox = "0 0 14 14",
@@ -369,23 +381,36 @@ glassMultiSelect <- function(
     "gt-ms-all",
     if (n_total > 0 && n_sel == n_total) "checked" else if (n_sel > 0) "indeterminate" else ""
   )
+  # Tri-state for the select-all checkbox: checked, mixed (partial), or false.
+  # Mirrors the all_cls logic above; the JS syncUI() keeps it in step.
+  all_checked <- if (n_total > 0 && n_sel == n_total) {
+    "true"
+  } else if (n_sel > 0) {
+    "mixed"
+  } else {
+    "false"
+  }
 
   all_row <- if (isTRUE(show_select_all)) {
-    shiny::div(
+    shiny::tags$button(
+      type = "button",
+      tabindex = "-1",
       class = all_cls,
       id = paste0(inputId, "-all"),
-      role = "option",
-      `aria-selected` = if (n_total > 0 && n_sel == n_total) "true" else "false",
+      role = "checkbox",
+      `aria-checked` = all_checked,
       shiny::div(class = "gt-ms-check", check_svg),
       shiny::tags$span("Select all")
     )
   } else {
-    shiny::div(
+    shiny::tags$button(
+      type = "button",
+      tabindex = "-1",
       class = all_cls,
       id = paste0(inputId, "-all"),
       style = "display:none;",
-      role = "option",
-      `aria-selected` = if (n_total > 0 && n_sel == n_total) "true" else "false",
+      role = "checkbox",
+      `aria-checked` = all_checked,
       shiny::div(class = "gt-ms-check", check_svg),
       shiny::tags$span("Select all")
     )
@@ -436,13 +461,17 @@ glassMultiSelect <- function(
       paste0(n_sel, " / ", n_total, " selected")
     ),
     if (isTRUE(show_clear_all)) {
-      shiny::tags$span(
+      shiny::tags$button(
+        type = "button",
+        tabindex = "-1",
         class = "gt-ms-clear",
         id = paste0(inputId, "-clear"),
         "Clear all"
       )
     } else {
-      shiny::tags$span(
+      shiny::tags$button(
+        type = "button",
+        tabindex = "-1",
         class = "gt-ms-clear",
         id = paste0(inputId, "-clear"),
         style = "display:none;",
@@ -502,6 +531,11 @@ glassMultiSelect <- function(
           `aria-expanded` = "false",
           `aria-disabled` = if (disabled) "true" else NULL,
           `aria-controls` = paste0(inputId, "-dropdown"),
+          `aria-labelledby` = if (!is.null(label)) {
+            paste0(inputId, "-field-label")
+          } else {
+            paste0(inputId, "-label")
+          },
           shiny::tags$span(id = paste0(inputId, "-label"), init_label),
           shiny::div(
             style = "display:flex;align-items:center;gap:6px;",
@@ -529,6 +563,7 @@ glassMultiSelect <- function(
           class = "gt-ms-dropdown",
           id = paste0(inputId, "-dropdown"),
           role = "listbox",
+          `aria-multiselectable` = "true",
 
           shiny::div(
             class = trimws(paste(
@@ -550,6 +585,7 @@ glassMultiSelect <- function(
               type = "text",
               id = paste0(inputId, "-search"),
               placeholder = "Search options...",
+              `aria-label` = "Search options",
               autocomplete = "off"
             )
           ),

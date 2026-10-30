@@ -38,6 +38,13 @@
   light/dark switches and use `theme = "auto"` consistently. Example apps now
   return standard Shiny app objects for automated launchers, and an obsolete
   `shinyjs` scratch app was removed from the installed examples.
+* Select chrome controls are now real buttons reachable by keyboard: the
+  multi-select style switcher, Select-all row, and Clear-all button, and the
+  single-select Clear button, all take arrow-key focus inside the open
+  dropdown (Tab still closes and exits). Multi-select listboxes now report
+  `aria-multiselectable`, field labels are associated with their triggers,
+  search fields have accessible names, and the Select-all row reports its
+  tri-state (`true` / `mixed` / `false`) instead of a plain selected flag.
 * Select field titles now default to a distinct 14px semibold treatment and
   accept `label_size` alongside `label_bold`. Dropdown search uses a quieter
   neutral focus treatment by default; `search_focus_ring = TRUE` opts into the
