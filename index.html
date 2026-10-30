@@ -85,10 +85,7 @@
 <!-- badges: start -->
 
 <!-- badges: end -->
-<div class="section level2">
-<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
-</h2>
-<p>glasstabs gives Shiny apps polished navigation and filtering without asking you to write custom JavaScript or CSS. It provides animated tab navigation, a searchable single-select, and a multi-select filter, all of which work in a regular <code><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage()</a></code>, a <code>bslib</code> app, or a <code>bs4Dash</code> dashboard.</p>
+<p>glasstabs gives Shiny apps polished navigation and filtering without asking you to write custom JavaScript or CSS. The package includes:</p>
 <ul>
 <li>
 <code><a href="reference/glassTabsUI.html">glassTabsUI()</a></code> for animated horizontal or vertical tab navigation</li>
@@ -97,59 +94,76 @@
 <li>
 <code><a href="reference/glassMultiSelect.html">glassMultiSelect()</a></code> for multi-select filters with optional tag pills</li>
 </ul>
-</div>
+<p>The widgets work in a regular <code><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage()</a></code>, a <code>bslib</code> app, or a <code>bs4Dash</code> dashboard. Each one can use a dark, light, automatic, or custom colour theme.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <p>Install the CRAN release:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"glasstabs"</span><span class="op">)</span></span></code></pre></div>
-<p>To install directly from the current GitHub source:</p>
+<p>Install the development version from GitHub when you want changes that are not yet available in the CRAN release:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"PrigasG/glasstabs@main"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"glasstabs"</span><span class="op">)</span></span></code></pre></div>
 <p>Installing from GitHub replaces the installed copy on your machine. For most people, the CRAN installation above is the simpler choice.</p>
 </div>
 <div class="section level2">
-<h2 id="quick-start">Quick Start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
+<h2 id="a-complete-app">A complete app<a class="anchor" aria-label="anchor" href="#a-complete-app"></a>
 </h2>
-<p>Call <code><a href="reference/useGlassTabs.html">useGlassTabs()</a></code> once at the UI root, then use the widgets like ordinary Shiny controls. This minimal app is complete and runnable:</p>
+<p>Call <code><a href="reference/useGlassTabs.html">useGlassTabs()</a></code> once in the UI, then compose the widgets like ordinary Shiny controls. This app places a filter beside two tabs and displays the current tab and selection.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny.posit.co/" class="external-link">shiny</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/PrigasG/glasstabs" class="external-link">glasstabs</a></span><span class="op">)</span></span>
 <span></span>
+<span><span class="va">choices</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Apple <span class="op">=</span> <span class="st">"apple"</span>, Banana <span class="op">=</span> <span class="st">"banana"</span>, Cherry <span class="op">=</span> <span class="st">"cherry"</span><span class="op">)</span></span>
+<span></span>
 <span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="reference/useGlassTabs.html">useGlassTabs</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  <span class="fu"><a href="reference/glassSelect.html">glassSelect</a></span><span class="op">(</span></span>
-<span>    <span class="st">"fruit"</span>,</span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Apple <span class="op">=</span> <span class="st">"apple"</span>, Banana <span class="op">=</span> <span class="st">"banana"</span>, Cherry <span class="op">=</span> <span class="st">"cherry"</span><span class="op">)</span>,</span>
-<span>    label <span class="op">=</span> <span class="st">"Fruit"</span></span>
+<span>  <span class="fu"><a href="reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
+<span>    <span class="st">"main"</span>,</span>
+<span>    <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span></span>
+<span>      <span class="st">"overview"</span>, <span class="st">"Overview"</span>, selected <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>      <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">h3</a></span><span class="op">(</span><span class="st">"Fruit summary"</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="reference/glassFilterTags.html">glassFilterTags</a></span><span class="op">(</span><span class="st">"fruit"</span><span class="op">)</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span></span>
+<span>      <span class="st">"details"</span>, <span class="st">"Details"</span>,</span>
+<span>      <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">h3</a></span><span class="op">(</span><span class="st">"Selection details"</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/textOutput.html" class="external-link">verbatimTextOutput</a></span><span class="op">(</span><span class="st">"selection"</span><span class="op">)</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    extra_ui <span class="op">=</span> <span class="fu"><a href="reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span></span>
+<span>      <span class="st">"fruit"</span>,</span>
+<span>      <span class="va">choices</span>,</span>
+<span>      show_style_switcher <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>    <span class="op">)</span></span>
 <span>  <span class="op">)</span>,</span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/textOutput.html" class="external-link">verbatimTextOutput</a></span><span class="op">(</span><span class="st">"out"</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/textOutput.html" class="external-link">verbatimTextOutput</a></span><span class="op">(</span><span class="st">"active_tab"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">output</span><span class="op">$</span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/renderPrint.html" class="external-link">renderPrint</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">fruit</span><span class="op">)</span></span>
+<span>  <span class="va">active_tab</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/glassTabsServer.html">glassTabsServer</a></span><span class="op">(</span><span class="st">"main"</span><span class="op">)</span></span>
+<span></span>
+<span>  <span class="va">output</span><span class="op">$</span><span class="va">active_tab</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/renderPrint.html" class="external-link">renderPrint</a></span><span class="op">(</span><span class="fu">active_tab</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">output</span><span class="op">$</span><span class="va">selection</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/renderPrint.html" class="external-link">renderPrint</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">fruit</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/shinyApp.html" class="external-link">shinyApp</a></span><span class="op">(</span><span class="va">ui</span>, <span class="va">server</span><span class="op">)</span></span></code></pre></div>
-<p>The selected value is available at <code>input$fruit</code> (<code>NULL</code> when nothing is selected). Tabs and multi-selects follow the same pattern; see Main Features below.</p>
+<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/shinyApp.html" class="external-link">shinyApp</a></span><span class="op">(</span><span class="va">ui</span>, <span class="va">server</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p><code><a href="reference/glassMultiSelect.html">glassMultiSelect()</a></code> selects every choice by default. Use <code>selected = character(0)</code> when the filter should start empty.</p>
 </div>
 <div class="section level2">
-<h2 id="main-features">Main Features<a class="anchor" aria-label="anchor" href="#main-features"></a>
+<h2 id="pick-the-control-you-need">Pick the control you need<a class="anchor" aria-label="anchor" href="#pick-the-control-you-need"></a>
 </h2>
-<p><strong>Tabs.</strong> <code><a href="reference/glassTabsUI.html">glassTabsUI()</a></code> builds an animated tab bar from <code><a href="reference/glassTabPanel.html">glassTabPanel()</a></code> objects. Long bars scroll on small screens (<code>overflow = "scroll"</code>, the default), wrap onto rows (<code>"multiline"</code>), or collapse into a compact chooser (<code>"menu"</code>). Vertical rails, touch swipes, and glass, solid, or underline indicators are options, and arrow keys move between tabs with Home and End jumping to the ends.</p>
+<p>Tabs are made from <code><a href="reference/glassTabPanel.html">glassTabPanel()</a></code> objects. The first selected panel is shown when the app opens.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
 <span>  <span class="st">"reports"</span>,</span>
-<span>  <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"summary"</span>, <span class="st">"Summary"</span>, selected <span class="op">=</span> <span class="cn">TRUE</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"Summary content"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"summary"</span>, <span class="st">"Summary"</span>, selected <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">summary_ui</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"table"</span>, <span class="st">"Table"</span>, <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/renderTable.html" class="external-link">tableOutput</a></span><span class="op">(</span><span class="st">"results"</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"notes"</span>, <span class="st">"Notes"</span>, <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/textAreaInput.html" class="external-link">textAreaInput</a></span><span class="op">(</span><span class="st">"notes"</span>, <span class="cn">NULL</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  indicator <span class="op">=</span> <span class="st">"underline"</span>,</span>
-<span>  theme <span class="op">=</span> <span class="st">"auto"</span></span>
+<span>  <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"notes"</span>, <span class="st">"Notes"</span>, <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/textAreaInput.html" class="external-link">textAreaInput</a></span><span class="op">(</span><span class="st">"notes"</span>, <span class="cn">NULL</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>The active tab is available at <code>input[["reports-active_tab"]]</code>, and <code>glassTabsServer("reports")</code> returns it as a reactive.</p>
-<p><strong>Single-select.</strong> <code><a href="reference/glassSelect.html">glassSelect()</a></code> behaves like a standard Shiny input with search, an optional clear button, and a panel that always matches the trigger width (long labels wrap inside it). The panel unfurls from its field like a tongue: attached flush, squared off at the join, and flipping above when there is no room below. An empty-string value is an ordinary choice value, distinct from clearing to <code>NULL</code>.</p>
+<p>A single-select behaves like a standard Shiny input. Its value is available at <code>input$region</code>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/glassSelect.html">glassSelect</a></span><span class="op">(</span></span>
 <span>  <span class="st">"region"</span>,</span>
@@ -157,7 +171,7 @@
 <span>  label <span class="op">=</span> <span class="st">"Region"</span>,</span>
 <span>  clearable <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><strong>Multi-select.</strong> <code><a href="reference/glassMultiSelect.html">glassMultiSelect()</a></code> returns a character vector. By default every enabled choice starts selected (<code>selected = NULL</code>); pass <code>selected = character(0)</code> for an empty start. Selected values can show as tag pills anywhere in the UI, and the built-in select-all row tracks all, some, or none with a tri-state checkbox.</p>
+<p>A multi-select returns a character vector and can display the selected values as tag pills anywhere in the UI.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span></span>
 <span>  <span class="st">"status"</span>,</span>
@@ -167,138 +181,483 @@
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="reference/glassFilterTags.html">glassFilterTags</a></span><span class="op">(</span><span class="st">"status"</span><span class="op">)</span></span></code></pre></div>
-<p><strong>Server-side search.</strong> For hundreds or thousands of choices, keep the full vector on the server and send a small bounded slice of matches to the browser. The widget takes <code>server = TRUE</code> and a matching helper answers each search:</p>
+<p>The <a href="https://prigasg.github.io/glasstabs/articles/multiselect.html">multi-select guide</a> covers selection semantics, summaries, search, linked filters, server updates, and migration from <code>selectizeInput(multiple = TRUE)</code>. The corresponding <a href="https://prigasg.github.io/glasstabs/articles/glassSelect.html">single-select guide</a> covers one-value controls.</p>
+<p>Select dropdowns always match their trigger width. The standard width is a compact <code>160px</code>; use the optional <code>width</code> argument only when an app needs more room for long labels. Both fixed and fluid CSS widths are supported and remain capped by the containing layout, so <code>width = "240px"</code> works well for a wider filter while <code>width = "100%"</code> fills the available column. Exceptionally long labels still wrap safely inside the matching panel.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny.posit.co/" class="external-link">shiny</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/PrigasG/glasstabs" class="external-link">glasstabs</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="reference/glassSelect.html">glassSelect</a></span><span class="op">(</span><span class="st">"industry"</span>, <span class="va">industry_choices</span>, width <span class="op">=</span> <span class="st">"240px"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span><span class="st">"filters"</span>, <span class="va">filter_choices</span>, width <span class="op">=</span> <span class="st">"100%"</span><span class="op">)</span></span></code></pre></div>
+<p>With <code><a href="reference/glassSelect.html">glassSelect()</a></code>, <code>overflow_tooltip = "auto"</code> (the default) reveals an ellipsized selected label on pointer hover or keyboard focus. Inside either open dropdown, it reveals only the truncated option currently hovered or reached with keyboard navigation. Multi-select never combines every selected label into one noisy trigger tooltip. Touch users read the wrapped option in the open dropdown. Set <code>overflow_tooltip = "never"</code> to suppress visual tooltips.</p>
+<p>The select controls also expose their presentation choices directly:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/glassSelect.html">glassSelect</a></span><span class="op">(</span></span>
+<span>  <span class="st">"industry"</span>, <span class="va">industry_choices</span>,</span>
+<span>  theme <span class="op">=</span> <span class="st">"auto"</span>,</span>
+<span>  dark_selector <span class="op">=</span> <span class="st">"body.app-dark"</span>, <span class="co"># optional custom dark-mode hook</span></span>
+<span>  tongue <span class="op">=</span> <span class="cn">FALSE</span>,              <span class="co"># detached panel with a short fade</span></span>
+<span>  label_bold <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  label_size <span class="op">=</span> <span class="st">"14px"</span>,</span>
+<span>  search_focus_ring <span class="op">=</span> <span class="cn">FALSE</span>    <span class="co"># quiet search focus is the default</span></span>
+<span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">many_choices</span> <span class="op">&lt;-</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span></span>
+<span><span class="fu"><a href="reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span></span>
+<span>  <span class="st">"filters"</span>, <span class="va">filter_choices</span>,</span>
+<span>  check_style <span class="op">=</span> <span class="st">"filled"</span>,</span>
+<span>  fill_colors <span class="op">=</span> <span class="st">"single"</span>       <span class="co"># use "multi" for per-choice hues</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><code>tongue = TRUE</code> keeps the signature attached unfurl animation. Turning it off does not remove motion entirely: the detached panel uses a restrained open and close transition and still honors reduced-motion preferences.</p>
+<p>With <code>theme = "auto"</code>, all tabs and select widgets default to Bootstrap’s <code>[data-bs-theme="dark"]</code> signal. Supply <code>dark_selector</code> when an application uses a different class or attribute to announce dark mode. An explicit selector also works with <code>theme = "light"</code> for applications that switch modes later.</p>
+<p>For a short list, the search box can stay out of the way. Both select widgets accept <code>searchable = "auto"</code>; search appears only when the list reaches the chosen threshold. Five categories, for example, remain uncluttered when the threshold is six.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/glassSelect.html">glassSelect</a></span><span class="op">(</span></span>
+<span>  <span class="st">"category"</span>,</span>
+<span>  <span class="va">category_choices</span>,</span>
+<span>  searchable <span class="op">=</span> <span class="st">"auto"</span>,</span>
+<span>  search_threshold <span class="op">=</span> <span class="fl">6</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>The multi-select trigger can also show a compact summary instead of the generic “Multiple selection” label.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span></span>
+<span>  <span class="st">"facility"</span>,</span>
+<span>  <span class="va">facility_choices</span>,</span>
+<span>  searchable <span class="op">=</span> <span class="st">"auto"</span>,</span>
+<span>  search_threshold <span class="op">=</span> <span class="fl">12</span>,</span>
+<span>  selection_display <span class="op">=</span> <span class="st">"summary"</span>,</span>
+<span>  selection_max_items <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  dropdown_max_height <span class="op">=</span> <span class="st">"18rem"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>Choice updates are handled as one transaction. Existing selections are kept when they still exist, and Shiny is notified only when the effective value changes. <code>notify = "never"</code> is useful when several linked filters are settling and the final update should be the only one that reaches the server.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/updateGlassMultiSelect.html">updateGlassMultiSelect</a></span><span class="op">(</span></span>
+<span>  <span class="va">session</span>,</span>
+<span>  <span class="st">"facility"</span>,</span>
+<span>  choices <span class="op">=</span> <span class="va">facilities_for_region</span>,</span>
+<span>  preserve_selection <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  drop_invalid <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  notify <span class="op">=</span> <span class="st">"changed"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="match-the-surrounding-app">Match the surrounding app<a class="anchor" aria-label="anchor" href="#match-the-surrounding-app"></a>
+</h2>
+<p>Use <code>theme = "auto"</code> in Bootstrap 5 or <code>bslib</code> apps so the widgets follow the page’s light and dark modes. Use <code>shape = "square"</code> when the controls sit next to native Shiny inputs.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
+<span>  <span class="st">"nav"</span>,</span>
+<span>  <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"one"</span>, <span class="st">"One"</span>, selected <span class="op">=</span> <span class="cn">TRUE</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"First panel"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"two"</span>, <span class="st">"Two"</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"Second panel"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  indicator <span class="op">=</span> <span class="st">"underline"</span>,</span>
+<span>  theme <span class="op">=</span> <span class="st">"auto"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="reference/glassSelect.html">glassSelect</a></span><span class="op">(</span><span class="st">"region"</span>, <span class="va">choices</span>, shape <span class="op">=</span> <span class="st">"square"</span>, theme <span class="op">=</span> <span class="st">"auto"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span><span class="st">"filters"</span>, <span class="va">choices</span>, shape <span class="op">=</span> <span class="st">"square"</span>, theme <span class="op">=</span> <span class="st">"auto"</span><span class="op">)</span></span></code></pre></div>
+<p>Tabs also support a vertical rail and three indicator styles:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
+<span>  <span class="st">"workflow"</span>,</span>
+<span>  <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"intake"</span>, <span class="st">"Intake"</span>, selected <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">intake_ui</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"review"</span>, <span class="st">"Review"</span>, <span class="va">review_ui</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"approve"</span>, <span class="st">"Approve"</span>, <span class="va">approve_ui</span><span class="op">)</span>,</span>
+<span>  orientation <span class="op">=</span> <span class="st">"vertical"</span>,</span>
+<span>  indicator <span class="op">=</span> <span class="st">"solid"</span>,</span>
+<span>  tab_align <span class="op">=</span> <span class="st">"left"</span>,</span>
+<span>  text_align <span class="op">=</span> <span class="st">"left"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><code>tab_align</code> places the tab group at the left, center, or right of the available navigation area in either layout. <code>text_align</code> separately aligns labels and icons inside each tab button. For visible left or right alignment in a horizontal bar, the buttons share the width of the widest label.</p>
+<p>Tab content sits in a subtle glass container, so the tabs and their content read as one connected component instead of a tab bar floating over bare space. The active tab picks up a soft light on its content-facing edge to tie them together.</p>
+<p>Use <code>style = "attached"</code> to dock the tab bar directly onto the content box as a single card, and <code>transition = "slide"</code> to slide panes in the direction you move between tabs:</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
+<span>  <span class="st">"reports"</span>,</span>
+<span>  <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"summary"</span>, <span class="st">"Summary"</span>, selected <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">summary_ui</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"activity"</span>, <span class="st">"Recent activity"</span>, <span class="va">activity_ui</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"quality"</span>, <span class="st">"Data quality"</span>, <span class="va">quality_ui</span><span class="op">)</span>,</span>
+<span>  style <span class="op">=</span> <span class="st">"attached"</span>,</span>
+<span>  transition <span class="op">=</span> <span class="st">"slide"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="tabs-that-fit-the-screen">Tabs that fit the screen<a class="anchor" aria-label="anchor" href="#tabs-that-fit-the-screen"></a>
+</h2>
+<p>Long tab bars stay on one line and scroll on smaller screens. The active tab comes back into view after a click, keyboard change, swipe, or server update.</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
+<span>  <span class="st">"reports"</span>,</span>
+<span>  <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"summary"</span>, <span class="st">"Summary"</span>, selected <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">summary_ui</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"activity"</span>, <span class="st">"Recent activity"</span>, <span class="va">activity_ui</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"quality"</span>, <span class="st">"Data quality"</span>, <span class="va">quality_ui</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"settings"</span>, <span class="st">"Team settings"</span>, <span class="va">settings_ui</span><span class="op">)</span>,</span>
+<span>  overflow <span class="op">=</span> <span class="st">"scroll"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><code>overflow = "multiline"</code> keeps every label visible on as many rows as needed. For horizontal tabs, <code>overflow = "menu"</code> replaces the strip with a compact native chooser. Vertical tabs already use a rail, so menu mode is not available there. Touch swipes are available with <code>swipe = TRUE</code>; they start only on ordinary panel content, leaving inputs, plots, maps, and horizontally scrolling tables alone.</p>
+<p>Keyboard focus follows the selected tab. Arrow keys move between available tabs, while Home and End jump to the first and last. Motion is shortened when the device asks for reduced motion, and solid colors take over when glass blur is unavailable.</p>
+</div>
+<div class="section level2">
+<h2 id="an-experimental-fillable-page">An experimental fillable page<a class="anchor" aria-label="anchor" href="#an-experimental-fillable-page"></a>
+</h2>
+<p><code><a href="reference/glassPage.html">glassPage()</a></code> is a small wrapper around <code><a href="https://rstudio.github.io/bslib/reference/page_fillable.html" class="external-link">bslib::page_fillable()</a></code>. It loads the package assets automatically and starts with Bootstrap 5. The wrapper is experimental during the 0.4.x cycle; regular Shiny and bslib pages remain fully supported.</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/glassPage.html">glassPage</a></span><span class="op">(</span></span>
+<span>  title <span class="op">=</span> <span class="st">"Team review"</span>,</span>
+<span>  <span class="fu"><a href="reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
+<span>    <span class="st">"review"</span>,</span>
+<span>    <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"queue"</span>, <span class="st">"Queue"</span>, <span class="va">queue_ui</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"done"</span>, <span class="st">"Done"</span>, <span class="va">done_ui</span><span class="op">)</span>,</span>
+<span>    theme <span class="op">=</span> <span class="st">"auto"</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>For a custom accent, change only the fields your app needs:</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
+<span>  <span class="st">"nav"</span>,</span>
+<span>  <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"A"</span>, selected <span class="op">=</span> <span class="cn">TRUE</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"Content"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"b"</span>, <span class="st">"B"</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"More content"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  theme <span class="op">=</span> <span class="fu"><a href="reference/glass_tab_theme.html">glass_tab_theme</a></span><span class="op">(</span></span>
+<span>    halo_bg <span class="op">=</span> <span class="st">"rgba(37, 99, 235, 0.16)"</span>,</span>
+<span>    halo_border <span class="op">=</span> <span class="st">"#2563eb"</span>,</span>
+<span>    focus_ring <span class="op">=</span> <span class="st">"#1d4ed8"</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="reference/glassSelect.html">glassSelect</a></span><span class="op">(</span></span>
+<span>  <span class="st">"region"</span>,</span>
+<span>  <span class="va">choices</span>,</span>
+<span>  theme <span class="op">=</span> <span class="fu"><a href="reference/glass_select_theme.html">glass_select_theme</a></span><span class="op">(</span></span>
+<span>    mode <span class="op">=</span> <span class="st">"light"</span>,</span>
+<span>    accent_color <span class="op">=</span> <span class="st">"#2563eb"</span>,</span>
+<span>    focus_ring <span class="op">=</span> <span class="st">"#1d4ed8"</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><code>focus_ring</code> keeps the keyboard indicator in the same colour family as the rest of an app while remaining separate from its decorative accent.</p>
+<p>Inside a <code>bs4Dash</code> card, <code>compact = TRUE</code> reduces spacing and <code>wrap = FALSE</code> lets the card provide the outer container.</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">bs4Dash</span><span class="fu">::</span><span class="fu"><a href="https://bs4dash.rinterface.com/reference/box.html" class="external-link">box</a></span><span class="op">(</span></span>
+<span>  width <span class="op">=</span> <span class="fl">12</span>,</span>
+<span>  <span class="fu">glasstabs</span><span class="fu">::</span><span class="fu"><a href="reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
+<span>    <span class="st">"dashboard"</span>,</span>
+<span>    <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"summary"</span>, <span class="st">"Summary"</span>, selected <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">summary_ui</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"detail"</span>, <span class="st">"Detail"</span>, <span class="va">detail_ui</span><span class="op">)</span>,</span>
+<span>    compact <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    wrap <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    theme <span class="op">=</span> <span class="st">"light"</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="read-and-update-values">Read and update values<a class="anchor" aria-label="anchor" href="#read-and-update-values"></a>
+</h2>
+<p>The widgets expose familiar Shiny inputs:</p>
+<table class="table">
+<thead><tr>
+<th>Widget</th>
+<th>Current value</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><code>glassTabsUI("main", ...)</code></td>
+<td><code>input[["main-active_tab"]]</code></td>
+</tr>
+<tr>
+<td><code>glassSelect("region", ...)</code></td>
+<td><code>input$region</code></td>
+</tr>
+<tr>
+<td><code>glassMultiSelect("status", ...)</code></td>
+<td><code>input$status</code></td>
+</tr>
+<tr>
+<td>An open select dropdown</td>
+<td>
+<code>input$region_open</code> or <code>input$status_open</code>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Server helpers cover common programmatic changes:</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/observeEvent.html" class="external-link">observeEvent</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">next_step</span>, <span class="op">{</span></span>
+<span>    <span class="fu"><a href="reference/updateGlassTabsUI.html">updateGlassTabsUI</a></span><span class="op">(</span><span class="va">session</span>, <span class="st">"workflow"</span>, selected <span class="op">=</span> <span class="st">"review"</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="reference/updateGlassTabBadge.html">updateGlassTabBadge</a></span><span class="op">(</span><span class="va">session</span>, <span class="st">"workflow"</span>, <span class="st">"review"</span>, count <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/observeEvent.html" class="external-link">observeEvent</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">reset_filters</span>, <span class="op">{</span></span>
+<span>    <span class="fu"><a href="reference/updateGlassSelect.html">updateGlassSelect</a></span><span class="op">(</span><span class="va">session</span>, <span class="st">"region"</span>, selected <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="reference/updateGlassMultiSelect.html">updateGlassMultiSelect</a></span><span class="op">(</span><span class="va">session</span>, <span class="st">"status"</span>, selected <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p>Use <code><a href="reference/glassTabCondition.html">glassTabCondition()</a></code> when a regular <code><a href="https://rdrr.io/pkg/shiny/man/conditionalPanel.html" class="external-link">conditionalPanel()</a></code> should follow the active glass tab:</p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/conditionalPanel.html" class="external-link">conditionalPanel</a></span><span class="op">(</span></span>
+<span>  condition <span class="op">=</span> <span class="fu"><a href="reference/glassTabCondition.html">glassTabCondition</a></span><span class="op">(</span><span class="st">"main"</span>, <span class="st">"details"</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"This appears while the Details tab is active."</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="large-choice-sets">Large choice sets<a class="anchor" aria-label="anchor" href="#large-choice-sets"></a>
+</h2>
+<p>For hundreds or thousands of choices, keep the full vector on the server and send a small page of matches to the browser.</p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">many_choices</span> <span class="op">&lt;-</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"value-%04d"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">2000</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Choice %04d"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">2000</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="reference/useGlassTabs.html">useGlassTabs</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  <span class="fu"><a href="reference/glassSelect.html">glassSelect</a></span><span class="op">(</span></span>
-<span>    <span class="st">"item"</span>,</span>
-<span>    <span class="va">many_choices</span>,</span>
-<span>    server <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>    server_limit <span class="op">=</span> <span class="fl">30</span></span>
-<span>  <span class="op">)</span>,</span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/textOutput.html" class="external-link">verbatimTextOutput</a></span><span class="op">(</span><span class="st">"selected"</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="reference/glassSelect.html">glassSelect</a></span><span class="op">(</span><span class="st">"item"</span>, <span class="va">many_choices</span>, server <span class="op">=</span> <span class="cn">TRUE</span>, server_limit <span class="op">=</span> <span class="fl">30</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span><span class="st">"filters"</span>, <span class="va">many_choices</span>, server <span class="op">=</span> <span class="cn">TRUE</span>, server_limit <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="reference/glassSelectServer.html">glassSelectServer</a></span><span class="op">(</span></span>
-<span>    <span class="st">"item"</span>,</span>
-<span>    <span class="va">many_choices</span>,</span>
-<span>    session <span class="op">=</span> <span class="va">session</span>,</span>
-<span>    limit <span class="op">=</span> <span class="fl">30</span></span>
-<span>  <span class="op">)</span></span>
-<span></span>
-<span>  <span class="va">output</span><span class="op">$</span><span class="va">selected</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/renderPrint.html" class="external-link">renderPrint</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">item</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/shinyApp.html" class="external-link">shinyApp</a></span><span class="op">(</span><span class="va">ui</span>, <span class="va">server</span><span class="op">)</span></span></code></pre></div>
-<p><code><a href="reference/glassMultiSelectServer.html">glassMultiSelectServer()</a></code> is the multi-select counterpart. Results are bounded, not paginated.</p>
-<p><strong>Themes.</strong> Every widget takes <code>theme = "dark"</code> (the default), <code>"light"</code>, <code>"auto"</code> (follows the page’s Bootstrap signal), or a custom theme object from <code><a href="reference/glass_tab_theme.html">glass_tab_theme()</a></code> / <code><a href="reference/glass_select_theme.html">glass_select_theme()</a></code>. Dashboards with their own dark-mode toggle need <code>dark_selector</code> pointed at that toggle’s marker.</p>
-<p><strong>Keyboard and accessibility.</strong> Dropdown options and their chrome rows (style switcher, select-all, clear) form one wrapping keyboard cycle; screen readers get labelled triggers, listbox roles, and tri-state select-all. Motion shortens under reduced-motion preferences.</p>
-<p><strong>Reading and updating values.</strong> Updates are one transaction: existing selections are kept when they still exist, and Shiny is notified only when the effective value changes.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/observeEvent.html" class="external-link">observeEvent</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">reset_filters</span>, <span class="op">{</span></span>
-<span>    <span class="fu"><a href="reference/updateGlassSelect.html">updateGlassSelect</a></span><span class="op">(</span><span class="va">session</span>, <span class="st">"region"</span>, selected <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
-<span>    <span class="fu"><a href="reference/updateGlassMultiSelect.html">updateGlassMultiSelect</a></span><span class="op">(</span><span class="va">session</span>, <span class="st">"status"</span>, selected <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="op">}</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="reference/glassSelectServer.html">glassSelectServer</a></span><span class="op">(</span><span class="st">"item"</span>, <span class="va">many_choices</span>, session <span class="op">=</span> <span class="va">session</span>, limit <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="reference/glassMultiSelectServer.html">glassMultiSelectServer</a></span><span class="op">(</span><span class="st">"filters"</span>, <span class="va">many_choices</span>, session <span class="op">=</span> <span class="va">session</span>, limit <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p><code><a href="reference/glassPage.html">glassPage()</a></code> is an experimental fillable Bootstrap 5 page wrapper that loads the package assets automatically; regular Shiny and bslib pages remain fully supported.</p>
 </div>
 <div class="section level2">
-<h2 id="customization">Customization<a class="anchor" aria-label="anchor" href="#customization"></a>
+<h2 id="function-reference">Function reference<a class="anchor" aria-label="anchor" href="#function-reference"></a>
 </h2>
-<p>The options most apps reach for, with their defaults. The full argument lists live in the function reference on the website.</p>
-<p>Shared by both select widgets:</p>
-<ul>
-<li>
-<code>theme = "dark"</code> (<code>"light"</code>, <code>"auto"</code>, or a <code><a href="reference/glass_select_theme.html">glass_select_theme()</a></code> object)</li>
-<li>
-<code>shape = "rounded"</code> (<code>"square"</code> sits better next to native inputs)</li>
-<li>
-<code>check_style = "checkbox"</code> (<code>"check-only"</code>, <code>"filled"</code>)</li>
-<li>
-<code>searchable = TRUE</code> (always show search; <code>"auto"</code> shows it only at <code>search_threshold = 15</code> choices, <code>FALSE</code> hides it)</li>
-<li>
-<code>width = NULL</code> (trigger width; uses a compact 160px default width; the panel always matches it)</li>
-<li>
-<code>tongue = TRUE</code> (attached unfurl animation; <code>FALSE</code> is a detached fade)</li>
-<li>
-<code>label_size = "14px"</code>, <code>label_bold = TRUE</code>, <code>search_focus_ring = FALSE</code>, <code>overflow_tooltip = "auto"</code>
-</li>
-<li>
-<code>server = FALSE</code>, <code>server_limit = 50</code>, <code>server_min_chars = 0</code>
-</li>
-</ul>
-<p>Single-select only: <code>clearable = FALSE</code>, <code>include_all = FALSE</code> (All value <code>"__all__"</code>), <code>placeholder = "Select an option"</code>.</p>
-<p>Multi-select only: <code>show_select_all = TRUE</code>, <code>show_clear_all = TRUE</code>, <code>show_style_switcher = TRUE</code>, <code>selection_display = "auto"</code> (<code>"count"</code>, <code>"summary"</code>, <code>"labels"</code>), <code>selection_max_items = 2</code>, <code>placeholder = "Filter by Category"</code>, <code>fill_colors = "single"</code> (<code>"multi"</code> for per-choice hues).</p>
-<p>Tabs: <code>style = "floating"</code> (<code>"attached"</code> docks the bar onto the content box), <code>transition = "fade"</code> (<code>"slide"</code>), <code>indicator = "glass"</code> (<code>"solid"</code>, <code>"underline"</code>), <code>orientation = "horizontal"</code> (<code>"vertical"</code>), <code>overflow = "scroll"</code> (<code>"multiline"</code>, <code>"menu"</code>), <code>swipe = FALSE</code>, <code>tab_align = "center"</code>, <code>text_align = "center"</code>, <code>compact = FALSE</code>, <code>wrap = TRUE</code>.</p>
+<div class="section level3">
+<h3 id="setup">Setup<a class="anchor" aria-label="anchor" href="#setup"></a>
+</h3>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead><tr>
+<th>Function</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><code><a href="reference/useGlassTabs.html">useGlassTabs()</a></code></td>
+<td>Inject package CSS and JavaScript—call once in the UI</td>
+</tr>
+<tr>
+<td><code>glassPage(...)</code></td>
+<td>Experimental fillable Bootstrap 5 page with glasstabs already loaded</td>
+</tr>
+<tr>
+<td><code>runGlassExample(example)</code></td>
+<td>Launch a built-in example app (<code><a href="reference/runGlassExample.html">runGlassExample()</a></code> lists all available apps)</td>
+</tr>
+<tr>
+<td><code><a href="reference/glasstabs_news.html">glasstabs_news()</a></code></td>
+<td>Print the package changelog to the R console</td>
+</tr>
+</tbody>
+</table>
+<p>Built-in examples include <code>basic</code>, <code>bs4dash</code>, <code>bslib</code>, <code>connect-workflow</code>, <code>dashboard</code>, <code>indicators</code>, <code>light-mode</code>, <code>native-comparison</code>, <code>server-select</code>, <code>smoke-test</code>, <code>square-corners</code>, <code>stress-test</code>, and <code>theme-switcher</code>. The <code>native-comparison</code> lab places native Shiny and glasstabs fields side by side, including an intentionally truncated selected label and live controls for width, tongue motion, labels, search focus, filled colors, and overflow tooltips. The dedicated light-mode example includes long select labels for checking adaptive dropdown sizing. The theme-switcher example flips every select between dark and light with one switch, and exercises long category names, wide text in a narrow phone frame, and a bottom-of-page dropdown that must flip above the field. The Connect workflow doubles as a v0.4.1 test lab, with the responsive, keyboard, touch, dynamic-tab, badge, theme, and page-wrapper checks collected in one app.</p>
+</div>
+<div class="section level3">
+<h3 id="tab-widget">Tab widget<a class="anchor" aria-label="anchor" href="#tab-widget"></a>
+</h3>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead><tr>
+<th>Function</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><code>glassTabsUI(id, ..., selected, wrap, compact, content_min_height, style, transition, shape, indicator, orientation, tab_align, text_align, overflow, swipe, extra_ui, theme, dark_selector)</code></td>
+<td>Animated tab bar with responsive overflow and optional touch swipes</td>
+</tr>
+<tr>
+<td><code>glassTabPanel(value, label, ..., icon, selected)</code></td>
+<td>Define one tab and its content; <code>icon</code> accepts <code><a href="https://rdrr.io/pkg/shiny/man/icon.html" class="external-link">shiny::icon()</a></code>
+</td>
+</tr>
+<tr>
+<td><code>glassTabsServer(id, bookmark)</code></td>
+<td>Reactive returning the active tab; can bookmark the active tab in the URL</td>
+</tr>
+<tr>
+<td><code>glassTabsOutput(outputId)</code></td>
+<td>UI placeholder for a server-rendered tab widget</td>
+</tr>
+<tr>
+<td><code>renderGlassTabs({expr})</code></td>
+<td>Render a <code><a href="reference/glassTabsUI.html">glassTabsUI()</a></code> reactively; JavaScript reinitialises automatically</td>
+</tr>
+<tr>
+<td><code>glassTabCondition(id, value)</code></td>
+<td>JavaScript condition string for <code><a href="https://rdrr.io/pkg/shiny/man/conditionalPanel.html" class="external-link">conditionalPanel()</a></code>
+</td>
+</tr>
+<tr>
+<td><code>updateGlassTabsUI(session, id, selected)</code></td>
+<td>Switch the active tab from the server</td>
+</tr>
+<tr>
+<td><code>updateGlassTabBadge(session, id, value, count)</code></td>
+<td>Set a numeric badge on a tab button (<code>0</code> hides it)</td>
+</tr>
+<tr>
+<td><code>showGlassTab(session, id, value)</code></td>
+<td>Show a hidden tab</td>
+</tr>
+<tr>
+<td><code>hideGlassTab(session, id, value)</code></td>
+<td>Hide a tab from the navigation bar</td>
+</tr>
+<tr>
+<td><code>disableGlassTab(session, id, value)</code></td>
+<td>Disable a tab while keeping it visible</td>
+</tr>
+<tr>
+<td><code>enableGlassTab(session, id, value)</code></td>
+<td>Re-enable a disabled tab</td>
+</tr>
+<tr>
+<td><code>appendGlassTab(session, id, tab, select)</code></td>
+<td>Add a new tab at runtime</td>
+</tr>
+<tr>
+<td><code>removeGlassTab(session, id, value)</code></td>
+<td>Remove a tab at runtime</td>
+</tr>
+<tr>
+<td><code>glass_tab_theme(...)</code></td>
+<td>Create a custom colour theme for <code><a href="reference/glassTabsUI.html">glassTabsUI()</a></code>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section level3">
+<h3 id="select-widgets">Select widgets<a class="anchor" aria-label="anchor" href="#select-widgets"></a>
+</h3>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead><tr>
+<th>Function</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><code>glassMultiSelect(inputId, choices, ...)</code></td>
+<td>Multi-select dropdown widget</td>
+</tr>
+<tr>
+<td><code>glassMultiSelectServer(inputId, choices, ...)</code></td>
+<td>Server-side search for large multi-select choice sets</td>
+</tr>
+<tr>
+<td><code>updateGlassMultiSelect(session, inputId, ...)</code></td>
+<td>Update multi-select choices, selection, or style</td>
+</tr>
+<tr>
+<td><code>glassMultiSelectValue(input, inputId, ...)</code></td>
+<td>Raw and resolved multi-select values, empty state, and style</td>
+</tr>
+<tr>
+<td><code>glassSelect(inputId, choices, ...)</code></td>
+<td>Single-select dropdown widget</td>
+</tr>
+<tr>
+<td><code>glassSelectServer(inputId, choices, ...)</code></td>
+<td>Server-side search for large single-select choice sets</td>
+</tr>
+<tr>
+<td><code>updateGlassSelect(session, inputId, ...)</code></td>
+<td>Update single-select choices, selection, or style</td>
+</tr>
+<tr>
+<td><code>glassSelectValue(input, inputId)</code></td>
+<td>Reactive helper for the selected value</td>
+</tr>
+<tr>
+<td><code>closeGlassSelect(session, inputId)</code></td>
+<td>Close one open single-select dropdown</td>
+</tr>
+<tr>
+<td><code>closeGlassMultiSelect(session, inputId)</code></td>
+<td>Close one open multi-select dropdown</td>
+</tr>
+<tr>
+<td><code>closeAllGlassSelects(session)</code></td>
+<td>Close every open glasstabs select dropdown</td>
+</tr>
+<tr>
+<td><code>glassFilterTags(inputId)</code></td>
+<td>Tag-pill display area synced to a multi-select</td>
+</tr>
+<tr>
+<td><code>glass_select_theme(...)</code></td>
+<td>Create a custom theme for <code><a href="reference/glassSelect.html">glassSelect()</a></code> and <code><a href="reference/glassMultiSelect.html">glassMultiSelect()</a></code>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <div class="section level2">
-<h2 id="more-examples">More Examples<a class="anchor" aria-label="anchor" href="#more-examples"></a>
+<h2 id="shiny-inputs">Shiny inputs<a class="anchor" aria-label="anchor" href="#shiny-inputs"></a>
 </h2>
-<p>The website holds the full guides:</p>
-<ul>
-<li>
-<a href="https://prigasg.github.io/glasstabs/articles/getting-started.html">Getting started</a> — first app, all three widgets</li>
-<li>
-<a href="https://prigasg.github.io/glasstabs/articles/glassSelect.html">Single-select guide</a> — one-value controls, server mode, updates</li>
-<li>
-<a href="https://prigasg.github.io/glasstabs/articles/multiselect.html">Multi-select guide</a> — selection semantics, summaries, search, linked filters</li>
-<li>
-<a href="https://prigasg.github.io/glasstabs/articles/tabs.html">Tabs</a> and <a href="https://prigasg.github.io/glasstabs/articles/indicators.html">indicators</a> — navigation, overflow, badges</li>
-<li>
-<a href="https://prigasg.github.io/glasstabs/articles/modules.html">Shiny modules</a> and <a href="https://prigasg.github.io/glasstabs/articles/linked-filters.html">linked filters</a> — recipes for real apps</li>
-<li>
-<a href="https://prigasg.github.io/glasstabs/articles/migrating.html">Migrating from native Shiny controls</a> — before-and-after conversions</li>
-<li>
-<a href="https://prigasg.github.io/glasstabs/articles/responsive-accessibility.html">Responsive design and accessibility</a> — keyboard, screen readers, small screens</li>
-<li>
-<a href="https://prigasg.github.io/glasstabs/articles/troubleshooting.html">Troubleshooting</a> — the full issue list</li>
-<li>
-<a href="https://prigasg.github.io/glasstabs/articles/examples-gallery.html">Example gallery</a> — every built-in demo</li>
-<li>
-<a href="https://prigasg.github.io/glasstabs/articles/posit-connect.html">Posit Connect deployment</a> — versions, assets, CSP</li>
-<li>
-<a href="https://prigasg.github.io/glasstabs/articles/cheatsheet.html">Cheatsheet</a> — the one-page reference</li>
-</ul>
-<p>Built-in demos, launched with <code><a href="reference/runGlassExample.html">runGlassExample()</a></code>: <code>basic</code>, <code>bs4dash</code>, <code>bslib</code>, <code>connect-workflow</code>, <code>dashboard</code>, <code>indicators</code>, <code>light-mode</code>, <code>native-comparison</code>, <code>server-select</code>, <code>smoke-test</code>, <code>square-corners</code>, <code>stress-test</code>, <code>theme-switcher</code>. The <code>native-comparison</code> demo places native Shiny and glasstabs fields side by side; <code>theme-switcher</code> flips every select between dark and light with one switch.</p>
+<table class="table">
+<colgroup>
+<col width="33%">
+<col width="33%">
+<col width="33%">
+</colgroup>
+<thead><tr>
+<th>Input</th>
+<th>Type</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><code>input[["&lt;id&gt;-active_tab"]]</code></td>
+<td><code>character</code></td>
+<td>Active tab value from <code><a href="reference/glassTabsUI.html">glassTabsUI()</a></code>
+</td>
+</tr>
+<tr>
+<td><code>input$&lt;inputId&gt;</code></td>
+<td><code>character vector</code></td>
+<td>Selected values from <code><a href="reference/glassMultiSelect.html">glassMultiSelect()</a></code>
+</td>
+</tr>
+<tr>
+<td><code>input$&lt;inputId&gt;_style</code></td>
+<td><code>character</code></td>
+<td>Active selection style from <code><a href="reference/glassMultiSelect.html">glassMultiSelect()</a></code>
+</td>
+</tr>
+<tr>
+<td><code>input$&lt;inputId&gt;_open</code></td>
+<td><code>logical</code></td>
+<td>Whether a select dropdown is open</td>
+</tr>
+<tr>
+<td><code>input$&lt;inputId&gt;_ready</code></td>
+<td><code>logical</code></td>
+<td>Whether the select widget has finished initializing</td>
+</tr>
+<tr>
+<td><code>input$&lt;inputId&gt;</code></td>
+<td>
+<code>character</code> or <code>NULL</code>
+</td>
+<td>Selected value from <code><a href="reference/glassSelect.html">glassSelect()</a></code>
+</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="section level2">
-<h2 id="troubleshooting">Troubleshooting<a class="anchor" aria-label="anchor" href="#troubleshooting"></a>
+<h2 id="documentation-and-support">Documentation and support<a class="anchor" aria-label="anchor" href="#documentation-and-support"></a>
 </h2>
-<p>Short answers; the <a href="https://prigasg.github.io/glasstabs/articles/troubleshooting.html">troubleshooting guide</a> has the full entries.</p>
-<ul>
-<li>
-<strong>Dropdown looks unstyled.</strong> The CSS and JavaScript never loaded: call <code><a href="reference/useGlassTabs.html">useGlassTabs()</a></code> exactly once at the UI root, not inside <code><a href="https://rdrr.io/pkg/shiny/man/renderUI.html" class="external-link">renderUI()</a></code> or a module UI. (<code><a href="reference/glassPage.html">glassPage()</a></code> loads it automatically.)</li>
-<li>
-<strong>Server search never returns results.</strong> Register the helper in the server function, once per input ID, with the same ID as the widget: <code><a href="reference/glassSelectServer.html">glassSelectServer()</a></code> for single-select, <code><a href="reference/glassMultiSelectServer.html">glassMultiSelectServer()</a></code> for multi-select. In a module, pass the module session and the bare ID, not the namespaced one.</li>
-<li>
-<strong>Multi-select starts with everything checked.</strong> That is the default, not a bug: <code>selected = NULL</code> selects every enabled choice. Pass <code>selected = character(0)</code> for an empty start.</li>
-<li>
-<strong>Clearing shows all records.</strong> The widget returns <code>character(0)</code> on clear; if the app treats empty as “no filter,” that choice must be deliberate. Use <code>glassMultiSelectValue(..., empty_behavior = "all")</code> / <code>"none"</code> to resolve empty consistently.</li>
-<li>
-<strong>Selection disappears after a choices update.</strong> The value is absent from the new set: multi-select drops it when <code>drop_invalid = TRUE</code> (the default) and keeps it when <code>FALSE</code>; single-select clears a vanished selection to <code>NULL</code> with no knob. Set the policy explicitly.</li>
-<li>
-<strong>Dropdown is too narrow.</strong> The panel matches the trigger by design: widen the trigger with <code>width</code> (for example <code>"100%"</code> inside a wide container) and check the parent column or card, which caps the trigger first.</li>
-<li>
-<strong>Theme differs from the dashboard.</strong> Use <code>theme = "auto"</code>, plus <code>dark_selector</code> pointed at the dashboard’s dark-mode marker when the dashboard has its own toggle.</li>
-<li>
-<strong>Server update misses a module control.</strong> Module server code takes the bare ID (<code>"region"</code>), not <code>ns("region")</code> — a namespaced ID addresses a nonexistent input, silently.</li>
-<li>
-<strong>Dropdown closes when a modal opens.</strong> By design: open dropdowns close rather than stranding above a full-screen overlay. Close deliberately first with <code><a href="reference/closeGlassSelect.html">closeAllGlassSelects()</a></code> (or <code><a href="reference/closeGlassSelect.html">closeGlassSelect()</a></code> / <code><a href="reference/closeGlassSelect.html">closeGlassMultiSelect()</a></code> for one widget) if the close looks abrupt.</li>
-<li>
-<strong>Widget unstyled or unbound after <code><a href="https://rdrr.io/pkg/shiny/man/renderUI.html" class="external-link">renderUI()</a></code>.</strong> Keep <code><a href="reference/useGlassTabs.html">useGlassTabs()</a></code> at the root and server registration in the server function (not inside the render), and re-apply the intended selection after the rebuild — a rebuilt widget starts from its UI arguments.</li>
-</ul>
-<p>Release notes are in <a href="NEWS.html"><code>NEWS.md</code></a> or from R with <code><a href="reference/glasstabs_news.html">glasstabs_news()</a></code>. If a widget does not fit naturally into your app, please open a <a href="https://github.com/PrigasG/glasstabs/issues" class="external-link">GitHub issue</a> with a small Shiny example.</p>
+<p>The <a href="https://prigasg.github.io/glasstabs/">glasstabs website</a> includes focused articles, a searchable function reference, and the <a href="https://prigasg.github.io/glasstabs/articles/cheatsheet.html">v0.4.1 cheatsheet</a>. Release notes are available in <a href="NEWS.html"><code>NEWS.md</code></a> or from R with <code><a href="reference/glasstabs_news.html">glasstabs_news()</a></code>.</p>
+<p>If a widget does not fit naturally into your app, please open a <a href="https://github.com/PrigasG/glasstabs/issues" class="external-link">GitHub issue</a> with a small Shiny example. Questions, bug reports, and ideas for making the package easier to use are all welcome.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">

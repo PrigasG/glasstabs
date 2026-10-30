@@ -330,35 +330,12 @@ glassSelect(
 
 For
 [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md),
-an empty-string value is an ordinary choice: selecting one reports `""`,
-while clearing reports `NULL`.
-
-For
-[`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md),
 the overflow tooltip appears for an ellipsized trigger. Inside either
 open dropdown, it appears for the truncated option currently hovered or
 reached with the keyboard; the multi-select trigger does not combine
 selected labels into a tooltip. On touch, wrapped option text is the
 full-text fallback. Use `overflow_tooltip = "never"` to disable visual
 tips.
-
-Select chrome rows are real buttons, not Tab stops: inside an open
-dropdown, arrow keys move between options and the style switcher,
-Select-all row, and Clear controls, and Enter or Space activates the
-focused button.
-
-## Selects: modules and server recipes
-
-The patterns above cover one widget. For the rest, read the recipe
-articles instead of duplicating code here:
-
-- Shiny modules (namespaced widget IDs, bare IDs with the module
-  session, server helpers in modules): the modules article.
-- Dependent dropdowns and dynamic UI (linked filters, renderUI rebuilds,
-  settling filters, reset meanings): the linked-filters article.
-- Server search limits, bounded results, and the performance model: the
-  multi-select guide’s server-search section.
-- When something breaks: troubleshooting.
 
 ## Tabs: inside bs4Dash
 
