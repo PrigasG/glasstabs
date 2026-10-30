@@ -13,4 +13,5 @@ docs
 dev/
 node_modules/
 coverage.xml
+benchmarks/results/
 inst/examples/connect-workflow/rsconnect/
