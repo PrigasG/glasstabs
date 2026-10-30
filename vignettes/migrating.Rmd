@@ -41,8 +41,14 @@ for you. The behavior-preserving migration below uses
 
 Before, with native Shiny:
 
-```{r native-before}
+```{r run-native-before}
+library(shiny)
+
 regions <- c(North = "north", South = "south", East = "east")
+data <- data.frame(
+  region = c("north", "south", "east", "north"),
+  cases = c(12, 8, 5, 3)
+)
 
 ui <- fluidPage(
   selectInput(
@@ -64,7 +70,10 @@ server <- function(input, output, session) {
 
 After, with glasstabs. The downstream filter is untouched:
 
-```{r glasstabs-after}
+```{r run-glasstabs-after}
+library(shiny)
+library(glasstabs)
+
 ui <- fluidPage(
   useGlassTabs(),
   glassMultiSelect(
@@ -82,7 +91,12 @@ server <- function(input, output, session) {
     data[data$region %in% input$region, , drop = FALSE]
   })
 }
+
+shinyApp(ui, server)
 ```
+
+The example above is complete: it defines its dataset, both app
+halves, and the app object, so it runs end to end.
 
 Two changes beyond the widget swap: `useGlassTabs()` once at the UI
 root (the one rule), and `selected = character(0)` preserving the

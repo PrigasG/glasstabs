@@ -2178,3 +2178,106 @@ test_that("browser: stuck server search status clears on its own", {
     document.querySelector('#server_hung-dropdown .gt-select-status').textContent !== 'Searching...'
   ", timeout = 20000)
 })
+
+test_that("browser: stale server response is dropped and the latest guard survives", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-server-stale",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+  app$click(selector = "#server_stale-trigger")
+  app$wait_for_js("document.querySelector('#server_stale-dropdown.open') !== null")
+  search_in <- function(value) {
+    app$get_js(sprintf(
+      "(function() {
+        var search = document.querySelector('#server_stale-dropdown input[type=text]');
+        search.focus();
+        search.value = '%s';
+        search.dispatchEvent(new Event('input', {bubbles: true}));
+        return true;
+      })()",
+      value
+    ))
+  }
+  # The first search answers late (2 s server sleep); the second never
+  # answers. Send the second while the first is still in flight.
+  search_in("alpha")
+  app$wait_for_js("
+    document.querySelector('#server_stale-dropdown .gt-select-status').textContent === 'Searching...'
+  ")
+  search_in("beta")
+  # Long after the late first response has arrived, it must not have
+  # replaced the results, and the second search must still be loading:
+  # under the old >= logic the stale response applied and disarmed the
+  # guard, so both assertions below fail on it.
+  Sys.sleep(4)
+  expect_true(app$get_js("
+    document.querySelector('#server_stale-dropdown .gt-gs-option[data-value=\"alpha_stale\"]') === null
+  "))
+  expect_true(app$get_js("
+    document.querySelector('#server_stale-dropdown .gt-gs-option[data-value=\"one\"]') !== null &&
+    document.querySelector('#server_stale-dropdown .gt-gs-option[data-value=\"two\"]') !== null
+  "))
+  expect_equal(app$get_js("
+    document.querySelector('#server_stale-dropdown .gt-select-status').textContent
+  "), "Searching...")
+  # The second search's own guard still fires on its own schedule.
+  app$wait_for_js("
+    document.querySelector('#server_stale-dropdown .gt-select-status').textContent !== 'Searching...'
+  ", timeout = 20000)
+  expect_true(app$get_js("
+    document.querySelector('#server_stale-dropdown .gt-gs-option[data-value=\"one\"]') !== null
+  "))
+})
+
+test_that("browser: empty-string choice value is distinct from cleared", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-empty-value",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+  # Initially selected: the empty-string choice, not "nothing selected".
+  expect_equal(app$get_value(input = "empty_val"), "")
+  expect_equal(app$get_js("
+    document.querySelector('#empty_val-label').textContent
+  "), "All statuses")
+  app$click(selector = "#empty_val-trigger")
+  app$wait_for_js("document.querySelector('#empty_val-dropdown.open') !== null")
+  app$click(selector = "#empty_val-dropdown .gt-gs-option[data-value=\"active\"]")
+  app$wait_for_idle()
+  expect_equal(app$get_value(input = "empty_val"), "active")
+  expect_equal(app$get_js("
+    document.querySelector('#empty_val-label').textContent
+  "), "Active")
+  app$click(selector = "#empty_val-trigger")
+  app$wait_for_js("document.querySelector('#empty_val-dropdown.open') !== null")
+  app$click(selector = "#empty_val-dropdown .gt-gs-option[data-value=\"\"]")
+  app$wait_for_idle()
+  expect_equal(app$get_value(input = "empty_val"), "")
+  expect_equal(app$get_js("
+    document.querySelector('#empty_val-label').textContent
+  "), "All statuses")
+  # Clearing is a different state: NULL value and the placeholder label.
+  app$click(selector = "#empty_val-clear")
+  app$wait_for_idle()
+  expect_null(app$get_value(input = "empty_val"))
+  expect_equal(app$get_js("
+    document.querySelector('#empty_val-label').textContent
+  "), "Select an option")
+})

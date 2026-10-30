@@ -1690,7 +1690,7 @@
     function setValue(value, opts) {
       opts = opts || {};
       var doNotify = opts.notify !== false;
-      var valueStr = (value === null || typeof value === 'undefined' || value === '') ? null : String(value);
+      var valueStr = (value === null || typeof value === 'undefined') ? null : String(value);
 
       if (valueStr !== null && !findChoice(valueStr)) {
         if (opts.preserveMissingSelection) {
@@ -1769,9 +1769,15 @@
       }));
       choices = asChoiceArray(choices);
       state.loading = false;
-      if (state.searchTimeoutId) {
+      /* The guard timer belongs to the request that armed it. Only the
+         response to that request, or a non-server update carrying no
+         sequence, may disarm it; a stale response must leave the latest
+         request's guard armed. */
+      if (state.searchTimeoutId &&
+          (opts.seq === undefined || opts.seq === state.searchTimerSeq)) {
         clearTimeout(state.searchTimeoutId);
         state.searchTimeoutId = null;
+        state.searchTimerSeq = null;
       }
 
       /* The synthetic "All" row is a client-side prepend, not part of any
@@ -1877,10 +1883,12 @@
       if (state.searchTimeoutId) clearTimeout(state.searchTimeoutId);
       /* A response normally lands in milliseconds. If none arrives, the
          "Searching..." status must not stick forever (e.g. the session
-         stopped responding). Clearing here is benign: a late response
-         still applies through setChoices(). */
+         stopped responding). Clearing here is benign: the latest
+         response still applies through setChoices(), and a stale one is
+         dropped by the message handler. */
       state.searchTimeoutId = setTimeout(function () {
         state.searchTimeoutId = null;
+        state.searchTimerSeq = null;
         if (state.loading) {
           state.loading = false;
           updateStatus();
@@ -1890,6 +1898,8 @@
         query: query,
         seq: ++serverSearchSeq
       }, { priority: 'event' });
+      wrap._gtServerSeqIssued = serverSearchSeq;
+      state.searchTimerSeq = serverSearchSeq;
     }
 
     var debouncedSearch = debounce(function () {
@@ -2684,9 +2694,15 @@
       }));
       choices = asChoiceArray(choices);
       state.loading = false;
-      if (state.searchTimeoutId) {
+      /* The guard timer belongs to the request that armed it. Only the
+         response to that request, or a non-server update carrying no
+         sequence, may disarm it; a stale response must leave the latest
+         request's guard armed. */
+      if (state.searchTimeoutId &&
+          (opts.seq === undefined || opts.seq === state.searchTimerSeq)) {
         clearTimeout(state.searchTimeoutId);
         state.searchTimeoutId = null;
+        state.searchTimerSeq = null;
       }
 
       /* Update state */
@@ -2780,10 +2796,12 @@
       if (state.searchTimeoutId) clearTimeout(state.searchTimeoutId);
       /* A response normally lands in milliseconds. If none arrives, the
          "Searching..." status must not stick forever (e.g. the session
-         stopped responding). Clearing here is benign: a late response
-         still applies through setChoices(). */
+         stopped responding). Clearing here is benign: the latest
+         response still applies through setChoices(), and a stale one is
+         dropped by the message handler. */
       state.searchTimeoutId = setTimeout(function () {
         state.searchTimeoutId = null;
+        state.searchTimerSeq = null;
         if (state.loading) {
           state.loading = false;
           updateStatus();
@@ -2793,6 +2811,8 @@
         query: query,
         seq: ++serverSearchSeq
       }, { priority: 'event' });
+      wrap._gtServerSeqIssued = serverSearchSeq;
+      state.searchTimerSeq = serverSearchSeq;
     }
 
     var debouncedSearch = debounce(function () {
@@ -3673,12 +3693,14 @@
       if (!msg || !msg.inputId) return;
       var selector = msg.type === 'multi' ? '.gt-ms-wrap' : '.gt-gs-wrap';
       var wrap = document.querySelector(selector + attrEquals('data-input-id', msg.inputId));
-      /* Responses carry the sequence of the search they answer. A stale
-         response (older than the latest one already applied for this
-         widget) is dropped, so with rapid typing only the newest search
-         wins. Messages without a sequence (older servers) always apply. */
+      /* Responses carry the sequence of the search they answer. Only the
+         response to the latest issued search for this widget applies: an
+         older response arriving after a newer search was sent is dropped,
+         so it can neither replace current results nor disarm the latest
+         search's loading guard. Messages without a sequence (older
+         servers) always apply. */
       if (wrap && typeof msg.seq === 'number') {
-        if (wrap._gtServerSeq !== undefined && msg.seq < wrap._gtServerSeq) return;
+        if (wrap._gtServerSeqIssued !== undefined && msg.seq !== wrap._gtServerSeqIssued) return;
         wrap._gtServerSeq = msg.seq;
       }
       var ctrl = wrap ? ensureInit(wrap) : null;
@@ -3687,7 +3709,8 @@
       ctrl.setChoices(msg.choices || [], {
         notify: false,
         preserveMissingSelection: true,
-        total: typeof msg.total === 'number' ? msg.total : undefined
+        total: typeof msg.total === 'number' ? msg.total : undefined,
+        seq: msg.seq
       });
     });
 

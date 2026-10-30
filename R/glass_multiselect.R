@@ -1371,7 +1371,8 @@ glassMultiSelectServer <- function(
       search <- session$input[[paste0(inputId, "_search")]]
       query <- if (is.list(search) && !is.null(search$query)) search$query else search
       # Echo the client's search sequence (NULL when the client did not send
-      # one); the browser drops responses older than the latest applied one.
+      # one); the browser applies only the response to the latest issued
+      # search for the widget and drops older ones.
       # list() drops NULL elements, so the field is simply absent then.
       seq <- if (is.list(search)) search$seq else NULL
       filtered <- .gt_filter_choices(

@@ -32,7 +32,7 @@ simply clears — and that difference is called out below.
 | Facility list refreshes | Keep selections that remain available |
 | New choices arrive | Decide: keep available, or select every new choice |
 | `renderUI()` replaces a dropdown | Keep the server registration outside the render |
-| Several filters update together | Silence intermediates, notify once at the end |
+| Several filters update together | Notify each filter whose value must sync |
 | An existing choice becomes disabled | Update its disabled state consistently |
 | A selected choice disappears | Know the resulting value and label |
 | Reset button clicked | Define whether reset means all, default, or none |
@@ -64,7 +64,7 @@ updateGlassMultiSelect(
 when choices change; `drop_invalid = TRUE` (the default) drops
 selected values absent from the new choices. Together they are "keep
 what is still available." `drop_invalid = FALSE` instead keeps absent
-values around for when they reappear, which is what a paged server
+values around for when they reappear, which is what a bounded server
 search wants — but then the widget can hold values no longer in the
 choice set, so only use it when the app expects those values back.
 
@@ -134,18 +134,23 @@ its UI arguments, not from the previous control's state.
 
 When one change cascades through several linked filters, each
 intermediate update can rerun downstream observers for a state no
-user will ever see. Silence the intermediates and notify once:
+user will ever see. But a notification syncs only the input it
+belongs to: notifying the region does not send the county's or the
+facility's updated values to the server, so downstream reactives
+would keep seeing their old selections. Notify every input whose
+server value must sync:
 
 ```{r settling}
-updateGlassMultiSelect(session, "county", choices = counties, notify = "never")
-updateGlassMultiSelect(session, "facility", choices = facilities, notify = "never")
+updateGlassMultiSelect(session, "county", choices = counties, notify = "changed")
+updateGlassMultiSelect(session, "facility", choices = facilities, notify = "changed")
 updateGlassMultiSelect(session, "region", choices = regions, notify = "changed")
 ```
 
-`notify = "never"` makes a quiet intermediate update; `"changed"`
-(the default) notifies only when the effective selection actually
-changed; `"always"` forces an event. The last update in the cascade
-is the one that should notify.
+`notify = "changed"` (the default) notifies only when the effective
+selection actually changed; `"always"` forces an event.
+`notify = "never"` makes a quiet update for one input only — use it
+when that input's server value genuinely does not matter yet, never
+as a way to batch several inputs behind a single notification.
 
 ## Reset means one of three things
 

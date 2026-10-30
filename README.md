@@ -447,7 +447,7 @@ conditionalPanel(
 
 ## Large choice sets
 
-For hundreds or thousands of choices, keep the full vector on the server and send a small page of matches to the browser.
+For hundreds or thousands of choices, keep the full vector on the server and send a small slice of matches to the browser.
 
 ``` r
 many_choices <- stats::setNames(

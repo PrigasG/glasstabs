@@ -214,6 +214,11 @@ example gallery). The detailed fixes follow.
 * Server-side choice search now normalizes the choice set once per widget
   instead of on every keystroke, making search over large choice sets
   noticeably snappier.
+* Server search responses now apply only when they answer the latest
+  issued search for the widget: a stale response can no longer replace
+  current results or disarm the latest search's loading guard.
+* Empty-string choice values are now ordinary values in `glassSelect()`:
+  selecting one reports `""`, while clearing the field reports `NULL`.
 
 ## Docs and examples
 
@@ -224,6 +229,12 @@ example gallery). The detailed fixes follow.
   `closeAllGlassSelects`; `%||%` remains an internal helper.
 * CI now installs stable Chrome so the shinytest2 browser suite actually runs
   instead of failing on a missing browser.
+* The linked-filter recipe no longer teaches silencing intermediates
+  behind a single notification: every input whose server value must sync
+  needs its own notification.
+* The migration guide now defines its sample dataset, and its final
+  example runs end to end.
+* Server search wording now says bounded, not paged, everywhere.
 
 ## Select dropdown sizing
 

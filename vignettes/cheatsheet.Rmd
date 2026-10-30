@@ -309,6 +309,9 @@ glassSelect(
 )
 ```
 
+For `glassSelect()`, an empty-string value is an ordinary choice:
+selecting one reports `""`, while clearing reports `NULL`.
+
 For `glassSelect()`, the overflow tooltip appears for an ellipsized trigger.
 Inside either open dropdown, it appears for the truncated option currently
 hovered or reached with the keyboard; the multi-select trigger does not combine

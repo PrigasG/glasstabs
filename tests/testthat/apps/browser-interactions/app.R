@@ -107,6 +107,23 @@ ui <- fluidPage(
       choices,
       server = TRUE
     ),
+    # Stale-response fixture: searches for "alpha" answer late, searches
+    # for "beta" never answer (see the server observer below).
+    glassSelect(
+      "server_stale",
+      c(One = "one", Two = "two"),
+      server = TRUE,
+      server_limit = 2,
+      selected = "one"
+    ),
+    # Empty-string fixture: "" is a real choice value, distinct from
+    # clearing the field (which yields NULL).
+    glassSelect(
+      "empty_val",
+      c("All statuses" = "", "Active" = "active"),
+      selected = "",
+      clearable = TRUE
+    ),
     glassMultiSelect(
       "cats",
       choices,
@@ -321,6 +338,32 @@ server <- function(input, output, session) {
     session = session,
     disabled_choices = "zeta"
   )
+
+  # Stale-response fixture: the first search answers after a 2 s delay,
+  # the second never answers. The client must drop the late first
+  # response (it no longer matches the latest issued search) and keep
+  # the second search's loading guard armed until it fires.
+  observeEvent(session$input$server_stale_search, {
+    search <- session$input$server_stale_search
+    query <- if (is.list(search) && !is.null(search$query)) search$query else search
+    seq <- if (is.list(search)) search$seq else NULL
+    if (identical(query, "beta")) return()
+    if (identical(query, "alpha")) Sys.sleep(2)
+    session$sendCustomMessage(
+      "glasstabs_server_choices",
+      list(
+        inputId = session$ns("server_stale"),
+        type = "single",
+        seq = seq,
+        choices = glasstabs:::.gt_choice_payload(
+          c("Alpha stale"),
+          c("alpha_stale")
+        ),
+        total = 2L,
+        matched = 1L
+      )
+    )
+  }, ignoreInit = TRUE)
 
   output$fruit_open_state <- renderText({
     if (isTRUE(input$fruit_open)) "open" else "closed"

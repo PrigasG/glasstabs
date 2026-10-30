@@ -74,6 +74,14 @@ glassSelect("f", fruits, selected = "banana")
 ```
 
 
+### Empty-string values are ordinary values
+
+An empty string is a valid choice value, distinct from nothing
+selected: `glassSelect("status", c("All statuses" = "", "Active" =
+"active"), selected = "")` starts on "All statuses" and reports
+`""`, while clearing the field reports `NULL`. The same holds for
+`updateGlassSelect(..., selected = "")`.
+
 ## Optional label
 
 ```{r label}

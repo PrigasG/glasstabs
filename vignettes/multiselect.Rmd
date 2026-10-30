@@ -624,12 +624,12 @@ server <- function(input, output, session) {
   `selected` is supplied explicitly.
 - `drop_invalid = TRUE` (the default) drops selected values absent from
   the new choices; `FALSE` keeps them around for when they reappear,
-  which is what a paged server search wants.
+  which is what a bounded server search wants.
 - `notify = "changed"` (the default) avoids rerunning observers when the
   effective selection and style did not change; `"always"` forces an
-  event; `"never"` makes a quiet intermediate update — useful when
-  several linked filters are settling and only the final update should
-  reach the server.
+  event; `"never"` makes a quiet update for one input only — it does
+  not sync other inputs, so every input whose server value must sync
+  needs its own notification (see the linked-filters recipe).
 
 ## Closing dropdowns and dynamic layouts
 
