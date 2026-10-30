@@ -1,18 +1,15 @@
 # glasstabs roadmap
 
-This is the working plan for upcoming releases. It records what is
-promised, what is experimental, and what is still only an idea. A
-feature moves to `NEWS.md` when it ships.
+This roadmap records shipped milestones, experimental features, and
+ideas for future releases. See `NEWS.md` for the release history.
 
-## v0.4.1 — select resilience and connected layouts
+## v0.4.1 — shipped select resilience and connected layouts
 
-The 0.4.1 line makes select inputs dependable with long labels, narrow
+Version 0.4.1 makes select inputs dependable with long labels, narrow
 and mobile layouts, light or dark themes, server-backed choices, and
 native Shiny controls used alongside glasstabs. It also connects the tab
 bar and content area more clearly while keeping detached dropdown motion
-available as an option. The shipped API and examples are documented in
-`NEWS.md`; remaining work in this roadmap is forward-looking rather than
-a second release log.
+available as an option. The release details are documented in `NEWS.md`.
 
 ## v0.4.0 — responsive and accessible navigation
 
@@ -32,7 +29,7 @@ setting, or high contrast mode.
 | Select keyboard use | Arrow-key, Home/End, Enter/Space, Escape, and active-option behavior | Implemented |
 | Documentation | Friendly examples in the README, reference site, and vignettes | Implemented |
 
-### API direction
+### Implemented API
 
 ``` r
 
@@ -72,7 +69,7 @@ or dashboard layouts. Existing widgets remain usable in all of them.
 
 ## Deferred ideas
 
-These remain worthwhile, but they are outside the focused 0.4.0 release:
+These remain ideas for future releases:
 
 - lazy pane rendering;
 - tab groups;
