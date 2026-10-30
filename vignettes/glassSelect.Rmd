@@ -74,6 +74,14 @@ glassSelect("f", fruits, selected = "banana")
 ```
 
 
+### Empty-string values are ordinary values
+
+An empty string is a valid choice value, distinct from nothing
+selected: `glassSelect("status", c("All statuses" = "", "Active" =
+"active"), selected = "")` starts on "All statuses" and reports
+`""`, while clearing the field reports `NULL`. The same holds for
+`updateGlassSelect(..., selected = "")`.
+
 ## Optional label
 
 ```{r label}
@@ -222,6 +230,11 @@ glassSelect(
 )
 ```
 
+The Clear button is keyboard-reachable too: with the dropdown open, Arrow
+Down past the last option moves focus to it (Arrow Up returns to the
+options), and Enter or Space clears the selection. Tab and Escape close
+the panel as usual.
+
 For example, five categories do not need a search field when the threshold is
 six:
 
@@ -317,6 +330,17 @@ This pattern also works when the control is created dynamically with
 `renderUI()`. Keep the `glassSelectServer()` call in the server function
 for the same `inputId`.
 
+The two limits are independent — see the multi-select guide's
+server-search section for the full table: `server_limit` bounds the
+initial slice, while the helper's `limit` bounds each search's
+matches. Results are bounded, not paginated: each search returns the
+first N matches, with no next-page cursor. And as with the
+multi-select, `server = TRUE` with search disabled is unsupported:
+without a search input the user cannot reach choices outside the
+initial slice. The explicit "All" option works in server mode (see
+below); it sits first in the initial slice and is restored across
+search responses.
+
 ## Explicit "All" option
 
 You can prepend an explicit "All" option:
@@ -335,6 +359,18 @@ glassSelect(
 This is useful when you want the UI to distinguish between:
 - no selection
 - a deliberate "All" selection
+
+The option is off by default (`include_all = FALSE`). When on, the
+widget prepends one row with label `all_choice_label` (default
+`"All categories"`) and value `all_choice_value` (default
+`"__all__"`); choosing it returns that value, not the full choice
+list, so the app decides what "All" means downstream. The row is a
+client-side affordance, not a data row: it survives choices updates
+(the row and an active "All" selection are both preserved across
+`updateGlassSelect()` calls) and it works in server mode too, where it
+sits first in the initial slice and is restored across search
+responses. The search threshold counts real choices only — the All row
+is excluded from it.
 
 ## Server-side access
 
@@ -431,7 +467,16 @@ if (interactive()) shinyApp(ui, server)
 
 
 When `choices` is updated without `selected`, the widget keeps the
-current value if it still exists in the new set of choices.
+current value if it still exists in the new set of choices. If it no
+longer exists, the selection clears and the value becomes `NULL` —
+there is no stale-value state, and no separate "invalid" marker. To
+keep a selection that is temporarily absent instead, do not remove it
+from the choice set; the multi-select updater's `drop_invalid = FALSE`
+has no single-select equivalent. Two more update rules: passing more
+than one value to `selected` is an error (use the multi-select
+updater for multiple values), and the label cannot be updated — there
+is no `label` argument on `updateGlassSelect()`, so a label change
+means recreating the widget with `renderUI()`.
 
 ## Theming
 

@@ -9,7 +9,8 @@ glassMultiSelectServer(
   choices,
   session = shiny::getDefaultReactiveDomain(),
   limit = 50L,
-  ignore_case = TRUE
+  ignore_case = TRUE,
+  disabled_choices = NULL
 )
 }
 \arguments{
@@ -27,6 +28,12 @@ Default \code{50}.}
 
 \item{ignore_case}{Logical. Match labels and values case-insensitively.
 Default \code{TRUE}.}
+
+\item{disabled_choices}{Optional character vector of choice values to
+render as disabled in search responses. Default \code{NULL}, which
+leaves previously loaded disabled state unchanged. A disabled value
+need not appear in any rendered page yet; it takes effect when it
+first arrives in a response.}
 }
 \value{
 An observer created by \code{\link[shiny:observeEvent]{shiny::observeEvent()}}.

@@ -1,5 +1,7 @@
 ArrowDown
 ArrowUp
+aria
+affordance
 CMD
 CSP
 Cheatsheet
@@ -52,9 +54,11 @@ initialised
 initialises
 lifecycle
 listbox
+macOS
 mojibake
 morphism
 multiline
+multiselectable
 namespaced
 namespacing
 nav
@@ -62,12 +66,15 @@ offcanvas
 pkgdown
 placeable
 pre
+programmatically
 px
 reactively
 reactives
 reinitialised
 reinitialises
 renderGlassTabs
+reselects
+renderUI
 renderer
 rlang
 roxygen
@@ -91,6 +98,8 @@ toggleable
 transactional
 ungrouped
 unselected
+unstyled
+updaters
 walkthrough
 widget's
 wordlist

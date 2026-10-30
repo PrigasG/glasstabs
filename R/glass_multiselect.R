@@ -56,8 +56,9 @@
 #' @param server Logical. If \code{TRUE}, render only an initial slice of
 #'   choices and use [glassMultiSelectServer()] to search the full choice set
 #'   from the Shiny server. Default \code{FALSE}.
-#' @param server_limit Maximum number of choices rendered initially and returned
-#'   for each server-side search. Default \code{50}. Explicitly selected
+#' @param server_limit Maximum number of choices rendered initially.
+#'   Search results are bounded separately by the \code{limit} argument of
+#'   the \code{*Server()} helper. Default \code{50}. Explicitly selected
 #'   values that fall outside the initial slice are still rendered as extra
 #'   rows so they stay visible and checked.
 #' @param server_min_chars Minimum search characters required before server-side
@@ -222,6 +223,15 @@ glassMultiSelect <- function(
 
   n_total <- length(vals)
   n_sel <- length(selected)
+
+  # The select-all toggle acts on enabled choices only (see the JS
+  # selectableVisibleChoices() scope); the initial indicator must use the
+  # same scope, or it disagrees with the first click. At render time no
+  # search filter applies, so "visible" is every choice. Explicit selections
+  # may include disabled values; they are not part of the toggle set.
+  enabled_vals <- setdiff(vals, disabled_choices)
+  n_enabled <- length(enabled_vals)
+  n_enabled_sel <- length(intersect(selected, enabled_vals))
   init_label <- .ms_label(
     vals        = vals,
     labels      = labels,
@@ -285,6 +295,7 @@ glassMultiSelect <- function(
         "gt-input-label",
         if (!label_bold) "gt-label-regular" else NULL
       )),
+      id = paste0(inputId, "-field-label"),
       `for` = paste0(inputId, "-trigger"),
       label
     )
@@ -295,9 +306,14 @@ glassMultiSelect <- function(
   style_btns <- if (isTRUE(show_style_switcher)) {
     shiny::div(
       class = "gt-style-switcher",
-      shiny::div(
+      role = "group",
+      `aria-label` = "Selection style",
+      shiny::tags$button(
+        type = "button",
+        tabindex = "-1",
         class = paste("gt-style-btn", if (check_style == "check-only") "active" else ""),
         `data-style` = "check-only",
+        `aria-pressed` = if (check_style == "check-only") "true" else "false",
         shiny::tags$svg(
           class = "gt-sb-icon",
           viewBox = "0 0 14 14",
@@ -312,9 +328,12 @@ glassMultiSelect <- function(
         ),
         shiny::tags$span("Check")
       ),
-      shiny::div(
+      shiny::tags$button(
+        type = "button",
+        tabindex = "-1",
         class = paste("gt-style-btn", if (check_style == "checkbox") "active" else ""),
         `data-style` = "checkbox",
+        `aria-pressed` = if (check_style == "checkbox") "true" else "false",
         shiny::tags$svg(
           class = "gt-sb-icon",
           viewBox = "0 0 14 14",
@@ -338,9 +357,12 @@ glassMultiSelect <- function(
         ),
         shiny::tags$span("Box")
       ),
-      shiny::div(
+      shiny::tags$button(
+        type = "button",
+        tabindex = "-1",
         class = paste("gt-style-btn", if (check_style == "filled") "active" else ""),
         `data-style` = "filled",
+        `aria-pressed` = if (check_style == "filled") "true" else "false",
         shiny::tags$svg(
           class = "gt-sb-icon",
           viewBox = "0 0 14 14",
@@ -367,25 +389,39 @@ glassMultiSelect <- function(
 
   all_cls <- paste(
     "gt-ms-all",
-    if (n_total > 0 && n_sel == n_total) "checked" else if (n_sel > 0) "indeterminate" else ""
+    if (n_enabled > 0 && n_enabled_sel == n_enabled) "checked" else if (n_enabled_sel > 0) "indeterminate" else ""
   )
+  # Tri-state for the select-all checkbox: checked, mixed (partial), or false.
+  # Uses the enabled-only toggle scope above; the JS syncUI() keeps it in
+  # step with the same scope.
+  all_checked <- if (n_enabled > 0 && n_enabled_sel == n_enabled) {
+    "true"
+  } else if (n_enabled_sel > 0) {
+    "mixed"
+  } else {
+    "false"
+  }
 
   all_row <- if (isTRUE(show_select_all)) {
-    shiny::div(
+    shiny::tags$button(
+      type = "button",
+      tabindex = "-1",
       class = all_cls,
       id = paste0(inputId, "-all"),
-      role = "option",
-      `aria-selected` = if (n_total > 0 && n_sel == n_total) "true" else "false",
+      role = "checkbox",
+      `aria-checked` = all_checked,
       shiny::div(class = "gt-ms-check", check_svg),
       shiny::tags$span("Select all")
     )
   } else {
-    shiny::div(
+    shiny::tags$button(
+      type = "button",
+      tabindex = "-1",
       class = all_cls,
       id = paste0(inputId, "-all"),
       style = "display:none;",
-      role = "option",
-      `aria-selected` = if (n_total > 0 && n_sel == n_total) "true" else "false",
+      role = "checkbox",
+      `aria-checked` = all_checked,
       shiny::div(class = "gt-ms-check", check_svg),
       shiny::tags$span("Select all")
     )
@@ -436,13 +472,17 @@ glassMultiSelect <- function(
       paste0(n_sel, " / ", n_total, " selected")
     ),
     if (isTRUE(show_clear_all)) {
-      shiny::tags$span(
+      shiny::tags$button(
+        type = "button",
+        tabindex = "-1",
         class = "gt-ms-clear",
         id = paste0(inputId, "-clear"),
         "Clear all"
       )
     } else {
-      shiny::tags$span(
+      shiny::tags$button(
+        type = "button",
+        tabindex = "-1",
         class = "gt-ms-clear",
         id = paste0(inputId, "-clear"),
         style = "display:none;",
@@ -502,6 +542,11 @@ glassMultiSelect <- function(
           `aria-expanded` = "false",
           `aria-disabled` = if (disabled) "true" else NULL,
           `aria-controls` = paste0(inputId, "-dropdown"),
+          `aria-labelledby` = if (!is.null(label)) {
+            paste0(inputId, "-field-label")
+          } else {
+            paste0(inputId, "-label")
+          },
           shiny::tags$span(id = paste0(inputId, "-label"), init_label),
           shiny::div(
             style = "display:flex;align-items:center;gap:6px;",
@@ -529,6 +574,7 @@ glassMultiSelect <- function(
           class = "gt-ms-dropdown",
           id = paste0(inputId, "-dropdown"),
           role = "listbox",
+          `aria-multiselectable` = "true",
 
           shiny::div(
             class = trimws(paste(
@@ -550,6 +596,7 @@ glassMultiSelect <- function(
               type = "text",
               id = paste0(inputId, "-search"),
               placeholder = "Search options...",
+              `aria-label` = "Search options",
               autocomplete = "off"
             )
           ),
@@ -870,6 +917,11 @@ glassMultiSelectValue <- function(
 #'   Default \code{50}.
 #' @param ignore_case Logical. Match labels and values case-insensitively.
 #'   Default \code{TRUE}.
+#' @param disabled_choices Optional character vector of choice values to
+#'   render as disabled in search responses. Default \code{NULL}, which
+#'   leaves previously loaded disabled state unchanged. A disabled value
+#'   need not appear in any rendered page yet; it takes effect when it
+#'   first arrives in a response.
 #'
 #' @return An observer created by [shiny::observeEvent()].
 #'
@@ -901,7 +953,8 @@ glassMultiSelectServer <- function(
     choices,
     session = shiny::getDefaultReactiveDomain(),
     limit = 50L,
-    ignore_case = TRUE
+    ignore_case = TRUE,
+    disabled_choices = NULL
 ) {
   .gt_register_server_choices(
     inputId = inputId,
@@ -909,7 +962,8 @@ glassMultiSelectServer <- function(
     session = session,
     limit = limit,
     ignore_case = ignore_case,
-    type = "multi"
+    type = "multi",
+    disabled_choices = disabled_choices
   )
 }
 
@@ -1170,12 +1224,29 @@ glassMultiSelectServer <- function(
 }
 
 #' @noRd
-.gt_choice_payload <- function(labels, values, hues = NULL, groups = NULL) {
+.gt_choice_payload <- function(labels, values, hues = NULL, groups = NULL, disabled_choices = NULL) {
   groups <- groups %||% rep("", length(values))
+  # NULL means "not specified": omit the field so the client keeps its
+  # previously loaded disabled state (oldDisabled fallback). An explicit
+  # set, even character(0), is authoritative per row.
+  disabled_set <- if (is.null(disabled_choices)) {
+    NULL
+  } else {
+    as.character(disabled_choices)
+  }
+  add_disabled <- function(choice, value) {
+    if (!is.null(disabled_set)) {
+      choice$disabled <- value %in% disabled_set
+    }
+    choice
+  }
   if (is.null(hues)) {
     unname(Map(
       f = function(label, value, group) {
-        list(label = label, value = value, group = group)
+        add_disabled(
+          list(label = label, value = value, group = group),
+          value
+        )
       },
       label = labels,
       value = values,
@@ -1184,7 +1255,10 @@ glassMultiSelectServer <- function(
   } else {
     unname(Map(
       f = function(label, value, hue, group) {
-        list(label = label, value = value, hue = unname(as.integer(hue)), group = group)
+        add_disabled(
+          list(label = label, value = value, hue = unname(as.integer(hue)), group = group),
+          value
+        )
       },
       label = labels,
       value = values,
@@ -1264,7 +1338,8 @@ glassMultiSelectServer <- function(
     session,
     limit,
     ignore_case,
-    type
+    type,
+    disabled_choices = NULL
 ) {
   if (is.null(session)) {
     .gt_abort(
@@ -1277,6 +1352,13 @@ glassMultiSelectServer <- function(
   }
   .gt_check_string(inputId, "inputId")
   limit <- .gt_positive_int(limit, "limit")
+  # No membership validation: a disabled value may first appear in a later
+  # search response, so it need not be in any page rendered so far.
+  disabled_choices <- if (is.null(disabled_choices)) {
+    NULL
+  } else {
+    as.character(disabled_choices)
+  }
   normalized <- .gt_normalize_choices(choices)
   hues <- NULL
   if (identical(type, "multi")) {
@@ -1288,6 +1370,11 @@ glassMultiSelectServer <- function(
     {
       search <- session$input[[paste0(inputId, "_search")]]
       query <- if (is.list(search) && !is.null(search$query)) search$query else search
+      # Echo the client's search sequence (NULL when the client did not send
+      # one); the browser applies only the response to the latest issued
+      # search for the widget and drops older ones.
+      # list() drops NULL elements, so the field is simply absent then.
+      seq <- if (is.list(search)) search$seq else NULL
       filtered <- .gt_filter_choices(
         choices = choices,
         query = query,
@@ -1301,7 +1388,14 @@ glassMultiSelectServer <- function(
         list(
           inputId = session$ns(inputId),
           type = type,
-          choices = .gt_choice_payload(filtered$labels, filtered$values, payload_hues, filtered$groups),
+          seq = seq,
+          choices = .gt_choice_payload(
+            filtered$labels,
+            filtered$values,
+            payload_hues,
+            filtered$groups,
+            disabled_choices
+          ),
           total = length(normalized$values),
           matched = filtered$total
         )

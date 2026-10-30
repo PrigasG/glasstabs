@@ -12,6 +12,11 @@ if (file.exists(file.path(pkg_root, "DESCRIPTION")) &&
 }
 
 choices <- c(Apple = "apple", Banana = "banana", Cherry = "cherry")
+server_full_choices <- c(
+  Alpha = "alpha", Beta = "beta", Gamma = "gamma", Delta = "delta",
+  Epsilon = "epsilon", Zeta = "zeta", Eta = "eta", Theta = "theta",
+  Iota = "iota", Kappa = "kappa"
+)
 five_choices <- stats::setNames(letters[1:5], paste("Category", 1:5))
 short_field_choices <- c(
   One = "one",
@@ -62,6 +67,64 @@ ui <- fluidPage(
       show_style_switcher = FALSE
     ),
     actionButton("refresh_disabled_choices", "Refresh choices without disabled override"),
+    glassSelect(
+      "all_update_single",
+      choices,
+      selected = "apple",
+      include_all = TRUE
+    ),
+    actionButton("all_update_single_change", "Update all-row choices"),
+    glassMultiSelect(
+      "server_disabled",
+      server_full_choices,
+      server = TRUE,
+      server_limit = 3,
+      selected = "alpha"
+    ),
+    glassMultiSelect(
+      "scope_check",
+      c(A = "a", B = "b", C = "c", D = "d", E = "e"),
+      selected = c("a", "b", "c", "d"),
+      disabled_choices = "e",
+      show_style_switcher = FALSE
+    ),
+    glassSelect(
+      "value_search",
+      c("Red fruit" = "apple", "Yellow fruit" = "banana", "Green fruit" = "cherry"),
+      selected = "apple"
+    ),
+    glassMultiSelect(
+      "value_search_multi",
+      c("Red fruit" = "apple", "Yellow fruit" = "banana", "Green fruit" = "cherry"),
+      selected = "apple",
+      show_style_switcher = FALSE
+    ),
+    # Intentionally unregistered: searches for this widget never receive a
+    # response, which exercises the loading-timeout guard (the "Searching..."
+    # status must clear on its own instead of sticking forever).
+    glassSelect(
+      "server_hung",
+      choices,
+      server = TRUE
+    ),
+    # Stale-response fixture: searches for "alpha" answer late, searches
+    # for "beta" never answer (see the server observer below).
+    glassSelect(
+      "server_stale",
+      c(One = "one", Two = "two"),
+      server = TRUE,
+      server_limit = 2,
+      selected = "one"
+    ),
+    # Empty-string fixture: "" is a real choice value, distinct from
+    # clearing the field (which yields NULL).
+    glassSelect(
+      "empty_val",
+      c("All statuses" = "", "Active" = "active"),
+      selected = "",
+      clearable = TRUE
+    ),
+    actionButton("empty_val_update_empty", "Set empty via update"),
     glassMultiSelect(
       "cats",
       choices,
@@ -260,6 +323,51 @@ server <- function(input, output, session) {
     refreshed <- c(Apple = "apple", Banana = "banana", Cherry = "cherry", Date = "date")
     updateGlassSelect(session, "disabled_update_single", choices = refreshed)
     updateGlassMultiSelect(session, "disabled_update_multi", choices = refreshed)
+  })
+
+  observeEvent(input$all_update_single_change, {
+    updateGlassSelect(
+      session,
+      "all_update_single",
+      choices = c(Durian = "durian", Elderberry = "elderberry", Fig = "fig")
+    )
+  })
+
+  glassMultiSelectServer(
+    "server_disabled",
+    choices = server_full_choices,
+    session = session,
+    disabled_choices = "zeta"
+  )
+
+  # Stale-response fixture: the first search answers after a 2 s delay,
+  # the second never answers. The client must drop the late first
+  # response (it no longer matches the latest issued search) and keep
+  # the second search's loading guard armed until it fires.
+  observeEvent(session$input$server_stale_search, {
+    search <- session$input$server_stale_search
+    query <- if (is.list(search) && !is.null(search$query)) search$query else search
+    seq <- if (is.list(search)) search$seq else NULL
+    if (identical(query, "beta")) return()
+    if (identical(query, "alpha")) Sys.sleep(2)
+    session$sendCustomMessage(
+      "glasstabs_server_choices",
+      list(
+        inputId = session$ns("server_stale"),
+        type = "single",
+        seq = seq,
+        choices = glasstabs:::.gt_choice_payload(
+          c("Alpha stale"),
+          c("alpha_stale")
+        ),
+        total = 2L,
+        matched = 1L
+      )
+    )
+  }, ignoreInit = TRUE)
+
+  observeEvent(input$empty_val_update_empty, {
+    updateGlassSelect(session, "empty_val", selected = "")
   })
 
   output$fruit_open_state <- renderText({

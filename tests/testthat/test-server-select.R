@@ -179,3 +179,12 @@ test_that("server selects keep a bounded renderUI-friendly contract", {
   expect_true(grepl('data-selected-values="[&quot;value-001&quot;', multi_html, fixed = TRUE))
   expect_true(grepl('&quot;value-100&quot;]"', multi_html, fixed = TRUE))
 })
+
+test_that("server choice registration echoes the client search sequence", {
+  source <- paste(
+    deparse(body(glasstabs:::.gt_register_server_choices)),
+    collapse = "\n"
+  )
+  expect_match(source, "search$seq", fixed = TRUE)
+  expect_match(source, "seq = seq", fixed = TRUE)
+})

@@ -2,6 +2,18 @@
   'use strict';
 
   /* UTILITIES */
+
+  /* Monotonic sequence for server searches, shared by every select
+     controller. Each search takes the next value; the server echoes it and
+     the response handler drops anything older than the latest issued
+     response for that widget. One shared counter (rather than one per
+     widget) also stays monotonic if a widget is replaced via renderUI,
+     so a re-created widget's first response can never look stale next to
+     a response in flight from its predecessor. The sequence also replaces
+     the old Date.now() nonce: every send differs, so Shiny still
+     retriggers on a repeated query. */
+  var serverSearchSeq = 0;
+
   function px(n) { return Math.round(n) + 'px'; }
   function exactPx(n) { return (Math.round(n * 100) / 100) + 'px'; }
 
@@ -478,7 +490,11 @@
       move: move,
       prepare: prepare,
       clear: function () { setActive(null); },
-      set: setActive
+      set: setActive,
+      /* Visible options (hidden/disabled skipped), for chrome-boundary
+         checks in the controllers. Identity comparison only; move()
+         remains the place that prepares ids. */
+      options: options
     };
   }
 
@@ -1452,6 +1468,18 @@
       query: ''
     };
 
+    /* Value -> choice index for patchVisibility(): without it, every search
+       keystroke scans all choices for every visible row (O(n^2)). Rebuilt
+       whenever state.choices is replaced; first occurrence wins, matching
+       the old linear findChoice() on duplicate values. */
+    var choiceByValue = new Map();
+    function rebuildChoiceIndex() {
+      choiceByValue = new Map();
+      state.choices.forEach(function (ch) {
+        if (!choiceByValue.has(ch.value)) choiceByValue.set(ch.value, ch);
+      });
+    }
+
     /* Read initial state from R-generated DOM */
     Array.from(wrap.querySelectorAll('.gt-gs-option')).forEach(function (el) {
       var value = el.getAttribute('data-value');
@@ -1463,7 +1491,8 @@
         hidden: false,
         disabled: el.classList.contains('disabled'),
         group: el.getAttribute('data-group') || '',
-        _labelLower: label.toLowerCase()
+        _labelLower: label.toLowerCase(),
+        _valueLower: value.toLowerCase()
       });
       if (el.classList.contains('selected')) {
         state.selected = value;
@@ -1471,6 +1500,7 @@
       }
       bindOption(el);
     });
+    rebuildChoiceIndex();
 
     var optionNav = createOptionNavigator(
       dropdown,
@@ -1483,6 +1513,80 @@
       var option = optionNav.move(where);
       optionOverflowTip.enter(option);
       return option;
+    }
+
+    /* Chrome-row keyboard navigation. The clear button is a real button, but
+       it is not a Tab stop: Tab closes the dropdown and exits, per the
+       combobox pattern, so arrow keys carry chrome navigation instead.
+       Options (DOM order, skipping hidden/disabled) and chrome rows (DOM
+       order, skipping hidden) form one cycle in both directions, matching
+       the option navigator's existing wrap behavior. chromeIndex is -1
+       while navigation sits on options. The focus/blur listeners on the
+       button keep chromeIndex in step when it is reached by mouse/touch. */
+    var chromeIndex = -1;
+
+    function chromeItems() {
+      var items = [];
+      if (clearBtn && clearBtn.offsetParent !== null) items.push(clearBtn);
+      return items;
+    }
+
+    function focusOwnerElement() {
+      return (searchIn && !searchIn.disabled) ? searchIn : trigger;
+    }
+
+    function enterChrome(index) {
+      var items = chromeItems();
+      if (!items.length) return;
+      index = ((index % items.length) + items.length) % items.length;
+      optionNav.clear();
+      optionOverflowTip.hide();
+      chromeIndex = index;
+      items[index].focus();
+    }
+
+    function exitChrome(where) {
+      chromeIndex = -1;
+      var owner = focusOwnerElement();
+      if (owner) owner.focus();
+      moveOptionAndReveal(where);
+    }
+
+    function handleChromeAwareNav(key) {
+      var items = chromeItems();
+      if (chromeIndex >= 0 && !items.length) chromeIndex = -1;
+      if (chromeIndex >= 0) {
+        if (key === 'Home') { enterChrome(0); return; }
+        if (key === 'End') { enterChrome(items.length - 1); return; }
+        if (key === 'ArrowDown') {
+          if (chromeIndex < items.length - 1) enterChrome(chromeIndex + 1);
+          else exitChrome('first');
+          return;
+        }
+        if (chromeIndex > 0) enterChrome(chromeIndex - 1);
+        else exitChrome('last');
+        return;
+      }
+      if (!items.length) {
+        if (key === 'Home') moveOptionAndReveal('first');
+        else if (key === 'End') moveOptionAndReveal('last');
+        else moveOptionAndReveal(key === 'ArrowDown' ? 1 : -1);
+        return;
+      }
+      var before = optionNav.current();
+      var opts = optionNav.options();
+      if (key === 'Home') { moveOptionAndReveal('first'); return; }
+      if (key === 'End') { moveOptionAndReveal('last'); return; }
+      if (key === 'ArrowDown' && before && opts.length &&
+          before === opts[opts.length - 1]) {
+        enterChrome(0);
+        return;
+      }
+      if (key === 'ArrowUp' && before && opts.length && before === opts[0]) {
+        enterChrome(items.length - 1);
+        return;
+      }
+      moveOptionAndReveal(key === 'ArrowDown' ? 1 : -1);
     }
 
     /* State readers */
@@ -1559,7 +1663,7 @@
     function patchVisibility() {
       Array.from(dropdown.querySelectorAll('.gt-gs-option')).forEach(function (el) {
         var v = el.getAttribute('data-value');
-        var ch = findChoice(v);
+        var ch = choiceByValue.get(v) || null;
         el.classList.toggle('hidden', ch ? ch.hidden : false);
       });
       syncOptgroupHeaders(optionsBox);
@@ -1586,7 +1690,7 @@
     function setValue(value, opts) {
       opts = opts || {};
       var doNotify = opts.notify !== false;
-      var valueStr = (value === null || typeof value === 'undefined' || value === '') ? null : String(value);
+      var valueStr = (value === null || typeof value === 'undefined') ? null : String(value);
 
       if (valueStr !== null && !findChoice(valueStr)) {
         if (opts.preserveMissingSelection) {
@@ -1665,6 +1769,25 @@
       }));
       choices = asChoiceArray(choices);
       state.loading = false;
+      /* The guard timer belongs to the request that armed it. Only the
+         response to that request, or a non-server update carrying no
+         sequence, may disarm it; a stale response must leave the latest
+         request's guard armed. */
+      if (state.searchTimeoutId &&
+          (opts.seq === undefined || opts.seq === state.searchTimerSeq)) {
+        clearTimeout(state.searchTimeoutId);
+        state.searchTimeoutId = null;
+        state.searchTimerSeq = null;
+      }
+
+      /* The synthetic "All" row is a client-side prepend, not part of any
+         update payload: without this it vanishes on the first choices
+         update. Restore it only when this widget actually has one
+         (include_all on, and the row is in the current choices); an update
+         that already carries the All value needs no duplicate. */
+      var allValue = wrap.getAttribute('data-all-choice-value');
+      var hadAll = wrap.getAttribute('data-include-all') === 'true' &&
+        state.choices.some(function (ch) { return ch.value === allValue; });
 
       /* Update state */
       state.choices = choices.map(function (ch) {
@@ -1674,10 +1797,28 @@
           hidden: false,
           disabled: typeof ch.disabled === 'boolean' ? ch.disabled : oldDisabled.has(String(ch.value)),
           group: ch.group ? String(ch.group) : '',
-          _labelLower: String(ch.label).toLowerCase()
+          _labelLower: String(ch.label).toLowerCase(),
+          _valueLower: String(ch.value).toLowerCase()
         };
       });
-      state.total = total === null ? state.choices.length : total;
+      if (hadAll && !state.choices.some(function (ch) { return ch.value === allValue; })) {
+        state.choices.unshift({
+          label: wrap.getAttribute('data-all-choice-label') || 'All',
+          value: allValue,
+          hidden: false,
+          disabled: oldDisabled.has(allValue),
+          group: '',
+          _labelLower: (wrap.getAttribute('data-all-choice-label') || 'All').toLowerCase(),
+          _valueLower: String(allValue).toLowerCase()
+        });
+      }
+      /* state.total excludes the All row (it is a UI affordance, not a data
+         row): subtract it whenever the All row is present -- restored just
+         now or already carried by the update -- so the auto search
+         threshold keeps counting real choices. */
+      state.total = total === null ?
+        (hadAll ? state.choices.length - 1 : state.choices.length) : total;
+      rebuildChoiceIndex();
 
       /* Intersect selection */
       if (oldSelected !== null && findChoice(oldSelected)) {
@@ -1724,7 +1865,7 @@
       state.query = qq;
 
       state.choices.forEach(function (ch) {
-        ch.hidden = qq !== '' && ch._labelLower.indexOf(qq) === -1;
+        ch.hidden = qq !== '' && ch._labelLower.indexOf(qq) === -1 && ch._valueLower.indexOf(qq) === -1;
       });
 
       patchVisibility();
@@ -1739,10 +1880,26 @@
       if (query.length < serverMinChars) query = '';
       state.loading = true;
       updateStatus();
+      if (state.searchTimeoutId) clearTimeout(state.searchTimeoutId);
+      /* A response normally lands in milliseconds. If none arrives, the
+         "Searching..." status must not stick forever (e.g. the session
+         stopped responding). Clearing here is benign: the latest
+         response still applies through setChoices(), and a stale one is
+         dropped by the message handler. */
+      state.searchTimeoutId = setTimeout(function () {
+        state.searchTimeoutId = null;
+        state.searchTimerSeq = null;
+        if (state.loading) {
+          state.loading = false;
+          updateStatus();
+        }
+      }, 10000);
       Shiny.setInputValue(inputId + '_search', {
         query: query,
-        nonce: Date.now()
+        seq: ++serverSearchSeq
       }, { priority: 'event' });
+      wrap._gtServerSeqIssued = serverSearchSeq;
+      state.searchTimerSeq = serverSearchSeq;
     }
 
     var debouncedSearch = debounce(function () {
@@ -1813,6 +1970,7 @@
       scheduleTeleportClose(wrap, dropdown);
       setDropdownOpenState(wrap, inputId, false);
       optionNav.clear();
+      chromeIndex = -1;
     }
 
     function closeAndReturnFocus() {
@@ -1845,9 +2003,7 @@
         e.preventDefault();
         if (!dropdown.classList.contains('open')) open();
         setTimeout(function () {
-          if (e.key === 'Home') moveOptionAndReveal('first');
-          else if (e.key === 'End') moveOptionAndReveal('last');
-          else moveOptionAndReveal(e.key === 'ArrowDown' ? 1 : -1);
+          handleChromeAwareNav(e.key);
         }, 110);
       } else if (e.key === 'Escape' || e.key === 'Tab') {
         closeAndReturnFocus();
@@ -1858,9 +2014,7 @@
       if (e.key === 'ArrowDown' || e.key === 'ArrowUp' ||
           e.key === 'Home' || e.key === 'End') {
         e.preventDefault();
-        if (e.key === 'Home') moveOptionAndReveal('first');
-        else if (e.key === 'End') moveOptionAndReveal('last');
-        else moveOptionAndReveal(e.key === 'ArrowDown' ? 1 : -1);
+        handleChromeAwareNav(e.key);
       } else if (e.key === 'Enter') {
         var option = optionNav.current();
         if (option) {
@@ -1896,6 +2050,42 @@
       clearBtn.addEventListener('click', function (e) {
         e.stopPropagation();
         setValue(null, { notify: true });
+      });
+      /* The clear button lives in the trigger, not the dropdown, so its keys
+         never reach the dropdown handler and would bubble to the trigger
+         handler, whose Enter/Space branch would open or close the panel
+         instead of clearing. Shield it here: Enter/Space keep their native
+         button activation in every state (only propagation is stopped, the
+         default is not); arrows and Escape/Tab act only while the panel is
+         open, since there is nothing to navigate or close otherwise.
+         Focus/blur keep chromeIndex in step when the button is reached by
+         mouse/touch. */
+      clearBtn.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.stopPropagation();
+          return;
+        }
+        if (!dropdown.classList.contains('open')) return;
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp' ||
+            e.key === 'Home' || e.key === 'End') {
+          e.preventDefault();
+          e.stopPropagation();
+          handleChromeAwareNav(e.key);
+        } else if (e.key === 'Escape' || e.key === 'Tab') {
+          e.stopPropagation();
+          closeAndReturnFocus();
+        }
+      });
+      clearBtn.addEventListener('focus', function () {
+        var idx = chromeItems().indexOf(clearBtn);
+        if (idx >= 0) {
+          optionNav.clear();
+          optionOverflowTip.hide();
+          chromeIndex = idx;
+        }
+      });
+      clearBtn.addEventListener('blur', function () {
+        chromeIndex = -1;
       });
     }
 
@@ -2061,6 +2251,18 @@
       query: ''
     };
 
+    /* Value -> choice index for patchVisibility(): without it, every search
+       keystroke scans all choices for every visible row (O(n^2)). Rebuilt
+       whenever state.choices is replaced; first occurrence wins, matching
+       the old linear scan on duplicate values. */
+    var choiceByValue = new Map();
+    function rebuildChoiceIndex() {
+      choiceByValue = new Map();
+      state.choices.forEach(function (ch) {
+        if (!choiceByValue.has(ch.value)) choiceByValue.set(ch.value, ch);
+      });
+    }
+
     /* Read initial state from R-generated DOM */
     Array.from(wrap.querySelectorAll('.gt-ms-option')).forEach(function (el) {
       var value = el.getAttribute('data-value');
@@ -2075,7 +2277,8 @@
         disabled: el.classList.contains('disabled'),
         group: el.getAttribute('data-group') || '',
         hue: parseInt(hue, 10) || 210,
-        _labelLower: label.toLowerCase()
+        _labelLower: label.toLowerCase(),
+        _valueLower: value.toLowerCase()
       });
 
       if (el.classList.contains('checked')) {
@@ -2084,6 +2287,7 @@
 
       bindOption(el);
     });
+    rebuildChoiceIndex();
 
     parseJsonArrayAttr(wrap, 'data-selected-values').forEach(function (v) {
       state.selected.add(v);
@@ -2100,6 +2304,85 @@
       var option = optionNav.move(where);
       optionOverflowTip.enter(option);
       return option;
+    }
+
+    /* Chrome-row keyboard navigation. The chrome rows are real buttons, but
+       they are not Tab stops: Tab closes the dropdown and exits, per the
+       combobox pattern, so arrow keys carry chrome navigation instead.
+       Options (DOM order, skipping hidden/disabled) and chrome rows (DOM
+       order: style switcher, select-all, clear; skipping hidden) form one
+       cycle in both directions, matching the option navigator's existing
+       wrap behavior. chromeIndex is -1 while navigation sits on options.
+       The focus/blur listeners on the chrome buttons keep chromeIndex in
+       step when a row is reached by mouse/touch. */
+    var chromeIndex = -1;
+
+    function chromeItems() {
+      var items = [];
+      styleBtns.forEach(function (btn) {
+        if (btn.offsetParent !== null) items.push(btn);
+      });
+      if (allRow && allRow.offsetParent !== null) items.push(allRow);
+      if (clearBtn && clearBtn.offsetParent !== null) items.push(clearBtn);
+      return items;
+    }
+
+    function focusOwnerElement() {
+      return (searchEnabled() && searchIn) ? searchIn : trigger;
+    }
+
+    function enterChrome(index) {
+      var items = chromeItems();
+      if (!items.length) return;
+      index = ((index % items.length) + items.length) % items.length;
+      optionNav.clear();
+      optionOverflowTip.hide();
+      chromeIndex = index;
+      items[index].focus();
+    }
+
+    function exitChrome(where) {
+      chromeIndex = -1;
+      var owner = focusOwnerElement();
+      if (owner) owner.focus();
+      moveOptionAndReveal(where);
+    }
+
+    function handleChromeAwareNav(key) {
+      var items = chromeItems();
+      if (chromeIndex >= 0 && !items.length) chromeIndex = -1;
+      if (chromeIndex >= 0) {
+        if (key === 'Home') { enterChrome(0); return; }
+        if (key === 'End') { enterChrome(items.length - 1); return; }
+        if (key === 'ArrowDown') {
+          if (chromeIndex < items.length - 1) enterChrome(chromeIndex + 1);
+          else exitChrome('first');
+          return;
+        }
+        if (chromeIndex > 0) enterChrome(chromeIndex - 1);
+        else exitChrome('last');
+        return;
+      }
+      if (!items.length) {
+        if (key === 'Home') moveOptionAndReveal('first');
+        else if (key === 'End') moveOptionAndReveal('last');
+        else moveOptionAndReveal(key === 'ArrowDown' ? 1 : -1);
+        return;
+      }
+      var before = optionNav.current();
+      var opts = optionNav.options();
+      if (key === 'Home') { moveOptionAndReveal('first'); return; }
+      if (key === 'End') { moveOptionAndReveal('last'); return; }
+      if (key === 'ArrowDown' && before && opts.length &&
+          before === opts[opts.length - 1]) {
+        enterChrome(0);
+        return;
+      }
+      if (key === 'ArrowUp' && before && opts.length && before === opts[0]) {
+        enterChrome(items.length - 1);
+        return;
+      }
+      moveOptionAndReveal(key === 'ArrowDown' ? 1 : -1);
     }
 
     /* State readers */
@@ -2123,12 +2406,15 @@
       return state.choices.filter(function (ch) { return !ch.hidden; });
     }
 
-    function visibleSelectedCount() {
-      var n = 0;
-      state.choices.forEach(function (ch) {
-        if (!ch.hidden && state.selected.has(ch.value)) n++;
+    /* The select-all toggle scope: enabled AND visible. syncUI(),
+       applySearchNow(), and the select-all click handler must all use this
+       one scope, or the indicator disagrees with the click: a disabled
+       choice counted in the indicator but skipped by the click makes the
+       indicator read "partial" while the click clears everything. */
+    function selectableVisibleChoices() {
+      return state.choices.filter(function (ch) {
+        return !ch.hidden && !ch.disabled;
       });
-      return n;
     }
 
     function searchEnabled() {
@@ -2221,12 +2507,8 @@
     function patchVisibility() {
       Array.from(dropdown.querySelectorAll('.gt-ms-option')).forEach(function (el) {
         var v = el.getAttribute('data-value');
-        for (var i = 0; i < state.choices.length; i++) {
-          if (state.choices[i].value === v) {
-            el.classList.toggle('hidden', state.choices[i].hidden);
-            break;
-          }
-        }
+        var ch = choiceByValue.get(v);
+        if (ch) el.classList.toggle('hidden', ch.hidden);
       });
       syncOptgroupHeaders(optionsBox);
     }
@@ -2235,8 +2517,11 @@
     function syncUI() {
       var total = state.total === null ? state.choices.length : state.total;
       var selCount = state.selected.size;
-      var vis = visibleChoices().length;
-      var visSel = visibleSelectedCount();
+      var visChoices = selectableVisibleChoices();
+      var vis = visChoices.length;
+      var visSel = visChoices.filter(function (ch) {
+        return state.selected.has(ch.value);
+      }).length;
 
       /* All row */
       if (allRow) {
@@ -2246,7 +2531,7 @@
         } else if (visSel > 0) {
           allRow.classList.add('indeterminate');
         }
-        allRow.setAttribute('aria-selected', vis > 0 && visSel === vis ? 'true' : 'false');
+        allRow.setAttribute('aria-checked', vis > 0 && visSel === vis ? 'true' : (visSel > 0 ? 'mixed' : 'false'));
       }
 
       /* Badge */
@@ -2409,6 +2694,16 @@
       }));
       choices = asChoiceArray(choices);
       state.loading = false;
+      /* The guard timer belongs to the request that armed it. Only the
+         response to that request, or a non-server update carrying no
+         sequence, may disarm it; a stale response must leave the latest
+         request's guard armed. */
+      if (state.searchTimeoutId &&
+          (opts.seq === undefined || opts.seq === state.searchTimerSeq)) {
+        clearTimeout(state.searchTimeoutId);
+        state.searchTimeoutId = null;
+        state.searchTimerSeq = null;
+      }
 
       /* Update state */
       var n = choices.length;
@@ -2420,10 +2715,12 @@
           disabled: typeof ch.disabled === 'boolean' ? ch.disabled : oldDisabled.has(String(ch.value)),
           group: ch.group ? String(ch.group) : '',
           hue: ch.hue || Math.round((200 + 360 * i / Math.max(1, n)) % 360),
-          _labelLower: String(ch.label).toLowerCase()
+          _labelLower: String(ch.label).toLowerCase(),
+          _valueLower: String(ch.value).toLowerCase()
         };
       });
       state.total = total === null ? state.choices.length : total;
+      rebuildChoiceIndex();
 
       /* Intersect selection */
       var newValues = new Set(state.choices.map(function (ch) { return ch.value; }));
@@ -2465,14 +2762,17 @@
       state.query = qq;
 
       state.choices.forEach(function (ch) {
-        ch.hidden = qq !== '' && ch._labelLower.indexOf(qq) === -1;
+        ch.hidden = qq !== '' && ch._labelLower.indexOf(qq) === -1 && ch._valueLower.indexOf(qq) === -1;
       });
 
       patchVisibility();
       optionNav.prepare();
       /* Update allRow and counts without notifying Shiny */
-      var vis = visibleChoices().length;
-      var visSel = visibleSelectedCount();
+      var visChoices = selectableVisibleChoices();
+      var vis = visChoices.length;
+      var visSel = visChoices.filter(function (ch) {
+        return state.selected.has(ch.value);
+      }).length;
 
       if (allRow) {
         allRow.classList.remove('checked', 'indeterminate');
@@ -2481,7 +2781,7 @@
         } else if (visSel > 0) {
           allRow.classList.add('indeterminate');
         }
-        allRow.setAttribute('aria-selected', vis > 0 && visSel === vis ? 'true' : 'false');
+        allRow.setAttribute('aria-checked', vis > 0 && visSel === vis ? 'true' : (visSel > 0 ? 'mixed' : 'false'));
       }
       updateStatus();
     }
@@ -2493,10 +2793,26 @@
       if (query.length < serverMinChars) query = '';
       state.loading = true;
       updateStatus();
+      if (state.searchTimeoutId) clearTimeout(state.searchTimeoutId);
+      /* A response normally lands in milliseconds. If none arrives, the
+         "Searching..." status must not stick forever (e.g. the session
+         stopped responding). Clearing here is benign: the latest
+         response still applies through setChoices(), and a stale one is
+         dropped by the message handler. */
+      state.searchTimeoutId = setTimeout(function () {
+        state.searchTimeoutId = null;
+        state.searchTimerSeq = null;
+        if (state.loading) {
+          state.loading = false;
+          updateStatus();
+        }
+      }, 10000);
       Shiny.setInputValue(inputId + '_search', {
         query: query,
-        nonce: Date.now()
+        seq: ++serverSearchSeq
       }, { priority: 'event' });
+      wrap._gtServerSeqIssued = serverSearchSeq;
+      state.searchTimerSeq = serverSearchSeq;
     }
 
     var debouncedSearch = debounce(function () {
@@ -2564,6 +2880,7 @@
       scheduleTeleportClose(wrap, dropdown);
       setDropdownOpenState(wrap, inputId, false);
       optionNav.clear();
+      chromeIndex = -1;
     }
 
     function closeAndReturnFocus() {
@@ -2596,9 +2913,7 @@
         e.preventDefault();
         if (!dropdown.classList.contains('open')) open();
         setTimeout(function () {
-          if (e.key === 'Home') moveOptionAndReveal('first');
-          else if (e.key === 'End') moveOptionAndReveal('last');
-          else moveOptionAndReveal(e.key === 'ArrowDown' ? 1 : -1);
+          handleChromeAwareNav(e.key);
         }, 110);
       } else if (e.key === 'Escape' || e.key === 'Tab') {
         closeAndReturnFocus();
@@ -2609,9 +2924,7 @@
       if (e.key === 'ArrowDown' || e.key === 'ArrowUp' ||
           e.key === 'Home' || e.key === 'End') {
         e.preventDefault();
-        if (e.key === 'Home') moveOptionAndReveal('first');
-        else if (e.key === 'End') moveOptionAndReveal('last');
-        else moveOptionAndReveal(e.key === 'ArrowDown' ? 1 : -1);
+        handleChromeAwareNav(e.key);
       } else if (e.key === 'Enter' || e.key === ' ') {
         var option = optionNav.current();
         if (option) {
@@ -2648,6 +2961,9 @@
 
         styleBtns.forEach(function (b) { b.classList.remove('active'); });
         btn.classList.add('active');
+        styleBtns.forEach(function (b) {
+          b.setAttribute('aria-pressed', b === btn ? 'true' : 'false');
+        });
 
         STYLES.forEach(function (st) { wrap.classList.remove('style-' + st); dropdown.classList.remove('style-' + st); });
         wrap.classList.add('style-' + s);
@@ -2661,8 +2977,9 @@
 
     if (allRow) {
       allRow.addEventListener('click', function () {
-        /* Select-all only ever acts on enabled, visible options */
-        var vis = visibleChoices().filter(function (ch) { return !ch.disabled; });
+        /* Select-all only ever acts on enabled, visible options: the
+           shared selectableVisibleChoices() scope, same as the indicator. */
+        var vis = selectableVisibleChoices();
         var anyUnchecked = vis.some(function (ch) { return !state.selected.has(ch.value); });
 
         vis.forEach(function (ch) {
@@ -2685,6 +3002,28 @@
         commitSelection();
       });
     }
+
+    /* Keep chrome navigation state in step with DOM focus: a mouse or touch
+       tap on a chrome row puts focus there without going through arrow
+       navigation, and leaving it must drop chrome mode. The dropdown
+       handler covers arrows/Escape/Tab for these buttons (they live inside
+       the dropdown), so only focus/blur sync is needed here. */
+    var allChromeButtons = styleBtns.slice();
+    if (allRow) allChromeButtons.push(allRow);
+    if (clearBtn) allChromeButtons.push(clearBtn);
+    allChromeButtons.forEach(function (btn) {
+      btn.addEventListener('focus', function () {
+        var idx = chromeItems().indexOf(btn);
+        if (idx >= 0) {
+          optionNav.clear();
+          optionOverflowTip.hide();
+          chromeIndex = idx;
+        }
+      });
+      btn.addEventListener('blur', function () {
+        chromeIndex = -1;
+      });
+    });
 
     if (searchIn) {
       searchIn.addEventListener('input', debouncedSearch);
@@ -2736,6 +3075,7 @@
 
         styleBtns.forEach(function (b) {
           b.classList.toggle('active', b.getAttribute('data-style') === s);
+          b.setAttribute('aria-pressed', b.getAttribute('data-style') === s ? 'true' : 'false');
         });
 
         STYLES.forEach(function (st) { wrap.classList.remove('style-' + st); dropdown.classList.remove('style-' + st); });
@@ -2815,7 +3155,8 @@
     if (hasOwn(data, 'selected')) {
       var sel = data.selected;
       if (Array.isArray(sel)) sel = sel.length ? sel[0] : null;
-      if (sel === '') sel = null;
+      /* "" is an ordinary choice value, not "cleared": the cleared state
+         is null (or an empty array from the R updater's character(0)). */
       ctrl.setValue(sel, { notify: false });
       shouldCommit = true;
     }
@@ -3353,13 +3694,24 @@
       if (!msg || !msg.inputId) return;
       var selector = msg.type === 'multi' ? '.gt-ms-wrap' : '.gt-gs-wrap';
       var wrap = document.querySelector(selector + attrEquals('data-input-id', msg.inputId));
+      /* Responses carry the sequence of the search they answer. Only the
+         response to the latest issued search for this widget applies: an
+         older response arriving after a newer search was sent is dropped,
+         so it can neither replace current results nor disarm the latest
+         search's loading guard. Messages without a sequence (older
+         servers) always apply. */
+      if (wrap && typeof msg.seq === 'number') {
+        if (wrap._gtServerSeqIssued !== undefined && msg.seq !== wrap._gtServerSeqIssued) return;
+        wrap._gtServerSeq = msg.seq;
+      }
       var ctrl = wrap ? ensureInit(wrap) : null;
       if (!ctrl || !ctrl.setChoices) return;
 
       ctrl.setChoices(msg.choices || [], {
         notify: false,
         preserveMissingSelection: true,
-        total: typeof msg.total === 'number' ? msg.total : undefined
+        total: typeof msg.total === 'number' ? msg.total : undefined,
+        seq: msg.seq
       });
     });
 

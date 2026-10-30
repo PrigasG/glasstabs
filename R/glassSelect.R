@@ -235,6 +235,7 @@ glassSelect <- function(
         "gt-input-label",
         if (!label_bold) "gt-label-regular" else NULL
       )),
+      id = paste0(inputId, "-field-label"),
       `for` = paste0(inputId, "-trigger"),
       label
     )
@@ -282,13 +283,17 @@ glassSelect <- function(
   }
 
   clear_btn <- if (isTRUE(clearable)) {
-    shiny::tags$span(
+    shiny::tags$button(
+      type = "button",
+      tabindex = "-1",
       class = "gt-gs-clear",
       id = paste0(inputId, "-clear"),
       "Clear"
     )
   } else {
-    shiny::tags$span(
+    shiny::tags$button(
+      type = "button",
+      tabindex = "-1",
       class = "gt-gs-clear",
       id = paste0(inputId, "-clear"),
       style = "display:none;",
@@ -316,6 +321,7 @@ glassSelect <- function(
         `data-clearable` = tolower(as.character(clearable)),
         `data-all-choice-label` = all_choice_label,
         `data-all-choice-value` = all_choice_value,
+        `data-include-all` = tolower(as.character(include_all)),
         `data-server` = tolower(as.character(server)),
         `data-server-total` = as.character(search_choice_count),
         `data-server-min-chars` = as.character(server_min_chars),
@@ -331,6 +337,11 @@ glassSelect <- function(
           `aria-expanded` = "false",
           `aria-disabled` = if (disabled) "true" else NULL,
           `aria-controls` = paste0(inputId, "-dropdown"),
+          `aria-labelledby` = if (!is.null(label)) {
+            paste0(inputId, "-field-label")
+          } else {
+            paste0(inputId, "-label")
+          },
           shiny::tags$span(id = paste0(inputId, "-label"), init_label),
           shiny::div(
             style = "display:flex;align-items:center;gap:6px;",
@@ -375,6 +386,7 @@ glassSelect <- function(
               type = "text",
               id = paste0(inputId, "-search"),
               placeholder = "Search options...",
+              `aria-label` = "Search options",
               autocomplete = "off"
             )
           ),
@@ -569,6 +581,11 @@ glassSelectValue <- function(input, inputId) {
 #'   Default \code{50}.
 #' @param ignore_case Logical. Match labels and values case-insensitively.
 #'   Default \code{TRUE}.
+#' @param disabled_choices Optional character vector of choice values to
+#'   render as disabled in search responses. Default \code{NULL}, which
+#'   leaves previously loaded disabled state unchanged. A disabled value
+#'   need not appear in any rendered page yet; it takes effect when it
+#'   first arrives in a response.
 #'
 #' @return An observer created by [shiny::observeEvent()].
 #'
@@ -600,7 +617,8 @@ glassSelectServer <- function(
     choices,
     session = shiny::getDefaultReactiveDomain(),
     limit = 50L,
-    ignore_case = TRUE
+    ignore_case = TRUE,
+    disabled_choices = NULL
 ) {
   .gt_register_server_choices(
     inputId = inputId,
@@ -608,6 +626,7 @@ glassSelectServer <- function(
     session = session,
     limit = limit,
     ignore_case = ignore_case,
-    type = "single"
+    type = "single",
+    disabled_choices = disabled_choices
   )
 }

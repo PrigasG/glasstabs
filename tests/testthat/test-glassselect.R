@@ -605,3 +605,28 @@ test_that("glassSelect() rejects a non-string no_matches_text", {
     class = "glasstabs_error_bad_argument"
   )
 })
+
+test_that("glassSelect() treats an empty-string value as a real choice", {
+  html <- as.character(glassSelect(
+    "status",
+    c("All statuses" = "", "Active" = "active"),
+    selected = ""
+  ))
+  expect_true(grepl('data-value=""', html, fixed = TRUE))
+  option_tag <- regmatches(html, regexpr('<[^>]*data-value=""[^>]*>', html))
+  expect_true(grepl('aria-selected="true"', option_tag, fixed = TRUE))
+  expect_true(grepl("All statuses", html, fixed = TRUE))
+})
+
+test_that("updateGlassSelect() sends an empty-string selection through", {
+  send_mock <- mockery::mock()
+  fake_session <- list(
+    sendCustomMessage = send_mock,
+    ns = function(id) paste0("module-", id)
+  )
+
+  updateGlassSelect(fake_session, "pick", selected = "")
+
+  args <- mockery::mock_args(send_mock)[[1]]
+  expect_equal(args[[2]]$data$selected, "")
+})
