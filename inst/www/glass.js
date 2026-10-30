@@ -1744,6 +1744,15 @@
       choices = asChoiceArray(choices);
       state.loading = false;
 
+      /* The synthetic "All" row is a client-side prepend, not part of any
+         update payload: without this it vanishes on the first choices
+         update. Restore it only when this widget actually has one
+         (include_all on, and the row is in the current choices); an update
+         that already carries the All value needs no duplicate. */
+      var allValue = wrap.getAttribute('data-all-choice-value');
+      var hadAll = wrap.getAttribute('data-include-all') === 'true' &&
+        state.choices.some(function (ch) { return ch.value === allValue; });
+
       /* Update state */
       state.choices = choices.map(function (ch) {
         return {
@@ -1755,7 +1764,22 @@
           _labelLower: String(ch.label).toLowerCase()
         };
       });
-      state.total = total === null ? state.choices.length : total;
+      if (hadAll && !state.choices.some(function (ch) { return ch.value === allValue; })) {
+        state.choices.unshift({
+          label: wrap.getAttribute('data-all-choice-label') || 'All',
+          value: allValue,
+          hidden: false,
+          disabled: oldDisabled.has(allValue),
+          group: '',
+          _labelLower: (wrap.getAttribute('data-all-choice-label') || 'All').toLowerCase()
+        });
+      }
+      /* state.total excludes the All row (it is a UI affordance, not a data
+         row): subtract it whenever the All row is present -- restored just
+         now or already carried by the update -- so the auto search
+         threshold keeps counting real choices. */
+      state.total = total === null ?
+        (hadAll ? state.choices.length - 1 : state.choices.length) : total;
 
       /* Intersect selection */
       if (oldSelected !== null && findChoice(oldSelected)) {
@@ -2313,12 +2337,15 @@
       return state.choices.filter(function (ch) { return !ch.hidden; });
     }
 
-    function visibleSelectedCount() {
-      var n = 0;
-      state.choices.forEach(function (ch) {
-        if (!ch.hidden && state.selected.has(ch.value)) n++;
+    /* The select-all toggle scope: enabled AND visible. syncUI(),
+       applySearchNow(), and the select-all click handler must all use this
+       one scope, or the indicator disagrees with the click: a disabled
+       choice counted in the indicator but skipped by the click makes the
+       indicator read "partial" while the click clears everything. */
+    function selectableVisibleChoices() {
+      return state.choices.filter(function (ch) {
+        return !ch.hidden && !ch.disabled;
       });
-      return n;
     }
 
     function searchEnabled() {
@@ -2425,8 +2452,11 @@
     function syncUI() {
       var total = state.total === null ? state.choices.length : state.total;
       var selCount = state.selected.size;
-      var vis = visibleChoices().length;
-      var visSel = visibleSelectedCount();
+      var visChoices = selectableVisibleChoices();
+      var vis = visChoices.length;
+      var visSel = visChoices.filter(function (ch) {
+        return state.selected.has(ch.value);
+      }).length;
 
       /* All row */
       if (allRow) {
@@ -2661,8 +2691,11 @@
       patchVisibility();
       optionNav.prepare();
       /* Update allRow and counts without notifying Shiny */
-      var vis = visibleChoices().length;
-      var visSel = visibleSelectedCount();
+      var visChoices = selectableVisibleChoices();
+      var vis = visChoices.length;
+      var visSel = visChoices.filter(function (ch) {
+        return state.selected.has(ch.value);
+      }).length;
 
       if (allRow) {
         allRow.classList.remove('checked', 'indeterminate');
@@ -2851,8 +2884,9 @@
 
     if (allRow) {
       allRow.addEventListener('click', function () {
-        /* Select-all only ever acts on enabled, visible options */
-        var vis = visibleChoices().filter(function (ch) { return !ch.disabled; });
+        /* Select-all only ever acts on enabled, visible options: the
+           shared selectableVisibleChoices() scope, same as the indicator. */
+        var vis = selectableVisibleChoices();
         var anyUnchecked = vis.some(function (ch) { return !state.selected.has(ch.value); });
 
         vis.forEach(function (ch) {

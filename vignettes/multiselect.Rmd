@@ -277,7 +277,11 @@ glassMultiSelect("f", fruits,
 The select-all row acts only on **enabled, visible** options: it
 selects everything currently matching the search (skipping disabled
 rows), or clears them if all are already selected, and it shows an
-indeterminate state for a partial selection. "Clear all" clears the
+indeterminate state for a partial selection. In server mode the row acts
+on the currently loaded page: options that have not arrived from the
+server yet are not part of the toggle set, and
+`glassMultiSelectServer(..., disabled_choices)` marks values disabled as
+they arrive in search responses. "Clear all" clears the
 whole selection. Note there is no `clearable` argument on
 `glassMultiSelect()` — clearing is `show_clear_all`, which is `TRUE` by
 default. (`clearable` belongs to the single-select and does not exist here;

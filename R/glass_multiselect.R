@@ -222,6 +222,15 @@ glassMultiSelect <- function(
 
   n_total <- length(vals)
   n_sel <- length(selected)
+
+  # The select-all toggle acts on enabled choices only (see the JS
+  # selectableVisibleChoices() scope); the initial indicator must use the
+  # same scope, or it disagrees with the first click. At render time no
+  # search filter applies, so "visible" is every choice. Explicit selections
+  # may include disabled values; they are not part of the toggle set.
+  enabled_vals <- setdiff(vals, disabled_choices)
+  n_enabled <- length(enabled_vals)
+  n_enabled_sel <- length(intersect(selected, enabled_vals))
   init_label <- .ms_label(
     vals        = vals,
     labels      = labels,
@@ -379,13 +388,14 @@ glassMultiSelect <- function(
 
   all_cls <- paste(
     "gt-ms-all",
-    if (n_total > 0 && n_sel == n_total) "checked" else if (n_sel > 0) "indeterminate" else ""
+    if (n_enabled > 0 && n_enabled_sel == n_enabled) "checked" else if (n_enabled_sel > 0) "indeterminate" else ""
   )
   # Tri-state for the select-all checkbox: checked, mixed (partial), or false.
-  # Mirrors the all_cls logic above; the JS syncUI() keeps it in step.
-  all_checked <- if (n_total > 0 && n_sel == n_total) {
+  # Uses the enabled-only toggle scope above; the JS syncUI() keeps it in
+  # step with the same scope.
+  all_checked <- if (n_enabled > 0 && n_enabled_sel == n_enabled) {
     "true"
-  } else if (n_sel > 0) {
+  } else if (n_enabled_sel > 0) {
     "mixed"
   } else {
     "false"
@@ -906,6 +916,11 @@ glassMultiSelectValue <- function(
 #'   Default \code{50}.
 #' @param ignore_case Logical. Match labels and values case-insensitively.
 #'   Default \code{TRUE}.
+#' @param disabled_choices Optional character vector of choice values to
+#'   render as disabled in search responses. Default \code{NULL}, which
+#'   leaves previously loaded disabled state unchanged. A disabled value
+#'   need not appear in any rendered page yet; it takes effect when it
+#'   first arrives in a response.
 #'
 #' @return An observer created by [shiny::observeEvent()].
 #'
@@ -937,7 +952,8 @@ glassMultiSelectServer <- function(
     choices,
     session = shiny::getDefaultReactiveDomain(),
     limit = 50L,
-    ignore_case = TRUE
+    ignore_case = TRUE,
+    disabled_choices = NULL
 ) {
   .gt_register_server_choices(
     inputId = inputId,
@@ -945,7 +961,8 @@ glassMultiSelectServer <- function(
     session = session,
     limit = limit,
     ignore_case = ignore_case,
-    type = "multi"
+    type = "multi",
+    disabled_choices = disabled_choices
   )
 }
 
@@ -1206,12 +1223,29 @@ glassMultiSelectServer <- function(
 }
 
 #' @noRd
-.gt_choice_payload <- function(labels, values, hues = NULL, groups = NULL) {
+.gt_choice_payload <- function(labels, values, hues = NULL, groups = NULL, disabled_choices = NULL) {
   groups <- groups %||% rep("", length(values))
+  # NULL means "not specified": omit the field so the client keeps its
+  # previously loaded disabled state (oldDisabled fallback). An explicit
+  # set, even character(0), is authoritative per row.
+  disabled_set <- if (is.null(disabled_choices)) {
+    NULL
+  } else {
+    as.character(disabled_choices)
+  }
+  add_disabled <- function(choice, value) {
+    if (!is.null(disabled_set)) {
+      choice$disabled <- value %in% disabled_set
+    }
+    choice
+  }
   if (is.null(hues)) {
     unname(Map(
       f = function(label, value, group) {
-        list(label = label, value = value, group = group)
+        add_disabled(
+          list(label = label, value = value, group = group),
+          value
+        )
       },
       label = labels,
       value = values,
@@ -1220,7 +1254,10 @@ glassMultiSelectServer <- function(
   } else {
     unname(Map(
       f = function(label, value, hue, group) {
-        list(label = label, value = value, hue = unname(as.integer(hue)), group = group)
+        add_disabled(
+          list(label = label, value = value, hue = unname(as.integer(hue)), group = group),
+          value
+        )
       },
       label = labels,
       value = values,
@@ -1300,7 +1337,8 @@ glassMultiSelectServer <- function(
     session,
     limit,
     ignore_case,
-    type
+    type,
+    disabled_choices = NULL
 ) {
   if (is.null(session)) {
     .gt_abort(
@@ -1313,6 +1351,13 @@ glassMultiSelectServer <- function(
   }
   .gt_check_string(inputId, "inputId")
   limit <- .gt_positive_int(limit, "limit")
+  # No membership validation: a disabled value may first appear in a later
+  # search response, so it need not be in any page rendered so far.
+  disabled_choices <- if (is.null(disabled_choices)) {
+    NULL
+  } else {
+    as.character(disabled_choices)
+  }
   normalized <- .gt_normalize_choices(choices)
   hues <- NULL
   if (identical(type, "multi")) {
@@ -1337,7 +1382,13 @@ glassMultiSelectServer <- function(
         list(
           inputId = session$ns(inputId),
           type = type,
-          choices = .gt_choice_payload(filtered$labels, filtered$values, payload_hues, filtered$groups),
+          choices = .gt_choice_payload(
+            filtered$labels,
+            filtered$values,
+            payload_hues,
+            filtered$groups,
+            disabled_choices
+          ),
           total = length(normalized$values),
           matched = filtered$total
         )

@@ -1869,3 +1869,151 @@ test_that("browser: keyboard navigation reaches chrome rows and activates them",
   app$wait_for_idle()
   expect_null(app$get_value(input = "fruit"))
 })
+
+test_that("browser: select-all indicator agrees with the select-all click", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-select-all-scope",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+  app$click(selector = "#scope_check-trigger")
+  app$wait_for_js("document.querySelector('#scope_check-dropdown.open') !== null")
+
+  # Four enabled options selected, one disabled: the indicator must read
+  # checked (the toggle set is complete), not indeterminate.
+  expect_true(app$get_js("
+    (function() {
+      var all = document.querySelector('#scope_check-all');
+      return all.classList.contains('checked') &&
+        all.getAttribute('aria-checked') === 'true';
+    })()
+  "))
+  # And the click must agree with it: everything enabled clears.
+  app$click(selector = "#scope_check-all")
+  app$wait_for_idle()
+  expect_length(app$get_value(input = "scope_check"), 0)
+
+  # Search-filtered scope: only "a" visible and unselected, so the
+  # indicator reads unchecked and the click selects just "a".
+  app$get_js("
+    (function() {
+      var search = document.querySelector('#scope_check-dropdown input[type=text]');
+      search.focus();
+      search.value = 'a';
+      search.dispatchEvent(new Event('input', {bubbles: true}));
+      return true;
+    })()
+  ")
+  app$wait_for_js("
+    [...document.querySelectorAll('#scope_check-dropdown .gt-ms-option')]
+      .filter(function (o) { return !o.classList.contains('hidden'); }).length === 1
+  ")
+  expect_true(app$get_js("
+    document.querySelector('#scope_check-all').getAttribute('aria-checked') === 'false'
+  "))
+  app$click(selector = "#scope_check-all")
+  app$wait_for_idle()
+  expect_equal(app$get_value(input = "scope_check"), "a")
+})
+
+test_that("browser: server search responses carry disabled choices", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-server-disabled",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+  app$click(selector = "#server_disabled-trigger")
+  app$wait_for_js("document.querySelector('#server_disabled-dropdown.open') !== null")
+
+  # The initial page is the first three choices; zeta is not among them.
+  expect_true(app$get_js("
+    document.querySelector('#server_disabled-dropdown .gt-ms-option[data-value=\"zeta\"]') === null
+  "))
+  app$get_js("
+    (function() {
+      var search = document.querySelector('#server_disabled-dropdown input[type=text]');
+      search.focus();
+      search.value = 'zeta';
+      search.dispatchEvent(new Event('input', {bubbles: true}));
+      return true;
+    })()
+  ")
+  app$wait_for_js("
+    document.querySelector('#server_disabled-dropdown .gt-ms-option[data-value=\"zeta\"]') !== null
+  ")
+
+  # The late-arriving disabled row renders disabled ...
+  expect_true(app$get_js("
+    (function() {
+      var row = document.querySelector('#server_disabled-dropdown .gt-ms-option[data-value=\"zeta\"]');
+      return row.classList.contains('disabled') &&
+        row.getAttribute('aria-disabled') === 'true';
+    })()
+  "))
+  # ... and clicking it does not select it.
+  app$click(selector = "#server_disabled-dropdown .gt-ms-option[data-value=\"zeta\"]")
+  app$wait_for_idle()
+  expect_equal(app$get_value(input = "server_disabled"), "alpha")
+})
+
+test_that("browser: single-select All row survives choices updates", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-all-row-update",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle()
+  app$click(selector = "#all_update_single-trigger")
+  app$wait_for_js("document.querySelector('#all_update_single-dropdown.open') !== null")
+  expect_equal(app$get_js("
+    document.querySelectorAll('#all_update_single-dropdown .gt-gs-option[data-value=\"__all__\"]').length
+  "), 1)
+  expect_equal(app$get_js("
+    document.querySelectorAll('#all_update_single-dropdown .gt-gs-option').length
+  "), 4)
+
+  # Select "All", then update the choices: the row must survive the
+  # rebuild and the active "All" selection must survive with it.
+  app$click(selector = "#all_update_single-dropdown .gt-gs-option[data-value=\"__all__\"]")
+  app$wait_for_idle()
+  expect_equal(app$get_value(input = "all_update_single"), "__all__")
+  app$click(selector = "#all_update_single_change")
+  app$wait_for_js("
+    document.querySelectorAll('#all_update_single-dropdown .gt-gs-option').length === 4 &&
+    document.querySelectorAll('#all_update_single-dropdown .gt-gs-option[data-value=\"__all__\"]').length === 1
+  ")
+  app$wait_for_idle()
+  expect_equal(app$get_value(input = "all_update_single"), "__all__")
+
+  # A second identical update must not duplicate the row.
+  app$click(selector = "#all_update_single_change")
+  app$wait_for_js("
+    document.querySelectorAll('#all_update_single-dropdown .gt-gs-option').length === 4 &&
+    document.querySelectorAll('#all_update_single-dropdown .gt-gs-option[data-value=\"__all__\"]').length === 1
+  ")
+  app$wait_for_idle()
+  expect_equal(app$get_value(input = "all_update_single"), "__all__")
+})

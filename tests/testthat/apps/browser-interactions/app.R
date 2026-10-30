@@ -12,6 +12,11 @@ if (file.exists(file.path(pkg_root, "DESCRIPTION")) &&
 }
 
 choices <- c(Apple = "apple", Banana = "banana", Cherry = "cherry")
+server_full_choices <- c(
+  Alpha = "alpha", Beta = "beta", Gamma = "gamma", Delta = "delta",
+  Epsilon = "epsilon", Zeta = "zeta", Eta = "eta", Theta = "theta",
+  Iota = "iota", Kappa = "kappa"
+)
 five_choices <- stats::setNames(letters[1:5], paste("Category", 1:5))
 short_field_choices <- c(
   One = "one",
@@ -62,6 +67,27 @@ ui <- fluidPage(
       show_style_switcher = FALSE
     ),
     actionButton("refresh_disabled_choices", "Refresh choices without disabled override"),
+    glassSelect(
+      "all_update_single",
+      choices,
+      selected = "apple",
+      include_all = TRUE
+    ),
+    actionButton("all_update_single_change", "Update all-row choices"),
+    glassMultiSelect(
+      "server_disabled",
+      server_full_choices,
+      server = TRUE,
+      server_limit = 3,
+      selected = "alpha"
+    ),
+    glassMultiSelect(
+      "scope_check",
+      c(A = "a", B = "b", C = "c", D = "d", E = "e"),
+      selected = c("a", "b", "c", "d"),
+      disabled_choices = "e",
+      show_style_switcher = FALSE
+    ),
     glassMultiSelect(
       "cats",
       choices,
@@ -261,6 +287,21 @@ server <- function(input, output, session) {
     updateGlassSelect(session, "disabled_update_single", choices = refreshed)
     updateGlassMultiSelect(session, "disabled_update_multi", choices = refreshed)
   })
+
+  observeEvent(input$all_update_single_change, {
+    updateGlassSelect(
+      session,
+      "all_update_single",
+      choices = c(Durian = "durian", Elderberry = "elderberry", Fig = "fig")
+    )
+  })
+
+  glassMultiSelectServer(
+    "server_disabled",
+    choices = server_full_choices,
+    session = session,
+    disabled_choices = "zeta"
+  )
 
   output$fruit_open_state <- renderText({
     if (isTRUE(input$fruit_open)) "open" else "closed"

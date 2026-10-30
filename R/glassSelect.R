@@ -321,6 +321,7 @@ glassSelect <- function(
         `data-clearable` = tolower(as.character(clearable)),
         `data-all-choice-label` = all_choice_label,
         `data-all-choice-value` = all_choice_value,
+        `data-include-all` = tolower(as.character(include_all)),
         `data-server` = tolower(as.character(server)),
         `data-server-total` = as.character(search_choice_count),
         `data-server-min-chars` = as.character(server_min_chars),
@@ -580,6 +581,11 @@ glassSelectValue <- function(input, inputId) {
 #'   Default \code{50}.
 #' @param ignore_case Logical. Match labels and values case-insensitively.
 #'   Default \code{TRUE}.
+#' @param disabled_choices Optional character vector of choice values to
+#'   render as disabled in search responses. Default \code{NULL}, which
+#'   leaves previously loaded disabled state unchanged. A disabled value
+#'   need not appear in any rendered page yet; it takes effect when it
+#'   first arrives in a response.
 #'
 #' @return An observer created by [shiny::observeEvent()].
 #'
@@ -611,7 +617,8 @@ glassSelectServer <- function(
     choices,
     session = shiny::getDefaultReactiveDomain(),
     limit = 50L,
-    ignore_case = TRUE
+    ignore_case = TRUE,
+    disabled_choices = NULL
 ) {
   .gt_register_server_choices(
     inputId = inputId,
@@ -619,6 +626,7 @@ glassSelectServer <- function(
     session = session,
     limit = limit,
     ignore_case = ignore_case,
-    type = "single"
+    type = "single",
+    disabled_choices = disabled_choices
   )
 }
