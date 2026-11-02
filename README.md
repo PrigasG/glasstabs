@@ -60,6 +60,7 @@ ui <- fluidPage(
     extra_ui = glassMultiSelect(
       "fruit",
       choices,
+      width = "240px",
       show_style_switcher = FALSE
     )
   ),
@@ -124,9 +125,49 @@ glassFilterTags("status")
 
 For selection semantics and filter examples, see the [multi-select guide](https://prigasg.github.io/glasstabs/articles/multiselect.html) and [single-select guide](https://prigasg.github.io/glasstabs/articles/glassSelect.html).
 
+## Dropdown too narrow? Set `width` {#dropdown-too-narrow-set-width}
+
+**Both `glassSelect()` and `glassMultiSelect()` use a compact 160px width by default.** If a dropdown looks too narrow, you can fix it directly with the `width` argument. No custom CSS is needed.
+
+``` r
+# A wider, fixed-size filter
+glassSelect("region", c(North = "north", South = "south"), width = "260px")
+
+# A multi-select that fills the available column or card width
+glassMultiSelect("facility", c(A = "a", B = "b"), width = "100%")
+```
+
+| `width` | What it does | Best use |
+|----|----|----|
+| Omitted or `NULL` | Compact 160px default | Small filter toolbars |
+| `"240px"` or `"280px"` | Makes the control wider | Longer labels in dashboard filters |
+| `"100%"` | Fills the available width of its parent | `bslib::card()`, columns, sidebars |
+| `"20rem"` | Relative to the root font size | Font-aware layouts |
+
+**How sizing works:** The closed control sets the dropdown panel's width. Explicit widths are capped by the surrounding container, and dropdowns are positioned to stay within the viewport. A `width = "100%"` control fills its *parent*, not the entire screen. If it remains narrow, check the width of the containing card, column, or toolbar.
+
+For example, in a dashboard column:
+
+``` r
+bslib::card(
+  bslib::card_header("Facility filters"),
+  glassSelect(
+    "county", c(Camden = "camden", Cumberland = "cumberland"),
+    label = "County", width = "100%", theme = "auto"
+  ),
+  glassMultiSelect(
+    "status", c(Open = "open", Review = "review", Closed = "closed"),
+    label = "Status", width = "100%", theme = "auto",
+    selection_display = "summary"
+  )
+)
+```
+
+**Practical tip:** Start with `width = "260px"` for stand-alone dropdowns or `width = "100%"` inside a card. Long option labels wrap, so a wider control improves readability without requiring horizontal scrolling.
+
 ### Dropdown sizing, tooltips, and search
 
-Select dropdowns are positioned relative to their triggers and constrained to the viewport. Use `width` for the control width, and allow long labels to wrap safely inside dropdown options.
+**Quick fix:** The default control width is `160px`. Pass `width = "260px"` for a wider dropdown, or `width = "100%"` to fill the containing card or column. Both single- and multi-select widgets support the same setting. See [Dropdown too narrow? Set `width`](#dropdown-too-narrow-set-width) near the top for a sizing table, troubleshooting tip, and bslib example.
 
 ``` r
 glassSelect("industry", c(Manufacturing = "manufacturing", Retail = "retail"), width = "240px")
