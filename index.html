@@ -134,6 +134,7 @@
 <span>    extra_ui <span class="op">=</span> <span class="fu"><a href="reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span></span>
 <span>      <span class="st">"fruit"</span>,</span>
 <span>      <span class="va">choices</span>,</span>
+<span>      width <span class="op">=</span> <span class="st">"240px"</span>,</span>
 <span>      show_style_switcher <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span>    <span class="op">)</span></span>
 <span>  <span class="op">)</span>,</span>
@@ -192,16 +193,82 @@
 <span><span class="fu"><a href="reference/glassFilterTags.html">glassFilterTags</a></span><span class="op">(</span><span class="st">"status"</span><span class="op">)</span></span></code></pre></div>
 <p>For selection semantics and filter examples, see the <a href="https://prigasg.github.io/glasstabs/articles/multiselect.html">multi-select guide</a> and <a href="https://prigasg.github.io/glasstabs/articles/glassSelect.html">single-select guide</a>.</p>
 </div>
+</div>
+<div class="section level2">
+<h2 id="dropdown-too-narrow-set-width">Dropdown too narrow? Set <code>width</code>
+<a class="anchor" aria-label="anchor" href="#dropdown-too-narrow-set-width"></a>
+</h2>
+<p><strong>Both <code><a href="reference/glassSelect.html">glassSelect()</a></code> and <code><a href="reference/glassMultiSelect.html">glassMultiSelect()</a></code> use a compact 160px width by default.</strong> If a dropdown looks too narrow, you can fix it directly with the <code>width</code> argument. No custom CSS is needed.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># A wider, fixed-size filter</span></span>
+<span><span class="fu"><a href="reference/glassSelect.html">glassSelect</a></span><span class="op">(</span><span class="st">"region"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>North <span class="op">=</span> <span class="st">"north"</span>, South <span class="op">=</span> <span class="st">"south"</span><span class="op">)</span>, width <span class="op">=</span> <span class="st">"260px"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># A multi-select that fills the available column or card width</span></span>
+<span><span class="fu"><a href="reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span><span class="st">"facility"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>A <span class="op">=</span> <span class="st">"a"</span>, B <span class="op">=</span> <span class="st">"b"</span><span class="op">)</span>, width <span class="op">=</span> <span class="st">"100%"</span><span class="op">)</span></span></code></pre></div>
+<table class="table">
+<colgroup>
+<col width="33%">
+<col width="33%">
+<col width="33%">
+</colgroup>
+<thead><tr>
+<th><code>width</code></th>
+<th>What it does</th>
+<th>Best use</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Omitted or <code>NULL</code>
+</td>
+<td>Compact 160px default</td>
+<td>Small filter toolbars</td>
+</tr>
+<tr>
+<td>
+<code>"240px"</code> or <code>"280px"</code>
+</td>
+<td>Makes the control wider</td>
+<td>Longer labels in dashboard filters</td>
+</tr>
+<tr>
+<td><code>"100%"</code></td>
+<td>Fills the available width of its parent</td>
+<td>
+<code><a href="https://rstudio.github.io/bslib/reference/card.html" class="external-link">bslib::card()</a></code>, columns, sidebars</td>
+</tr>
+<tr>
+<td><code>"20rem"</code></td>
+<td>Relative to the root font size</td>
+<td>Font-aware layouts</td>
+</tr>
+</tbody>
+</table>
+<p><strong>How sizing works:</strong> The closed control sets the dropdown panel’s width. Explicit widths are capped by the surrounding container, and dropdowns are positioned to stay within the viewport. A <code>width = "100%"</code> control fills its <em>parent</em>, not the entire screen. If it remains narrow, check the width of the containing card, column, or toolbar.</p>
+<p>For example, in a dashboard column:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">bslib</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/bslib/reference/card.html" class="external-link">card</a></span><span class="op">(</span></span>
+<span>  <span class="fu">bslib</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/bslib/reference/card_body.html" class="external-link">card_header</a></span><span class="op">(</span><span class="st">"Facility filters"</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="reference/glassSelect.html">glassSelect</a></span><span class="op">(</span></span>
+<span>    <span class="st">"county"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Camden <span class="op">=</span> <span class="st">"camden"</span>, Cumberland <span class="op">=</span> <span class="st">"cumberland"</span><span class="op">)</span>,</span>
+<span>    label <span class="op">=</span> <span class="st">"County"</span>, width <span class="op">=</span> <span class="st">"100%"</span>, theme <span class="op">=</span> <span class="st">"auto"</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span></span>
+<span>    <span class="st">"status"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Open <span class="op">=</span> <span class="st">"open"</span>, Review <span class="op">=</span> <span class="st">"review"</span>, Closed <span class="op">=</span> <span class="st">"closed"</span><span class="op">)</span>,</span>
+<span>    label <span class="op">=</span> <span class="st">"Status"</span>, width <span class="op">=</span> <span class="st">"100%"</span>, theme <span class="op">=</span> <span class="st">"auto"</span>,</span>
+<span>    selection_display <span class="op">=</span> <span class="st">"summary"</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><strong>Practical tip:</strong> Start with <code>width = "260px"</code> for stand-alone dropdowns or <code>width = "100%"</code> inside a card. Long option labels wrap, so a wider control improves readability without requiring horizontal scrolling.</p>
 <div class="section level3">
 <h3 id="dropdown-sizing-tooltips-and-search">Dropdown sizing, tooltips, and search<a class="anchor" aria-label="anchor" href="#dropdown-sizing-tooltips-and-search"></a>
 </h3>
-<p>Select dropdowns are positioned relative to their triggers and constrained to the viewport. Use <code>width</code> for the control width, and allow long labels to wrap safely inside dropdown options.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<p><strong>Quick fix:</strong> The default control width is <code>160px</code>. Pass <code>width = "260px"</code> for a wider dropdown, or <code>width = "100%"</code> to fill the containing card or column. Both single- and multi-select widgets support the same setting. See <a href="#dropdown-too-narrow-set-width">Dropdown too narrow? Set <code>width</code></a> near the top for a sizing table, troubleshooting tip, and bslib example.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/glassSelect.html">glassSelect</a></span><span class="op">(</span><span class="st">"industry"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Manufacturing <span class="op">=</span> <span class="st">"manufacturing"</span>, Retail <span class="op">=</span> <span class="st">"retail"</span><span class="op">)</span>, width <span class="op">=</span> <span class="st">"240px"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span><span class="st">"filters"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Active <span class="op">=</span> <span class="st">"active"</span>, Closed <span class="op">=</span> <span class="st">"closed"</span><span class="op">)</span>, width <span class="op">=</span> <span class="st">"100%"</span><span class="op">)</span></span></code></pre></div>
 <p>For a long selected label, <code>overflow_tooltip = "auto"</code> can show the full label on hover or keyboard focus. Truncated options can also show an option-specific tooltip. On touch screens, option labels remain readable in the open dropdown. Use <code>overflow_tooltip = "never"</code> to disable visual tooltips.</p>
 <p>For short lists, <code>searchable = "auto"</code> hides the search field until the number of choices reaches <code>search_threshold</code>. This works with both select widgets.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/glassSelect.html">glassSelect</a></span><span class="op">(</span></span>
 <span>  <span class="st">"category"</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>A <span class="op">=</span> <span class="st">"a"</span>, B <span class="op">=</span> <span class="st">"b"</span>, C <span class="op">=</span> <span class="st">"c"</span><span class="op">)</span>,</span>
@@ -223,7 +290,7 @@
 <h3 id="updating-selections">Updating selections<a class="anchor" aria-label="anchor" href="#updating-selections"></a>
 </h3>
 <p><code><a href="reference/updateGlassSelect.html">updateGlassSelect()</a></code> and <code><a href="reference/updateGlassMultiSelect.html">updateGlassMultiSelect()</a></code> apply updates transactionally. By default, the effective input value is sent to Shiny when it changes.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/updateGlassMultiSelect.html">updateGlassMultiSelect</a></span><span class="op">(</span></span>
 <span>  <span class="va">session</span>,</span>
 <span>  <span class="st">"facility"</span>,</span>
@@ -239,7 +306,7 @@
 <h2 id="match-the-surrounding-app">Match the surrounding app<a class="anchor" aria-label="anchor" href="#match-the-surrounding-app"></a>
 </h2>
 <p>Use <code>theme = "auto"</code> in Bootstrap 5 or <code>bslib</code> apps, and <code>shape = "square"</code> when your filters sit beside square native inputs.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
 <span>  <span class="st">"nav"</span>,</span>
 <span>  <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"one"</span>, <span class="st">"One"</span>, selected <span class="op">=</span> <span class="cn">TRUE</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"First panel"</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -251,7 +318,7 @@
 <span><span class="fu"><a href="reference/glassSelect.html">glassSelect</a></span><span class="op">(</span><span class="st">"region"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>North <span class="op">=</span> <span class="st">"north"</span>, South <span class="op">=</span> <span class="st">"south"</span><span class="op">)</span>, shape <span class="op">=</span> <span class="st">"square"</span>, theme <span class="op">=</span> <span class="st">"auto"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="reference/glassMultiSelect.html">glassMultiSelect</a></span><span class="op">(</span><span class="st">"filters"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Active <span class="op">=</span> <span class="st">"active"</span>, Closed <span class="op">=</span> <span class="st">"closed"</span><span class="op">)</span>, shape <span class="op">=</span> <span class="st">"square"</span>, theme <span class="op">=</span> <span class="st">"auto"</span><span class="op">)</span></span></code></pre></div>
 <p>Tabs can use a vertical rail, multiple indicator styles, and independent alignment of the tab group and its labels.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
 <span>  <span class="st">"workflow"</span>,</span>
 <span>  <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"intake"</span>, <span class="st">"Intake"</span>, selected <span class="op">=</span> <span class="cn">TRUE</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"Intake"</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -264,7 +331,7 @@
 <span><span class="op">)</span></span></code></pre></div>
 <p>Use <code>style = "attached"</code> for a tab bar docked to its content container and <code>transition = "slide"</code> for directional pane movement. For select controls, <code>tongue = TRUE</code> provides the attached unfurl animation; <code>tongue = FALSE</code> uses a detached transition. Motion preferences are respected.</p>
 <p>Custom themes allow control of the accent and focus ring without restyling the rest of the app.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
 <span>  <span class="st">"accented"</span>,</span>
 <span>  <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"A"</span>, selected <span class="op">=</span> <span class="cn">TRUE</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"Content"</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -296,7 +363,7 @@
 <h2 id="an-experimental-fillable-page">An experimental fillable page<a class="anchor" aria-label="anchor" href="#an-experimental-fillable-page"></a>
 </h2>
 <p><code><a href="reference/glassPage.html">glassPage()</a></code> provides a thin wrapper around <code><a href="https://rstudio.github.io/bslib/reference/page_fillable.html" class="external-link">bslib::page_fillable()</a></code> with glasstabs dependencies loaded automatically. Its API is still experimental. Existing <code><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage()</a></code> and <code>bslib</code> layouts remain supported.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/glassPage.html">glassPage</a></span><span class="op">(</span></span>
 <span>  title <span class="op">=</span> <span class="st">"Team review"</span>,</span>
 <span>  <span class="fu"><a href="reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span></span>
@@ -338,7 +405,7 @@
 </tbody>
 </table>
 <p>Programmatic tab switching, badges, and filter resets use ordinary Shiny server code:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/observeEvent.html" class="external-link">observeEvent</a></span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">next_step</span>, <span class="op">{</span></span>
 <span>    <span class="fu"><a href="reference/updateGlassTabsUI.html">updateGlassTabsUI</a></span><span class="op">(</span><span class="va">session</span>, <span class="st">"workflow"</span>, selected <span class="op">=</span> <span class="st">"review"</span><span class="op">)</span></span>
@@ -385,7 +452,7 @@
 </tbody>
 </table>
 <p>These results are bounded, <strong>not paginated</strong>. Here is a complete example:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny.posit.co/" class="external-link">shiny</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/PrigasG/glasstabs" class="external-link">glasstabs</a></span><span class="op">)</span></span>
 <span></span>

@@ -2,6 +2,8 @@
 
 ## glasstabs 0.4.1
 
+CRAN release: 2026-10-30
+
 0.4.1 is a stabilization release: the dropdowns keep their look and gain
 predictable behavior. Highlights: the tongue dropdown (the panel unfurls
 flush from the field), accessible chrome controls (real buttons with
