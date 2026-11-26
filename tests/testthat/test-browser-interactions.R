@@ -1189,6 +1189,7 @@ test_that("browser: instant tabs switch synchronously and preserve input state",
   )
   on.exit(app$stop(), add = TRUE)
   app$wait_for_idle()
+  app$wait_for_js("document.querySelector('#instant_tabs-wrap .gt-navbar')._gtTabsInit === true")
   app$set_inputs(instant_text = "retained")
   expect_true(app$get_js("
     (function() {
@@ -1196,12 +1197,20 @@ test_that("browser: instant tabs switch synchronously and preserve input state",
       var b = document.getElementById('instant_tabs-pane-b');
       document.getElementById('instant_tabs-tab-b').click();
       return !a.classList.contains('active') && a.hasAttribute('inert') &&
-        b.classList.contains('active') && !b.hasAttribute('inert') &&
-        getComputedStyle(b).transitionDuration === '0s' &&
-        getComputedStyle(b).transform === 'none' &&
-        document.getElementById('instant_tabs-transfer').getAnimations().length === 0;
+        b.classList.contains('active') && !b.hasAttribute('inert');
     })()
   "))
+  expect_true(app$get_js("
+    (function() {
+      var style = getComputedStyle(document.getElementById('instant_tabs-pane-b'));
+      return style.transitionDuration.split(',').every(function(v) {
+        return parseFloat(v) === 0;
+      }) && style.transform === 'none';
+    })()
+  "))
+  expect_equal(app$get_js("
+    document.getElementById('instant_tabs-transfer').getAnimations().length
+  "), 0)
   app$wait_for_idle()
   expect_equal(app$get_value(input = "instant_tabs-active_tab"), "b")
   expect_true(app$get_js("
