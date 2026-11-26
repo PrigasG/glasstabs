@@ -14,7 +14,9 @@ glass_select_theme(
   text_color = NULL,
   accent_color = NULL,
   focus_ring = NULL,
-  label_color = NULL
+  label_color = NULL,
+  trigger_bg = NULL,
+  dropdown_bg = NULL
 )
 ```
 
@@ -49,6 +51,12 @@ glass_select_theme(
 - label_color:
 
   Widget label color. Defaults to `text_color` when `NULL`.
+
+- trigger_bg, dropdown_bg:
+
+  Optional explicit trigger and panel colors. These override the
+  corresponding surface, including during dark mode. When unset, the
+  existing theme surface behavior is unchanged.
 
 ## Value
 

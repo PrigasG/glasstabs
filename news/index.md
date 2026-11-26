@@ -1,5 +1,39 @@
 # Changelog
 
+## glasstabs 0.4.2 (development)
+
+### Navigation and layout
+
+- Add segmented navigation and refine the attached underline
+  presentation.
+- `transition = "none"` activates the pane and indicator immediately.
+- Add opt-in spacing, fillable content, equal-width tabs and single-tab
+  hiding.
+- `reorderable = TRUE` enables desktop drag reordering and
+  Alt+Shift+arrow keyboard reordering without recreating panes. The
+  `-tab_order` input reports all tab values. Rebuilding the widget from
+  R resets its order unless the application uses the reported order when
+  building the new widget.
+
+### Select appearance and integration
+
+- Add `glass_strength` (0 to 1) across tabs and both select widgets, and
+  `size` for compact or large select triggers. Existing defaults remain.
+- Add independent `trigger_bg` and `dropdown_bg` custom theme surfaces.
+- Single-select accepts `dropdown_max_height` for its option list.
+- Long single- and multi-select lists show a subtle “Scroll for more”
+  cue while more options remain below. Open panels limit their option
+  area to the available viewport space and update the cue after
+  scrolling, filtering, choice updates and resizing.
+- Closed select fields no longer create a positive stacking level. Host
+  overlays and Bootstrap layer changes close portaled dropdowns
+  immediately; ordinary close retains its retract animation.
+- Refresh open portaled panel theme variables on live mode changes.
+  Scope the box-sizing reset to widget areas rather than the entire
+  application.
+- Add a modernization example and focused unit/browser regression
+  coverage.
+
 ## glasstabs 0.4.1
 
 CRAN release: 2026-10-30

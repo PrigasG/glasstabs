@@ -34,7 +34,10 @@ glassSelect(
   search_focus_ring = FALSE,
   overflow_tooltip = c("auto", "never"),
   search_threshold = 15L,
-  dark_selector = NULL
+  dark_selector = NULL,
+  glass_strength = 1,
+  size = c("md", "sm", "lg"),
+  dropdown_max_height = NULL
 )
 ```
 
@@ -190,6 +193,23 @@ glassSelect(
   for bs4Dash). When provided, emits an extra scoped `<style>` block
   that reverts colors to the dark-mode defaults whenever that selector
   is active.
+
+- glass_strength:
+
+  Decorative glass intensity between 0 and 1. The default retains the
+  original appearance; lower values soften blur, reflections and shadows
+  without reducing text or focus contrast.
+
+- size:
+
+  Field density: `"md"` (original), `"sm"`, or `"lg"`.
+
+- dropdown_max_height:
+
+  Optional CSS length for the scrollable option list. `NULL` keeps the
+  original default of 260px. The open panel further limits this height
+  to the available viewport space, and shows "Scroll for more" while
+  additional choices remain below.
 
 ## Value
 

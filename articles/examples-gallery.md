@@ -16,6 +16,7 @@ under `inst/examples/<name>/app.R` in the package repository. Start with
 
 | Example | What you learn | Launch |
 |----|----|----|
+| `modernization` | Configure tab layouts, glass intensity, density, order, inspect host-menu layering, and try the long-list scroll cue | `runGlassExample("modernization")` |
 | `basic` | The smallest complete app: tabs with Overview, Details, Extras, and Final panels | `runGlassExample("basic")` |
 | `native-comparison` | glasstabs versus built-in Shiny controls, side by side, including a deliberately truncated selected label and live controls for width, tongue motion, labels, search focus, filled colors, and overflow tooltips | `runGlassExample("native-comparison")` |
 | `server-select` | Server-side glass selects: bounded search over a large choice set | `runGlassExample("server-select")` |

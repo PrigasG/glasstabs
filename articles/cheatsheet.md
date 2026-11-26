@@ -1,5 +1,21 @@
 # glasstabs Cheatsheet
 
+## Modernization quick reference
+
+| Widget | Options |
+|----|----|
+| Tabs | `style = "segmented"`, `transition = "none"`, `reorderable = TRUE` |
+| Tabs | `tab_gap`, `tab_padding`, `nav_padding`, `content_padding` |
+| Tabs | `fill`, `hide_single`, `equal_width` |
+| All | `glass_strength = 0.25` (default `1`) |
+| Selects | `size = "sm"` or `"lg"`, `dropdown_max_height`; long lists show a scroll cue and fit the viewport |
+| Select theme | `trigger_bg`, `dropdown_bg` |
+
+With reorderable tabs, use `input[["id-tab_order"]]` to read the tab
+order. The active-tab input and server helper remain unchanged. Try the
+`modernization` example before integrating the options into an
+application.
+
 ## One rule
 
 Call

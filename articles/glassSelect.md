@@ -5,6 +5,27 @@
 [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md)
 is an animated single-select dropdown for Shiny.
 
+For dense interfaces, set `size = "sm"` and `glass_strength = 0.25`. The
+original appearance is `glass_strength = 1` and `size = "md"`. A
+strength of zero removes decorative blur while keeping selection and
+keyboard focus visible. Use `dropdown_max_height = "180px"` for short
+lists. Longer lists show **Scroll for more** while additional options
+remain below. The panel uses the available viewport space, flipping
+above the field when there is more room there. Search and updated
+choices refresh the scroll cue.
+
+``` r
+
+glassSelect("dataset", c(A = "a", B = "b"), theme = "auto",
+            size = "sm", glass_strength = 0.25,
+            dropdown_max_height = "180px")
+```
+
+For independent surfaces, pass
+`glass_select_theme(mode = "light", trigger_bg = "#f8fafc", dropdown_bg = "#ffffff")`.
+These explicit colors remain fixed during mode changes; ensure text
+remains readable.
+
 For filters that accept several values, see the [multi-select
 guide](https://prigasg.github.io/glasstabs/articles/multiselect.md).
 

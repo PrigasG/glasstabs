@@ -12,8 +12,8 @@ glassTabsUI(
   wrap = TRUE,
   compact = FALSE,
   content_min_height = NULL,
-  style = c("floating", "attached"),
-  transition = c("fade", "slide"),
+  style = c("floating", "attached", "segmented"),
+  transition = c("fade", "slide", "none"),
   shape = c("rounded", "square"),
   indicator = c("glass", "solid", "underline"),
   orientation = c("horizontal", "vertical"),
@@ -23,7 +23,16 @@ glassTabsUI(
   swipe = FALSE,
   extra_ui = NULL,
   theme = NULL,
-  dark_selector = NULL
+  dark_selector = NULL,
+  glass_strength = 1,
+  tab_gap = NULL,
+  tab_padding = NULL,
+  nav_padding = NULL,
+  content_padding = NULL,
+  fill = FALSE,
+  hide_single = FALSE,
+  equal_width = FALSE,
+  reorderable = FALSE
 )
 ```
 
@@ -66,13 +75,15 @@ glassTabsUI(
   Visual relationship between the tab bar and the content box.
   `"floating"` (default) renders them as two separate floating pieces.
   `"attached"` docks the tab bar directly onto the content box: they
-  share one border and read as a single unified card.
+  share one border and read as a single unified card. `"segmented"`
+  places the tabs in a compact navigation tray.
 
 - transition:
 
   How panes animate when switching tabs. `"fade"` (default) fades and
   rises the incoming pane. `"slide"` slides panes horizontally in the
-  direction of travel, following tab order.
+  direction of travel, following tab order. `"none"` activates the
+  destination immediately without a pane or halo transition.
 
 - shape:
 
@@ -158,6 +169,42 @@ glassTabsUI(
   `<style>` block overrides the CSS variables back to the dark-mode
   defaults whenever that selector is active - so the tabs stay readable
   after a dark-mode toggle without any server-side intervention.
+
+- glass_strength:
+
+  Decorative glass intensity from 0 (minimal) to 1 (original
+  appearance). Text and focus indicators are unaffected.
+
+- tab_gap:
+
+  Optional CSS length between tabs.
+
+- tab_padding, nav_padding, content_padding:
+
+  Optional CSS padding lengths (one to four space-separated values).
+  Defaults preserve existing spacing.
+
+- fill:
+
+  Logical. Fill a parent with a definite height; the active pane scrolls
+  when needed. Does not create a height on its own.
+
+- hide_single:
+
+  Logical. Hide navigation for one or zero visible tabs; any supplied
+  extra UI remains available.
+
+- equal_width:
+
+  Logical. Match horizontal tab widths while allowing scroll.
+
+- reorderable:
+
+  Logical. Enable desktop drag-and-drop and Alt+Shift+arrow reordering.
+  The order of all tab values is available as
+  `input[[paste0(id, "-tab_order")]]`. Hidden and disabled tabs cannot
+  be dragged; their relative order is retained. Menu overflow has no
+  drag UI.
 
 ## Value
 

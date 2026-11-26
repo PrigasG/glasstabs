@@ -16,9 +16,10 @@ runGlassExample(example = NULL, ...)
 
   Name of the example to run, such as `"basic"`, `"bs4dash"`, `"bslib"`,
   `"connect-workflow"`, `"dashboard"`, `"indicators"`, `"light-mode"`,
-  `"native-comparison"`, `"server-select"`, `"smoke-test"`,
-  `"square-corners"`, `"stress-test"`, or `"theme-switcher"`. When
-  `NULL` (default), lists all available examples.
+  `"modernization"`, `"native-comparison"`, `"server-select"`,
+  `"smoke-test"`, `"square-corners"`, `"stress-test"`, or
+  `"theme-switcher"`. When `NULL` (default), lists all available
+  examples.
 
 - ...:
 
@@ -42,6 +43,7 @@ runGlassExample()
 #>   - dashboard
 #>   - indicators
 #>   - light-mode
+#>   - modernization
 #>   - native-comparison
 #>   - server-select
 #>   - smoke-test

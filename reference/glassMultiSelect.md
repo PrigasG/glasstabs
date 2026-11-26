@@ -39,7 +39,9 @@ glassMultiSelect(
   fill_colors = c("single", "multi"),
   label_size = "14px",
   search_focus_ring = FALSE,
-  overflow_tooltip = c("auto", "never")
+  overflow_tooltip = c("auto", "never"),
+  glass_strength = 1,
+  size = c("md", "sm", "lg")
 )
 ```
 
@@ -180,7 +182,9 @@ glassMultiSelect(
 - dropdown_max_height:
 
   Maximum height of the scrolling option area as a CSS unit, such as
-  `"18rem"` or `"320px"`. The default is `"260px"`.
+  `"18rem"` or `"320px"`. The default is `"260px"`. The open panel
+  further limits this height to the available viewport space and shows
+  "Scroll for more" while additional choices remain below.
 
 - no_matches_text:
 
@@ -222,6 +226,16 @@ glassMultiSelect(
   currently under the pointer; `"never"` disables it. The multi-value
   trigger keeps its complete accessible label without showing a combined
   visual tooltip for every selection.
+
+- glass_strength:
+
+  Decorative glass intensity between 0 and 1. The default retains the
+  original appearance; lower values soften blur, reflections and shadows
+  without reducing text or focus contrast.
+
+- size:
+
+  Field density: `"md"` (original), `"sm"`, or `"lg"`.
 
 ## Value
 
