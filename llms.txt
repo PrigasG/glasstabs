@@ -365,9 +365,12 @@ also accepts `trigger_bg` and `dropdown_bg` for separate surfaces.
 Explicit surface colors remain fixed across mode changes, so choose
 colors with appropriate contrast.
 
-Run `runGlassExample("modernization")` to compare layouts and glass
-settings, inspect actual input values and reproduce host-menu layering
-cases.
+Run `runGlassExample("modernization")` to use glass controls for tab
+style, theme, indicator, motion, alignment, spacing, overflow,
+one/six-tab layouts, reordering, and lifecycle operations. It also shows
+select sizing, long-list scrolling, actual input values, and host-menu
+layering. Native Shiny inputs appear only in its labeled side-by-side
+comparison.
 
 ``` r
 
