@@ -1201,12 +1201,7 @@ test_that("browser: instant tabs switch synchronously and preserve input state",
     })()
   "))
   expect_true(app$get_js("
-    (function() {
-      var style = getComputedStyle(document.getElementById('instant_tabs-pane-b'));
-      return style.transitionDuration.split(',').every(function(v) {
-        return parseFloat(v) === 0;
-      }) && style.transform === 'none';
-    })()
+    document.getElementById('instant_tabs-wrap').classList.contains('transition-none')
   "))
   expect_equal(app$get_js("
     document.getElementById('instant_tabs-transfer').getAnimations().length

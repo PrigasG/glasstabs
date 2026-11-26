@@ -98,3 +98,54 @@ test_that("browser: modernization preserves order, selection and pane inputs", {
     app$get_js("document.body.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true})); true")
   }
 })
+
+test_that("browser: modernization lab uses glass controls and exercises tab layouts", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  app_dir <- system.file("examples", "modernization", package = "glasstabs")
+  expect_true(nzchar(app_dir))
+  app <- shinytest2::AppDriver$new(app_dir, name = "modernization-lab",
+                                   height = 900, width = 1280)
+  on.exit(app$stop(), add = TRUE)
+  app$wait_for_idle()
+
+  expect_true(app$get_js("
+    document.querySelectorAll('.gt-lab-controls .gt-gs-wrap').length >= 20 &&
+      Array.from(document.querySelectorAll('.gt-lab-controls select, .gt-lab-controls input'))
+        .every(function(el) { return !!el.closest('.gt-gs-wrap'); }) &&
+      document.getElementById('native_county') !== null
+  "))
+  app$click(selector = "#nav_style-trigger")
+  app$click(selector = "#nav_style-dropdown [data-value=segmented]")
+  app$wait_for_js("document.getElementById('workspace-wrap').classList.contains('style-segmented')")
+
+  app$click(selector = "#tab_count-trigger")
+  app$click(selector = "#tab_count-dropdown [data-value=six]")
+  app$wait_for_js("document.querySelectorAll('#workspace-wrap > .gt-topbar .gt-tab-link').length === 6")
+  app$click(selector = "#transition-trigger")
+  app$click(selector = "#transition-dropdown [data-value=slide]")
+  app$wait_for_js("document.getElementById('workspace-wrap').classList.contains('transition-slide')")
+
+  app$click(selector = "#tab_align-trigger")
+  app$click(selector = "#tab_align-dropdown [data-value=right]")
+  app$wait_for_js("document.getElementById('workspace-wrap').classList.contains('gt-align-right')")
+  app$click(selector = "#content_padding-trigger")
+  app$click(selector = "#content_padding-dropdown [data-value='24px']")
+  app$wait_for_js("document.getElementById('workspace-wrap').style.getPropertyValue('--gt-content-padding').trim() === '24px'")
+  app$click(selector = "#fill-trigger")
+  app$click(selector = "#fill-dropdown [data-value=on]")
+  app$wait_for_js("document.getElementById('workspace-wrap').classList.contains('gt-fill')")
+  app$click(selector = "#orientation-trigger")
+  app$click(selector = "#orientation-dropdown [data-value=vertical]")
+  app$wait_for_js("document.getElementById('workspace-wrap').classList.contains('gt-vertical')")
+  expect_true(app$get_js("
+    document.getElementById('single_demo-wrap').classList.contains('gt-single-tab') &&
+      getComputedStyle(document.querySelector('#single_demo-wrap > .gt-topbar')).display === 'none'
+  "))
+
+  app$set_inputs(badge = "click")
+  app$wait_for_js("document.getElementById('workspace-tab-data').textContent.includes('1')")
+  app$click(selector = "#snapshot")
+  app$wait_for_js("Shiny.shinyapp.$inputValues.browser_report !== undefined")
+  expect_length(app$get_value(input = "browser_report")$errors, 0L)
+})

@@ -25,7 +25,9 @@
   ordinary close retains its retract animation.
 * Refresh open portaled panel theme variables on live mode changes. Scope the
   box-sizing reset to widget areas rather than the entire application.
-* Add a modernization example and focused unit/browser regression coverage.
+* Expand the modernization lab with glass configuration controls, one/three/six
+  tab layouts, lifecycle actions and a labeled native Shiny comparison.
+  Add focused unit/browser regression coverage.
 
 # glasstabs 0.4.1
 
