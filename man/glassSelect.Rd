@@ -31,7 +31,10 @@ glassSelect(
   search_focus_ring = FALSE,
   overflow_tooltip = c("auto", "never"),
   search_threshold = 15L,
-  dark_selector = NULL
+  dark_selector = NULL,
+  glass_strength = 1,
+  size = c("md", "sm", "lg"),
+  dropdown_max_height = NULL
 )
 }
 \arguments{
@@ -131,6 +134,17 @@ shows the search field. Default \code{15}.}
 \code{"body.dark-mode"} for bs4Dash). When provided, emits an extra
 scoped \code{<style>} block that
 reverts colors to the dark-mode defaults whenever that selector is active.}
+
+\item{glass_strength}{Decorative glass intensity between 0 and 1. The
+default retains the original appearance; lower values soften blur,
+reflections and shadows without reducing text or focus contrast.}
+
+\item{size}{Field density: \code{"md"} (original), \code{"sm"}, or \code{"lg"}.}
+
+\item{dropdown_max_height}{Optional CSS length for the scrollable option
+list. \code{NULL} keeps the original default of 260px. The open panel
+further limits this height to the available viewport space, and shows
+"Scroll for more" while additional choices remain below.}
 }
 \value{
 An \code{htmltools::tagList} containing the single-select trigger,

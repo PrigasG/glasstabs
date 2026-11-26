@@ -1,4 +1,15 @@
-*,*::before,*::after{box-sizing:border-box;}
+:where(.gt-container,.gt-wrap-shell,.gt-gs-field,.gt-ms-field,
+       .gt-gs-dropdown,.gt-ms-dropdown,.gt-overflow-tooltip),
+:where(.gt-container,.gt-wrap-shell,.gt-gs-field,.gt-ms-field,
+       .gt-gs-dropdown,.gt-ms-dropdown,.gt-overflow-tooltip) *,
+:where(.gt-container,.gt-wrap-shell,.gt-gs-field,.gt-ms-field,
+       .gt-gs-dropdown,.gt-ms-dropdown,.gt-overflow-tooltip)::before,
+:where(.gt-container,.gt-wrap-shell,.gt-gs-field,.gt-ms-field,
+       .gt-gs-dropdown,.gt-ms-dropdown,.gt-overflow-tooltip)::after,
+:where(.gt-container,.gt-wrap-shell,.gt-gs-field,.gt-ms-field,
+       .gt-gs-dropdown,.gt-ms-dropdown,.gt-overflow-tooltip) *::before,
+:where(.gt-container,.gt-wrap-shell,.gt-gs-field,.gt-ms-field,
+       .gt-gs-dropdown,.gt-ms-dropdown,.gt-overflow-tooltip) *::after{box-sizing:border-box;}
 
 /* Container */
 /* No max-width or centering - behaves like a regular block inside Shiny layouts */
@@ -130,7 +141,13 @@
   transition:opacity 240ms cubic-bezier(.2,.9,.25,1),transform 240ms cubic-bezier(.2,.9,.25,1);
   pointer-events:none;
 }
-.gt-tab-pane.active{opacity:1;transform:translateY(0) scale(1);position:relative;pointer-events:auto;}
+.gt-tab-pane.active{opacity:1;transform:none;position:relative;pointer-events:auto;}
+
+/* Instant navigation is scoped so nested animated tabs keep their own behavior. */
+.transition-none > .gt-tab-wrap > .gt-tab-pane{transition:none;transform:none;}
+.transition-none > .gt-topbar > .gt-tab-viewport > .gt-halo{transition:none;animation:none;}
+.transition-none > .gt-topbar > .gt-tab-viewport > .gt-transfer{display:none;}
+.transition-none > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link{transition:none;}
 
 /* Directional slide transition: panes travel horizontally following tab
    order. JS sets .gt-slide-fwd/.gt-slide-back on the widget root and
@@ -138,7 +155,7 @@
    of sliding back. */
 .transition-slide.gt-slide-fwd .gt-tab-pane:not(.active){transform:translateX(34px) scale(.995);}
 .transition-slide.gt-slide-back .gt-tab-pane:not(.active){transform:translateX(-34px) scale(.995);}
-.transition-slide .gt-tab-pane.active{transform:translateX(0) scale(1);}
+.transition-slide .gt-tab-pane.active{transform:none;}
 .transition-slide.gt-slide-fwd .gt-tab-pane.gt-pane-exit{transform:translateX(-34px) scale(.995);}
 .transition-slide.gt-slide-back .gt-tab-pane.gt-pane-exit{transform:translateX(34px) scale(.995);}
 /* RTL mirrors the travel direction. */
@@ -174,7 +191,7 @@
 .gt-ms-wrap,
 .gt-gs-wrap{
   position:relative;
-  z-index:100;
+  z-index:auto;
   width:160px;
   max-width:100%;
 }
@@ -492,12 +509,6 @@
   margin:0;
 }
 .gt-input-label.gt-label-regular{font-weight:400;}
-
-.gt-gs-wrap{
-  position:relative;
-  z-index:100;
-}
-
 
 /* Trigger button */
 .gt-gs-trigger{
@@ -940,7 +951,7 @@
  */
 .gt-gs-options-scroll,
 .gt-ms-options-scroll{
-  max-height:var(--ms-dropdown-max-height,260px);
+  max-height:min(var(--ms-dropdown-max-height,260px),var(--gt-available-options-height,100vh));
   overflow-y:auto;
   overflow-x:hidden;
   overscroll-behavior:contain;
@@ -950,6 +961,21 @@
   /* Smooth momentum on iOS */
   -webkit-overflow-scrolling:touch;
 }
+
+.gt-scroll-cue{
+  position:absolute;
+  left:12px;
+  right:12px;
+  padding:9px 8px 4px;
+  text-align:center;
+  font-size:11px;
+  font-weight:600;
+  color:var(--ms-text);
+  background:linear-gradient(transparent,var(--ms-bg) 35%);
+  pointer-events:none;
+  z-index:1;
+}
+.gt-scroll-cue.hidden{display:none;}
 
 /* Subtle scrollbar styling for dark theme */
 .gt-gs-options-scroll::-webkit-scrollbar,
@@ -1259,7 +1285,7 @@
    share one border, reading as a single unified card instead of two floating
    pieces. The topbar becomes the tab tray; the content box loses its top
    border and top corners. */
-.style-attached .gt-topbar{
+.style-attached > .gt-topbar{
   margin-bottom:0;
   background:var(--gt-content-bg,transparent);
   border:1px solid var(--gt-content-border,transparent);
@@ -1267,7 +1293,7 @@
   border-radius:14px 14px 0 0;
   padding:10px 14px 0;
 }
-.style-attached .gt-tab-wrap{
+.style-attached > .gt-tab-wrap{
   border-top:none;
   border-radius:0 0 14px 14px;
 }
@@ -1514,4 +1540,126 @@
   .gt-tab-pane{transform:none;}
   .transition-slide .gt-tab-pane{transform:none !important;}
   .gt-arrival-pulse,.gt-tab-badge.gt-badge-updated{animation:none !important;}
+}
+
+/* Modern navigation and configurable glass surfaces. Direct-child selectors
+   keep independently configured nested tab widgets from inheriting layout. */
+.style-segmented > .gt-topbar > .gt-tab-viewport{
+  background:var(--gt-content-bg,transparent);
+  border:1px solid var(--gt-content-border,transparent);
+  border-radius:12px;padding:3px;
+}
+.style-segmented > .gt-topbar > .gt-tab-viewport > .gt-navbar{gap:3px;}
+.style-segmented > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link{
+  padding:8px 15px;border-radius:9px;background:transparent;
+}
+.style-segmented > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link.active{box-shadow:none;}
+.style-segmented.shape-square > .gt-topbar > .gt-tab-viewport,
+.style-segmented.shape-square > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link{border-radius:4px;}
+.style-attached.indicator-underline > .gt-topbar{
+  border-bottom:1px solid var(--gt-content-border,transparent);
+}
+.style-attached.indicator-underline > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link{
+  border-radius:6px 6px 0 0;padding-bottom:12px;
+}
+.style-attached.indicator-underline.gt-vertical > .gt-topbar{
+  border-bottom:0;border-inline-end:1px solid var(--gt-content-border,transparent);
+}
+@media(max-width:760px){
+  .style-attached.indicator-underline.gt-vertical > .gt-topbar{
+    border-inline-end:1px solid var(--gt-content-border,transparent);
+    border-bottom:1px solid var(--gt-content-border,transparent);
+  }
+}
+.gt-custom-gap > .gt-topbar > .gt-tab-viewport > .gt-navbar{gap:var(--gt-tab-gap);}
+.gt-custom-tab-padding > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link{padding:var(--gt-tab-padding);}
+.gt-custom-nav-padding > .gt-topbar{padding:var(--gt-nav-padding);}
+.gt-custom-content-padding > .gt-tab-wrap{padding:0;}
+.gt-custom-content-padding > .gt-tab-wrap > .gt-tab-pane{padding:var(--gt-content-padding);}
+.gt-equal-width:not(.gt-vertical) > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link{
+  flex:1 0 0;min-width:max-content;
+}
+.gt-hide-single.gt-single-tab > .gt-topbar > .gt-tab-viewport,
+.gt-hide-single.gt-single-tab > .gt-topbar > .gt-tab-menu-select,
+.gt-hide-single.gt-single-tab.gt-no-extra > .gt-topbar{display:none;}
+.gt-hide-single.gt-single-tab.gt-no-extra.style-attached > .gt-tab-wrap{
+  border:1px solid var(--gt-content-border,transparent);border-radius:14px;
+}
+.gt-hide-single.gt-single-tab.gt-no-extra.shape-square > .gt-tab-wrap{border-radius:4px;}
+.transition-none:not(.gt-fill) > .gt-tab-wrap{overflow:visible;z-index:auto;}
+.transition-none > .gt-tab-wrap > .gt-tab-pane{transform:none;transition:none;}
+.gt-fill{display:flex;flex-direction:column;align-items:stretch;height:100%;min-height:0;}
+.gt-fill > .gt-topbar{flex:0 0 auto;}
+.gt-fill > .gt-tab-wrap{flex:1 1 0;min-height:0;min-width:0;overflow:hidden;display:flex;flex-direction:column;}
+.gt-fill > .gt-tab-wrap > .gt-tab-pane.active{flex:1 1 0;min-height:0;min-width:0;overflow:auto;}
+.gt-fill.gt-vertical{flex-direction:row;}
+@media(max-width:760px){.gt-fill.gt-vertical{flex-direction:column;}}
+.gt-reorderable > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link[draggable="true"]{cursor:grab;}
+.gt-reorderable > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link.gt-dragging{opacity:.55;cursor:grabbing;}
+
+/* Density is independent of theme, shape, label and choice semantics. */
+.gt-size-sm > :is(.gt-gs-trigger,.gt-ms-trigger){padding:5px 9px;min-height:30px;font-size:12px;gap:6px;}
+.gt-size-lg > :is(.gt-gs-trigger,.gt-ms-trigger){padding:11px 16px;min-height:44px;font-size:15px;gap:10px;}
+/* Custom colors work for both closed triggers and body-portaled panels.
+   CSS variable fallbacks preserve all legacy styles when no override is set. */
+.gt-custom-trigger > :is(.gt-gs-trigger,.gt-ms-trigger),
+.gt-custom-trigger.theme-light > :is(.gt-gs-trigger,.gt-ms-trigger),
+.gt-custom-trigger > :is(.gt-gs-trigger,.gt-ms-trigger):is(:hover,.open),
+.gt-custom-trigger.theme-light > :is(.gt-gs-trigger,.gt-ms-trigger):is(:hover,.open){background:var(--gt-trigger-bg);}
+.gt-custom-panel:is(.gt-gs-dropdown,.gt-ms-dropdown){background:var(--gt-panel-bg);}
+.gt-custom-panel > :is(.gt-gs-dropdown,.gt-ms-dropdown){background:var(--gt-panel-bg);}
+
+/* Reduce decorative layers without applying opacity to labels or controls. */
+.gt-refined-glass > :is(.gt-gs-trigger,.gt-ms-trigger),
+.gt-refined-glass.theme-light > :is(.gt-gs-trigger,.gt-ms-trigger){
+  backdrop-filter:blur(calc(6px * var(--gt-glass-strength)));
+  -webkit-backdrop-filter:blur(calc(6px * var(--gt-glass-strength)));
+  box-shadow:none;
+}
+.gt-refined-glass > :is(.gt-gs-trigger,.gt-ms-trigger):hover,
+.gt-refined-glass.theme-light > :is(.gt-gs-trigger,.gt-ms-trigger):hover{
+  box-shadow:0 2px 8px rgba(0,0,0,calc(.12 * var(--gt-glass-strength)));
+}
+.gt-refined-glass > :is(.gt-gs-trigger,.gt-ms-trigger).open,
+.gt-refined-glass.theme-light > :is(.gt-gs-trigger,.gt-ms-trigger).open{
+  box-shadow:0 0 0 1px var(--ms-ac-18),0 2px 8px rgba(0,0,0,calc(.12 * var(--gt-glass-strength)));
+}
+.gt-refined-glass:is(.gt-gs-dropdown,.gt-ms-dropdown){
+  backdrop-filter:blur(calc(20px * var(--gt-glass-strength)));
+  -webkit-backdrop-filter:blur(calc(20px * var(--gt-glass-strength)));
+  box-shadow:0 4px calc(8px + 24px * var(--gt-glass-strength)) rgba(0,0,0,calc(.12 + .2 * var(--gt-glass-strength)));
+}
+.gt-refined-glass:not(.indicator-solid):not(.indicator-underline) > .gt-topbar > .gt-tab-viewport > .gt-halo{
+  backdrop-filter:blur(calc(10px * var(--gt-glass-strength)));
+  -webkit-backdrop-filter:blur(calc(10px * var(--gt-glass-strength)));
+  box-shadow:0 3px 12px rgba(0,0,0,calc(.22 * var(--gt-glass-strength)));
+  background:var(--gt-content-bg,transparent);
+  background:color-mix(in srgb,var(--gt-halo-bg) calc(100% * var(--gt-glass-strength)),var(--gt-content-bg,transparent));
+}
+.gt-refined-glass > .gt-topbar > .gt-tab-viewport > .gt-halo::before{opacity:calc(.65 * var(--gt-glass-strength));}
+.gt-refined-glass.theme-light > .gt-topbar > .gt-tab-viewport > .gt-halo::before{opacity:calc(.85 * var(--gt-glass-strength));}
+.gt-refined-glass.gt-ms-dropdown.style-filled .gt-ms-option.checked{
+  background:hsla(var(--opt-hue,210),72%,52%,calc(.04 + .08 * var(--gt-glass-strength)));
+}
+.gt-refined-glass.gt-ms-dropdown.fill-single.style-filled .gt-ms-option.checked{
+  background:var(--ms-tx-06);
+  background:color-mix(in srgb,var(--ms-ac-12) calc(100% * var(--gt-glass-strength)),var(--ms-tx-06));
+}
+.gt-refined-glass > .gt-topbar > .gt-tab-viewport > .gt-transfer{visibility:hidden;}
+.gt-refined-glass > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link.active{box-shadow:none;}
+.gt-refined-glass > .gt-tab-wrap{border-top-color:var(--gt-content-border,transparent);}
+@supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
+  .gt-refined-glass > :is(.gt-gs-trigger,.gt-ms-trigger){background:var(--gt-trigger-bg,#1c2a3a);}
+  .gt-refined-glass.theme-light > :is(.gt-gs-trigger,.gt-ms-trigger){background:var(--gt-trigger-bg,#fff);}
+  .gt-custom-panel:is(.gt-gs-dropdown,.gt-ms-dropdown){background:var(--gt-panel-bg);}
+}
+@media(prefers-reduced-motion:reduce){
+  .gt-reorderable > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link{animation:none!important;}
+}
+
+.gt-refined-glass.gt-no-glass > :is(.gt-gs-trigger,.gt-ms-trigger),
+.gt-refined-glass.gt-no-glass.theme-light > :is(.gt-gs-trigger,.gt-ms-trigger),
+.gt-refined-glass.gt-no-glass:is(.gt-gs-dropdown,.gt-ms-dropdown),
+.gt-refined-glass.gt-no-glass:not(.indicator-solid):not(.indicator-underline) > .gt-topbar > .gt-tab-viewport > .gt-halo{
+  backdrop-filter:none;-webkit-backdrop-filter:none;
 }

@@ -36,7 +36,9 @@ glassMultiSelect(
   fill_colors = c("single", "multi"),
   label_size = "14px",
   search_focus_ring = FALSE,
-  overflow_tooltip = c("auto", "never")
+  overflow_tooltip = c("auto", "never"),
+  glass_strength = 1,
+  size = c("md", "sm", "lg")
 )
 }
 \arguments{
@@ -125,7 +127,9 @@ trigger: \code{"auto"} (the existing behavior), \code{"count"},
 
 \item{dropdown_max_height}{Maximum height of the scrolling option area as a
 CSS unit, such as \code{"18rem"} or \code{"320px"}. The default is
-\code{"260px"}.}
+\code{"260px"}. The open panel further limits this height to the
+available viewport space and shows "Scroll for more" while additional
+choices remain below.}
 
 \item{no_matches_text}{Text shown when a search matches no choices.
 Default \code{"No matches"}.}
@@ -155,6 +159,12 @@ open dropdown. \code{"auto"} (default) shows one tooltip for the truncated
 option currently under the pointer; \code{"never"} disables it. The
 multi-value trigger keeps its complete accessible label without showing a
 combined visual tooltip for every selection.}
+
+\item{glass_strength}{Decorative glass intensity between 0 and 1. The
+default retains the original appearance; lower values soften blur,
+reflections and shadows without reducing text or focus contrast.}
+
+\item{size}{Field density: \code{"md"} (original), \code{"sm"}, or \code{"lg"}.}
 }
 \value{
 An \code{htmltools::tagList} containing the trigger button, dropdown

@@ -296,12 +296,42 @@ ui <- fluidPage(
         tab_align = "center"
       )
     ),
+    glassTabsUI(
+      "instant_tabs",
+      glassTabPanel("a", "Instant A", textInput("instant_text", "Text", "initial")),
+      glassTabPanel("b", "Instant B", p("Instant B pane")),
+      transition = "none"
+    ),
+    glassTabsUI(
+      "modern_tabs",
+      glassTabPanel("a", "A", textInput("modern_text", "Retain", "initial")),
+      glassTabPanel("b", "Longer B", p("B")),
+      glassTabPanel("c", "C", p("C")),
+      style = "segmented", indicator = "solid", transition = "none",
+      reorderable = TRUE, equal_width = TRUE, glass_strength = 0.25,
+      tab_gap = "4px", tab_padding = "8px 12px"
+    ),
+    glassTabsUI("one_tab", glassTabPanel("a", "Only", p("Visible")), hide_single = TRUE),
+    actionButton("modern_append", "Append modern tab"),
+    glassSelect("modern_small", choices, theme = "auto", size = "sm", glass_strength = 0,
+                dropdown_max_height = "180px"),
+    glassMultiSelect("modern_large", choices, size = "lg", glass_strength = 0.25,
+                     theme = glass_select_theme(mode = "light", trigger_bg = "#f8fafc", dropdown_bg = "#ffffff")),
+    glassSelect("modern_custom_selector", choices, theme = "light",
+                dark_selector = "[data-review-dark=true]"),
+    glassSelect("scroll_single", stats::setNames(as.character(seq_len(30)),
+                paste("County", seq_len(30))), dropdown_max_height = "150px"),
+    glassMultiSelect("scroll_multi", stats::setNames(as.character(seq_len(30)),
+                     paste("County", seq_len(30))), dropdown_max_height = "150px"),
     actionButton("append_tab", "Append tab"),
     actionButton("show_test_modal", "Show test modal")
   )
 )
 
 server <- function(input, output, session) {
+  observeEvent(input$modern_append, {
+    appendGlassTab(session, "modern_tabs", glassTabPanel("d", "D", p("D")))
+  }, once = TRUE)
   session$onFlushed(function() {
     disableGlassTab(session, "mobile_tabs", "activity")
   }, once = TRUE)

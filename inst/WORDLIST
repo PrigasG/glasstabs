@@ -67,6 +67,7 @@ namespacing
 offcanvas
 pkgdown
 placeable
+portaled
 pre
 px
 reactively
@@ -76,6 +77,7 @@ reinitialises
 renderGlassTabs
 renderUI
 renderer
+reorderable
 reselects
 retriggering
 roxygen
@@ -95,6 +97,7 @@ themeable
 theming
 toggleable
 transactional
+transactionally
 tri
 ungrouped
 unselected

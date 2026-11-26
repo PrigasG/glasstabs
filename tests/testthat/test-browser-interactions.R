@@ -10,6 +10,60 @@ local_browser_pkg_root <- function() {
   }, testthat::teardown_env())
 }
 
+test_that("browser: closed select fields respect host application layers", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-closed-select-layering",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+  app$wait_for_idle()
+
+  for (id in c("fruit", "cats")) {
+    app$get_js(sprintf("document.getElementById('%s-trigger').scrollIntoView({block:'center'}); true", id))
+    expect_true(app$get_js(sprintf("
+      (function() {
+        var wrap = document.getElementById('%s-wrap');
+        var trigger = document.getElementById('%s-trigger');
+        var parent = wrap.parentElement;
+        var originalPosition = parent.style.position;
+        var probe = document.createElement('button');
+        probe.style.cssText = 'position:absolute;inset:0;z-index:20;background:white;';
+        parent.style.position = 'relative';
+        parent.appendChild(probe);
+        try {
+          var r = trigger.getBoundingClientRect();
+          return getComputedStyle(wrap).zIndex === 'auto' &&
+            document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2) === probe;
+        } finally {
+          probe.remove();
+          parent.style.position = originalPosition;
+        }
+      })()
+    ", id, id)), info = id)
+
+    app$click(selector = paste0("#", id, "-trigger"))
+    app$wait_for_js(sprintf("document.getElementById('%s-dropdown').classList.contains('open')", id))
+    expect_true(app$get_js(sprintf("
+      document.getElementById('%s-dropdown').parentElement === document.body &&
+      getComputedStyle(document.getElementById('%s-wrap')).zIndex === '1000'
+    ", id, id)))
+    app$get_js("document.body.dispatchEvent(new PointerEvent('pointerdown', {bubbles:true})); true")
+    app$wait_for_js(sprintf("
+      document.getElementById('%s-dropdown').parentElement === document.getElementById('%s-wrap')
+    ", id, id))
+    expect_true(app$get_js(sprintf("
+      getComputedStyle(document.getElementById('%s-wrap')).zIndex === 'auto' &&
+      getComputedStyle(document.getElementById('%s-dropdown')).pointerEvents === 'none'
+    ", id, id)))
+  }
+})
+
 test_that("browser: glassSelect opens and clicking an option updates input", {
   skip_on_covr()
   skip_if_not_installed("shinytest2")
@@ -1122,6 +1176,43 @@ test_that("browser: tabs keep focus, scroll, menu state, and dynamic tabs in syn
   expect_equal(app$get_value(input = "special_tabs-active_tab"), 'team"review')
 })
 
+test_that("browser: instant tabs switch synchronously and preserve input state", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-instant-tabs",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+  app$wait_for_idle()
+  app$set_inputs(instant_text = "retained")
+  expect_true(app$get_js("
+    (function() {
+      var a = document.getElementById('instant_tabs-pane-a');
+      var b = document.getElementById('instant_tabs-pane-b');
+      document.getElementById('instant_tabs-tab-b').click();
+      return !a.classList.contains('active') && a.hasAttribute('inert') &&
+        b.classList.contains('active') && !b.hasAttribute('inert') &&
+        getComputedStyle(b).transitionDuration === '0s' &&
+        getComputedStyle(b).transform === 'none' &&
+        document.getElementById('instant_tabs-transfer').getAnimations().length === 0;
+    })()
+  "))
+  app$wait_for_idle()
+  expect_equal(app$get_value(input = "instant_tabs-active_tab"), "b")
+  expect_true(app$get_js("
+    document.getElementById('instant_tabs-tab-a').click();
+    document.getElementById('instant_tabs-pane-a').classList.contains('active') &&
+      document.getElementById('instant_text').value === 'retained'
+  "))
+  app$wait_for_idle()
+  expect_equal(app$get_value(input = "instant_tabs-active_tab"), "a")
+})
+
 test_that("browser: rapid tab changes settle on one honest state", {
   skip_on_covr()
   skip_if_not_installed("shinytest2")
@@ -1280,7 +1371,9 @@ test_that("browser: vertical halo respects motion settings and stays aligned", {
       var navbar = document.querySelector('#vertical_tabs-navbar').getBoundingClientRect();
       var first = document.querySelector('#vertical_tabs-tab-first');
       return Math.abs(viewport.right - navbar.right) < 1 &&
-        getComputedStyle(first).justifyContent === 'flex-start';
+        ['flex-start', 'flow-start', 'start'].includes(
+          getComputedStyle(first).justifyContent
+        );
     })()
   "))
 
@@ -1351,7 +1444,9 @@ test_that("browser: horizontal tab alignment moves the whole tab group", {
     (function() {
       var first = document.querySelector('#right_tabs-tab-one');
       var second = document.querySelector('#right_tabs-tab-two');
-      return getComputedStyle(first).justifyContent === 'flex-start' &&
+      return ['flex-start', 'flow-start', 'start'].includes(
+          getComputedStyle(first).justifyContent
+        ) &&
         Math.abs(first.getBoundingClientRect().width - second.getBoundingClientRect().width) < 1;
     })()
   "))
@@ -2453,6 +2548,12 @@ test_that("browser: stuck server search status clears on its own", {
       return status === null || status.textContent !== 'Searching...';
     })()
   ", timeout = 20000)
+  expect_true(app$get_js("
+    (function() {
+      var status = document.querySelector('#server_hung-dropdown .gt-select-status');
+      return status === null || status.textContent !== 'Searching...';
+    })()
+  "))
 })
 
 test_that("browser: stale server response is dropped and the latest guard survives", {

@@ -22,6 +22,22 @@ fruits <- c(Apple = "apple",
             Peach = "peach")
 ```
 
+## Refined filters
+
+Use `glass_strength = 0.25` and `size = "sm"` for dense layouts.
+The original field density is `"md"`; use `"lg"` for a larger trigger.
+Glass intensity changes decorative blur and tint but does not change choice
+values, checked-marker meaning or keyboard focus behavior.
+
+```{r refined-filter}
+glassMultiSelect("fruit", fruits, theme = "auto", size = "sm",
+                 glass_strength = 0.25, dropdown_max_height = "180px")
+```
+
+Independent trigger and dropdown colors can be supplied through
+`glass_select_theme()`. Explicit colors stay fixed during mode changes.
+See `runGlassExample("modernization")` for interactive layout tests.
+
 ## Why multi-select is the centerpiece
 
 Most Shiny dashboards are, at heart, a filter problem: pick a set of
@@ -224,6 +240,10 @@ is the empty-result message, and `dropdown_max_height` (default
 `"260px"`) caps the scrolling option area. `search_focus_ring = TRUE`
 opts into an accent outline when the search field is focused; the
 default `FALSE` uses a quieter background and border change.
+
+The open panel also respects the available viewport space. **Scroll for more**
+appears only while more choices are below the visible list and disappears
+when you reach the end or filter down to a short result set.
 
 ## Long labels, wrapping, and tooltips
 

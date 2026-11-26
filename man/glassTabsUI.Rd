@@ -11,8 +11,8 @@ glassTabsUI(
   wrap = TRUE,
   compact = FALSE,
   content_min_height = NULL,
-  style = c("floating", "attached"),
-  transition = c("fade", "slide"),
+  style = c("floating", "attached", "segmented"),
+  transition = c("fade", "slide", "none"),
   shape = c("rounded", "square"),
   indicator = c("glass", "solid", "underline"),
   orientation = c("horizontal", "vertical"),
@@ -22,7 +22,16 @@ glassTabsUI(
   swipe = FALSE,
   extra_ui = NULL,
   theme = NULL,
-  dark_selector = NULL
+  dark_selector = NULL,
+  glass_strength = 1,
+  tab_gap = NULL,
+  tab_padding = NULL,
+  nav_padding = NULL,
+  content_padding = NULL,
+  fill = FALSE,
+  hide_single = FALSE,
+  equal_width = FALSE,
+  reorderable = FALSE
 )
 }
 \arguments{
@@ -47,11 +56,13 @@ no inline height is set: the default is \verb{120px}, or \verb{60px} when
 \item{style}{Visual relationship between the tab bar and the content box.
 \code{"floating"} (default) renders them as two separate floating pieces.
 \code{"attached"} docks the tab bar directly onto the content box: they share
-one border and read as a single unified card.}
+one border and read as a single unified card.
+\code{"segmented"} places the tabs in a compact navigation tray.}
 
 \item{transition}{How panes animate when switching tabs. \code{"fade"}
 (default) fades and rises the incoming pane. \code{"slide"} slides panes
-horizontally in the direction of travel, following tab order.}
+horizontally in the direction of travel, following tab order. \code{"none"}
+activates the destination immediately without a pane or halo transition.}
 
 \item{shape}{Corner style for the tab bar and content. One of \code{"rounded"}
 (default) for the signature glass look, or \code{"square"} for crisp,
@@ -111,6 +122,27 @@ for Bootstrap 5). When provided and \code{theme = "light"}, a second scoped
 \verb{<style>} block overrides the CSS variables back to the dark-mode defaults
 whenever that selector is active - so the tabs stay readable after a
 dark-mode toggle without any server-side intervention.}
+
+\item{glass_strength}{Decorative glass intensity from 0 (minimal) to 1
+(original appearance). Text and focus indicators are unaffected.}
+
+\item{tab_gap}{Optional CSS length between tabs.}
+
+\item{tab_padding, nav_padding, content_padding}{Optional CSS padding lengths
+(one to four space-separated values). Defaults preserve existing spacing.}
+
+\item{fill}{Logical. Fill a parent with a definite height; the active pane
+scrolls when needed. Does not create a height on its own.}
+
+\item{hide_single}{Logical. Hide navigation for one or zero visible tabs;
+any supplied extra UI remains available.}
+
+\item{equal_width}{Logical. Match horizontal tab widths while allowing scroll.}
+
+\item{reorderable}{Logical. Enable desktop drag-and-drop and Alt+Shift+arrow
+reordering. The order of all tab values is available as
+\code{input[[paste0(id, "-tab_order")]]}. Hidden and disabled tabs cannot be
+dragged; their relative order is retained. Menu overflow has no drag UI.}
 }
 \value{
 An \code{htmltools::tagList} ready to use in a Shiny UI.

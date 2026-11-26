@@ -23,6 +23,10 @@
 #' @param server Logical. If \code{TRUE}, render only an initial slice of
 #'   choices and use [glassSelectServer()] to search the full choice set from
 #'   the Shiny server. Default \code{FALSE}.
+#' @param dropdown_max_height Optional CSS length for the scrollable option
+#'   list. \code{NULL} keeps the original default of 260px. The open panel
+#'   further limits this height to the available viewport space, and shows
+#'   "Scroll for more" while additional choices remain below.
 #' @param overflow_tooltip Tooltip behavior for trigger text that is visually
 #'   truncated with an ellipsis. \code{"auto"} (default) shows the complete
 #'   text on pointer hover or keyboard focus only when truncation is detected;
@@ -88,8 +92,16 @@ glassSelect <- function(
     search_focus_ring = FALSE,
     overflow_tooltip = c("auto", "never"),
     search_threshold = 15L,
-    dark_selector = NULL
+    dark_selector = NULL,
+    glass_strength = 1,
+    size = c("md", "sm", "lg"),
+    dropdown_max_height = NULL
 ) {
+  glass_strength <- .gt_glass_strength(glass_strength)
+  size <- .gt_match_arg(size, c("md", "sm", "lg"), "size")
+  if (!is.null(dropdown_max_height)) {
+    dropdown_max_height <- .gt_css_unit(dropdown_max_height, "dropdown_max_height")
+  }
   .gt_check_string(
     inputId,
     "inputId",
@@ -205,6 +217,7 @@ glassSelect <- function(
     "[ ]+", " ",
     paste(
       "gt-gs-wrap",
+      .gt_select_classes(glass_strength, size, theme),
       paste0("style-", check_style),
       if (search_focus_ring) "gt-search-ring" else NULL,
       if (!tongue) "gt-no-tongue" else NULL,
@@ -312,7 +325,11 @@ glassSelect <- function(
       shiny::div(
         class = wrap_cls,
         id = scope_id,
-        style = inner_width_style,
+        style = .gt_css_join(inner_width_style, .gt_select_properties(
+          theme, glass_strength, dropdown_max_height
+        )),
+        `data-gt-dark-selector` = if (.is_light_theme(theme) && !is_auto) dark_selector else
+          if (is_auto && !identical(dark_selector, '[data-bs-theme="dark"]')) dark_selector,
         `data-input-id` = inputId,
         `data-placeholder` = placeholder,
         `data-no-matches-text` = no_matches_text,

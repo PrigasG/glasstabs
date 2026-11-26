@@ -4,6 +4,15 @@ test_that("glassTabPanel() returns correct class", {
   expect_s3_class(glassTabPanel("a", "Tab A"), "glassTabPanel")
 })
 
+test_that("glassTabsUI() supports opt-in instant navigation", {
+  panel <- glassTabPanel("a", "A")
+  expect_match(as.character(glassTabsUI("nav", panel, transition = "none")),
+               "transition-none", fixed = TRUE)
+  expect_false(grepl("transition-none", as.character(glassTabsUI("nav", panel)), fixed = TRUE))
+  expect_error(glassTabsUI("nav", panel, transition = "invalid"),
+               class = "glasstabs_error_bad_argument")
+})
+
 test_that("glassTabPanel() stores value and label", {
   p <- glassTabPanel("my_tab", "My Label")
   expect_equal(p$value, "my_tab")
@@ -639,8 +648,8 @@ test_that("stylesheet and JS wire attached style and directional slide", {
     collapse = "\n"
   )
 
-  expect_true(grepl(".style-attached .gt-topbar", css, fixed = TRUE))
-  expect_true(grepl(".style-attached .gt-tab-wrap", css, fixed = TRUE))
+  expect_true(grepl(".style-attached > .gt-topbar", css, fixed = TRUE))
+  expect_true(grepl(".style-attached > .gt-tab-wrap", css, fixed = TRUE))
   expect_true(grepl(".transition-slide.gt-slide-fwd", css, fixed = TRUE))
   expect_true(grepl(".gt-pane-exit", css, fixed = TRUE))
   # JS records travel direction and marks the outgoing pane

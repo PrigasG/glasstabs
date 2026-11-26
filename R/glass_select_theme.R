@@ -13,6 +13,9 @@
 #' @param focus_ring Keyboard focus indicator color. Choose a color with at
 #'   least 3:1 contrast against the trigger and dropdown surfaces.
 #' @param label_color  Widget label color. Defaults to `text_color` when `NULL`.
+#' @param trigger_bg,dropdown_bg Optional explicit trigger and panel colors.
+#'   These override the corresponding surface, including during dark mode.
+#'   When unset, the existing theme surface behavior is unchanged.
 #'
 #' @return A named list of class `"glass_select_theme"` for passing to the
 #'   `theme` argument of [glassMultiSelect()] or [glassSelect()].
@@ -53,11 +56,17 @@ glass_select_theme <- function(
     text_color = NULL,
     accent_color = NULL,
     focus_ring = NULL,
-    label_color = NULL
+    label_color = NULL,
+    trigger_bg = NULL,
+    dropdown_bg = NULL
 ) {
   mode <- .gt_match_arg(mode, c("dark", "light"), "mode")
+  for (name in c("trigger_bg", "dropdown_bg")) {
+    value <- if (name == "trigger_bg") trigger_bg else dropdown_bg
+    if (!is.null(value)) .gt_check_css_color(value, name)
+  }
 
-  structure(
+  structure(c(
     list(
       mode = mode,
       bg_color = bg_color,
@@ -67,6 +76,9 @@ glass_select_theme <- function(
       focus_ring = focus_ring,
       label_color = label_color
     ),
+    if (!is.null(trigger_bg)) list(trigger_bg = trigger_bg),
+    if (!is.null(dropdown_bg)) list(dropdown_bg = dropdown_bg)
+  ),
     class = "glass_select_theme"
   )
 }

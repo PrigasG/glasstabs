@@ -178,6 +178,13 @@ For a long selected label, `overflow_tooltip = "auto"` can show the full label o
 
 For short lists, `searchable = "auto"` hides the search field until the number of choices reaches `search_threshold`. This works with both select widgets.
 
+Longer lists fit within the available space above or below the field. A
+subtle **Scroll for more** cue appears when options remain below the visible
+area and disappears at the end of the list. The option area also responds to
+search results, choice updates, and window resizing. Use
+`dropdown_max_height = "18rem"` on either select to set a lower maximum;
+short lists use only the height they need.
+
 ``` r
 glassSelect(
   "category",
@@ -246,9 +253,39 @@ glassTabsUI(
 )
 ```
 
-Use `style = "attached"` for a tab bar docked to its content container and `transition = "slide"` for directional pane movement. For select controls, `tongue = TRUE` provides the attached unfurl animation; `tongue = FALSE` uses a detached transition. Motion preferences are respected.
+Use `style = "attached"` for a tab bar docked to its content container and `transition = "slide"` for directional pane movement. Use `transition = "none"` for immediate navigation without pane or halo animation. For select controls, `tongue = TRUE` provides the attached unfurl animation; `tongue = FALSE` uses a detached transition. Motion preferences are respected.
 
-Custom themes allow control of the accent and focus ring without restyling the rest of the app.
+For a denser workspace, use `style = "segmented"` or refine the attached
+layout with `tab_gap`, `tab_padding`, `nav_padding`, and `content_padding`.
+`fill = TRUE` needs a parent with a definite height. `hide_single = TRUE`
+keeps a one-tab view clean, and `equal_width = TRUE` aligns tab widths.
+
+```r
+glassTabsUI(
+  "workspace",
+  glassTabPanel("data", "Data", shiny::p("Data")),
+  glassTabPanel("preview", "Preview", shiny::p("Preview")),
+  style = "segmented", indicator = "solid", theme = "auto",
+  transition = "none", reorderable = TRUE, glass_strength = 0.25,
+  tab_gap = "4px", tab_padding = "8px 14px", equal_width = TRUE
+)
+glassSelect("dataset", c(A = "a", B = "b"), theme = "auto",
+            size = "sm", glass_strength = 0.25)
+```
+
+Drag a tab on desktop, or focus a tab and press Alt+Shift+Left/Right
+(Up/Down on a vertical rail). `input[["workspace-tab_order"]]` gives the
+order of all values without changing the active tab. A full `renderUI()`
+replacement follows the order supplied by R; native menu overflow has no
+reorder control. Touch dragging is not promised in this release.
+
+Custom themes allow control of the accent and focus ring without restyling
+the rest of the app. `glass_select_theme()` also accepts `trigger_bg` and
+`dropdown_bg` for separate surfaces. Explicit surface colors remain fixed
+across mode changes, so choose colors with appropriate contrast.
+
+Run `runGlassExample("modernization")` to compare layouts and glass settings,
+inspect actual input values and reproduce host-menu layering cases.
 
 ``` r
 glassTabsUI(

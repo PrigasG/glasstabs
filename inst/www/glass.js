@@ -527,7 +527,7 @@
 
   var MS_VARS = [
     '--ms-bg','--ms-border','--ms-text','--ms-accent','--ms-focus-ring','--ms-label',
-    '--ms-dropdown-max-height',
+    '--ms-dropdown-max-height','--gt-glass-strength','--gt-trigger-bg','--gt-panel-bg',
     '--ms-ac-12','--ms-ac-16','--ms-ac-18','--ms-ac-22','--ms-ac-28',
     '--ms-ac-32','--ms-ac-40','--ms-ac-55','--ms-ac-60','--ms-ac-75',
     '--ms-tx-03','--ms-tx-04','--ms-tx-05','--ms-tx-06','--ms-tx-08',
@@ -536,16 +536,14 @@
 
   var TELEPORT_CLASSES = [
     'style-checkbox','style-check-only','style-filled','fill-single','gt-search-ring',
-    'theme-light','shape-square','gt-no-tongue'
+    'theme-light','shape-square','gt-no-tongue','gt-refined-glass','gt-custom-panel',
+    'gt-size-sm','gt-size-lg','gt-no-glass'
   ];
 
-  /** Teleport a dropdown to <body> so no parent overflow/transform can clip it */
-  function teleportOpen(wrap, dropdown) {
-    if (dropdown.parentNode === document.body) return;
-    /* Read CSS vars from the field ancestor which has them via the scoped <style> tag.
-       Falling back up the tree ensures we find them even in deeply nested layouts. */
-    var source = wrap.closest ? (wrap.closest('.gt-ms-field, .gt-gs-field') || wrap) : wrap;
-    var cs = getComputedStyle(source);
+  function refreshPortalTheme(wrap, dropdown) {
+    /* Read from the wrapper, including inherited field theme variables and
+       local density, glass and surface settings. */
+    var cs = getComputedStyle(wrap);
     var isLight = wrap.classList.contains('theme-light');
     var fallbacks = isLight
       ? { '--ms-bg': 'rgba(255,255,255,0.98)', '--ms-border': 'rgba(0,0,0,0.12)',
@@ -560,12 +558,17 @@
       var val = cs.getPropertyValue(v).trim();
       if (val) dropdown.style.setProperty(v, val);
       else if (hasOwn(fallbacks, v)) dropdown.style.setProperty(v, fallbacks[v]);
+      else dropdown.style.removeProperty(v);
     });
-    /* Copy style/theme classes onto the dropdown so CSS ancestor selectors still match */
     TELEPORT_CLASSES.forEach(function (cls) {
-      if (wrap.classList.contains(cls)) dropdown.classList.add(cls);
-      else dropdown.classList.remove(cls);
+      dropdown.classList.toggle(cls, wrap.classList.contains(cls));
     });
+  }
+
+  /** Teleport a dropdown to <body> so no parent overflow/transform can clip it */
+  function teleportOpen(wrap, dropdown) {
+    refreshPortalTheme(wrap, dropdown);
+    if (dropdown.parentNode === document.body) return;
     document.body.appendChild(dropdown);
     /* Use absolute positioning so AdminLTE's overflow-x:hidden on body/html
        doesn't clip the dropdown (position:fixed breaks in those scroll contexts) */
@@ -596,14 +599,23 @@
     dropdown.style.minWidth = dropdownWidth + 'px';
     dropdown.classList.toggle('gt-compact-controls', dropdownWidth <= 240);
 
+    var optionsBox = dropdown.querySelector('.gt-gs-options-scroll, .gt-ms-options-scroll');
+    dropdown.style.removeProperty('--gt-available-options-height');
+    var fullHeight = dropdown.offsetHeight || 0;
+    var optionsHeight = optionsBox ? optionsBox.offsetHeight : 0;
+    var chromeHeight = fullHeight - optionsHeight;
+    var below = Math.max(0, vh - rect.bottom - edge + overlap);
+    var above = Math.max(0, rect.top - edge + overlap);
+    var flipped = fullHeight > below && above > below;
+    var available = flipped ? above : below;
+    if (optionsBox) {
+      dropdown.style.setProperty('--gt-available-options-height',
+        Math.max(0, Math.floor(available - chromeHeight)) + 'px');
+    }
     var ddHeight = dropdown.offsetHeight || 0;
     var ddWidth = Math.min(dropdown.offsetWidth || dropdownWidth, preferredMaxWidth);
-    var top = rect.bottom + scrollY - overlap;
-    var flipped = false;
-    if (rect.bottom + ddHeight - overlap > vh - edge && rect.top - ddHeight + overlap > edge) {
-      top = rect.top + scrollY - ddHeight + overlap;
-      flipped = true;
-    }
+    var top = flipped ? rect.top + scrollY - ddHeight + overlap :
+      rect.bottom + scrollY - overlap;
     /* Signal the tongue direction so CSS squares the adjoining corners and
        anchors the unfurl animation at the attached edge. This runs before
        `.open` is added, so the opening transition uses the right origin. */
@@ -621,6 +633,45 @@
     dropdown.style.top = top + 'px';
     dropdown.style.left = (left + scrollX) + 'px';
     dropdown.style.right = 'auto';
+    updateScrollCue(dropdown);
+  }
+
+  function attachScrollCue(dropdown, optionsBox) {
+    if (!optionsBox) return;
+    var cue = document.createElement('div');
+    cue.className = 'gt-scroll-cue hidden';
+    cue.setAttribute('aria-hidden', 'true');
+    cue.textContent = 'Scroll for more';
+    dropdown.appendChild(cue);
+    optionsBox.addEventListener('scroll', function () { updateScrollCue(dropdown); }, { passive: true });
+    var observer = new MutationObserver(function (mutations) {
+      var layoutChanged = mutations.some(function (m) {
+        if (m.type === 'childList') return true;
+        var wasHidden = /(?:^|\s)hidden(?:\s|$)/.test(m.oldValue || '');
+        return wasHidden !== m.target.classList.contains('hidden');
+      });
+      if (!layoutChanged) return;
+      if (dropdown.classList.contains('open')) {
+        requestAnimationFrame(function () {
+          var wrap = dropdown._gtOwner;
+          if (wrap && wrap._gtScrollHandler) wrap._gtScrollHandler();
+        });
+      }
+    });
+    observer.observe(optionsBox, { childList: true, subtree: true, attributes: true,
+      attributeFilter: ['class'], attributeOldValue: true });
+    dropdown._gtScrollCueObserver = observer;
+  }
+
+  function updateScrollCue(dropdown) {
+    var cue = dropdown.querySelector('.gt-scroll-cue');
+    var optionsBox = dropdown.querySelector('.gt-gs-options-scroll, .gt-ms-options-scroll');
+    if (!cue || !optionsBox) return;
+    var more = optionsBox.scrollHeight > optionsBox.clientHeight + 2 &&
+      optionsBox.scrollTop + optionsBox.clientHeight < optionsBox.scrollHeight - 2;
+    cue.classList.toggle('hidden', !more);
+    var footer = dropdown.querySelector('.gt-ms-footer');
+    cue.style.bottom = ((footer ? footer.offsetHeight : 0) + 3) + 'px';
   }
 
   /** Move a teleported dropdown back to its wrap */
@@ -716,9 +767,147 @@
     });
   }
 
+  function closeForHostLayer() {
+    hideAllOverflowTooltips();
+    closeAllDropdowns();
+    document.querySelectorAll('.gt-gs-wrap, .gt-ms-wrap').forEach(function (wrap) {
+      var dd = wrap._gtDropdown;
+      if (dd && dd.parentNode === document.body) teleportClose(wrap, dd);
+    });
+  }
+
+  function setupTabReorder(navbar, container, onChange, onMove) {
+    var dragged = null;
+    var original = null;
+    var animations = new Map();
+    var suppressClick = false;
+    var clickTimer = null;
+    function all() { return Array.from(navbar.querySelectorAll(':scope > .gt-tab-link')); }
+    function movable(link) {
+      return link && link.parentNode === navbar &&
+        !link.classList.contains('gt-tab-hidden') && !link.classList.contains('gt-tab-disabled');
+    }
+    function enabled() { return !container.classList.contains('gt-overflow-menu'); }
+    function refresh() {
+      all().forEach(function (link) {
+        var canMove = enabled() && movable(link);
+        link.draggable = canMove;
+        if (canMove) link.setAttribute('aria-keyshortcuts', 'Alt+Shift+ArrowLeft Alt+Shift+ArrowRight Alt+Shift+ArrowUp Alt+Shift+ArrowDown');
+        else link.removeAttribute('aria-keyshortcuts');
+      });
+    }
+    function cancelAnimations() {
+      animations.forEach(function (a) { a.cancel(); });
+      animations.clear();
+    }
+    function move(link, reference) {
+      if (link === reference || link.nextElementSibling === reference ||
+          (!reference && !link.nextElementSibling)) return false;
+      var before = new Map();
+      all().forEach(function (l) { before.set(l, l.getBoundingClientRect()); });
+      cancelAnimations();
+      navbar.insertBefore(link, reference);
+      if (!reducedMotion()) all().forEach(function (l) {
+        if (l === link || !l.animate || !before.has(l)) return;
+        var r = l.getBoundingClientRect(), old = before.get(l);
+        var dx = old.left - r.left, dy = old.top - r.top;
+        if (Math.abs(dx) + Math.abs(dy) < 1) return;
+        var animation = l.animate([{transform:'translate(' + dx + 'px,' + dy + 'px)'},
+          {transform:'none'}], {duration:140,easing:'ease-out'});
+        animations.set(l, animation);
+        animation.onfinish = function () {
+          if (animations.get(l) === animation) animations.delete(l);
+          onMove();
+        };
+      });
+      onMove();
+      return true;
+    }
+    function finish(commit, silent) {
+      if (!dragged) return;
+      dragged.classList.remove('gt-dragging');
+      if (!commit && original) original.slice().reverse().forEach(function (l) {
+        if (l.parentNode === navbar) navbar.insertBefore(l, navbar.firstChild);
+      });
+      dragged = null;
+      original = null;
+      cancelAnimations();
+      if (!silent) onChange();
+      suppressClick = true;
+      clearTimeout(clickTimer);
+      clickTimer = setTimeout(function () { suppressClick = false; }, 0);
+    }
+    function start(e) {
+      var link = e.target.closest && e.target.closest('.gt-tab-link');
+      if (!enabled() || !movable(link)) { e.preventDefault(); return; }
+      dragged = link;
+      original = all();
+      dragged.classList.add('gt-dragging');
+      if (e.dataTransfer) {
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', link.getAttribute('data-value'));
+      }
+    }
+    function over(e) {
+      if (!dragged) return;
+      e.preventDefault();
+      if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
+      var target = e.target.closest && e.target.closest('.gt-tab-link');
+      if (!target || target.parentNode !== navbar || target === dragged ||
+          target.classList.contains('gt-tab-hidden')) return;
+      var r = target.getBoundingClientRect();
+      var vertical = container.classList.contains('gt-vertical') &&
+        getComputedStyle(navbar).flexDirection === 'column';
+      var rtl = getComputedStyle(navbar).direction === 'rtl';
+      var after = vertical ? e.clientY > r.top + r.height / 2 :
+        (rtl ? e.clientX < r.left + r.width / 2 : e.clientX > r.left + r.width / 2);
+      move(dragged, after ? target.nextElementSibling : target);
+    }
+    function drop(e) { if (dragged) { e.preventDefault(); finish(true, false); } }
+    function end() { finish(false, false); }
+    function key(e, focused) {
+      if (!enabled() || !e.altKey || !e.shiftKey || !/^Arrow(Left|Right|Up|Down)$/.test(e.key) || !movable(focused)) return false;
+      var vertical = container.classList.contains('gt-vertical') && getComputedStyle(navbar).flexDirection === 'column';
+      if (vertical ? !/Up|Down/.test(e.key) : !/Left|Right/.test(e.key)) return false;
+      e.preventDefault();
+      var visible = all().filter(function (l) { return !l.classList.contains('gt-tab-hidden'); });
+      var index = visible.indexOf(focused);
+      var forward = /Right|Down/.test(e.key);
+      if (!vertical && getComputedStyle(navbar).direction === 'rtl') forward = !forward;
+      var other = visible[index + (forward ? 1 : -1)];
+      if (other && move(focused, forward ? other.nextElementSibling : other)) {
+        onChange();
+        focused.focus();
+      }
+      return true;
+    }
+    navbar.addEventListener('dragstart', start);
+    navbar.addEventListener('dragover', over);
+    navbar.addEventListener('drop', drop);
+    navbar.addEventListener('dragend', end);
+    refresh();
+    return {
+      refresh: refresh, key: key,
+      dragging: function () { return dragged !== null; },
+      suppressClick: function () { return suppressClick; },
+      destroy: function () {
+        finish(false, true);
+        clearTimeout(clickTimer);
+        cancelAnimations();
+        navbar.removeEventListener('dragstart', start);
+        navbar.removeEventListener('dragover', over);
+        navbar.removeEventListener('drop', drop);
+        navbar.removeEventListener('dragend', end);
+        all().forEach(function (l) { l.removeAttribute('draggable'); l.removeAttribute('aria-keyshortcuts'); });
+      }
+    };
+  }
+
   /** Release all listeners, observers, timers, and animations owned by a tab bar. */
   function destroyTabs(navbar) {
     if (!navbar) return;
+    if (navbar._gtReorder) navbar._gtReorder.destroy();
+    navbar._gtReorder = null;
 
     if (navbar._gtTabTimers) {
       navbar._gtTabTimers.forEach(function (id) { clearTimeout(id); });
@@ -788,7 +977,17 @@
     var links = Array.from(navbar.querySelectorAll('.gt-tab-link'));
     var activeEl = links.find(function (l) { return l.classList.contains('active'); }) || links[0];
 
-    if (!halo || !trf || links.length === 0 || !activeEl) return;
+    if (container.classList.contains('gt-hide-single')) {
+      container.classList.toggle('gt-single-tab', links.filter(function (l) {
+        return !l.classList.contains('gt-tab-hidden');
+      }).length <= 1);
+    }
+    if (!halo || !trf || links.length === 0 || !activeEl) {
+      if (container.classList.contains('gt-reorderable') && window.Shiny && Shiny.setInputValue) {
+        Shiny.setInputValue(ns + '-tab_order', [], {priority:'deferred'});
+      }
+      return;
+    }
 
     navbar._gtTabsInit = true;
     navbar._gtHalo = halo;
@@ -851,22 +1050,45 @@
        still keeps its own independent alignment and overflow behavior. */
     function syncTextWidths() {
       links.forEach(function (link) { link.style.minWidth = ''; });
+      var equal = container.classList.contains('gt-equal-width');
       if (container.classList.contains('gt-vertical') ||
-          container.classList.contains('gt-text-align-center')) return;
+          (!equal && container.classList.contains('gt-text-align-center'))) return;
 
       var visible = links.filter(function (link) {
         return !link.classList.contains('gt-tab-hidden');
       });
+      if (equal) visible.forEach(function (link) { link.style.flex = '0 0 auto'; });
       var widest = visible.reduce(function (width, link) {
         return Math.max(width, link.getBoundingClientRect().width);
       }, 0);
+      if (equal) visible.forEach(function (link) { link.style.flex = ''; });
       if (widest <= 0) return;
       visible.forEach(function (link) {
         link.style.minWidth = Math.ceil(widest) + 'px';
       });
     }
 
+    function syncOrder() {
+      if (container.classList.contains('gt-hide-single')) {
+        container.classList.toggle('gt-single-tab', navigableLinks().length <= 1);
+      }
+      if (!container.classList.contains('gt-reorderable')) return;
+      if (navbar._gtReorder) {
+        navbar._gtReorder.refresh();
+        if (navbar._gtReorder.dragging()) return;
+      }
+      var values = Array.from(navbar.querySelectorAll('.gt-tab-link')).map(function (link) {
+        return link.getAttribute('data-value');
+      });
+      var json = JSON.stringify(values);
+      if (window.Shiny && Shiny.setInputValue && navbar._gtLastTabOrder !== json) {
+        navbar._gtLastTabOrder = json;
+        Shiny.setInputValue(ns + '-tab_order', values, {priority:'deferred'});
+      }
+    }
+
     function syncMenu() {
+      syncOrder();
       if (!menuSelect) return;
       var previous = menuSelect.value;
       menuSelect.innerHTML = '';
@@ -1121,6 +1343,14 @@
 
       var toEl = navbar.querySelector('.gt-tab-link' + attrEquals('data-value', target));
       if (!isAvailable(toEl)) return;
+      if (container.classList.contains('transition-none')) {
+        commitSwitch(target, { cancelAnimation: true, notify: true });
+        ensureTabVisible(toEl, false);
+        placeHalo(toEl, true, 1.0);
+        halo.style.opacity = '0.92';
+        if (moveFocus) toEl.focus();
+        return;
+      }
       if (target === active) {
         if (interrupted) pulseArrival(toEl);
         syncTabStops();
@@ -1216,6 +1446,15 @@
       });
     }
 
+    if (container.classList.contains('gt-reorderable')) {
+      navbar._gtReorder = setupTabReorder(navbar, container, function () {
+        links = Array.from(navbar.querySelectorAll('.gt-tab-link'));
+        syncTextWidths();
+        syncTabStops();
+        syncMenu();
+        realignHalo();
+      }, function () { realignHalo(); });
+    }
     syncTextWidths();
     initHalo();
     syncTabStops();
@@ -1230,6 +1469,7 @@
 
     /* Single delegated click handler - covers dynamically appended tabs */
     navbar._gtClickHandler = function (e) {
+      if (navbar._gtReorder && navbar._gtReorder.suppressClick()) { e.preventDefault(); return; }
       var link = e.target.closest ? e.target.closest('.gt-tab-link') : null;
       if (!link || link.classList.contains('gt-tab-hidden')) return;
       if (link.classList.contains('gt-tab-disabled')) return;
@@ -1239,6 +1479,7 @@
 
     navbar._gtKeyHandler = function (e) {
       if (!navbar.contains(document.activeElement)) return;
+      if (navbar._gtReorder && navbar._gtReorder.key(e, document.activeElement)) return;
 
       if (e.key === 'Enter' || e.key === ' ') {
         var focused = document.activeElement && document.activeElement.closest
@@ -1452,6 +1693,8 @@
 
     /* Add scroll class to options container */
     if (optionsBox) optionsBox.classList.add('gt-gs-options-scroll');
+    dropdown._gtOwner = wrap;
+    attachScrollCue(dropdown, optionsBox);
 
     var statusRow = document.createElement('div');
     statusRow.className = 'gt-select-status hidden';
@@ -1946,6 +2189,7 @@
         focusTimer = null;
         if (!wrap.classList.contains('gt-layer-active')) return;
         optionNav.move('current');
+        updateScrollCue(dropdown);
         if (searchIn && !searchIn.disabled) searchIn.focus();
       }, 100);
     }
@@ -2034,6 +2278,7 @@
        Only close when the trigger is detached or has no layout box. */
     wrap._gtScrollHandler = function (e) {
       if (!dropdown.classList.contains('open')) return;
+      if (e && e.target === optionsBox) return;
       if (e && e.type === 'resize') {
         var r = trigger.getBoundingClientRect();
         if (!document.contains(trigger) || (r.width === 0 && r.height === 0)) {
@@ -2095,6 +2340,7 @@
 
     /* Destroy (lifecycle teardown) */
     function destroy() {
+      if (dropdown._gtScrollCueObserver) dropdown._gtScrollCueObserver.disconnect();
       if (wrap._gtScrollHandler) {
         window.removeEventListener('scroll', wrap._gtScrollHandler, true);
         window.removeEventListener('resize', wrap._gtScrollHandler);
@@ -2236,6 +2482,8 @@
 
     /* Add scroll class */
     if (optionsBox) optionsBox.classList.add('gt-ms-options-scroll');
+    dropdown._gtOwner = wrap;
+    attachScrollCue(dropdown, optionsBox);
 
     var statusRow = document.createElement('div');
     statusRow.className = 'gt-select-status hidden';
@@ -2856,6 +3104,7 @@
         focusTimer = null;
         if (!wrap.classList.contains('gt-layer-active')) return;
         optionNav.move('current');
+        updateScrollCue(dropdown);
         if (searchEnabled() && searchIn) searchIn.focus();
       }, 100);
     }
@@ -2942,6 +3191,7 @@
        Only close when the trigger is detached or has no layout box. */
     wrap._gtScrollHandler = function (e) {
       if (!dropdown.classList.contains('open')) return;
+      if (e && e.target === optionsBox) return;
       if (e && e.type === 'resize') {
         var r = trigger.getBoundingClientRect();
         if (!document.contains(trigger) || (r.width === 0 && r.height === 0)) {
@@ -3031,6 +3281,7 @@
 
     /* Destroy (lifecycle teardown) */
     function destroy() {
+      if (dropdown._gtScrollCueObserver) dropdown._gtScrollCueObserver.disconnect();
       if (wrap._gtScrollHandler) {
         window.removeEventListener('scroll', wrap._gtScrollHandler, true);
         window.removeEventListener('resize', wrap._gtScrollHandler);
@@ -3343,20 +3594,34 @@
      data-bs-theme attribute (CSS variables are handled by scoped <style>
      blocks emitted from R). */
   function syncAutoThemes() {
-    document.querySelectorAll('.theme-auto').forEach(function (el) {
-      var scope = el.closest('[data-bs-theme]');
-      var mode = scope ? scope.getAttribute('data-bs-theme') : 'light';
-      el.classList.toggle('theme-light', mode !== 'dark');
+    document.querySelectorAll('.theme-auto, [data-gt-dark-selector]').forEach(function (el) {
+      var selector = el.getAttribute('data-gt-dark-selector');
+      var dark;
+      if (selector && selector !== '[data-bs-theme="dark"]') {
+        try { dark = !!el.closest(selector); } catch (error) { dark = false; }
+      } else {
+        var scope = el.closest('[data-bs-theme]');
+        dark = !!scope && scope.getAttribute('data-bs-theme') === 'dark';
+      }
+      el.classList.toggle('theme-light', !dark);
+      var dd = el._gtDropdown;
+      if (dd && dd.parentNode === document.body) refreshPortalTheme(el, dd);
     });
   }
 
   var themeAutoObserver = null;
   function watchAutoThemes() {
     if (themeAutoObserver || !window.MutationObserver) return;
-    themeAutoObserver = new MutationObserver(syncAutoThemes);
+    themeAutoObserver = new MutationObserver(function (mutations) {
+      var custom = Array.from(document.querySelectorAll('[data-gt-dark-selector]'));
+      if (mutations.some(function (m) {
+        return m.attributeName === 'data-bs-theme' || custom.some(function (el) {
+          return m.target !== el && m.target.contains(el);
+        });
+      })) syncAutoThemes();
+    });
     themeAutoObserver.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ['data-bs-theme'],
       subtree: true
     });
   }
@@ -3421,7 +3686,7 @@
       'show.bs.offcanvas'
     ];
     var closeForBootstrapLayer = function () {
-      closeAllDropdowns();
+      closeForHostLayer();
     };
 
     /* Bootstrap 5 dispatches native events. Bootstrap 3 and 4 use jQuery
@@ -3488,13 +3753,15 @@
     function overlayCoversDropdown(overlay) {
       /* Teleported panels live on document.body; non-teleported ones sit in
          the wrap. Either way compare against the visible panel. */
-      var dd = document.querySelector('.gt-gs-dropdown.open, .gt-ms-dropdown.open');
-      if (!dd) {
-        dd = document.querySelector(
-          '.gt-gs-wrap.gt-layer-active, .gt-ms-wrap.gt-layer-active'
-        );
+      var wrap = document.querySelector('.gt-gs-wrap.gt-layer-active, .gt-ms-wrap.gt-layer-active');
+      if (!wrap || overlay.contains(wrap)) return false;
+      var dd = wrap._gtDropdown || wrap;
+      var trigger = wrap.querySelector('.gt-gs-trigger, .gt-ms-trigger');
+      if (trigger) {
+        var r = trigger.getBoundingClientRect();
+        var top = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+        if (top && overlay.contains(top)) return true;
       }
-      if (!dd) return true;
       var oz = overlayZ(overlay), dz = overlayZ(dd);
       if (oz === null || dz === null) return true;
       return oz >= dz;
@@ -3525,7 +3792,7 @@
     function maybeCloseForOverlay(el) {
       var cand = findOverlayCandidate(el);
       if (cand && overlayCoversDropdown(cand)) {
-        closeAllDropdowns();
+        closeForHostLayer();
         return true;
       }
       return false;
@@ -3626,6 +3893,13 @@
       var activeLink = nb.querySelector('.gt-tab-link.active');
       if (ns && activeLink && window.Shiny) {
         Shiny.setInputValue(ns + '-active_tab', activeLink.getAttribute('data-value'));
+        var root = nb.closest('.gt-container, .gt-wrap-shell');
+        if (root && root.classList.contains('gt-reorderable')) {
+          var order = Array.from(nb.querySelectorAll('.gt-tab-link')).map(function (l) {
+            return l.getAttribute('data-value');
+          });
+          Shiny.setInputValue(ns + '-tab_order', order);
+        }
       }
     });
 

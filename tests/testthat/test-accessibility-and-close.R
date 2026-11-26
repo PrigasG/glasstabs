@@ -10,9 +10,8 @@ test_that("glass.css uses color-mix only as progressive enhancement", {
   # Ignore comments: only real declarations count.
   css <- gsub("(?s)/\\*.*?\\*/", "", css, perl = TRUE)
   # color-mix() is allowed only where an unsupported browser degrades
-  # gracefully: the active-tab inner edge light (the whole box-shadow
-  # declaration is dropped, leaving no shadow) and the tab-wrap top border
-  # (falls back to the border shorthand color set just above it).
+  # gracefully: decorative shadows, the tab-wrap top border and the opt-in
+  # glass tint backgrounds (each has a preceding ordinary fallback).
   mix_lines <- grep(
     "color-mix\\(",
     strsplit(css, "\n", fixed = TRUE)[[1]],
@@ -22,7 +21,9 @@ test_that("glass.css uses color-mix only as progressive enhancement", {
   for (line in mix_lines) {
     expect_true(
       grepl("box-shadow:inset", line, fixed = TRUE) ||
-        grepl("border-top-color:color-mix", line, fixed = TRUE),
+        grepl("border-top-color:color-mix", line, fixed = TRUE) ||
+        grepl("background:color-mix(in srgb,var(--gt-halo-bg)", line, fixed = TRUE) ||
+        grepl("background:color-mix(in srgb,var(--ms-ac-12)", line, fixed = TRUE),
       info = line
     )
   }

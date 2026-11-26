@@ -76,9 +76,11 @@ glassTabPanel <- function(value, label, ..., icon = NULL, selected = FALSE) {
 #'   `"floating"` (default) renders them as two separate floating pieces.
 #'   `"attached"` docks the tab bar directly onto the content box: they share
 #'   one border and read as a single unified card.
+#'   `"segmented"` places the tabs in a compact navigation tray.
 #' @param transition How panes animate when switching tabs. `"fade"`
 #'   (default) fades and rises the incoming pane. `"slide"` slides panes
-#'   horizontally in the direction of travel, following tab order.
+#'   horizontally in the direction of travel, following tab order. `"none"`
+#'   activates the destination immediately without a pane or halo transition.
 #' @param shape Corner style for the tab bar and content. One of `"rounded"`
 #'   (default) for the signature glass look, or `"square"` for crisp,
 #'   selectize-style corners that match [glassSelect()] and
@@ -126,6 +128,20 @@ glassTabPanel <- function(value, label, ..., icon = NULL, selected = FALSE) {
 #'   `<style>` block overrides the CSS variables back to the dark-mode defaults
 #'   whenever that selector is active - so the tabs stay readable after a
 #'   dark-mode toggle without any server-side intervention.
+#' @param glass_strength Decorative glass intensity from 0 (minimal) to 1
+#'   (original appearance). Text and focus indicators are unaffected.
+#' @param tab_gap Optional CSS length between tabs.
+#' @param tab_padding,nav_padding,content_padding Optional CSS padding lengths
+#'   (one to four space-separated values). Defaults preserve existing spacing.
+#' @param fill Logical. Fill a parent with a definite height; the active pane
+#'   scrolls when needed. Does not create a height on its own.
+#' @param hide_single Logical. Hide navigation for one or zero visible tabs;
+#'   any supplied extra UI remains available.
+#' @param equal_width Logical. Match horizontal tab widths while allowing scroll.
+#' @param reorderable Logical. Enable desktop drag-and-drop and Alt+Shift+arrow
+#'   reordering. The order of all tab values is available as
+#'   `input[[paste0(id, "-tab_order")]]`. Hidden and disabled tabs cannot be
+#'   dragged; their relative order is retained. Menu overflow has no drag UI.
 #'
 #' @return An `htmltools::tagList` ready to use in a Shiny UI.
 #' @family glass tabs
@@ -136,8 +152,8 @@ glassTabsUI <- function(
     wrap = TRUE,
     compact = FALSE,
     content_min_height = NULL,
-    style = c("floating", "attached"),
-    transition = c("fade", "slide"),
+    style = c("floating", "attached", "segmented"),
+    transition = c("fade", "slide", "none"),
     shape = c("rounded", "square"),
     indicator = c("glass", "solid", "underline"),
     orientation = c("horizontal", "vertical"),
@@ -147,13 +163,31 @@ glassTabsUI <- function(
     swipe = FALSE,
     extra_ui = NULL,
     theme = NULL,
-    dark_selector = NULL
+    dark_selector = NULL,
+    glass_strength = 1,
+    tab_gap = NULL,
+    tab_padding = NULL,
+    nav_padding = NULL,
+    content_padding = NULL,
+    fill = FALSE,
+    hide_single = FALSE,
+    equal_width = FALSE,
+    reorderable = FALSE
 ) {
   ns          <- shiny::NS(id)
   panels      <- list(...)
   .gt_check_flag(wrap, "wrap")
   .gt_check_flag(compact, "compact")
   .gt_check_flag(swipe, "swipe")
+  .gt_check_flag(fill, "fill")
+  .gt_check_flag(hide_single, "hide_single")
+  .gt_check_flag(equal_width, "equal_width")
+  .gt_check_flag(reorderable, "reorderable")
+  glass_strength <- .gt_glass_strength(glass_strength)
+  tab_gap <- .gt_layout_length(tab_gap, "tab_gap")
+  tab_padding <- .gt_layout_length(tab_padding, "tab_padding", 4L)
+  nav_padding <- .gt_layout_length(nav_padding, "nav_padding", 4L)
+  content_padding <- .gt_layout_length(content_padding, "content_padding", 4L)
   shape       <- .gt_match_arg(shape, c("rounded", "square"), "shape")
   indicator   <- .gt_match_arg(indicator, c("glass", "solid", "underline"), "indicator")
   orientation <- .gt_match_arg(orientation, c("horizontal", "vertical"), "orientation")
@@ -177,8 +211,8 @@ glassTabsUI <- function(
   if (!is.null(content_min_height)) {
     content_min_height <- .gt_css_unit(content_min_height, "content_min_height")
   }
-  style      <- .gt_match_arg(style, c("floating", "attached"), "style")
-  transition <- .gt_match_arg(transition, c("fade", "slide"), "transition")
+  style      <- .gt_match_arg(style, c("floating", "attached", "segmented"), "style")
+  transition <- .gt_match_arg(transition, c("fade", "slide", "none"), "transition")
 
   ## theme = "auto": bridge to Bootstrap 5 / bslib color modes. Base vars are
   ## the light preset; dark vars are scoped under [data-bs-theme="dark"] via
@@ -345,6 +379,18 @@ glassTabsUI <- function(
     c(if (isTRUE(wrap))    "gt-container",
       if (!isTRUE(wrap))   "gt-wrap-shell",
       if (isTRUE(compact)) "gt-compact",
+      if (fill) "gt-fill",
+      if (hide_single) "gt-hide-single",
+      if (hide_single && length(panels) <= 1L) "gt-single-tab",
+      if (hide_single && is.null(extra_ui)) "gt-no-extra",
+      if (equal_width) "gt-equal-width",
+      if (reorderable) "gt-reorderable",
+      if (glass_strength != "1") "gt-refined-glass",
+      if (glass_strength == "0") "gt-no-glass",
+      if (!is.null(tab_gap)) "gt-custom-gap",
+      if (!is.null(tab_padding)) "gt-custom-tab-padding",
+      if (!is.null(nav_padding)) "gt-custom-nav-padding",
+      if (!is.null(content_padding)) "gt-custom-content-padding",
       if (identical(shape, "square")) "shape-square",
       if (!identical(indicator, "glass")) paste0("indicator-", indicator),
       if (!identical(style, "floating")) paste0("style-", style),
@@ -360,6 +406,15 @@ glassTabsUI <- function(
   shiny::div(
     class = if (nzchar(container_cls)) container_cls else NULL,
     id = scope_id,
+    style = .gt_css_join(NULL, c(
+      if (glass_strength != "1") paste0("--gt-glass-strength:", glass_strength),
+      if (!is.null(tab_gap)) paste0("--gt-tab-gap:", tab_gap),
+      if (!is.null(tab_padding)) paste0("--gt-tab-padding:", tab_padding),
+      if (!is.null(nav_padding)) paste0("--gt-nav-padding:", nav_padding),
+      if (!is.null(content_padding)) paste0("--gt-content-padding:", content_padding)
+    )),
+    `data-gt-dark-selector` = if (is_light && !is_auto) dark_selector else
+      if (is_auto && !identical(dark_selector, '[data-bs-theme="dark"]')) dark_selector,
     `data-swipe` = if (isTRUE(swipe)) "true" else "false",
     inner
   )

@@ -3,6 +3,22 @@
 This roadmap records shipped milestones, experimental features, and ideas for
 future releases. See `NEWS.md` for the release history.
 
+## v0.4.2 candidate - navigation and visual integration
+
+Implemented for review: segmented and attached-underline navigation, instant
+transitions, spacing and fill options, single-tab hiding, equal-width tabs,
+desktop and keyboard reordering, glass intensity, select sizing, custom
+surfaces and closed-field layering. Before release, run the existing checks,
+modernization browser tests, and manual Forge/API Lab integration matrix.
+Long select lists now show a scroll cue and constrain their option area to
+the available viewport. The package version is set to 0.4.2 for this draft;
+the NEWS heading remains marked as development until publication.
+
+Native-style default width, content-measured `width = "auto"` and
+`size = "native"` remain design proposals. They would change existing
+default layouts and need theme-specific measurement, server-search bounds,
+and mobile regression work before inclusion.
+
 ## v0.4.1 — shipped select resilience and connected layouts
 
 Version 0.4.1 makes select inputs dependable with long labels, narrow and

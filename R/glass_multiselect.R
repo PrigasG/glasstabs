@@ -75,7 +75,9 @@
 #'   \code{selection_display = "summary"} before the remaining count is shown.
 #' @param dropdown_max_height Maximum height of the scrolling option area as a
 #'   CSS unit, such as \code{"18rem"} or \code{"320px"}. The default is
-#'   \code{"260px"}.
+#'   \code{"260px"}. The open panel further limits this height to the
+#'   available viewport space and shows "Scroll for more" while additional
+#'   choices remain below.
 #' @param no_matches_text Text shown when a search matches no choices.
 #'   Default \code{"No matches"}.
 #' @param tongue Logical. When \code{TRUE} (default), the dropdown attaches to
@@ -98,6 +100,10 @@
 #' @param fill_colors Color treatment for \code{check_style = "filled"}.
 #'   \code{"single"} (default) uses the theme accent for every selected row;
 #'   \code{"multi"} keeps the categorical per-option colors.
+#' @param glass_strength Decorative glass intensity between 0 and 1. The
+#'   default retains the original appearance; lower values soften blur,
+#'   reflections and shadows without reducing text or focus contrast.
+#' @param size Field density: \code{"md"} (original), \code{"sm"}, or \code{"lg"}.
 #'
 #' @return An \code{htmltools::tagList} containing the trigger button, dropdown
 #'   panel, and scoped \code{<style>} block.
@@ -155,8 +161,12 @@ glassMultiSelect <- function(
     fill_colors        = c("single", "multi"),
     label_size         = "14px",
     search_focus_ring  = FALSE,
-    overflow_tooltip   = c("auto", "never")
+    overflow_tooltip   = c("auto", "never"),
+    glass_strength     = 1,
+    size               = c("md", "sm", "lg")
 ) {
+  glass_strength <- .gt_glass_strength(glass_strength)
+  size <- .gt_match_arg(size, c("md", "sm", "lg"), "size")
   .gt_check_string(
     inputId,
     "inputId",
@@ -495,6 +505,7 @@ glassMultiSelect <- function(
     "[ ]+", " ",
     paste(
       "gt-ms-wrap",
+      .gt_select_classes(glass_strength, size, theme),
       paste0("style-", check_style),
       if (identical(fill_colors, "single")) "fill-single" else NULL,
       if (search_focus_ring) "gt-search-ring" else NULL,
@@ -517,7 +528,11 @@ glassMultiSelect <- function(
       shiny::div(
         class = wrap_cls,
         id = scope_id,
-        style = inner_width_style,
+        style = .gt_css_join(inner_width_style, .gt_select_properties(
+          theme, glass_strength
+        )),
+        `data-gt-dark-selector` = if (.is_light_theme(theme) && !is_auto) dark_selector else
+          if (is_auto && !identical(dark_selector, '[data-bs-theme="dark"]')) dark_selector,
         `data-input-id` = inputId,
         `data-placeholder` = placeholder,
         `data-no-matches-text` = no_matches_text,

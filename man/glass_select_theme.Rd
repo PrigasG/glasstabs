@@ -11,7 +11,9 @@ glass_select_theme(
   text_color = NULL,
   accent_color = NULL,
   focus_ring = NULL,
-  label_color = NULL
+  label_color = NULL,
+  trigger_bg = NULL,
+  dropdown_bg = NULL
 )
 }
 \arguments{
@@ -31,6 +33,10 @@ states.}
 least 3:1 contrast against the trigger and dropdown surfaces.}
 
 \item{label_color}{Widget label color. Defaults to \code{text_color} when \code{NULL}.}
+
+\item{trigger_bg, dropdown_bg}{Optional explicit trigger and panel colors.
+These override the corresponding surface, including during dark mode.
+When unset, the existing theme surface behavior is unchanged.}
 }
 \value{
 A named list of class \code{"glass_select_theme"} for passing to the

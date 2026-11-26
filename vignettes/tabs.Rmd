@@ -17,6 +17,30 @@ knitr::opts_chunk$set(eval = FALSE)
 Shiny. The active tab is tracked by a sliding glass halo with spring easing,
 and a luminous transfer trace sweeps across intermediate tabs during navigation.
 
+## Modern workspace navigation
+
+Use the existing `style` and `indicator` controls independently, and opt into
+layout and motion refinements when needed.
+
+```{r modern-tabs}
+glassTabsUI("workspace",
+  glassTabPanel("edit", "Edit", shiny::textInput("title", "Title")),
+  glassTabPanel("preview", "Preview", shiny::p("Preview")),
+  style = "segmented", indicator = "solid", transition = "none",
+  theme = "auto", glass_strength = 0.25, reorderable = TRUE,
+  tab_gap = "4px", tab_padding = "8px 16px", content_padding = "12px",
+  equal_width = TRUE, hide_single = TRUE
+)
+```
+
+Desktop drag-and-drop and Alt+Shift+arrow keyboard reordering change the tab
+order without replacing its panels. Read `input[["workspace-tab_order"]]`
+for all values, including hidden and disabled tabs. Recreating the whole
+widget through `renderUI()` follows the order provided in R. Native menu
+mode has no reorder UI. `fill = TRUE` needs a definite parent height and
+makes the active pane scroll. The default floating layout and animations
+remain available. `runGlassExample("modernization")` exercises these options.
+
 ## Basic usage
 
 Three functions work together:
