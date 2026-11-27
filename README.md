@@ -1,6 +1,6 @@
-# glasstabs <img src="man/figures/logo.svg" align="right" height="120"/>
+# glasstabs <img src="man/figures/logo.svg" align="right" height="100" alt="glasstabs logo"/>
 
-> Animated tabs and select inputs that feel at home in a Shiny app.
+Modern navigation and inputs for R Shiny.
 
 <!-- badges: start -->
 
@@ -8,14 +8,18 @@
 
 <!-- badges: end -->
 
-glasstabs brings animated navigation and polished filters to R Shiny without requiring custom JavaScript or CSS. Its primary components include:
+Build responsive tabs, searchable filters, and form controls without writing custom JavaScript or CSS. They work with `fluidPage()`, `bslib`, and `bs4Dash`, with light, dark, automatic, and custom themes.
 
-- `glassTabsUI()` for horizontal and vertical tab navigation.
-- `glassSelect()` for searchable single-choice inputs.
-- `glassMultiSelect()` for multi-choice filters and optional tag pills.
-- `glassSwitch()`, `glassRadioGroup()` and `glassCheckboxGroup()` for native-bound form controls (development 0.4.2).
+![Dashboard workflow with glasstabs filters and navigation](man/figures/dashboard-workflow.png)
 
-Widgets work with `fluidPage()`, `bslib`, and `bs4Dash`, and support dark, light, automatic, and custom themes. The 0.4.2 development candidate adds workspace management and refined form controls. See [What is new](https://prigasg.github.io/glasstabs/articles/whats-new-042.html) for details. The CRAN release may lag behind GitHub.
+## Components
+
+| [Navigation](https://prigasg.github.io/glasstabs/articles/tabs.html) | [Selects](https://prigasg.github.io/glasstabs/articles/multiselect.html) | [Form inputs](https://prigasg.github.io/glasstabs/articles/component-gallery.html) |
+|:---|:---|:---|
+| ![Tabs with an active Home panel and closable Data and Report panels](man/figures/tabs-closable.png) | ![Open multi-select with colored choices, search, and selection count](man/figures/select-multiselect.png) | ![Glass switch, radio buttons, and checkbox group](man/figures/form-inputs.png) |
+| Reorderable, closable, horizontal or vertical tabs. | Searchable single and multi-select filters. | Switches, radio groups, and checkboxes. |
+
+The 0.4.2 development version adds workspace management and form inputs. See [what is new in 0.4.2](https://prigasg.github.io/glasstabs/articles/whats-new-042.html). The CRAN release may lag behind GitHub.
 
 ## Installation
 
@@ -34,7 +38,7 @@ packageVersion("glasstabs")
 
 The GitHub installation replaces the installed copy on your machine. For most users, the CRAN release is the simpler choice.
 
-## A complete app
+## Quick start
 
 Call `useGlassTabs()` once at the UI root, then use the widgets like ordinary Shiny controls. The following app has two tabs, a multi-select filter, selected-value tags, and an active-tab readout.
 
@@ -78,6 +82,13 @@ if (interactive()) shinyApp(ui, server)
 ```
 
 `glassMultiSelect()` selects every enabled choice by default. Set `selected = character(0)` when the filter should start empty.
+
+## Explore more
+
+- [Documentation and function reference](https://prigasg.github.io/glasstabs/)
+- [Component gallery](https://prigasg.github.io/glasstabs/articles/component-gallery.html)
+- [Live examples](https://prigas89-glasstabs.share.connect.posit.cloud)
+- [Changelog](NEWS.md)
 
 ## Pick the control you need
 
