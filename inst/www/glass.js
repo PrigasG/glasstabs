@@ -579,6 +579,18 @@
     var host = wrap.closest('.modal.show, .offcanvas.show') || document.body;
     if (dropdown.parentNode === host) return;
     host.appendChild(dropdown);
+    if (dropdown._gtPortalHostObserver) dropdown._gtPortalHostObserver.disconnect();
+    dropdown._gtPortalHostObserver = null;
+    if (host !== document.body && window.MutationObserver) {
+      dropdown._gtPortalHostObserver = new MutationObserver(function () {
+        if (host.classList.contains('show') || host.classList.contains('showing')) return;
+        closeDropdownWrap(wrap);
+        teleportClose(wrap, dropdown);
+      });
+      dropdown._gtPortalHostObserver.observe(host, {
+        attributes: true, attributeFilter: ['class']
+      });
+    }
     /* Use absolute positioning so AdminLTE's overflow-x:hidden on body/html
        doesn't clip the dropdown (position:fixed breaks in those scroll contexts) */
     dropdown.style.position = 'absolute';
@@ -709,6 +721,10 @@
        close() and then moves immediately; it must not leave a timer or
        listener behind). */
     cancelPendingTeleportClose(dropdown);
+    if (dropdown._gtPortalHostObserver) {
+      dropdown._gtPortalHostObserver.disconnect();
+      dropdown._gtPortalHostObserver = null;
+    }
     if (dropdown.parentNode === wrap) return;
     MS_VARS.forEach(function (v) { dropdown.style.removeProperty(v); });
     dropdown.style.removeProperty('position');
@@ -2213,17 +2229,18 @@
         dropdown.classList.add('open');
         trigger.classList.add('open');
         trigger.setAttribute('aria-expanded', 'true');
+        /* Focus only after the panel is displayed. A throttled animation frame
+           can otherwise let the timer fire while the input is still hidden. */
+        focusTimer = setTimeout(function () {
+          focusTimer = null;
+          if (!wrap.classList.contains('gt-layer-active')) return;
+          optionNav.move('current');
+          updateScrollCue(dropdown);
+          if (searchIn && !searchIn.disabled) searchIn.focus();
+        }, 100);
       });
       setDropdownOpenState(wrap, inputId, true);
       openedAt = Date.now();
-      /* Delay focus so synthetic-click re-fires from AdminLTE don't close us */
-      focusTimer = setTimeout(function () {
-        focusTimer = null;
-        if (!wrap.classList.contains('gt-layer-active')) return;
-        optionNav.move('current');
-        updateScrollCue(dropdown);
-        if (searchIn && !searchIn.disabled) searchIn.focus();
-      }, 100);
     }
 
     function close() {
@@ -3128,17 +3145,18 @@
         dropdown.classList.add('open');
         trigger.classList.add('open');
         trigger.setAttribute('aria-expanded', 'true');
+        /* Keep focus behind the visible opening frame, including under a
+           Bootstrap focus trap on a busy browser. */
+        focusTimer = setTimeout(function () {
+          focusTimer = null;
+          if (!wrap.classList.contains('gt-layer-active')) return;
+          optionNav.move('current');
+          updateScrollCue(dropdown);
+          if (searchEnabled() && searchIn) searchIn.focus();
+        }, 100);
       });
       setDropdownOpenState(wrap, inputId, true);
       openedAt = Date.now();
-      /* Delay focus so synthetic-click re-fires from AdminLTE don't close us */
-      focusTimer = setTimeout(function () {
-        focusTimer = null;
-        if (!wrap.classList.contains('gt-layer-active')) return;
-        optionNav.move('current');
-        updateScrollCue(dropdown);
-        if (searchEnabled() && searchIn) searchIn.focus();
-      }, 100);
     }
 
     function close() {

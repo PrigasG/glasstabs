@@ -378,9 +378,13 @@ test_that("browser: transfer intensity follows glass strength", {
   })
   names(results) <- strengths
   expect_equal(results[["0"]]$count, 0)
-  expect_gt(results[["0.25"]]$maximum, 0)
-  expect_lt(results[["0.25"]]$maximum, results[["0.99"]]$maximum)
-  expect_lt(results[["0.99"]]$maximum, results[["1"]]$maximum)
+  if (app$get_js("matchMedia('(prefers-reduced-motion: reduce)').matches")) {
+    expect_true(all(vapply(results, function(x) x$count == 0, logical(1))))
+  } else {
+    expect_gt(results[["0.25"]]$maximum, 0)
+    expect_lt(results[["0.25"]]$maximum, results[["0.99"]]$maximum)
+    expect_lt(results[["0.99"]]$maximum, results[["1"]]$maximum)
+  }
 })
 
 test_that("browser: select dropdowns match their fields and stay viewport-safe", {

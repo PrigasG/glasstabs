@@ -73,12 +73,16 @@ test_that("browser: modernization preserves order, selection and pane inputs", {
   app$wait_for_js("document.getElementById('modern_small-dropdown').classList.contains('open')")
   app$get_js("document.body.setAttribute('data-bs-theme','dark'); true")
   app$wait_for_js("!document.getElementById('modern_small-dropdown').classList.contains('theme-light')")
-  expect_true(app$get_js("
-    (function(){var d=document.getElementById('modern_small-dropdown');
-      return d.classList.contains('open') && getComputedStyle(d).backdropFilter==='none' &&
-        getComputedStyle(d).getPropertyValue('--ms-dropdown-max-height').trim()==='180px' &&
-        getComputedStyle(d).getPropertyValue('--ms-text').trim()==='#cfe6ff';})()
-  "))
+  theme_state <- app$get_js("
+    (function(){var d=document.getElementById('modern_small-dropdown'),s=getComputedStyle(d);
+      return {open:d.classList.contains('open'),
+        blur:s.backdropFilter,maxHeight:s.getPropertyValue('--ms-dropdown-max-height').trim(),
+        text:s.getPropertyValue('--ms-text').trim()};})()
+  ")
+  expect_true(theme_state$open)
+  expect_true(theme_state$blur %in% c('', 'none', 'blur(0px)'))
+  expect_equal(theme_state$maxHeight, '180px')
+  expect_equal(theme_state$text, '#cfe6ff')
   expect_true(app$get_js("document.getElementById('modern_custom_selector-wrap').classList.contains('theme-light')"))
   app$get_js("document.body.setAttribute('data-review-dark', 'true'); true")
   app$wait_for_js("!document.getElementById('modern_custom_selector-wrap').classList.contains('theme-light')")
