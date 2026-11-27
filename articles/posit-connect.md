@@ -54,13 +54,12 @@ instructions.
 
 ## Versions, dependencies, and CSP
 
-**Pin the version you tested.** Install the CRAN release for stability,
-or a GitHub commit for development — but record which one the deployment
-uses, because the development version moves. The installed version is
-visible from R with `packageVersion("glasstabs")` and in the app with
-[`glasstabs_news()`](https://prigasg.github.io/glasstabs/reference/glasstabs_news.md);
-if a deployed app behaves differently from local, the version is the
-first thing to compare.
+**Pin the version you tested.** The Git deployment manifest beside this
+app pins a specific glasstabs 0.4.2 GitHub commit. The app header
+displays its installed version. When updating package code, regenerate
+the manifest from the tested commit, commit it, and republish. A stale
+manifest can silently restore an older package version even when the app
+source is current.
 
 **Confirm the assets published.** After the first deploy, open the app
 and confirm the dropdowns render styled. Unstyled controls after
@@ -74,17 +73,15 @@ includes the package’s dependencies. The “What to test” list above
 catches this on the first pass, but only if someone actually opens a
 dropdown.
 
-**The
+**Asset loading.** This app uses
+[`glassPage()`](https://prigasg.github.io/glasstabs/reference/glassPage.md),
+which loads the package assets. Do not add
 [`useGlassTabs()`](https://prigasg.github.io/glasstabs/reference/useGlassTabs.md)
-exception, stated once.** The getting-started rule is “exactly one
+inside it. For a page built without
+[`glassPage()`](https://prigasg.github.io/glasstabs/reference/glassPage.md),
+call
 [`useGlassTabs()`](https://prigasg.github.io/glasstabs/reference/useGlassTabs.md)
-call.”
-[`glassPage()`](https://prigasg.github.io/glasstabs/reference/glassPage.md)
-is the exception: it loads the dependency itself, so an app built on
-[`glassPage()`](https://prigasg.github.io/glasstabs/reference/glassPage.md)
-must not also call
-[`useGlassTabs()`](https://prigasg.github.io/glasstabs/reference/useGlassTabs.md).
-One or the other, never both, never neither.
+once in the UI.
 
 **Content Security Policy.** If the deployment serves a strict CSP, set
 the `glasstabs.csp_nonce` option to the page’s nonce and the package’s
@@ -114,20 +111,28 @@ if (interactive()) {
 ## Manifest
 
 A deployment manifest captures the package versions in the environment
-used to publish the app. It is generated locally and is not committed to
-this repository or included in the CRAN source package. Install the
-exact release or tested GitHub commit first, record that ref with your
-deployment notes, then generate the manifest from that environment:
+used to publish the app. Connect Cloud requires `manifest.json` or
+`renv.lock` beside `app.R` when publishing from GitHub. This repository
+tracks the app’s manifest for that deployment, while `.Rbuildignore`
+excludes it from the CRAN source package. Install the tested GitHub
+commit before regenerating it:
 
 ``` r
 
 rsconnect::writeManifest(appDir = "inst/examples/connect-workflow")
 ```
 
+Check that `packages.glasstabs.description.Version` is `0.4.2` and
+`packages.glasstabs.description.RemoteSha` is the intended commit before
+committing. Do not regenerate from a local package install without
+GitHub remote metadata: that loses the reproducible GitHub source.
+
 ## Deploy to Posit Connect
 
-The example is a self-contained Shiny app folder. In a package checkout,
-generate its manifest as shown above, then deploy that same folder:
+The example is a self-contained Shiny app folder. A GitHub sourced
+Connect Cloud deployment uses the tracked manifest. Push the app and
+manifest, then republish the existing content from its Connect Cloud
+page. For a direct deployment from a package checkout, use:
 
 ``` r
 
