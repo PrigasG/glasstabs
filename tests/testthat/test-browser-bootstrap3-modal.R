@@ -16,8 +16,11 @@ test_that("browser: Bootstrap 3 modal keeps select searches inside its focus bou
   for (id in c("modal_single", "modal_multi")) {
     app$click(selector = paste0("#", id, "-trigger"))
     app$wait_for_js(sprintf("document.getElementById('%s-dropdown').classList.contains('open')", id))
-    app$click(selector = paste0("#", id, "-dropdown input[type=text]"))
-    app$wait_for_js(sprintf("document.activeElement === document.querySelector('#%s-dropdown input[type=text]')", id))
+    app$wait_for_js(sprintf("document.getElementById('%s-dropdown').parentElement.classList.contains('modal')", id))
+    app$get_js(sprintf("document.querySelector('#%s-dropdown input[type=text]').focus(); true", id))
+    app$wait_for_js(sprintf(
+      "document.activeElement === document.querySelector('#%s-dropdown input[type=text]')", id
+    ))
     expect_true(app$get_js(sprintf("(function(){
       var panel=document.getElementById('%s-dropdown');
       return panel.parentElement.classList.contains('modal') &&
