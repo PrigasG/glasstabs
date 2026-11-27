@@ -1,5 +1,15 @@
 # Articles
 
+### New in 0.4.2
+
+- [What's new in glasstabs
+  0.4.2](https://prigasg.github.io/glasstabs/articles/whats-new-042.md):
+
+### Components
+
+- [Component
+  gallery](https://prigasg.github.io/glasstabs/articles/component-gallery.md):
+
 ### Cheatsheet
 
 - [glasstabs

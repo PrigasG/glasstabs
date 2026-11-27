@@ -154,3 +154,23 @@ dashboards, server-backed large lists — the migration above is the whole
 job: swap the constructor, add
 [`useGlassTabs()`](https://prigasg.github.io/glasstabs/reference/useGlassTabs.md),
 pin the initial selection explicitly, and remap the update calls.
+
+## Migrating to the 0.4.2 workspace and form APIs
+
+Existing select widths and densities are unchanged by default. Opt into
+Use an explicit width when matching a host layout. The new form controls
+retain native Shiny bindings:
+[`glassSwitch()`](https://prigasg.github.io/glasstabs/reference/glassSwitch.md)
+uses
+[`updateCheckboxInput()`](https://rdrr.io/pkg/shiny/man/updateCheckboxInput.html),
+[`glassRadioGroup()`](https://prigasg.github.io/glasstabs/reference/glassSwitch.md)
+uses
+[`updateRadioButtons()`](https://rdrr.io/pkg/shiny/man/updateRadioButtons.html),
+and
+[`glassCheckboxGroup()`](https://prigasg.github.io/glasstabs/reference/glassSwitch.md)
+uses
+[`updateCheckboxGroupInput()`](https://rdrr.io/pkg/shiny/man/updateCheckboxGroupInput.html).
+No custom server helper is needed. Keep using Shiny modules with
+namespaced UI IDs and bare IDs in module server update calls. Persistent
+order and closure are optional; existing desktop reorder inputs and
+active tab IDs are unchanged.

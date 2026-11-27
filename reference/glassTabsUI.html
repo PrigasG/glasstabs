@@ -34,6 +34,7 @@
     <li><a class="dropdown-item" href="../articles/index.html">More articles...</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/prigasG/glasstabs" aria-label="GitHub"><span class="fa fab fa-github"></span></a></li>
@@ -82,7 +83,11 @@
 <span>  fill <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  hide_single <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  equal_width <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  reorderable <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  reorderable <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  initial_order <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  persist_order <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"none"</span>, <span class="st">"session"</span>, <span class="st">"local"</span><span class="op">)</span>,</span>
+<span>  order_key <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  touch_reorder <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -245,6 +250,28 @@ any supplied extra UI remains available.</p></dd>
 reordering. The order of all tab values is available as
 <code>input[[paste0(id, "-tab_order")]]</code>. Hidden and disabled tabs cannot be
 dragged; their relative order is retained. Menu overflow has no drag UI.</p></dd>
+
+
+<dt id="arg-initial-order">initial_order<a class="anchor" aria-label="anchor" href="#arg-initial-order"></a></dt>
+<dd><p>Optional character vector of tab values in preferred
+order. Unknown values are ignored and new values are appended.</p></dd>
+
+
+<dt id="arg-persist-order">persist_order<a class="anchor" aria-label="anchor" href="#arg-persist-order"></a></dt>
+<dd><p>Browser order storage: <code>"none"</code> (default), <code>"session"</code>
+(reloads in the same browser tab), or <code>"local"</code> (across browser visits).
+Non-default modes require <code>reorderable = TRUE</code>; stored order takes precedence
+over <code>initial_order</code>. Only tab identifiers are stored, not pane contents.</p></dd>
+
+
+<dt id="arg-order-key">order_key<a class="anchor" aria-label="anchor" href="#arg-order-key"></a></dt>
+<dd><p>Optional storage key. Defaults to the namespaced widget id
+and is scoped to the current page path and browser origin.</p></dd>
+
+
+<dt id="arg-touch-reorder">touch_reorder<a class="anchor" aria-label="anchor" href="#arg-touch-reorder"></a></dt>
+<dd><p>Logical. Enable touch/pen reordering with a dedicated
+drag handle, edge scrolling and cancellation. Requires <code>reorderable = TRUE</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">

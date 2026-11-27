@@ -3,8 +3,8 @@
 > Animated tabs and select inputs that feel at home in a Shiny app.
 
 glasstabs brings animated navigation and polished filters to R Shiny
-without requiring custom JavaScript or CSS. Its three primary widgets
-are:
+without requiring custom JavaScript or CSS. Its primary components
+include:
 
 - [`glassTabsUI()`](https://prigasg.github.io/glasstabs/reference/glassTabsUI.md)
   for horizontal and vertical tab navigation.
@@ -12,12 +12,19 @@ are:
   for searchable single-choice inputs.
 - [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md)
   for multi-choice filters and optional tag pills.
+- [`glassSwitch()`](https://prigasg.github.io/glasstabs/reference/glassSwitch.md),
+  [`glassRadioGroup()`](https://prigasg.github.io/glasstabs/reference/glassSwitch.md)
+  and
+  [`glassCheckboxGroup()`](https://prigasg.github.io/glasstabs/reference/glassSwitch.md)
+  for native-bound form controls (development 0.4.2).
 
 Widgets work with
 [`fluidPage()`](https://rdrr.io/pkg/shiny/man/fluidPage.html), `bslib`,
 and `bs4Dash`, and support dark, light, automatic, and custom themes.
-Version 0.4.1 strengthens keyboard accessibility, selection correctness,
-server search, and responsive dropdown behavior.
+The 0.4.2 development candidate adds workspace management and refined
+form controls. See [What is
+new](https://prigasg.github.io/glasstabs/articles/whats-new-042.html)
+for details. The CRAN release may lag behind GitHub.
 
 ## Installation
 
@@ -355,8 +362,9 @@ Drag a tab on desktop, or focus a tab and press Alt+Shift+Left/Right
 (Up/Down on a vertical rail). `input[["workspace-tab_order"]]` gives the
 order of all values without changing the active tab. A full
 [`renderUI()`](https://rdrr.io/pkg/shiny/man/renderUI.html) replacement
-follows the order supplied by R; native menu overflow has no reorder
-control. Touch dragging is not promised in this release.
+follows the order supplied by R unless browser persistence is enabled;
+native menu overflow has no reorder control. Opt into browser
+persistence and touch handles with `persist_order` and `touch_reorder`.
 
 Custom themes allow control of the accent and focus ring without
 restyling the rest of the app.
@@ -554,9 +562,9 @@ reference](https://prigasg.github.io/glasstabs/reference/).
 | [`glass_select_theme()`](https://prigasg.github.io/glasstabs/reference/glass_select_theme.md) | Define a custom select theme |
 
 Built-in examples include `basic`, `bs4dash`, `bslib`,
-`connect-workflow`, `dashboard`, `indicators`, `light-mode`,
-`native-comparison`, `server-select`, `smoke-test`, `square-corners`,
-`stress-test`, and `theme-switcher`. Run one with
+`connect-workflow`, `dashboard`, `final-features`, `indicators`,
+`light-mode`, `native-comparison`, `server-select`, `smoke-test`,
+`square-corners`, `stress-test`, and `theme-switcher`. Run one with
 `runGlassExample("basic")`. The stress test is intended as a diagnostic,
 not as an application starter.
 
@@ -595,6 +603,57 @@ through
 in R. To report a problem or request an improvement, open a [GitHub
 issue](https://github.com/PrigasG/glasstabs/issues) and include a
 minimal Shiny example when possible.
+
+## Persistent, closable and touch-reorderable workspaces
+
+``` r
+
+glassTabsUI("workspace",
+  glassTabPanel("home", "Home", p("Pinned")),
+  glassTabPanel("report", "Report", textInput("notes", "Notes"), closable = TRUE),
+  glassTabPanel("settings", "Settings", glassSwitch("enabled", "Enabled"), closable = TRUE),
+  reorderable = TRUE,
+  initial_order = c("home", "settings", "report"),
+  persist_order = "local",
+  touch_reorder = TRUE
+)
+
+# In server: close is a request, not destructive client-side deletion.
+observeEvent(input[["workspace-close_request"]], {
+  value <- input[["workspace-close_request"]]
+  if (value %in% c("report", "settings")) removeGlassTab(session, "workspace", value)
+})
+```
+
+`persist_order = "session"` survives reloads in the same browser tab;
+`"local"` persists between visits on the same browser origin and page
+path. Use `initial_order` with your own authenticated storage for
+user-specific or cross-device ordering. Browser storage takes precedence
+when enabled; only currently rendered tab values are restored. New
+values follow saved values. Use `persist_order = "none"` to avoid
+browser storage. Do not use private data as tab identifiers. The server
+owns closure approval; a rejected request leaves the pane and its inputs
+untouched. Delete requests closure on a focused closable tab, and a
+separate accessible button closes the active closable tab (including
+menu overflow). Drag handles reserve their own touch area; normal
+scrolling and pane swiping remain available elsewhere.
+
+## Choice controls
+
+``` r
+
+glassSwitch("enabled", "Enabled", TRUE, glass_strength = 0.25)
+glassRadioGroup("mode", "Mode", c(Edit = "edit", Preview = "preview"), inline = TRUE)
+glassCheckboxGroup("fields", "Fields", c("Name", "County", "Rating"))
+```
+
+These use standard Shiny bindings and
+[`updateCheckboxInput()`](https://rdrr.io/pkg/shiny/man/updateCheckboxInput.html),
+[`updateRadioButtons()`](https://rdrr.io/pkg/shiny/man/updateRadioButtons.html)
+and
+[`updateCheckboxGroupInput()`](https://rdrr.io/pkg/shiny/man/updateCheckboxGroupInput.html);
+no separate JavaScript input-binding framework is required. Run
+`runGlassExample("final-features")` for the final feature fixture.
 
 # Package index
 
@@ -681,7 +740,26 @@ auto theming, search, update helpers, and reactive value helpers.
 - [`glass_select_theme()`](https://prigasg.github.io/glasstabs/reference/glass_select_theme.md)
   : Create a custom color theme for glass select widgets
 
+## Form inputs
+
+Native Shiny-bound switches, radio groups and checkboxes.
+
+- [`glassSwitch()`](https://prigasg.github.io/glasstabs/reference/glassSwitch.md)
+  [`glassRadioGroup()`](https://prigasg.github.io/glasstabs/reference/glassSwitch.md)
+  [`glassCheckboxGroup()`](https://prigasg.github.io/glasstabs/reference/glassSwitch.md)
+  : Glass-styled standard Shiny choice inputs
+
 # Articles
+
+### New in 0.4.2
+
+- [What's new in glasstabs
+  0.4.2](https://prigasg.github.io/glasstabs/articles/whats-new-042.md):
+
+### Components
+
+- [Component
+  gallery](https://prigasg.github.io/glasstabs/articles/component-gallery.md):
 
 ### Cheatsheet
 

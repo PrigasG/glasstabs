@@ -55,6 +55,7 @@
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -109,11 +110,11 @@ needed.</p>
 the tab order without replacing its panels. Read
 <code>input[["workspace-tab_order"]]</code> for all values, including
 hidden and disabled tabs. Recreating the whole widget through
-<code><a href="https://rdrr.io/pkg/shiny/man/renderUI.html" class="external-link">renderUI()</a></code> follows the order provided in R. Native menu
-mode has no reorder UI. <code>fill = TRUE</code> needs a definite parent
-height and makes the active pane scroll. The default floating layout and
-animations remain available.
-<code>runGlassExample("modernization")</code> exercises these
+<code><a href="https://rdrr.io/pkg/shiny/man/renderUI.html" class="external-link">renderUI()</a></code> follows the order provided in R unless browser
+persistence is enabled. Native menu mode has no reorder UI.
+<code>fill = TRUE</code> needs a definite parent height and makes the
+active pane scroll. The default floating layout and animations remain
+available. <code>runGlassExample("modernization")</code> exercises these
 options.</p>
 </div>
 <div class="section level2">
@@ -459,6 +460,51 @@ to match the card’s white background:</p>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/observe.html" class="external-link">observe</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"Widget 1 active: "</span>, <span class="va">input</span><span class="op">[[</span><span class="st">"widget1-active_tab"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/observe.html" class="external-link">observe</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"Widget 2 active: "</span>, <span class="va">input</span><span class="op">[[</span><span class="st">"widget2-active_tab"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="persisted-and-closable-workspaces">Persisted and closable workspaces<a class="anchor" aria-label="anchor" href="#persisted-and-closable-workspaces"></a>
+</h2>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span><span class="st">"workspace"</span>,</span>
+<span>  <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"home"</span>, <span class="st">"Home"</span>, <span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"Pinned"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="../reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"report"</span>, <span class="st">"Report"</span>, <span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/textInput.html" class="external-link">textInput</a></span><span class="op">(</span><span class="st">"title"</span>, <span class="st">"Title"</span><span class="op">)</span>,</span>
+<span>                closable <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>  reorderable <span class="op">=</span> <span class="cn">TRUE</span>, touch_reorder <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  persist_order <span class="op">=</span> <span class="st">"session"</span>, initial_order <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"home"</span>, <span class="st">"report"</span><span class="op">)</span>,</span>
+<span>  theme <span class="op">=</span> <span class="st">"auto"</span>, transition <span class="op">=</span> <span class="st">"none"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>Read <code>input[["workspace-tab_order"]]</code> for the complete
+order. <code>"none"</code> keeps the original behavior;
+<code>"session"</code> restores the order within a browser session and
+<code>"local"</code> across visits on the same origin and path. The
+default key includes the widget’s namespace; use a distinct
+<code>order_key</code> for separate projects or users sharing a browser.
+Saved browser order wins over the server-supplied
+<code>initial_order</code> for values that still exist. New values
+append; unknown and duplicate stored values are ignored. Storage failure
+is harmless. Only identifiers are saved. Do not put personal or
+confidential data in tab IDs. For cross-device or authenticated project
+storage, save the reported order on the server and use
+<code>initial_order</code> with browser persistence disabled.</p>
+<p>Closure is a request, not immediate deletion. In the server:</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/observeEvent.html" class="external-link">observeEvent</a></span><span class="op">(</span><span class="va">input</span><span class="op">[[</span><span class="st">"workspace-close_request"</span><span class="op">]</span><span class="op">]</span>, <span class="op">{</span></span>
+<span>  <span class="va">value</span> <span class="op">&lt;-</span> <span class="va">input</span><span class="op">[[</span><span class="st">"workspace-close_request"</span><span class="op">]</span><span class="op">]</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="va">value</span>, <span class="st">"report"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="co"># Check permissions and unsaved changes before accepting.</span></span>
+<span>    <span class="fu"><a href="../reference/appendGlassTab.html">removeGlassTab</a></span><span class="op">(</span><span class="va">session</span>, <span class="st">"workspace"</span>, <span class="va">value</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
+<p>Click the inline close mark, press Delete on a focused closable tab,
+or use the accessible active-tab close button. Nonclosable, hidden and
+disabled tabs do not request closure. Menu overflow has a close button
+but no drag UI. Removing a selected tab chooses the first remaining
+available tab; no available tab means a null active value. Appending to
+an empty workspace selects the new tab. Closing does not persist tab
+deletion across a fresh server session.</p>
+<p>Touch and pen reordering uses a dedicated handle. Normal scrolling
+and pane swipes remain independent. Keyboard users can reorder with
+Alt+Shift+arrows.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

@@ -34,6 +34,7 @@
     <li><a class="dropdown-item" href="../articles/index.html">More articles...</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="active nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/prigasG/glasstabs" aria-label="GitHub"><span class="fa fab fa-github"></span></a></li>
@@ -50,6 +51,14 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.4.2" id="glasstabs-042-development">glasstabs 0.4.2 (development)<a class="anchor" aria-label="anchor" href="#glasstabs-042-development"></a></h2>
+<div class="section level3">
+<h3 id="final-workspace-and-form-additions-0-4-2">Final workspace and form additions<a class="anchor" aria-label="anchor" href="#final-workspace-and-form-additions-0-4-2"></a></h3>
+<ul><li>Add opt-in persistent tab ordering (<code>persist_order</code>, <code>initial_order</code>, <code>order_key</code>), server-approved <code>closable</code> tabs and touch/pen drag handles (<code>touch_reorder</code>).</li>
+<li>Add native-bound <code><a href="../reference/glassSwitch.html">glassSwitch()</a></code>, <code><a href="../reference/glassSwitch.html">glassRadioGroup()</a></code> and <code><a href="../reference/glassSwitch.html">glassCheckboxGroup()</a></code>.</li>
+<li>Keep dropdown panels within the visible viewport, with a whole-panel scrolling fallback in tight spaces.</li>
+<li>Clear the active state when the final tab is hidden, disabled or removed; support immediate reappend after cancellation.</li>
+<li>Add release and component guides, update existing articles and cheatsheet source, and add focused integration tests.</li>
+</ul></div>
 <div class="section level3">
 <h3 id="navigation-and-layout-0-4-2">Navigation and layout<a class="anchor" aria-label="anchor" href="#navigation-and-layout-0-4-2"></a></h3>
 <ul><li>Add segmented navigation and refine the attached underline presentation.</li>

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>glasstabs - Animated Shiny Widgets • glasstabs</title>
+<title>glasstabs - Modern Navigation and Inputs for Shiny • glasstabs</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
@@ -15,10 +15,10 @@
 <script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><link href="extra.css" rel="stylesheet">
-<meta property="og:title" content="glasstabs - Animated Shiny Widgets">
-<meta name="description" content="Animated glass-morphism tabs, single-select, and multi-select widgets for R Shiny.
+<meta property="og:title" content="glasstabs - Modern Navigation and Inputs for Shiny">
+<meta name="description" content="Responsive, configurable navigation and form components for R Shiny.
 ">
-<meta property="og:description" content="Animated glass-morphism tabs, single-select, and multi-select widgets for R Shiny.
+<meta property="og:description" content="Responsive, configurable navigation and form components for R Shiny.
 ">
 <meta property="og:image" content="https://prigasg.github.io/glasstabs/logo.svg">
 </head>
@@ -60,6 +60,7 @@
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
+<li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -84,7 +85,7 @@
 <!-- badges: start -->
 
 <!-- badges: end -->
-<p>glasstabs brings animated navigation and polished filters to R Shiny without requiring custom JavaScript or CSS. Its three primary widgets are:</p>
+<p>glasstabs brings animated navigation and polished filters to R Shiny without requiring custom JavaScript or CSS. Its primary components include:</p>
 <ul>
 <li>
 <code><a href="reference/glassTabsUI.html">glassTabsUI()</a></code> for horizontal and vertical tab navigation.</li>
@@ -92,8 +93,10 @@
 <code><a href="reference/glassSelect.html">glassSelect()</a></code> for searchable single-choice inputs.</li>
 <li>
 <code><a href="reference/glassMultiSelect.html">glassMultiSelect()</a></code> for multi-choice filters and optional tag pills.</li>
+<li>
+<code><a href="reference/glassSwitch.html">glassSwitch()</a></code>, <code><a href="reference/glassSwitch.html">glassRadioGroup()</a></code> and <code><a href="reference/glassSwitch.html">glassCheckboxGroup()</a></code> for native-bound form controls (development 0.4.2).</li>
 </ul>
-<p>Widgets work with <code><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage()</a></code>, <code>bslib</code>, and <code>bs4Dash</code>, and support dark, light, automatic, and custom themes. Version 0.4.1 strengthens keyboard accessibility, selection correctness, server search, and responsive dropdown behavior.</p>
+<p>Widgets work with <code><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage()</a></code>, <code>bslib</code>, and <code>bs4Dash</code>, and support dark, light, automatic, and custom themes. The 0.4.2 development candidate adds workspace management and refined form controls. See <a href="https://prigasg.github.io/glasstabs/articles/whats-new-042.html">What is new</a> for details. The CRAN release may lag behind GitHub.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -342,7 +345,7 @@
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="reference/glassSelect.html">glassSelect</a></span><span class="op">(</span><span class="st">"dataset"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>A <span class="op">=</span> <span class="st">"a"</span>, B <span class="op">=</span> <span class="st">"b"</span><span class="op">)</span>, theme <span class="op">=</span> <span class="st">"auto"</span>,</span>
 <span>            size <span class="op">=</span> <span class="st">"sm"</span>, glass_strength <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span></span></code></pre></div>
-<p>Drag a tab on desktop, or focus a tab and press Alt+Shift+Left/Right (Up/Down on a vertical rail). <code>input[["workspace-tab_order"]]</code> gives the order of all values without changing the active tab. A full <code><a href="https://rdrr.io/pkg/shiny/man/renderUI.html" class="external-link">renderUI()</a></code> replacement follows the order supplied by R; native menu overflow has no reorder control. Touch dragging is not promised in this release.</p>
+<p>Drag a tab on desktop, or focus a tab and press Alt+Shift+Left/Right (Up/Down on a vertical rail). <code>input[["workspace-tab_order"]]</code> gives the order of all values without changing the active tab. A full <code><a href="https://rdrr.io/pkg/shiny/man/renderUI.html" class="external-link">renderUI()</a></code> replacement follows the order supplied by R unless browser persistence is enabled; native menu overflow has no reorder control. Opt into browser persistence and touch handles with <code>persist_order</code> and <code>touch_reorder</code>.</p>
 <p>Custom themes allow control of the accent and focus ring without restyling the rest of the app. <code><a href="reference/glass_select_theme.html">glass_select_theme()</a></code> also accepts <code>trigger_bg</code> and <code>dropdown_bg</code> for separate surfaces. Explicit surface colors remain fixed across mode changes, so choose colors with appropriate contrast.</p>
 <p>Run <code>runGlassExample("modernization")</code> to use glass controls for tab style, theme, indicator, motion, alignment, spacing, overflow, one/six-tab layouts, reordering, and lifecycle operations. It also shows select sizing, long-list scrolling, actual input values, and host-menu layering. Native Shiny inputs appear only in its labeled side-by-side comparison.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
@@ -648,7 +651,7 @@
 </tr>
 </tbody>
 </table>
-<p>Built-in examples include <code>basic</code>, <code>bs4dash</code>, <code>bslib</code>, <code>connect-workflow</code>, <code>dashboard</code>, <code>indicators</code>, <code>light-mode</code>, <code>native-comparison</code>, <code>server-select</code>, <code>smoke-test</code>, <code>square-corners</code>, <code>stress-test</code>, and <code>theme-switcher</code>. Run one with <code>runGlassExample("basic")</code>. The stress test is intended as a diagnostic, not as an application starter.</p>
+<p>Built-in examples include <code>basic</code>, <code>bs4dash</code>, <code>bslib</code>, <code>connect-workflow</code>, <code>dashboard</code>, <code>final-features</code>, <code>indicators</code>, <code>light-mode</code>, <code>native-comparison</code>, <code>server-select</code>, <code>smoke-test</code>, <code>square-corners</code>, <code>stress-test</code>, and <code>theme-switcher</code>. Run one with <code>runGlassExample("basic")</code>. The stress test is intended as a diagnostic, not as an application starter.</p>
 </div>
 </div>
 <div class="section level2">
@@ -703,6 +706,36 @@
 <p>The <a href="https://prigasg.github.io/glasstabs/">glasstabs website</a> provides the full reference, detailed guides, and a <a href="https://prigasg.github.io/glasstabs/articles/cheatsheet.html">cheatsheet</a>.</p>
 <p>Useful guides include <a href="https://prigasg.github.io/glasstabs/articles/modules.html">Shiny modules</a>, <a href="https://prigasg.github.io/glasstabs/articles/linked-filters.html">linked filters</a>, <a href="https://prigasg.github.io/glasstabs/articles/migrating.html">migrating from native inputs</a>, <a href="https://prigasg.github.io/glasstabs/articles/troubleshooting.html">troubleshooting</a>, <a href="https://prigasg.github.io/glasstabs/articles/examples-gallery.html">example gallery</a>, and <a href="https://prigasg.github.io/glasstabs/articles/posit-connect.html">Posit Connect deployment</a>.</p>
 <p>Release notes are in <a href="NEWS.html"><code>NEWS.md</code></a> or available through <code><a href="reference/glasstabs_news.html">glasstabs_news()</a></code> in R. To report a problem or request an improvement, open a <a href="https://github.com/PrigasG/glasstabs/issues" class="external-link">GitHub issue</a> and include a minimal Shiny example when possible.</p>
+</div>
+<div class="section level2">
+<h2 id="persistent-closable-and-touch-reorderable-workspaces">Persistent, closable and touch-reorderable workspaces<a class="anchor" aria-label="anchor" href="#persistent-closable-and-touch-reorderable-workspaces"></a>
+</h2>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/glassTabsUI.html">glassTabsUI</a></span><span class="op">(</span><span class="st">"workspace"</span>,</span>
+<span>  <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"home"</span>, <span class="st">"Home"</span>, <span class="fu"><a href="https://rstudio.github.io/htmltools/reference/builder.html" class="external-link">p</a></span><span class="op">(</span><span class="st">"Pinned"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"report"</span>, <span class="st">"Report"</span>, <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/textInput.html" class="external-link">textInput</a></span><span class="op">(</span><span class="st">"notes"</span>, <span class="st">"Notes"</span><span class="op">)</span>, closable <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="reference/glassTabPanel.html">glassTabPanel</a></span><span class="op">(</span><span class="st">"settings"</span>, <span class="st">"Settings"</span>, <span class="fu"><a href="reference/glassSwitch.html">glassSwitch</a></span><span class="op">(</span><span class="st">"enabled"</span>, <span class="st">"Enabled"</span><span class="op">)</span>, closable <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>  reorderable <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  initial_order <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"home"</span>, <span class="st">"settings"</span>, <span class="st">"report"</span><span class="op">)</span>,</span>
+<span>  persist_order <span class="op">=</span> <span class="st">"local"</span>,</span>
+<span>  touch_reorder <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># In server: close is a request, not destructive client-side deletion.</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/observeEvent.html" class="external-link">observeEvent</a></span><span class="op">(</span><span class="va">input</span><span class="op">[[</span><span class="st">"workspace-close_request"</span><span class="op">]</span><span class="op">]</span>, <span class="op">{</span></span>
+<span>  <span class="va">value</span> <span class="op">&lt;-</span> <span class="va">input</span><span class="op">[[</span><span class="st">"workspace-close_request"</span><span class="op">]</span><span class="op">]</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="va">value</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"report"</span>, <span class="st">"settings"</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="reference/appendGlassTab.html">removeGlassTab</a></span><span class="op">(</span><span class="va">session</span>, <span class="st">"workspace"</span>, <span class="va">value</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
+<p><code>persist_order = "session"</code> survives reloads in the same browser tab; <code>"local"</code> persists between visits on the same browser origin and page path. Use <code>initial_order</code> with your own authenticated storage for user-specific or cross-device ordering. Browser storage takes precedence when enabled; only currently rendered tab values are restored. New values follow saved values. Use <code>persist_order = "none"</code> to avoid browser storage. Do not use private data as tab identifiers. The server owns closure approval; a rejected request leaves the pane and its inputs untouched. Delete requests closure on a focused closable tab, and a separate accessible button closes the active closable tab (including menu overflow). Drag handles reserve their own touch area; normal scrolling and pane swiping remain available elsewhere.</p>
+</div>
+<div class="section level2">
+<h2 id="choice-controls">Choice controls<a class="anchor" aria-label="anchor" href="#choice-controls"></a>
+</h2>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/glassSwitch.html">glassSwitch</a></span><span class="op">(</span><span class="st">"enabled"</span>, <span class="st">"Enabled"</span>, <span class="cn">TRUE</span>, glass_strength <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/glassSwitch.html">glassRadioGroup</a></span><span class="op">(</span><span class="st">"mode"</span>, <span class="st">"Mode"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Edit <span class="op">=</span> <span class="st">"edit"</span>, Preview <span class="op">=</span> <span class="st">"preview"</span><span class="op">)</span>, inline <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/glassSwitch.html">glassCheckboxGroup</a></span><span class="op">(</span><span class="st">"fields"</span>, <span class="st">"Fields"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Name"</span>, <span class="st">"County"</span>, <span class="st">"Rating"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>These use standard Shiny bindings and <code><a href="https://rdrr.io/pkg/shiny/man/updateCheckboxInput.html" class="external-link">updateCheckboxInput()</a></code>, <code><a href="https://rdrr.io/pkg/shiny/man/updateRadioButtons.html" class="external-link">updateRadioButtons()</a></code> and <code><a href="https://rdrr.io/pkg/shiny/man/updateCheckboxGroupInput.html" class="external-link">updateCheckboxGroupInput()</a></code>; no separate JavaScript input-binding framework is required. Run <code>runGlassExample("final-features")</code> for the final feature fixture.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">

@@ -55,6 +55,7 @@
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -644,6 +645,74 @@ wrappers or revealed by toggling visibility.</li>
 <p>That is the whole working model: load the dependency once, compose
 widgets in the UI, and read their values through ordinary Shiny
 inputs.</p>
+</div>
+<div class="section level2">
+<h2 id="workspace-and-form-input-quick-reference">Workspace and form input quick reference<a class="anchor" aria-label="anchor" href="#workspace-and-form-input-quick-reference"></a>
+</h2>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead><tr class="header">
+<th>Task</th>
+<th>API</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>Restore browser order</td>
+<td>
+<code>persist_order = "session"</code> or <code>"local"</code>
+</td>
+</tr>
+<tr class="even">
+<td>Restore server order</td>
+<td><code>initial_order = c("a", "b")</code></td>
+</tr>
+<tr class="odd">
+<td>Isolate saved workspaces</td>
+<td><code>order_key</code></td>
+</tr>
+<tr class="even">
+<td>Touch and pen reorder</td>
+<td><code>reorderable = TRUE, touch_reorder = TRUE</code></td>
+</tr>
+<tr class="odd">
+<td>Request tab closure</td>
+<td>
+<code>glassTabPanel(..., closable = TRUE)</code>;
+<code>input[["id-close_request"]]</code>
+</td>
+</tr>
+<tr class="even">
+<td>Accept closure</td>
+<td><code>removeGlassTab(session, "id", value)</code></td>
+</tr>
+<tr class="odd">
+<td>Logical switch</td>
+<td>
+<code><a href="../reference/glassSwitch.html">glassSwitch()</a></code> /
+<code><a href="https://rdrr.io/pkg/shiny/man/updateCheckboxInput.html" class="external-link">shiny::updateCheckboxInput()</a></code>
+</td>
+</tr>
+<tr class="even">
+<td>One choice</td>
+<td>
+<code><a href="../reference/glassSwitch.html">glassRadioGroup()</a></code> /
+<code><a href="https://rdrr.io/pkg/shiny/man/updateRadioButtons.html" class="external-link">shiny::updateRadioButtons()</a></code>
+</td>
+</tr>
+<tr class="odd">
+<td>Multiple choices</td>
+<td>
+<code><a href="../reference/glassSwitch.html">glassCheckboxGroup()</a></code> /
+<code><a href="https://rdrr.io/pkg/shiny/man/updateCheckboxGroupInput.html" class="external-link">shiny::updateCheckboxGroupInput()</a></code>
+</td>
+</tr>
+</tbody>
+</table>
+<p>See the <a href="tabs.html">workspace guide</a> and <a href="whats-new-042.html">release overview</a> for persistence
+precedence, server authorization and mobile limitations.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

@@ -55,6 +55,7 @@
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -238,6 +239,71 @@ arguments, so re-apply the intended selection after the render.</p>
 and server registration in the server function, and treat a
 <code><a href="https://rdrr.io/pkg/shiny/man/renderUI.html" class="external-link">renderUI()</a></code> rebuild as a fresh widget (see the
 linked-filters article’s renderUI section).</p>
+</div>
+<div class="section level2">
+<h2 id="workspace-and-responsive-integration-checks">Workspace and responsive integration checks<a class="anchor" aria-label="anchor" href="#workspace-and-responsive-integration-checks"></a>
+</h2>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead><tr class="header">
+<th>Symptom</th>
+<th>Expected behavior and diagnostic</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>Closed select overlaps a button</td>
+<td>Trigger must fit the wrapper and parent. Check bounding rectangles
+and <code>min-width</code>. Use an explicit width that fits its
+parent.</td>
+</tr>
+<tr class="even">
+<td>Search cannot receive focus in a modal</td>
+<td>The portal should be inside the active Bootstrap 3/5 modal or
+Bootstrap offcanvas. Check focus and the panel parent.</td>
+</tr>
+<tr class="odd">
+<td>Arrow keys move the page</td>
+<td>Only the option list should scroll. Capture
+<code>window.scrollY</code> and the option list’s
+<code>scrollTop</code>.</td>
+</tr>
+<tr class="even">
+<td>Tab order resets</td>
+<td>Use <code>persist_order</code> or save <code>-tab_order</code> on
+the server and restore with <code>initial_order</code>. Check the
+storage key and the namespace.</td>
+</tr>
+<tr class="odd">
+<td>A close mark does nothing</td>
+<td>The server must handle <code>-close_request</code> and approve
+<code><a href="../reference/appendGlassTab.html">removeGlassTab()</a></code>. Never trust the client event as
+authorization.</td>
+</tr>
+<tr class="even">
+<td>Dynamic pane fails</td>
+<td>Inspect browser errors and network dependencies. A failed append
+must not expose an orphan link.</td>
+</tr>
+<tr class="odd">
+<td>Nested theme looks wrong</td>
+<td>Inspect the direct widget’s computed color, radius, and padding
+rather than the outer widget.</td>
+</tr>
+<tr class="even">
+<td>Mobile keyboard covers options</td>
+<td>Inspect <code>visualViewport</code>, the panel bounds, and
+whole-panel scroll fallback. Test a physical device.</td>
+</tr>
+</tbody>
+</table>
+<p>Use <code>runGlassExample("final-features")</code> for a focused
+reproduction. Include package version, Shiny version, browser, host
+theme, minimal code and the actual computed field/panel geometry in bug
+reports. Avoid application CSS overrides until the source of the issue
+is known.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

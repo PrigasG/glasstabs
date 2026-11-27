@@ -7,7 +7,14 @@ Each call defines one tab button and its associated content pane.
 ## Usage
 
 ``` r
-glassTabPanel(value, label, ..., icon = NULL, selected = FALSE)
+glassTabPanel(
+  value,
+  label,
+  ...,
+  icon = NULL,
+  selected = FALSE,
+  closable = FALSE
+)
 ```
 
 ## Arguments
@@ -34,6 +41,12 @@ glassTabPanel(value, label, ..., icon = NULL, selected = FALSE)
 
   Logical. Whether this tab starts selected. Only the first
   `selected = TRUE` tab takes effect; defaults to `FALSE`.
+
+- closable:
+
+  Logical. Allow requesting closure by the inline close mark, Delete key
+  or the active-tab close button. The server decides whether to remove
+  it.
 
 ## Value
 

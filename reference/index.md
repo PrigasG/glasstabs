@@ -82,3 +82,12 @@ auto theming, search, update helpers, and reactive value helpers.
   glassMultiSelect
 - [`glass_select_theme()`](https://prigasg.github.io/glasstabs/reference/glass_select_theme.md)
   : Create a custom color theme for glass select widgets
+
+## Form inputs
+
+Native Shiny-bound switches, radio groups and checkboxes.
+
+- [`glassSwitch()`](https://prigasg.github.io/glasstabs/reference/glassSwitch.md)
+  [`glassRadioGroup()`](https://prigasg.github.io/glasstabs/reference/glassSwitch.md)
+  [`glassCheckboxGroup()`](https://prigasg.github.io/glasstabs/reference/glassSwitch.md)
+  : Glass-styled standard Shiny choice inputs

@@ -15,10 +15,10 @@ scroll cue and constrain their option area to the available viewport.
 The package version is set to 0.4.2 for this draft; the NEWS heading
 remains marked as development until publication.
 
-Native-style default width, content-measured `width = "auto"` and
-`size = "native"` remain design proposals. They would change existing
-default layouts and need theme-specific measurement, server-search
-bounds, and mobile regression work before inclusion.
+Final candidate: persistent tab order, server-approved close requests,
+touch handles, native-bound form controls, visible-viewport positioning.
+Existing defaults remain. Release requires the full CI matrix,
+Regression Lab and physical mobile verification.
 
 ## v0.4.1 — shipped select resilience and connected layouts
 
@@ -91,7 +91,6 @@ These remain ideas for future releases:
 - lazy pane rendering;
 - tab groups;
 - additional pane transition styles;
-- local-storage persistence;
 - a hidden-navigation mode;
 - content-area header and footer slots;
 - global Ctrl+1–9 shortcuts;

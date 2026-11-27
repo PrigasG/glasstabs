@@ -220,3 +220,13 @@ Plain [`fluidPage()`](https://rdrr.io/pkg/shiny/man/fluidPage.html),
 [`page_fillable()`](https://rstudio.github.io/bslib/reference/page_fillable.html),
 and dashboard layouts remain first-class homes for every glasstabs
 widget.
+
+## Touch reordering and mobile search
+
+Use `reorderable = TRUE, touch_reorder = TRUE` to expose a dedicated
+drag handle. Drag from the handle using touch or pen. Drag near a strip
+edge to scroll it; release inside to commit, outside to cancel, or
+cancel with Escape/pointer cancellation. Ordinary taps, strip scrolling
+and pane swipes are unchanged. Menu overflow does not support dragging.
+Test real iOS and Android browsers, including rotation, keyboard
+opening, reduced motion, RTL and narrow iframes.

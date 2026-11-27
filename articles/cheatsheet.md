@@ -511,3 +511,23 @@ glasstabs_news()      # prints changelog to the console
 
 That is the whole working model: load the dependency once, compose
 widgets in the UI, and read their values through ordinary Shiny inputs.
+
+## Workspace and form input quick reference
+
+| Task | API |
+|----|----|
+| Restore browser order | `persist_order = "session"` or `"local"` |
+| Restore server order | `initial_order = c("a", "b")` |
+| Isolate saved workspaces | `order_key` |
+| Touch and pen reorder | `reorderable = TRUE, touch_reorder = TRUE` |
+| Request tab closure | `glassTabPanel(..., closable = TRUE)`; `input[["id-close_request"]]` |
+| Accept closure | `removeGlassTab(session, "id", value)` |
+| Logical switch | [`glassSwitch()`](https://prigasg.github.io/glasstabs/reference/glassSwitch.md) / [`shiny::updateCheckboxInput()`](https://rdrr.io/pkg/shiny/man/updateCheckboxInput.html) |
+| One choice | [`glassRadioGroup()`](https://prigasg.github.io/glasstabs/reference/glassSwitch.md) / [`shiny::updateRadioButtons()`](https://rdrr.io/pkg/shiny/man/updateRadioButtons.html) |
+| Multiple choices | [`glassCheckboxGroup()`](https://prigasg.github.io/glasstabs/reference/glassSwitch.md) / [`shiny::updateCheckboxGroupInput()`](https://rdrr.io/pkg/shiny/man/updateCheckboxGroupInput.html) |
+
+See the [workspace
+guide](https://prigasg.github.io/glasstabs/articles/tabs.md) and
+[release
+overview](https://prigasg.github.io/glasstabs/articles/whats-new-042.md)
+for persistence precedence, server authorization and mobile limitations.
