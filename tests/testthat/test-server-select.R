@@ -29,9 +29,6 @@ test_that("all built-in examples have app files and README coverage", {
     app_sources,
     fixed = TRUE
   )))
-  # covr installs the source tree directly, including this untracked local lab.
-  # R CMD build excludes it through .Rbuildignore.
-  examples <- setdiff(examples, "glasstabs-regression-lab")
   documented_examples <- c(
     "basic", "bs4dash", "bslib", "connect-workflow", "dashboard",
     "final-features", "indicators", "light-mode", "modernization", "native-comparison",
@@ -116,8 +113,8 @@ test_that("connect workflow example exists, parses, and demonstrates workflow fe
   expect_match(app_src, "enableGlassTab", fixed = TRUE)
   expect_match(app_src, "What this app is testing", fixed = TRUE)
 
-  # The deployment lock stays in the repository but is intentionally omitted
-  # from CRAN builds so it cannot pin installed users to an older release.
+  # A locally generated deployment manifest is optional and excluded from
+  # the repository and CRAN builds. Validate it when present in a checkout.
   manifest <- test_path("..", "..", "inst", "examples", "connect-workflow", "manifest.json")
   if (file.exists(manifest)) {
     manifest_src <- paste(readLines(manifest, warn = FALSE), collapse = "\n")

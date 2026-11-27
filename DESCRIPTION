@@ -12,6 +12,9 @@ Description: Tools for creating animated glassmorphism-style tab
     runtime append/remove, reactive rendering via 'renderGlassTabs()', URL
     bookmarking, responsive overflow modes, optional touch gestures,
     reduced-motion support, and compact mode for dashboard card layouts.
+    Optional browser storage retains tab order, while closable tabs send
+    server-approved close requests. Glass-styled switches, radio buttons,
+    and checkbox groups use standard 'Shiny' input bindings.
     'glassTabCondition()' generates 'conditionalPanel()' condition strings
     without needing to recall the internal input key pattern.
     'glasstabs_news()' displays the release notes from the R console.

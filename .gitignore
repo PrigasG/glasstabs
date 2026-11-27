@@ -1,17 +1,64 @@
-.Rproj.user
+# R and RStudio
+.Rproj.user/
 .Rhistory
 .RData
+.Ruserdata
+.Renviron
 *.Rcheck/
 *.tar.gz
+
+# Local environment and credentials
 .httr-oauth
+.env
+.env.*
+!.env.example
+
+# OS and editor artifacts
 .DS_Store
-.quarto
-inst/doc
-docs
+Thumbs.db
+.vscode/
+.idea/
+
+# Private development
+/dev/
+/ROADMAP.md
+/benchmarks/
+/glasstabs-regression-lab*/
+/glasstabs-042-completion/
+/glasstabs-final-extension/
+/glasstabs-0.4.2-*.zip
+/glasstabs-regression-lab*.zip
+/inst/examples/glasstabs-regression-lab*/
+/inst/examples/basic/testing_js_select.R
+/inst/examples/stress-test/STRESS_NOTES.md
+
+# Generated documentation
+.quarto/
+/inst/doc/
+/docs/
 /doc/
 /Meta/
-dev/
+/vignettes/*_files/
+/vignettes/*_cache/
+
+# JavaScript development artifacts
 node_modules/
-coverage.xml
-benchmarks/results/
-inst/examples/connect-workflow/rsconnect/
+.eslintcache
+npm-debug.log*
+
+# Temporary test artifacts (not accepted snapshots)
+/coverage.xml
+/tests/testthat/_snaps/**/*-new.*
+/tests/testthat/apps/**/shinytest2/
+
+# Local deployment metadata
+rsconnect/
+/inst/examples/connect-workflow/manifest.json
+
+# LaTeX compilation artifacts
+/inst/cheatsheet/*.aux
+/inst/cheatsheet/*.log
+/inst/cheatsheet/*.out
+/inst/cheatsheet/*.synctex.gz
+/inst/cheatsheet/*.fls
+/inst/cheatsheet/*.fdb_latexmk
