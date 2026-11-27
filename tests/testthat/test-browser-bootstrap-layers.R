@@ -22,6 +22,7 @@ test_that("browser: dropdowns remain usable inside Bootstrap focus layers", {
   for (id in c("off_single", "off_multi")) {
     app$click(selector = paste0("#", id, "-trigger"))
     app$wait_for_js(sprintf("document.getElementById('%s-dropdown').classList.contains('open')", id))
+    app$click(selector = paste0("#", id, "-dropdown input[type=text]"))
     app$wait_for_js(sprintf("
       document.activeElement === document.querySelector('#%s-dropdown input[type=text]')
     ", id))
@@ -47,6 +48,7 @@ test_that("browser: dropdowns remain usable inside Bootstrap focus layers", {
   for (id in c("modal_single", "modal_multi")) {
     app$click(selector = paste0("#", id, "-trigger"))
     app$wait_for_js(sprintf("document.getElementById('%s-dropdown').classList.contains('open')", id))
+    app$click(selector = paste0("#", id, "-dropdown input[type=text]"))
     app$wait_for_js(sprintf("
       document.activeElement === document.querySelector('#%s-dropdown input[type=text]')
     ", id))
