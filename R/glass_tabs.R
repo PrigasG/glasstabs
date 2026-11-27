@@ -718,23 +718,24 @@ appendGlassTab <- function(session, id, tab, select = FALSE) {
   full_ns <- session$ns(id)
 
   link_html <- as.character(.gt_tab_link(tab, FALSE, full_ns))
-  pane_html <- as.character(.gt_tab_pane(
+  pane <- .gt_tab_pane(
     tab,
     FALSE,
     paste0(full_ns, "-pane-", tab$value),
     tab_id = paste0(full_ns, "-tab-", tab$value)
-  ))
-
-  session$sendCustomMessage(
-    "glasstabs_append_tab",
-    list(
-      ns        = full_ns,
-      value     = tab$value,
-      link_html = link_html,
-      pane_html = pane_html,
-      select    = select
-    )
   )
+  pane_rendered <- htmltools::renderTags(pane)
+  pane_deps <- lapply(pane_rendered$dependencies, shiny::createWebDependency)
+
+  payload <- list(
+    ns        = full_ns,
+    value     = tab$value,
+    link_html = link_html,
+    pane_html = as.character(pane_rendered$html)
+  )
+  if (length(pane_deps)) payload$pane_deps <- pane_deps
+  payload$select <- select
+  session$sendCustomMessage("glasstabs_append_tab", payload)
   invisible(NULL)
 }
 

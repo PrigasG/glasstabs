@@ -400,6 +400,14 @@
      assistive technology and makes the panel state explicit. */
   function setPaneActive(pane, isActive) {
     if (!pane) return;
+    if (!isActive) {
+      pane.querySelectorAll('.gt-gs-wrap.gt-layer-active, .gt-ms-wrap.gt-layer-active')
+        .forEach(function (wrap) {
+          closeDropdownWrap(wrap);
+          var dropdown = wrap._gtDropdown;
+          if (dropdown) teleportClose(wrap, dropdown);
+        });
+    }
     pane.classList.toggle('active', isActive);
     pane.setAttribute('aria-hidden', isActive ? 'false' : 'true');
     pane.setAttribute('tabindex', isActive ? '0' : '-1');
@@ -565,11 +573,12 @@
     });
   }
 
-  /** Teleport a dropdown to <body> so no parent overflow/transform can clip it */
+  /** Escape local clipping while staying inside Bootstrap focus boundaries. */
   function teleportOpen(wrap, dropdown) {
     refreshPortalTheme(wrap, dropdown);
-    if (dropdown.parentNode === document.body) return;
-    document.body.appendChild(dropdown);
+    var host = wrap.closest('.modal.show, .offcanvas.show') || document.body;
+    if (dropdown.parentNode === host) return;
+    host.appendChild(dropdown);
     /* Use absolute positioning so AdminLTE's overflow-x:hidden on body/html
        doesn't clip the dropdown (position:fixed breaks in those scroll contexts) */
     dropdown.style.position = 'absolute';
@@ -579,6 +588,10 @@
     var rect = trigger.getBoundingClientRect();
     var scrollX = window.pageXOffset || 0;
     var scrollY = window.pageYOffset || 0;
+    var portalHost = dropdown.parentNode;
+    var hostRect = portalHost === document.body ? null : portalHost.getBoundingClientRect();
+    var portalX = hostRect ? portalHost.scrollLeft - hostRect.left : scrollX;
+    var portalY = hostRect ? portalHost.scrollTop - hostRect.top : scrollY;
     var vw = window.innerWidth;
     var vh = window.innerHeight;
     var edge = 8;
@@ -614,8 +627,8 @@
     }
     var ddHeight = dropdown.offsetHeight || 0;
     var ddWidth = Math.min(dropdown.offsetWidth || dropdownWidth, preferredMaxWidth);
-    var top = flipped ? rect.top + scrollY - ddHeight + overlap :
-      rect.bottom + scrollY - overlap;
+    var top = flipped ? rect.top + portalY - ddHeight + overlap :
+      rect.bottom + portalY - overlap;
     /* Signal the tongue direction so CSS squares the adjoining corners and
        anchors the unfurl animation at the attached edge. This runs before
        `.open` is added, so the opening transition uses the right origin. */
@@ -631,19 +644,35 @@
     left = Math.max(edge, Math.min(left, vw - ddWidth - edge));
 
     dropdown.style.top = top + 'px';
-    dropdown.style.left = (left + scrollX) + 'px';
+    dropdown.style.left = (left + portalX) + 'px';
     dropdown.style.right = 'auto';
     updateScrollCue(dropdown);
   }
 
+  function detachScrollCue(dropdown, optionsBox) {
+    if (dropdown._gtScrollCueObserver) {
+      dropdown._gtScrollCueObserver.disconnect();
+      dropdown._gtScrollCueObserver = null;
+    }
+    if (dropdown._gtScrollCueHandler && optionsBox) {
+      optionsBox.removeEventListener('scroll', dropdown._gtScrollCueHandler);
+      dropdown._gtScrollCueHandler = null;
+    }
+    dropdown.querySelectorAll(':scope > .gt-scroll-cue').forEach(function (cue) {
+      cue.remove();
+    });
+  }
+
   function attachScrollCue(dropdown, optionsBox) {
     if (!optionsBox) return;
+    detachScrollCue(dropdown, optionsBox);
     var cue = document.createElement('div');
     cue.className = 'gt-scroll-cue hidden';
     cue.setAttribute('aria-hidden', 'true');
     cue.textContent = 'Scroll for more';
     dropdown.appendChild(cue);
-    optionsBox.addEventListener('scroll', function () { updateScrollCue(dropdown); }, { passive: true });
+    dropdown._gtScrollCueHandler = function () { updateScrollCue(dropdown); };
+    optionsBox.addEventListener('scroll', dropdown._gtScrollCueHandler, { passive: true });
     var observer = new MutationObserver(function (mutations) {
       var layoutChanged = mutations.some(function (m) {
         if (m.type === 'childList') return true;
@@ -680,7 +709,7 @@
        close() and then moves immediately; it must not leave a timer or
        listener behind). */
     cancelPendingTeleportClose(dropdown);
-    if (dropdown.parentNode !== document.body) return;
+    if (dropdown.parentNode === wrap) return;
     MS_VARS.forEach(function (v) { dropdown.style.removeProperty(v); });
     dropdown.style.removeProperty('position');
     dropdown.style.removeProperty('top');
@@ -716,7 +745,7 @@
   }
 
   function scheduleTeleportClose(wrap, dropdown) {
-    if (dropdown.parentNode !== document.body) {
+    if (dropdown.parentNode === wrap) {
       teleportClose(wrap, dropdown);
       return;
     }
@@ -772,7 +801,7 @@
     closeAllDropdowns();
     document.querySelectorAll('.gt-gs-wrap, .gt-ms-wrap').forEach(function (wrap) {
       var dd = wrap._gtDropdown;
-      if (dd && dd.parentNode === document.body) teleportClose(wrap, dd);
+      if (dd && dd.parentNode !== wrap) teleportClose(wrap, dd);
     });
   }
 
@@ -1179,7 +1208,7 @@
       }
     }
 
-    function buildKF(cs2, fw, fh) {
+    function buildKF(cs2, fw, fh, strength) {
       var f = [];
       var sc = Math.max(1, cs2.length - 1);
 
@@ -1194,7 +1223,7 @@
           top: px(p.y),
           width: px(w),
           height: px(h),
-          opacity: nf ? 0.80 : 0.60,
+          opacity: (nf ? 0.80 : 0.60) * strength,
           offset: off
         });
       }
@@ -1219,6 +1248,11 @@
       var fi = order.indexOf(fromEl.getAttribute('data-value'));
       var ti = order.indexOf(toEl.getAttribute('data-value'));
       if (fi < 0 || ti < 0) return 200;
+      var dur = 200 + Math.max(1, Math.abs(ti - fi)) * 55;
+      var strength = parseFloat(container.style.getPropertyValue('--gt-glass-strength'));
+      if (!isFinite(strength)) strength = 1;
+      if (strength <= 0 || container.classList.contains('indicator-solid') ||
+          container.classList.contains('indicator-underline')) return dur;
 
       var step = ti > fi ? 1 : -1;
       var pts = [];
@@ -1238,15 +1272,13 @@
         trf.getAnimations().forEach(function (a) { a.cancel(); });
       }
 
-      var dur = 200 + Math.max(1, Math.abs(ti - fi)) * 55;
-
       trf.style.opacity = 0;
       trf.style.left = px(pts[0].x);
       trf.style.top = px(pts[0].y);
       trf.style.width = px(32);
       trf.style.height = px(11);
 
-      trf.animate(buildKF(pts, fw, fh), {
+      trf.animate(buildKF(pts, fw, fh, strength), {
         duration: dur,
         easing: 'cubic-bezier(.15,.9,.2,1)',
         fill: 'forwards'
@@ -1254,8 +1286,8 @@
 
       trf.animate([
         { filter: 'blur(3px)', opacity: 0 },
-        { filter: 'blur(2.4px)', opacity: 0.88, offset: 0.10 },
-        { filter: 'blur(2.8px)', opacity: 0.72, offset: 0.78 },
+        { filter: 'blur(2.4px)', opacity: 0.88 * strength, offset: 0.10 },
+        { filter: 'blur(2.8px)', opacity: 0.72 * strength, offset: 0.78 },
         { filter: 'blur(7px)', opacity: 0, offset: 1 }
       ], {
         duration: dur,
@@ -2340,7 +2372,7 @@
 
     /* Destroy (lifecycle teardown) */
     function destroy() {
-      if (dropdown._gtScrollCueObserver) dropdown._gtScrollCueObserver.disconnect();
+      detachScrollCue(dropdown, optionsBox);
       if (wrap._gtScrollHandler) {
         window.removeEventListener('scroll', wrap._gtScrollHandler, true);
         window.removeEventListener('resize', wrap._gtScrollHandler);
@@ -3281,7 +3313,7 @@
 
     /* Destroy (lifecycle teardown) */
     function destroy() {
-      if (dropdown._gtScrollCueObserver) dropdown._gtScrollCueObserver.disconnect();
+      detachScrollCue(dropdown, optionsBox);
       if (wrap._gtScrollHandler) {
         window.removeEventListener('scroll', wrap._gtScrollHandler, true);
         window.removeEventListener('resize', wrap._gtScrollHandler);
@@ -3605,7 +3637,7 @@
       }
       el.classList.toggle('theme-light', !dark);
       var dd = el._gtDropdown;
-      if (dd && dd.parentNode === document.body) refreshPortalTheme(el, dd);
+      if (dd && dd.parentNode !== el) refreshPortalTheme(el, dd);
     });
   }
 
@@ -3642,7 +3674,7 @@
     watchAutoThemes();
 
     document.querySelectorAll('.gt-navbar').forEach(function (nb) {
-      initTabs(nb);
+      if (!nb._gtTabsInit) initTabs(nb);
     });
 
     document.querySelectorAll('.gt-gs-wrap').forEach(function (w) {
@@ -3703,7 +3735,7 @@
 
     document.addEventListener('transitionstart', function (e) {
       var t = e.target;
-      if (t && t.closest && t.closest('.sidebar, .main-sidebar, .bslib-sidebar-layout, .offcanvas')) {
+      if (t && t.matches && t.matches('.sidebar, .main-sidebar, .bslib-sidebar-layout, .offcanvas')) {
         closeAllDropdowns();
       }
     });
@@ -4046,7 +4078,7 @@
       if (navbar._gtRefresh) navbar._gtRefresh();
     });
 
-    Shiny.addCustomMessageHandler('glasstabs_append_tab', function (msg) {
+    Shiny.addCustomMessageHandler('glasstabs_append_tab', async function (msg) {
       var navbar = document.querySelector('.gt-navbar' + attrEquals('data-ns', msg.ns));
       if (!navbar) return;
       if (navbar.querySelector('.gt-tab-link' + attrEquals('data-value', msg.value))) return;
@@ -4088,7 +4120,18 @@
       } else {
         setPaneActive(newPane, false);
       }
+      if (window.Shiny && msg.pane_deps && msg.pane_deps.length) {
+        if (Shiny.renderDependenciesAsync) {
+          await Shiny.renderDependenciesAsync(msg.pane_deps);
+        } else if (Shiny.renderDependencies) {
+          Shiny.renderDependencies(msg.pane_deps);
+        }
+      }
       paneWrap.appendChild(newPane);
+      if (window.Shiny && Shiny.bindAll) {
+        if (Shiny.initializeInputs) Shiny.initializeInputs(newPane);
+        await Shiny.bindAll(newPane);
+      }
 
       initTabs(navbar);
       if (navbar._gtResizeHandler) {
@@ -4134,7 +4177,10 @@
       link.remove();
       if (container) {
         var pane = document.getElementById(msg.ns + '-pane-' + msg.value);
-        if (pane) pane.remove();
+        if (pane) {
+          if (window.Shiny && Shiny.unbindAll) Shiny.unbindAll(pane);
+          pane.remove();
+        }
       }
 
       initTabs(navbar);

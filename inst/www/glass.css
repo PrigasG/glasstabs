@@ -24,32 +24,32 @@
 .gt-tab-menu-select{display:none;max-width:100%;min-width:180px;}
 
 /* Tab-strip overflow modes */
-.gt-overflow-scroll:not(.gt-vertical) .gt-tab-viewport{
+.gt-overflow-scroll:not(.gt-vertical) > .gt-topbar > .gt-tab-viewport{
   overflow-x:auto;overflow-y:hidden;overscroll-behavior-inline:contain;
   scrollbar-width:none;-webkit-overflow-scrolling:touch;
 }
-.gt-overflow-scroll:not(.gt-vertical) .gt-tab-viewport::-webkit-scrollbar{display:none;}
-.gt-overflow-scroll:not(.gt-vertical) .gt-navbar{width:max-content;min-width:100%;}
-.gt-overflow-scroll:not(.gt-vertical) .gt-tab-link{scroll-snap-align:center;scroll-margin-inline:16px;}
-.gt-overflow-scroll:not(.gt-vertical) .gt-tab-viewport{scroll-snap-type:inline proximity;}
-.gt-overflow-multiline:not(.gt-vertical) .gt-navbar{flex-wrap:wrap;}
-.gt-overflow-menu:not(.gt-vertical) .gt-tab-viewport{display:none;}
-.gt-overflow-menu:not(.gt-vertical) .gt-tab-menu-select{
+.gt-overflow-scroll:not(.gt-vertical) > .gt-topbar > .gt-tab-viewport::-webkit-scrollbar{display:none;}
+.gt-overflow-scroll:not(.gt-vertical) > .gt-topbar > .gt-tab-viewport > .gt-navbar{width:max-content;min-width:100%;}
+.gt-overflow-scroll:not(.gt-vertical) > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link{scroll-snap-align:center;scroll-margin-inline:16px;}
+.gt-overflow-scroll:not(.gt-vertical) > .gt-topbar > .gt-tab-viewport{scroll-snap-type:inline proximity;}
+.gt-overflow-multiline:not(.gt-vertical) > .gt-topbar > .gt-tab-viewport > .gt-navbar{flex-wrap:wrap;}
+.gt-overflow-menu:not(.gt-vertical) > .gt-topbar > .gt-tab-viewport{display:none;}
+.gt-overflow-menu:not(.gt-vertical) > .gt-topbar > .gt-tab-menu-select{
   display:block;padding:9px 34px 9px 12px;border-radius:10px;
   border:1px solid var(--gt-halo-border,rgba(255,255,255,0.22));
   background:var(--gt-content-bg,rgba(20,32,48,0.96));
   color:var(--gt-tab-active-text,#fff);font:inherit;font-weight:600;
   color-scheme:dark;
 }
-.gt-overflow-menu:not(.gt-vertical) .gt-tab-menu-select option,
-.gt-overflow-menu:not(.gt-vertical) .gt-tab-menu-select optgroup{
+.gt-overflow-menu:not(.gt-vertical) > .gt-topbar > .gt-tab-menu-select option,
+.gt-overflow-menu:not(.gt-vertical) > .gt-topbar > .gt-tab-menu-select optgroup{
   background:#0f172a;color:#fff;
 }
-.gt-overflow-menu.theme-light:not(.gt-vertical) .gt-tab-menu-select{
+.gt-overflow-menu.theme-light:not(.gt-vertical) > .gt-topbar > .gt-tab-menu-select{
   background:#fff;color:var(--gt-tab-active-text,#1e40af);color-scheme:light;
 }
-.gt-overflow-menu.theme-light:not(.gt-vertical) .gt-tab-menu-select option,
-.gt-overflow-menu.theme-light:not(.gt-vertical) .gt-tab-menu-select optgroup{
+.gt-overflow-menu.theme-light:not(.gt-vertical) > .gt-topbar > .gt-tab-menu-select option,
+.gt-overflow-menu.theme-light:not(.gt-vertical) > .gt-topbar > .gt-tab-menu-select optgroup{
   background:#fff;color:var(--gt-tab-active-text,#1e40af);
 }
 
@@ -64,12 +64,12 @@
   transition:color 120ms ease,background 120ms ease;
   z-index:6;user-select:none;white-space:nowrap;
 }
-.gt-text-align-left .gt-tab-link{justify-content:flex-start;text-align:left;}
-.gt-text-align-center .gt-tab-link{justify-content:center;text-align:center;}
-.gt-text-align-right .gt-tab-link{justify-content:flex-end;text-align:right;}
-.gt-align-left:not(.gt-vertical) .gt-navbar{justify-content:flex-start;}
-.gt-align-center:not(.gt-vertical) .gt-navbar{justify-content:center;}
-.gt-align-right:not(.gt-vertical) .gt-navbar{justify-content:flex-end;}
+.gt-text-align-left > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link{justify-content:flex-start;text-align:left;}
+.gt-text-align-center > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link{justify-content:center;text-align:center;}
+.gt-text-align-right > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link{justify-content:flex-end;text-align:right;}
+.gt-align-left:not(.gt-vertical) > .gt-topbar > .gt-tab-viewport > .gt-navbar{justify-content:flex-start;}
+.gt-align-center:not(.gt-vertical) > .gt-topbar > .gt-tab-viewport > .gt-navbar{justify-content:center;}
+.gt-align-right:not(.gt-vertical) > .gt-topbar > .gt-tab-viewport > .gt-navbar{justify-content:flex-end;}
 .gt-tab-link:hover{background:rgba(255,255,255,0.04);}
 .gt-tab-link.active{
   color:var(--gt-tab-active-text,#ffffff);
@@ -79,10 +79,10 @@
   box-shadow:inset 0 -2px 0 0 color-mix(in srgb,var(--gt-halo-border,rgba(126,195,247,0.38)) 80%,transparent);
 }
 /* The underline indicator already draws its own connection - don't double up. */
-.indicator-underline .gt-tab-link.active{box-shadow:none;}
+.indicator-underline > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link.active{box-shadow:none;}
 /* Vertical rail: content sits to the side, so the dock light moves with it. */
-.gt-vertical .gt-tab-link.active{box-shadow:inset -2px 0 0 0 color-mix(in srgb,var(--gt-halo-border,rgba(126,195,247,0.38)) 80%,transparent);}
-[dir="rtl"] .gt-vertical .gt-tab-link.active{box-shadow:inset 2px 0 0 0 color-mix(in srgb,var(--gt-halo-border,rgba(126,195,247,0.38)) 80%,transparent);}
+.gt-vertical > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link.active{box-shadow:inset -2px 0 0 0 color-mix(in srgb,var(--gt-halo-border,rgba(126,195,247,0.38)) 80%,transparent);}
+[dir="rtl"] .gt-vertical > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link.active{box-shadow:inset 2px 0 0 0 color-mix(in srgb,var(--gt-halo-border,rgba(126,195,247,0.38)) 80%,transparent);}
 .gt-tab-link.gt-tab-hidden{display:none;}
 .gt-tab-link:focus-visible{
   outline:3px solid var(--gt-focus-ring,#1683ff);outline-offset:3px;
@@ -153,16 +153,16 @@
    order. JS sets .gt-slide-fwd/.gt-slide-back on the widget root and
    .gt-pane-exit on the outgoing pane so it keeps traveling outward instead
    of sliding back. */
-.transition-slide.gt-slide-fwd .gt-tab-pane:not(.active){transform:translateX(34px) scale(.995);}
-.transition-slide.gt-slide-back .gt-tab-pane:not(.active){transform:translateX(-34px) scale(.995);}
-.transition-slide .gt-tab-pane.active{transform:none;}
-.transition-slide.gt-slide-fwd .gt-tab-pane.gt-pane-exit{transform:translateX(-34px) scale(.995);}
-.transition-slide.gt-slide-back .gt-tab-pane.gt-pane-exit{transform:translateX(34px) scale(.995);}
+.transition-slide.gt-slide-fwd > .gt-tab-wrap > .gt-tab-pane:not(.active){transform:translateX(34px) scale(.995);}
+.transition-slide.gt-slide-back > .gt-tab-wrap > .gt-tab-pane:not(.active){transform:translateX(-34px) scale(.995);}
+.transition-slide > .gt-tab-wrap > .gt-tab-pane.active{transform:none;}
+.transition-slide.gt-slide-fwd > .gt-tab-wrap > .gt-tab-pane.gt-pane-exit{transform:translateX(-34px) scale(.995);}
+.transition-slide.gt-slide-back > .gt-tab-wrap > .gt-tab-pane.gt-pane-exit{transform:translateX(34px) scale(.995);}
 /* RTL mirrors the travel direction. */
-[dir="rtl"] .transition-slide.gt-slide-fwd .gt-tab-pane:not(.active){transform:translateX(-34px) scale(.995);}
-[dir="rtl"] .transition-slide.gt-slide-back .gt-tab-pane:not(.active){transform:translateX(34px) scale(.995);}
-[dir="rtl"] .transition-slide.gt-slide-fwd .gt-tab-pane.gt-pane-exit{transform:translateX(34px) scale(.995);}
-[dir="rtl"] .transition-slide.gt-slide-back .gt-tab-pane.gt-pane-exit{transform:translateX(-34px) scale(.995);}
+[dir="rtl"] .transition-slide.gt-slide-fwd > .gt-tab-wrap > .gt-tab-pane:not(.active){transform:translateX(-34px) scale(.995);}
+[dir="rtl"] .transition-slide.gt-slide-back > .gt-tab-wrap > .gt-tab-pane:not(.active){transform:translateX(34px) scale(.995);}
+[dir="rtl"] .transition-slide.gt-slide-fwd > .gt-tab-wrap > .gt-tab-pane.gt-pane-exit{transform:translateX(34px) scale(.995);}
+[dir="rtl"] .transition-slide.gt-slide-back > .gt-tab-wrap > .gt-tab-pane.gt-pane-exit{transform:translateX(-34px) scale(.995);}
 
 /* Card */
 .gt-card{
@@ -209,7 +209,7 @@
   border:1px solid var(--ms-border);
   color:var(--ms-text);
   cursor:pointer;font-size:13px;font-weight:600;
-  white-space:nowrap;user-select:none;min-width:160px;
+  white-space:nowrap;user-select:none;min-width:0;
   transition:background 140ms,border-color 140ms,box-shadow 140ms;
   backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
   max-width:100%;
@@ -254,7 +254,7 @@
 
 /* Dropdown panel */
 .gt-ms-dropdown{
-  position:absolute;min-width:160px;box-sizing:border-box;
+  position:absolute;min-width:0;box-sizing:border-box;
   border-radius:14px;
   background:var(--ms-bg);
   border:1px solid var(--ms-border);
@@ -526,7 +526,7 @@
   font-weight:600;
   white-space:nowrap;
   user-select:none;
-  min-width:160px;
+  min-width:0;
   transition:background 140ms,border-color 140ms,box-shadow 140ms;
   backdrop-filter:blur(6px);
   -webkit-backdrop-filter:blur(6px);
@@ -648,7 +648,7 @@
 /* Dropdown panel */
 .gt-gs-dropdown{
   position:absolute;
-  min-width:160px;
+  min-width:0;
   box-sizing:border-box;
   border-radius:14px;
   background:var(--ms-bg);
@@ -976,6 +976,9 @@
   z-index:1;
 }
 .gt-scroll-cue.hidden{display:none;}
+.gt-custom-panel > .gt-scroll-cue{
+  background:linear-gradient(transparent,var(--gt-panel-bg,var(--ms-bg)) 35%);
+}
 
 /* Subtle scrollbar styling for dark theme */
 .gt-gs-options-scroll::-webkit-scrollbar,
@@ -1087,12 +1090,12 @@
   flex:0 0 auto;flex-direction:column;align-items:stretch;
   margin-bottom:0;min-width:170px;
 }
-.gt-vertical .gt-tab-viewport{display:flex;flex-direction:column;}
-.gt-vertical .gt-navbar{flex-direction:column;align-items:stretch;gap:8px;width:max-content;max-width:100%;}
-.gt-vertical.gt-align-left .gt-tab-viewport{align-items:flex-start;}
-.gt-vertical.gt-align-center .gt-tab-viewport{align-items:center;}
-.gt-vertical.gt-align-right .gt-tab-viewport{align-items:flex-end;}
-.gt-vertical .gt-tab-link{white-space:normal;}
+.gt-vertical > .gt-topbar > .gt-tab-viewport{display:flex;flex-direction:column;}
+.gt-vertical > .gt-topbar > .gt-tab-viewport > .gt-navbar{flex-direction:column;align-items:stretch;gap:8px;width:max-content;max-width:100%;}
+.gt-vertical.gt-align-left > .gt-topbar > .gt-tab-viewport{align-items:flex-start;}
+.gt-vertical.gt-align-center > .gt-topbar > .gt-tab-viewport{align-items:center;}
+.gt-vertical.gt-align-right > .gt-topbar > .gt-tab-viewport{align-items:flex-end;}
+.gt-vertical > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link{white-space:normal;}
 .gt-vertical > .gt-tab-wrap{flex:1 1 auto;min-width:0;}
 .gt-vertical.gt-compact{gap:10px;}
 .gt-vertical.gt-compact > .gt-topbar{min-width:120px;}
@@ -1102,8 +1105,8 @@
   .gt-vertical{flex-direction:column;}
   .gt-vertical > .gt-topbar{min-width:0;width:100%;}
   /* Rail stacks above the content again, so the dock light moves back down. */
-  .gt-vertical .gt-tab-link.active,
-  [dir="rtl"] .gt-vertical .gt-tab-link.active{box-shadow:inset 0 -2px 0 0 color-mix(in srgb,var(--gt-halo-border,rgba(126,195,247,0.38)) 80%,transparent);}
+  .gt-vertical > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link.active,
+  [dir="rtl"] .gt-vertical > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link.active{box-shadow:inset 0 -2px 0 0 color-mix(in srgb,var(--gt-halo-border,rgba(126,195,247,0.38)) 80%,transparent);}
 }
 
 /*
@@ -1113,29 +1116,29 @@
  */
 
 /* Solid: flat opaque sliding pill - no blur, shimmer, or particle */
-.indicator-solid .gt-halo{
+.indicator-solid > .gt-topbar > .gt-tab-viewport > .gt-halo{
   backdrop-filter:none;-webkit-backdrop-filter:none;
   background:var(--gt-halo-bg,rgba(126,195,247,0.22));
   box-shadow:none;
   filter:none;
 }
-.indicator-solid .gt-halo::before{display:none;}
-.indicator-solid .gt-transfer{display:none;}
+.indicator-solid > .gt-topbar > .gt-tab-viewport > .gt-halo::before{display:none;}
+.indicator-solid > .gt-topbar > .gt-tab-viewport > .gt-transfer{display:none;}
 
 /* Underline: slim sliding bar under the active tab; tabs lose the pill */
-.indicator-underline .gt-tab-link{background:transparent;}
-.indicator-underline .gt-tab-link:hover{background:rgba(255,255,255,0.03);}
-.indicator-underline.theme-light .gt-tab-link{background:transparent;}
-.indicator-underline.theme-light .gt-tab-link:hover{background:rgba(37,99,235,0.05);}
-.indicator-underline .gt-halo{
+.indicator-underline > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link{background:transparent;}
+.indicator-underline > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link:hover{background:rgba(255,255,255,0.03);}
+.indicator-underline.theme-light > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link{background:transparent;}
+.indicator-underline.theme-light > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link:hover{background:rgba(37,99,235,0.05);}
+.indicator-underline > .gt-topbar > .gt-tab-viewport > .gt-halo{
   backdrop-filter:none;-webkit-backdrop-filter:none;
   background:var(--gt-halo-border,rgba(126,195,247,0.85));
   border:none;
   box-shadow:none;
   filter:none;
 }
-.indicator-underline .gt-halo::before{display:none;}
-.indicator-underline .gt-transfer{display:none;}
+.indicator-underline > .gt-topbar > .gt-tab-viewport > .gt-halo::before{display:none;}
+.indicator-underline > .gt-topbar > .gt-tab-viewport > .gt-transfer{display:none;}
 
 /* Tab disabled state */
 .gt-tab-link.gt-tab-disabled{
@@ -1196,26 +1199,26 @@
  */
 
 /* Tab link idle / hover backgrounds */
-.theme-light .gt-tab-link{
+.theme-light > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link{
   background:rgba(0,0,0,0.03);
   color:var(--gt-tab-text,#475569);
 }
-.theme-light .gt-tab-link:hover{
+.theme-light > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link:hover{
   background:rgba(37,99,235,0.06);
 }
-.theme-light .gt-tab-link.active{
+.theme-light > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link.active{
   color:var(--gt-tab-active-text,#1e40af);
 }
-.indicator-underline.theme-light .gt-tab-link,
-.indicator-underline.theme-light .gt-tab-link.active{
+.indicator-underline.theme-light > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link,
+.indicator-underline.theme-light > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link.active{
   background:transparent;
 }
-.indicator-underline.theme-light .gt-tab-link:hover{
+.indicator-underline.theme-light > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link:hover{
   background:rgba(37,99,235,0.05);
 }
 
 /* Halo shimmer - replace white gradient with blue-tinted glass */
-.theme-light .gt-halo::before{
+.theme-light > .gt-topbar > .gt-tab-viewport > .gt-halo::before{
   background:linear-gradient(
     120deg,
     rgba(37,99,235,0.18) 0%,
@@ -1227,7 +1230,7 @@
 }
 
 /* Transfer trace particle - replace white glow with blue */
-.theme-light .gt-transfer{
+.theme-light > .gt-topbar > .gt-tab-viewport > .gt-transfer{
   background:radial-gradient(
     closest-side,
     rgba(37,99,235,0.60),
@@ -1240,7 +1243,7 @@
 /* Content area - transparent by default in light mode so glasstabs
    acts as "just tabs" inside whatever container the user provides.
    Users who want a card feel can override via glass_tab_theme(). */
-.theme-light .gt-tab-wrap{
+.theme-light > .gt-tab-wrap{
   background:var(--gt-content-bg,transparent);
   border-color:var(--gt-content-border,transparent);
   box-shadow:none;
@@ -1273,13 +1276,13 @@
 /* Compact / dense mode */
 /* Applied when glassTabsUI(compact = TRUE) */
 /* compact has no extra container margin to override - spacing handled below */
-.gt-compact .gt-topbar{margin-bottom:6px;}
-.gt-compact .gt-navbar{gap:6px;}
-.gt-compact .gt-tab-link{padding:10px 16px;font-size:15px;border-radius:10px;}
-.gt-compact .gt-tab-wrap{padding:12px;min-height:var(--gt-content-min-height,60px);}
-.gt-compact .gt-tab-pane{padding:12px;}
-.gt-compact .gt-card{padding:10px;}
-.gt-compact .gt-halo{border-radius:10px;}
+.gt-compact > .gt-topbar{margin-bottom:6px;}
+.gt-compact > .gt-topbar > .gt-tab-viewport > .gt-navbar{gap:6px;}
+.gt-compact > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link{padding:10px 16px;font-size:15px;border-radius:10px;}
+.gt-compact > .gt-tab-wrap{padding:12px;min-height:var(--gt-content-min-height,60px);}
+.gt-compact > .gt-tab-wrap > .gt-tab-pane{padding:12px;}
+.gt-compact > .gt-tab-wrap > .gt-tab-pane > .gt-card{padding:10px;}
+.gt-compact > .gt-topbar > .gt-tab-viewport > .gt-halo{border-radius:10px;}
 
 /* Attached style: the tab bar docks directly onto the content box and they
    share one border, reading as a single unified card instead of two floating
@@ -1645,7 +1648,6 @@
   background:var(--ms-tx-06);
   background:color-mix(in srgb,var(--ms-ac-12) calc(100% * var(--gt-glass-strength)),var(--ms-tx-06));
 }
-.gt-refined-glass > .gt-topbar > .gt-tab-viewport > .gt-transfer{visibility:hidden;}
 .gt-refined-glass > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link.active{box-shadow:none;}
 .gt-refined-glass > .gt-tab-wrap{border-top-color:var(--gt-content-border,transparent);}
 @supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){

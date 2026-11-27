@@ -29,3 +29,4 @@
 ^inst/examples/basic/testing_js_select\.R$
 ^inst/examples/connect-workflow/rsconnect/
 ^inst/examples/connect-workflow/manifest\.json$
+^inst/examples/glasstabs-regression-lab$

@@ -212,7 +212,7 @@ test_that("stylesheet keeps underline tabs transparent in light mode", {
     readLines(system.file("www", "glass.css", package = "glasstabs"), warn = FALSE),
     collapse = "\n"
   )
-  expect_true(grepl(".indicator-underline.theme-light .gt-tab-link.active", css, fixed = TRUE))
+  expect_true(grepl(".indicator-underline.theme-light > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link.active", css, fixed = TRUE))
 })
 
 test_that("script ships group + disabled handling", {

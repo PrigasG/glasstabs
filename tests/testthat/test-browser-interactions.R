@@ -217,6 +217,172 @@ test_that("browser: glassMultiSelect toggles choices and updates input", {
   expect_equal(app$get_value(input = "cats"), c("apple", "cherry"))
 })
 
+test_that("browser: narrow selects keep triggers and panels inside requested widths", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-narrow-select-width",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+  app$wait_for_idle()
+
+  expect_true(app$get_js("
+    Math.abs(document.getElementById('fruit-wrap').getBoundingClientRect().width - 160) <= 1
+  "))
+  for (id in c("narrow_single", "narrow_multi", "explicit_month")) {
+    app$get_js(sprintf("document.getElementById('%s-trigger').scrollIntoView({block:'center'}); true", id))
+    expect_true(app$get_js(sprintf("
+      (function() {
+        var wrap = document.getElementById('%s-wrap');
+        var trigger = document.getElementById('%s-trigger');
+        var width = wrap.getBoundingClientRect().width;
+        return width <= %d &&
+          Math.abs(trigger.getBoundingClientRect().width - width) <= 1 &&
+          getComputedStyle(trigger).minWidth === '0px';
+      })()
+    ", id, id, if (id == "explicit_month") 131 else 101)))
+    app$click(selector = paste0("#", id, "-trigger"))
+    app$wait_for_js(sprintf("document.querySelector('#%s-dropdown.open') !== null", id))
+    expect_true(app$get_js(sprintf("
+      (function() {
+        var trigger = document.getElementById('%s-trigger');
+        var panel = document.getElementById('%s-dropdown');
+        return Math.abs(panel.getBoundingClientRect().width -
+          trigger.getBoundingClientRect().width) <= 1;
+      })()
+    ", id, id)))
+    app$get_js("document.body.dispatchEvent(new PointerEvent('pointerdown', {bubbles:true})); true")
+    app$wait_for_js(sprintf("document.querySelector('#%s-dropdown.open') === null", id))
+  }
+})
+
+test_that("browser: nested tabs and dynamic panes retain independent bindings", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-nested-dynamic-tabs",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+  app$wait_for_idle()
+
+  expect_true(app$get_js("
+    getComputedStyle(document.querySelector('#scope_middle-wrap > .gt-topbar > .gt-tab-viewport')).display !== 'none' &&
+    getComputedStyle(document.querySelector('#scope_inner-wrap > .gt-topbar > .gt-tab-viewport')).display === 'flex' &&
+    getComputedStyle(document.querySelector('#scope_middle-wrap .gt-halo')).backdropFilter === 'none' &&
+    getComputedStyle(document.querySelector('#scope_inner-wrap .gt-halo')).backdropFilter !== 'none'
+  "))
+  expect_true(app$get_js("
+    window.__modernReorder = document.getElementById('modern_tabs-navbar')._gtReorder;
+    !!window.__modernReorder
+  "))
+  app$set_inputs(unrelated_glass_build = "click")
+  app$wait_for_js("document.getElementById('unrelated_glass_1-wrap') !== null")
+  expect_true(app$get_js("
+    document.getElementById('modern_tabs-navbar')._gtReorder === window.__modernReorder
+  "))
+
+  app$get_js("document.getElementById('modern_pane_select-trigger').scrollIntoView({block:'center'}); true")
+  app$click(selector = "#modern_pane_select-trigger")
+  app$wait_for_js("document.getElementById('modern_pane_select-dropdown').classList.contains('open')")
+  app$set_inputs(modern_switch = "click")
+  app$wait_for_js("document.getElementById('modern_tabs-pane-b').classList.contains('active')")
+  expect_true(app$get_js("
+    !document.getElementById('modern_pane_select-dropdown').classList.contains('open') &&
+      document.getElementById('modern_pane_select-dropdown').parentElement ===
+      document.getElementById('modern_pane_select-wrap')
+  "))
+
+  app$set_inputs(modern_append = "click")
+  app$wait_for_js("document.getElementById('dynamic_text') !== null")
+  app$set_inputs(dynamic_text = "updated", dynamic_number = 9)
+  app$wait_for_js("document.querySelector('#dynamic_plot img') !== null")
+  expect_equal(app$get_value(input = "dynamic_text"), "updated")
+  expect_equal(app$get_value(input = "dynamic_number"), 9)
+  app$click(selector = "#dynamic_nested-tab-b")
+  app$wait_for_js("document.getElementById('dynamic_nested-pane-b').classList.contains('active')")
+  app$set_inputs(modern_remove = "click")
+  app$wait_for_js("document.getElementById('dynamic_text') === null")
+  expect_true(app$get_js("document.querySelector('#modern_tabs-tab-d') === null"))
+})
+
+test_that("browser: select rebinding keeps exactly one scroll cue", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-scroll-cue-rebind",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+  app$wait_for_idle()
+
+  for (id in c("scroll_single", "scroll_multi")) {
+    for (cycle in seq_len(3)) {
+      expect_true(app$get_js(sprintf("
+        (function() {
+          var wrap = document.getElementById('%s-wrap');
+          Shiny.unbindAll(wrap, true);
+          Shiny.bindAll(wrap.parentElement);
+          return true;
+        })()
+      ", id)))
+      app$wait_for_js(sprintf("
+        document.querySelectorAll('#%s-dropdown > .gt-scroll-cue').length === 1
+      ", id))
+    }
+  }
+})
+
+test_that("browser: transfer intensity follows glass strength", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-transfer-strength",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+  app$wait_for_idle()
+
+  strengths <- c("0", "0.25", "0.99", "1")
+  results <- lapply(strengths, function(strength) {
+    id <- paste0("effect_", gsub("\\.", "_", strength))
+    app$get_js(sprintf("
+      (function() {
+        document.getElementById('%s-tab-b').click();
+        var animations = document.getElementById('%s-transfer').getAnimations();
+        var opacity = animations.flatMap(function(a) {
+          return a.effect.getKeyframes().map(function(k) {
+            return parseFloat(k.opacity) || 0;
+          });
+        });
+        return {count: animations.length, maximum: Math.max(0, ...opacity)};
+      })()
+    ", id, id))
+  })
+  names(results) <- strengths
+  expect_equal(results[["0"]]$count, 0)
+  expect_gt(results[["0.25"]]$maximum, 0)
+  expect_lt(results[["0.25"]]$maximum, results[["0.99"]]$maximum)
+  expect_lt(results[["0.99"]]$maximum, results[["1"]]$maximum)
+})
+
 test_that("browser: select dropdowns match their fields and stay viewport-safe", {
   skip_on_covr()
   skip_if_not_installed("shinytest2")

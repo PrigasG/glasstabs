@@ -14,17 +14,26 @@
 
 * Add `glass_strength` (0 to 1) across tabs and both select widgets, and
   `size` for compact or large select triggers. Existing defaults remain.
+  Decorative transfer intensity follows glass strength and is skipped at zero.
 * Add independent `trigger_bg` and `dropdown_bg` custom theme surfaces.
 * Single-select accepts `dropdown_max_height` for its option list.
 * Long single- and multi-select lists show a subtle "Scroll for more" cue
   while more options remain below. Open panels limit their option area to
   the available viewport space and update the cue after scrolling, filtering,
-  choice updates and resizing.
+  choice updates and resizing. Rebinding a select keeps one cue and releases
+  its previous scroll listener.
 * Closed select fields no longer create a positive stacking level. Host
   overlays and Bootstrap layer changes close portaled dropdowns immediately;
-  ordinary close retains its retract animation.
+  ordinary close retains its retract animation. Dropdowns opened inside a
+  Bootstrap modal or offcanvas stay within its focus boundary.
 * Refresh open portaled panel theme variables on live mode changes. Scope the
   box-sizing reset to widget areas rather than the entire application.
+* Respect explicit select widths below 160px, including narrow embedded
+  filters. Keep the 160px default width when no width is supplied.
+* Keep nested tab navigation layouts and indicator styles independent. Close
+  dropdowns when their pane becomes inactive, and bind dynamically appended
+  Shiny inputs and outputs with their HTML dependencies. Unrelated UI updates
+  no longer reinitialize existing tab controllers.
 * Expand the modernization lab with glass configuration controls, one/three/six
   tab layouts, lifecycle actions and a labeled native Shiny comparison.
   Add focused unit/browser regression coverage.

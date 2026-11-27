@@ -604,7 +604,7 @@ test_that("stylesheet wires the active-tab dock cue and content halo spill", {
   # Content box top edge picks up the halo color to bridge the gap
   expect_true(grepl("border-top-color:color-mix", css, fixed = TRUE))
   # The underline indicator keeps its own connection cue
-  expect_true(grepl(".indicator-underline .gt-tab-link.active", css, fixed = TRUE))
+  expect_true(grepl(".indicator-underline > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link.active", css, fixed = TRUE))
 })
 
 test_that("glassTabsUI() supports style and transition options", {

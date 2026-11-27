@@ -168,6 +168,13 @@ ui <- fluidPage(
       )
     ),
     tags$div(
+      style = "width:100px",
+      glassSelect("narrow_single", choices, width = "100%"),
+      glassMultiSelect("narrow_multi", choices, width = "100%")
+    ),
+    glassSelect("explicit_month", stats::setNames(month.abb, month.abb),
+                selected = "Jan", label = "Month", width = "130px", size = "sm"),
+    tags$div(
       style = "width:176px",
       glassSelect(
         "never_single",
@@ -304,7 +311,8 @@ ui <- fluidPage(
     ),
     glassTabsUI(
       "modern_tabs",
-      glassTabPanel("a", "A", textInput("modern_text", "Retain", "initial")),
+      glassTabPanel("a", "A", textInput("modern_text", "Retain", "initial"),
+                    glassSelect("modern_pane_select", choices)),
       glassTabPanel("b", "Longer B", p("B")),
       glassTabPanel("c", "C", p("C")),
       style = "segmented", indicator = "solid", transition = "none",
@@ -313,6 +321,32 @@ ui <- fluidPage(
     ),
     glassTabsUI("one_tab", glassTabPanel("a", "Only", p("Visible")), hide_single = TRUE),
     actionButton("modern_append", "Append modern tab"),
+    actionButton("modern_remove", "Remove modern tab"),
+    actionButton("modern_switch", "Server: modern B"),
+    actionButton("unrelated_glass_build", "Rebuild unrelated glass UI"),
+    uiOutput("unrelated_glass_ui"),
+    glassTabsUI("scope_outer",
+                glassTabPanel("a", "Outer A",
+                              glassTabsUI("scope_middle",
+                                          glassTabPanel("a", "Middle A",
+                                                        glassTabsUI("scope_inner",
+                                                                    glassTabPanel("a", "Inner A", p("Nested")),
+                                                                    glassTabPanel("b", "Inner B", p("Nested B")),
+                                                                    theme = "dark", orientation = "vertical",
+                                                                    indicator = "glass")),
+                                          glassTabPanel("b", "Middle B", p("Middle B")),
+                                          theme = "light", indicator = "solid",
+                                          style = "segmented", transition = "none")),
+                glassTabPanel("b", "Outer B", p("Outer B")),
+                theme = "light", indicator = "underline", overflow = "menu",
+                transition = "slide"),
+    tagList(lapply(c(0, 0.25, 0.99, 1), function(strength) {
+      id <- paste0("effect_", gsub("\\.", "_", as.character(strength)))
+      glassTabsUI(id,
+                  glassTabPanel("a", "Effect A", p("A")),
+                  glassTabPanel("b", "Effect B", p("B")),
+                  glass_strength = strength)
+    })),
     glassSelect("modern_small", choices, theme = "auto", size = "sm", glass_strength = 0,
                 dropdown_max_height = "180px"),
     glassMultiSelect("modern_large", choices, size = "lg", glass_strength = 0.25,
@@ -330,8 +364,23 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
   observeEvent(input$modern_append, {
-    appendGlassTab(session, "modern_tabs", glassTabPanel("d", "D", p("D")))
+    appendGlassTab(session, "modern_tabs",
+                   glassTabPanel("d", "D",
+                                 textInput("dynamic_text", "Dynamic text", "before"),
+                                 numericInput("dynamic_number", "Dynamic number", 1),
+                                 glassSelect("dynamic_select", choices),
+                                 plotOutput("dynamic_plot", height = "220px"),
+                                 glassTabsUI("dynamic_nested",
+                                             glassTabPanel("a", "Nested A", p("A")),
+                                             glassTabPanel("b", "Nested B", p("B")))),
+                   select = TRUE)
   }, once = TRUE)
+  output$dynamic_plot <- renderPlot(plot(1:5, 1:5, type = "b"))
+  observeEvent(input$modern_remove, removeGlassTab(session, "modern_tabs", "d"))
+  observeEvent(input$modern_switch, updateGlassTabsUI(session, "modern_tabs", "b"))
+  output$unrelated_glass_ui <- renderUI({
+    glassSelect(paste0("unrelated_glass_", input$unrelated_glass_build), choices)
+  })
   session$onFlushed(function() {
     disableGlassTab(session, "mobile_tabs", "activity")
   }, once = TRUE)
