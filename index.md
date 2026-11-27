@@ -1,28 +1,39 @@
 # glasstabs
 
-Modern navigation and inputs for R Shiny.
+**Modern navigation and inputs for R Shiny.**
 
-Build responsive tabs, searchable filters, and form controls without
-writing custom JavaScript or CSS. They work with
+glasstabs provides animated tab navigation, searchable filters, and
+glass-styled form controls for Shiny. Build responsive dashboards,
+interactive workspaces, and data-driven applications without writing
+custom JavaScript or CSS for the controls.
+
+Use the components individually or together in existing
 [`fluidPage()`](https://rdrr.io/pkg/shiny/man/fluidPage.html), `bslib`,
-and `bs4Dash`, with light, dark, automatic, and custom themes.
+and `bs4Dash` applications. Choose light or dark surfaces, automatic
+theming, compact layouts, or a custom appearance.
+
+**Version note:** This README describes the 0.4.2 development version.
+Persistent ordering, closable tabs, touch reorder handles, and the new
+form inputs require 0.4.2. The CRAN release may lag behind GitHub. See
+[What’s new in
+0.4.2](https://prigasg.github.io/glasstabs/articles/whats-new-042.html).
 
 ![Dashboard workflow with glasstabs filters and
 navigation](reference/figures/dashboard-workflow.png)
 
 Dashboard workflow with glasstabs filters and navigation
 
+[Documentation](https://prigasg.github.io/glasstabs/) · [Live
+demo](https://prigas89-glasstabs.share.connect.posit.cloud) · [Component
+gallery](https://prigasg.github.io/glasstabs/articles/component-gallery.html)
+· [Changelog](https://prigasg.github.io/glasstabs/news/index.html)
+
 ## Components
 
 | [Navigation](https://prigasg.github.io/glasstabs/articles/tabs.html) | [Selects](https://prigasg.github.io/glasstabs/articles/multiselect.html) | [Form inputs](https://prigasg.github.io/glasstabs/articles/component-gallery.html) |
 |:---|:---|:---|
 | ![Tabs with an active Home panel and closable Data and Report panels](reference/figures/tabs-closable.png) | ![Open multi-select with colored choices, search, and selection count](reference/figures/select-multiselect.png) | ![Glass switch, radio buttons, and checkbox group](reference/figures/form-inputs.png) |
-| Reorderable, closable, horizontal or vertical tabs. | Searchable single and multi-select filters. | Switches, radio groups, and checkboxes. |
-
-The 0.4.2 development version adds workspace management and form inputs.
-See [what is new in
-0.4.2](https://prigasg.github.io/glasstabs/articles/whats-new-042.html).
-The CRAN release may lag behind GitHub.
+| Responsive, configurable tab navigation. | Searchable single and multi-select filters. | Native-bound switches, radio groups, and checkboxes. |
 
 ## Installation
 
@@ -33,24 +44,27 @@ Install the CRAN release:
 install.packages("glasstabs")
 ```
 
-To install directly from the current GitHub source:
+To try the current development version from GitHub:
 
 ``` r
 
+# Requires the pak package
 pak::pak("PrigasG/glasstabs@main")
 packageVersion("glasstabs")
 ```
 
-The GitHub installation replaces the installed copy on your machine. For
-most users, the CRAN release is the simpler choice.
+The GitHub installation replaces the installed package in the target R
+library. For production deployments, use a tested release or pin the
+GitHub commit used for verification.
 
 ## Quick start
 
 Call
 [`useGlassTabs()`](https://prigasg.github.io/glasstabs/reference/useGlassTabs.md)
-once at the UI root, then use the widgets like ordinary Shiny controls.
-The following app has two tabs, a multi-select filter, selected-value
-tags, and an active-tab readout.
+once at the UI root. The following complete app combines two tabs, a
+multi-select filter, selected-value tags, and a reactive active-tab
+readout. It uses the established API and does not require the new 0.4.2
+workspace features.
 
 ``` r
 
@@ -93,45 +107,84 @@ if (interactive()) shinyApp(ui, server)
 ```
 
 [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md)
-selects every enabled choice by default. Set `selected = character(0)`
-when the filter should start empty.
+selects every enabled choice by default. To start with no selections,
+set `selected = character(0)`.
 
-## Explore more
+See the [Getting started
+guide](https://prigasg.github.io/glasstabs/articles/getting-started.html)
+for more examples.
 
-- [Documentation and function
-  reference](https://prigasg.github.io/glasstabs/)
-- [Component
-  gallery](https://prigasg.github.io/glasstabs/articles/component-gallery.html)
-- [Live examples](https://prigas89-glasstabs.share.connect.posit.cloud)
-- [Changelog](https://prigasg.github.io/glasstabs/NEWS.md)
+## Watch the demos
 
-## Pick the control you need
+The recordings open as animated GIFs:
 
-### Tabs
+- [Dashboard workflow: filters, tabs, and preserved input
+  state](https://prigasg.github.io/glasstabs/media/dashboard-workflow.gif)
+- [Configurable navigation: layouts, themes, and tab
+  operations](https://prigasg.github.io/glasstabs/media/configurable-navigation.gif)
 
-Create a tab bar from
-[`glassTabPanel()`](https://prigasg.github.io/glasstabs/reference/glassTabPanel.md)
-objects. In the example below, the panels are self-contained
-placeholders; replace them with your own outputs and UI components.
+## Feature highlights
+
+### Navigation and workspaces
+
+Choose floating, attached, or segmented navigation, with glass, solid,
+or underline indicators. Use horizontal or vertical layouts, compact
+spacing, numeric badges, and configurable overflow. Tab helpers support
+server-driven selection, showing and hiding, enabling and disabling, and
+runtime insertion and removal.
+
+![Three reorderable workspace tabs with drag
+handles](reference/figures/tabs-draggable.png)
+
+Three reorderable workspace tabs with drag handles
+
+With 0.4.2, opt into desktop and keyboard reordering, touch handles, and
+browser-persisted order. A closable tab sends a request to the server,
+giving the application control over whether the pane is removed.
 
 ``` r
 
+# UI (0.4.2)
 glassTabsUI(
-  "reports",
-  glassTabPanel("summary", "Summary", selected = TRUE, p("Summary content")),
-  glassTabPanel("table", "Table", p("Table content")),
-  glassTabPanel("notes", "Notes", textAreaInput("notes", NULL))
+  "workspace",
+  glassTabPanel("home", "Home", p("Pinned")),
+  glassTabPanel("report", "Report", textInput("notes", "Notes"),
+                closable = TRUE),
+  style = "segmented",
+  indicator = "solid",
+  transition = "none",
+  theme = "auto",
+  glass_strength = 0.25,
+  reorderable = TRUE,
+  touch_reorder = TRUE,
+  persist_order = "session"
 )
+
+# Inside server: approve closure only when appropriate for the application.
+observeEvent(input[["workspace-close_request"]], {
+  value <- input[["workspace-close_request"]]
+  if (identical(value, "report")) {
+    removeGlassTab(session, "workspace", value)
+  }
+})
 ```
 
-The selected tab is available as `input[["reports-active_tab"]]`, or via
-the reactive returned by `glassTabsServer("reports")`.
+Read the active tab using `input[["workspace-active_tab"]]` and the
+order using `input[["workspace-tab_order"]]`. Browser persistence stores
+tab identifiers, not pane contents or account-specific state. Use
+`initial_order` with application-managed storage for authenticated,
+cross-device preferences. Closure does not persist tab deletion across
+fresh server sessions.
 
-### Single-select
+[Tabs and workspace
+guide](https://prigasg.github.io/glasstabs/articles/tabs.html) ·
+[Indicator
+styles](https://prigasg.github.io/glasstabs/articles/indicators.html)
 
-[`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md)
-returns one character value, or `NULL` when cleared. An empty-string
-choice (`""`) is a real selection, distinct from a cleared input.
+### Searchable filters
+
+Both select widgets support search, disabled and grouped choices,
+programmatic updates, and configurable dropdown presentation.
 
 ``` r
 
@@ -139,525 +192,244 @@ glassSelect(
   "region",
   c(North = "north", South = "south", East = "east", West = "west"),
   label = "Region",
-  clearable = TRUE
+  clearable = TRUE,
+  width = "240px"
 )
-```
-
-### Multi-select
-
-[`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md)
-returns a character vector. A Select-all control represents all, some,
-and none using a tri-state checkbox.
-
-``` r
 
 glassMultiSelect(
   "status",
   c(Open = "open", Review = "review", Closed = "closed"),
+  label = "Status",
   selected = c("open", "review"),
-  label = "Status"
+  width = "100%"
 )
-
-glassFilterTags("status")
 ```
 
-For selection semantics and filter examples, see the [multi-select
-guide](https://prigasg.github.io/glasstabs/articles/multiselect.html)
-and [single-select
-guide](https://prigasg.github.io/glasstabs/articles/glassSelect.html).
+The single-select returns one character value or `NULL` when cleared. An
+empty-string choice is a distinct selection. The multi-select returns
+the selected choice values; use `glassFilterTags("status")` to display
+selection tags.
+
+For large choice sets, use `server = TRUE` with
+[`glassSelectServer()`](https://prigasg.github.io/glasstabs/reference/glassSelectServer.md)
+or
+[`glassMultiSelectServer()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelectServer.md).
+The constructor’s `server_limit` bounds the initial choice slice, while
+the helper’s `limit` bounds search results. Explicitly selected values
+may be rendered in addition to the initial slice. Results are bounded,
+not paginated.
+
+![Searchable glass dropdown inside a Shiny
+modal](reference/figures/select-in-modal.png)
+
+Searchable glass dropdown inside a Shiny modal
+
+[Single-select
+guide](https://prigasg.github.io/glasstabs/articles/glassSelect.html) ·
+[Multi-select
+guide](https://prigasg.github.io/glasstabs/articles/multiselect.html) ·
+[Linked
+filters](https://prigasg.github.io/glasstabs/articles/linked-filters.html)
+
+### Native-bound form inputs
+
+Available in 0.4.2, the form components use standard Shiny input
+bindings. They can be read and updated using familiar Shiny server code.
+
+``` r
+
+glassSwitch("enabled", "Enable filtering", value = TRUE)
+
+glassRadioGroup(
+  "mode", "Mode",
+  choices = c(Edit = "edit", Preview = "preview"),
+  inline = TRUE
+)
+
+glassCheckboxGroup(
+  "fields", "Fields",
+  choices = c(Name = "name", County = "county", Rating = "rating"),
+  selected = c("name", "county"),
+  inline = TRUE
+)
+```
+
+| Input | Shiny update function |
+|:---|:---|
+| [`glassSwitch()`](https://prigasg.github.io/glasstabs/reference/glassSwitch.md) | [`updateCheckboxInput()`](https://rdrr.io/pkg/shiny/man/updateCheckboxInput.html) |
+| [`glassRadioGroup()`](https://prigasg.github.io/glasstabs/reference/glassSwitch.md) | [`updateRadioButtons()`](https://rdrr.io/pkg/shiny/man/updateRadioButtons.html) |
+| [`glassCheckboxGroup()`](https://prigasg.github.io/glasstabs/reference/glassSwitch.md) | [`updateCheckboxGroupInput()`](https://rdrr.io/pkg/shiny/man/updateCheckboxGroupInput.html) |
+
+[Form input
+reference](https://prigasg.github.io/glasstabs/reference/glassSwitch.html)
+
+### Match the surrounding app
+
+Use `theme = "auto"` to follow Bootstrap color modes, or choose a fixed
+light or dark theme. Set `shape = "square"` on tabs and selects to
+complement square native controls. In 0.4.2, `glass_strength` adjusts
+decorative glass intensity, and `size` adjusts input density.
+
+``` r
+
+# 0.4.2 appearance options
+glassSelect(
+  "dataset", c(Providers = "providers", Population = "population"),
+  label = "Dataset",
+  theme = "auto",
+  shape = "square",
+  width = "240px",
+  size = "sm",
+  glass_strength = 0.25
+)
+```
+
+For more control, use
+[`glass_tab_theme()`](https://prigasg.github.io/glasstabs/reference/glass_tab_theme.md)
+and
+[`glass_select_theme()`](https://prigasg.github.io/glasstabs/reference/glass_select_theme.md).
+A custom `dark_selector` can connect the widgets to an application’s own
+dark-mode signal.
+
+![Dark-themed dropdown opening above its trigger to stay within the
+page](reference/figures/select-dark-dropup.png)
+
+Dark-themed dropdown opening above its trigger to stay within the page
+
+### Responsive layouts and accessibility
+
+Tabs support keyboard navigation, responsive overflow, and
+reduced-motion preferences. Horizontal tab strips can scroll, wrap
+across rows, or collapse into a compact menu. Vertical navigation uses a
+rail. Optional pane swipe gestures and 0.4.2 reorder handles support
+touch interaction. Selects adapt their panels to the available space and
+support keyboard navigation and long labels.
+
+![Narrow long-list dropdown with search, selection count, and scroll
+cue](reference/figures/select-narrow-long-list.png)
+
+Narrow long-list dropdown with search, selection count, and scroll cue
+
+[Responsive design and
+accessibility](https://prigasg.github.io/glasstabs/articles/responsive-accessibility.html)
 
 ## Dropdown too narrow? Set `width`
 
-**Both
-[`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md)
-and
-[`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md)
-use a compact 160px width by default.** If a dropdown looks too narrow,
-you can fix it directly with the `width` argument. No custom CSS is
-needed.
+Both select widgets retain a compact 160px default. Use explicit CSS
+lengths or a percentage to match the surrounding layout.
 
-``` r
+| `width`          | Use                                       |
+|:-----------------|:------------------------------------------|
+| `NULL` (default) | Compact 160px control.                    |
+| `"130px"`        | Narrow toolbar field.                     |
+| `"260px"`        | More room for longer labels.              |
+| `"100%"`         | Fill the parent card, column, or sidebar. |
 
-# A wider, fixed-size filter
-glassSelect("region", c(North = "north", South = "south"), width = "260px")
+A percentage fills the parent container, not the screen. Explicit widths
+are capped by the available container space. In 0.4.2,
+`dropdown_max_height` can limit the scrollable option area; short lists
+use only the space they need.
 
-# A multi-select that fills the available column or card width
-glassMultiSelect("facility", c(A = "a", B = "b"), width = "100%")
-```
+## Shiny integration
 
-| `width` | What it does | Best use |
-|----|----|----|
-| Omitted or `NULL` | Compact 160px default | Small filter toolbars |
-| `"240px"` or `"280px"` | Makes the control wider | Longer labels in dashboard filters |
-| `"100%"` | Fills the available width of its parent | [`bslib::card()`](https://rstudio.github.io/bslib/reference/card.html), columns, sidebars |
-| `"20rem"` | Relative to the root font size | Font-aware layouts |
+Read values with ordinary Shiny inputs, use reactive helpers where
+useful, and update components from the server.
 
-**How sizing works:** The closed control sets the dropdown panel’s
-width. Explicit widths are capped by the surrounding container, and
-dropdowns are positioned to stay within the viewport. A `width = "100%"`
-control fills its *parent*, not the entire screen. If it remains narrow,
-check the width of the containing card, column, or toolbar.
+| Input | Meaning |
+|:---|:---|
+| `input[["main-active_tab"]]` | Active tab value, or `NULL` when no tab is active (0.4.2). |
+| `input[["main-tab_order"]]` | Ordered tab values when reordering is enabled (0.4.2). |
+| `input[["main-close_request"]]` | Server-controlled close request (0.4.2). |
+| `input$region` | Single selected value, or `NULL`. |
+| `input$status` | Multi-select choice values. |
+| `input$status_open` | Whether the select dropdown is open. |
+| `input$enabled`, `input$mode`, `input$fields` | Standard Shiny switch, radio, and checkbox values (0.4.2). |
 
-For example, in a dashboard column:
-
-``` r
-
-bslib::card(
-  bslib::card_header("Facility filters"),
-  glassSelect(
-    "county", c(Camden = "camden", Cumberland = "cumberland"),
-    label = "County", width = "100%", theme = "auto"
-  ),
-  glassMultiSelect(
-    "status", c(Open = "open", Review = "review", Closed = "closed"),
-    label = "Status", width = "100%", theme = "auto",
-    selection_display = "summary"
-  )
-)
-```
-
-**Practical tip:** Start with `width = "260px"` for stand-alone
-dropdowns or `width = "100%"` inside a card. Long option labels wrap, so
-a wider control improves readability without requiring horizontal
-scrolling.
-
-### Dropdown sizing, tooltips, and search
-
-**Quick fix:** The default control width is `160px`. Pass
-`width = "260px"` for a wider dropdown, or `width = "100%"` to fill the
-containing card or column. Both single- and multi-select widgets support
-the same setting. See [Dropdown too narrow? Set
-`width`](#dropdown-too-narrow-set-width) near the top for a sizing
-table, troubleshooting tip, and bslib example.
-
-``` r
-
-glassSelect("industry", c(Manufacturing = "manufacturing", Retail = "retail"), width = "240px")
-glassMultiSelect("filters", c(Active = "active", Closed = "closed"), width = "100%")
-```
-
-For a long selected label, `overflow_tooltip = "auto"` can show the full
-label on hover or keyboard focus. Truncated options can also show an
-option-specific tooltip. On touch screens, option labels remain readable
-in the open dropdown. Use `overflow_tooltip = "never"` to disable visual
-tooltips.
-
-For short lists, `searchable = "auto"` hides the search field until the
-number of choices reaches `search_threshold`. This works with both
-select widgets.
-
-Longer lists fit within the available space above or below the field. A
-subtle **Scroll for more** cue appears when options remain below the
-visible area and disappears at the end of the list. The option area also
-responds to search results, choice updates, and window resizing. Use
-`dropdown_max_height = "18rem"` on either select to set a lower maximum;
-short lists use only the height they need.
-
-``` r
-
-glassSelect(
-  "category",
-  c(A = "a", B = "b", C = "c"),
-  searchable = "auto",
-  search_threshold = 6
-)
-
-glassMultiSelect(
-  "facility",
-  c(North = "north", South = "south", Central = "central"),
-  searchable = "auto",
-  search_threshold = 12,
-  selection_display = "summary",
-  selection_max_items = 2,
-  dropdown_max_height = "18rem"
-)
-```
-
-### Updating selections
-
-[`updateGlassSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassSelect.md)
+Use
+[`updateGlassTabsUI()`](https://prigasg.github.io/glasstabs/reference/updateGlassTabsUI.md),
+[`updateGlassTabBadge()`](https://prigasg.github.io/glasstabs/reference/updateGlassTabBadge.md),
+[`updateGlassSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassSelect.md),
 and
 [`updateGlassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassMultiSelect.md)
-apply updates transactionally. By default, the effective input value is
-sent to Shiny when it changes.
-
-``` r
-
-updateGlassMultiSelect(
-  session,
-  "facility",
-  choices = c(North = "north", Central = "central"),
-  preserve_selection = TRUE,
-  drop_invalid = TRUE,
-  notify = "changed"
-)
-```
-
-**Important for linked filters:** `notify` controls notification for the
-individual widget being updated. Setting `notify = "never"` on one input
-does not notify Shiny about changes to other inputs. When several
-dependent inputs change, use `notify = "changed"` for each updated input
-whose effective value the server must receive. See [dependent dropdowns
-and dynamic
-UI](https://prigasg.github.io/glasstabs/articles/linked-filters.html)
-for coordinated update patterns.
-
-## Match the surrounding app
-
-Use `theme = "auto"` in Bootstrap 5 or `bslib` apps, and
-`shape = "square"` when your filters sit beside square native inputs.
-
-``` r
-
-glassTabsUI(
-  "nav",
-  glassTabPanel("one", "One", selected = TRUE, p("First panel")),
-  glassTabPanel("two", "Two", p("Second panel")),
-  indicator = "underline",
-  theme = "auto"
-)
-
-glassSelect("region", c(North = "north", South = "south"), shape = "square", theme = "auto")
-glassMultiSelect("filters", c(Active = "active", Closed = "closed"), shape = "square", theme = "auto")
-```
-
-Tabs can use a vertical rail, multiple indicator styles, and independent
-alignment of the tab group and its labels.
-
-``` r
-
-glassTabsUI(
-  "workflow",
-  glassTabPanel("intake", "Intake", selected = TRUE, p("Intake")),
-  glassTabPanel("review", "Review", p("Review")),
-  glassTabPanel("approve", "Approve", p("Approve")),
-  orientation = "vertical",
-  indicator = "solid",
-  tab_align = "left",
-  text_align = "left"
-)
-```
-
-Use `style = "attached"` for a tab bar docked to its content container
-and `transition = "slide"` for directional pane movement. Use
-`transition = "none"` for immediate navigation without pane or halo
-animation. For select controls, `tongue = TRUE` provides the attached
-unfurl animation; `tongue = FALSE` uses a detached transition. Motion
-preferences are respected.
-
-For a denser workspace, use `style = "segmented"` or refine the attached
-layout with `tab_gap`, `tab_padding`, `nav_padding`, and
-`content_padding`. `fill = TRUE` needs a parent with a definite height.
-`hide_single = TRUE` keeps a one-tab view clean, and
-`equal_width = TRUE` aligns tab widths.
-
-``` r
-
-glassTabsUI(
-  "workspace",
-  glassTabPanel("data", "Data", shiny::p("Data")),
-  glassTabPanel("preview", "Preview", shiny::p("Preview")),
-  style = "segmented", indicator = "solid", theme = "auto",
-  transition = "none", reorderable = TRUE, glass_strength = 0.25,
-  tab_gap = "4px", tab_padding = "8px 14px", equal_width = TRUE
-)
-glassSelect("dataset", c(A = "a", B = "b"), theme = "auto",
-            size = "sm", glass_strength = 0.25)
-```
-
-Drag a tab on desktop, or focus a tab and press Alt+Shift+Left/Right
-(Up/Down on a vertical rail). `input[["workspace-tab_order"]]` gives the
-order of all values without changing the active tab. A full
-[`renderUI()`](https://rdrr.io/pkg/shiny/man/renderUI.html) replacement
-follows the order supplied by R unless browser persistence is enabled;
-native menu overflow has no reorder control. Opt into browser
-persistence and touch handles with `persist_order` and `touch_reorder`.
-
-Custom themes allow control of the accent and focus ring without
-restyling the rest of the app.
-[`glass_select_theme()`](https://prigasg.github.io/glasstabs/reference/glass_select_theme.md)
-also accepts `trigger_bg` and `dropdown_bg` for separate surfaces.
-Explicit surface colors remain fixed across mode changes, so choose
-colors with appropriate contrast.
-
-Run `runGlassExample("modernization")` to use glass controls for tab
-style, theme, indicator, motion, alignment, spacing, overflow,
-one/six-tab layouts, reordering, and lifecycle operations. It also shows
-select sizing, long-list scrolling, actual input values, and host-menu
-layering. Native Shiny inputs appear only in its labeled side-by-side
-comparison.
-
-``` r
-
-glassTabsUI(
-  "accented",
-  glassTabPanel("a", "A", selected = TRUE, p("Content")),
-  glassTabPanel("b", "B", p("More content")),
-  theme = glass_tab_theme(
-    halo_bg = "rgba(37, 99, 235, 0.16)",
-    halo_border = "#2563eb",
-    focus_ring = "#1d4ed8"
-  )
-)
-```
-
-With `theme = "auto"`, widgets follow the default Bootstrap dark-mode
-signal. If your dashboard uses another CSS marker to toggle dark mode,
-supply `dark_selector`.
-
-## Tabs that fit the screen
-
-Tabs adapt to different screen widths using the `overflow` argument:
-
-- `"scroll"` keeps a horizontal strip on one row and brings the active
-  tab into view.
-- `"multiline"` wraps tab labels onto as many rows as needed.
-- `"menu"` replaces a horizontal strip with a compact native chooser.
-
-Vertical tabs use a rail, not `overflow = "menu"`. Optional
-`swipe = TRUE` enables touch gestures while avoiding interactive content
-such as inputs and scrolling tables.
-
-Arrow keys, Home/End, and focus handling support keyboard tab
-navigation. Reduced-motion preferences and fallback colors help when
-motion or blur is not appropriate. See [responsive design and
-accessibility](https://prigasg.github.io/glasstabs/articles/responsive-accessibility.html).
-
-## An experimental fillable page
+to coordinate navigation and filters. For linked filters,
+`notify = "changed"` synchronizes each updated widget whose effective
+value changes. See the [linked filters
+guide](https://prigasg.github.io/glasstabs/articles/linked-filters.html)
+for coordinated updates.
 
 [`glassPage()`](https://prigasg.github.io/glasstabs/reference/glassPage.md)
-provides a thin wrapper around
-[`bslib::page_fillable()`](https://rstudio.github.io/bslib/reference/page_fillable.html)
-with glasstabs dependencies loaded automatically. Its API is still
-experimental. Existing
-[`fluidPage()`](https://rdrr.io/pkg/shiny/man/fluidPage.html) and
-`bslib` layouts remain supported.
+is an experimental fillable page wrapper for `bslib`. It loads the
+glasstabs dependency automatically, so do not add a second
+[`useGlassTabs()`](https://prigasg.github.io/glasstabs/reference/useGlassTabs.md)
+call when using it.
+
+[Shiny
+modules](https://prigasg.github.io/glasstabs/articles/modules.html) ·
+[Function reference](https://prigasg.github.io/glasstabs/reference/)
+
+## Try the examples
+
+Example apps ship with the package. List the examples available in your
+installed version or launch a specific app from an interactive R
+session:
 
 ``` r
 
-ui <- glassPage(
-  title = "Team review",
-  glassTabsUI(
-    "review",
-    glassTabPanel("queue", "Queue", selected = TRUE, p("Queue")),
-    glassTabPanel("done", "Done", p("Completed")),
-    theme = "auto"
-  )
-)
-```
-
-Inside a `bs4Dash` card, `compact = TRUE` reduces spacing and
-`wrap = FALSE` lets the surrounding card supply the content container.
-
-## Read and update values
-
-| Widget | Current Shiny value |
-|----|----|
-| `glassTabsUI("main", ...)` | `input[["main-active_tab"]]` |
-| `glassSelect("region", ...)` | `input$region` |
-| `glassMultiSelect("status", ...)` | `input$status` |
-| Open/closed select state | `input$region_open`, `input$status_open` |
-
-Programmatic tab switching, badges, and filter resets use ordinary Shiny
-server code:
-
-``` r
-
-server <- function(input, output, session) {
-  observeEvent(input$next_step, {
-    updateGlassTabsUI(session, "workflow", selected = "review")
-    updateGlassTabBadge(session, "workflow", "review", count = 3)
-  })
-
-  observeEvent(input$reset_filters, {
-    updateGlassSelect(session, "region", selected = character(0))
-    updateGlassMultiSelect(session, "status", selected = character(0))
-  })
-}
-```
-
-Use `glassTabCondition("main", "details")` inside a regular
-[`conditionalPanel()`](https://rdrr.io/pkg/shiny/man/conditionalPanel.html)
-to show content only when the specified glass tab is active.
-
-## Large choice sets
-
-For hundreds or thousands of choices, server-backed selects keep the
-full vector in R while displaying a bounded subset in the browser. These
-two limits serve **different purposes**:
-
-| Setting | Where to set it | What it controls |
-|----|----|----|
-| `server_limit` | [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md) or [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md) | Number of choices initially rendered, apart from explicitly included selected choices |
-| `limit` | [`glassSelectServer()`](https://prigasg.github.io/glasstabs/reference/glassSelectServer.md) or [`glassMultiSelectServer()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelectServer.md) | Maximum matching choices returned for each server search |
-
-These results are bounded, **not paginated**. Here is a complete
-example:
-
-``` r
-
-library(shiny)
 library(glasstabs)
-
-many_choices <- stats::setNames(
-  sprintf("value-%04d", 1:2000),
-  sprintf("Choice %04d", 1:2000)
-)
-
-ui <- fluidPage(
-  useGlassTabs(),
-  glassSelect("item", many_choices, server = TRUE, server_limit = 30),
-  glassMultiSelect("filters", many_choices, server = TRUE, server_limit = 30),
-  verbatimTextOutput("selected")
-)
-
-server <- function(input, output, session) {
-  glassSelectServer("item", many_choices, session = session, limit = 30)
-  glassMultiSelectServer("filters", many_choices, session = session, limit = 30)
-  output$selected <- renderPrint(list(item = input$item, filters = input$filters))
-}
-
-if (interactive()) shinyApp(ui, server)
+runGlassExample()
+runGlassExample("dashboard")
 ```
 
-The helper functions support `disabled_choices`. A disabled option
-cannot be chosen even if it arrives for the first time in a search
-response. The server-side sequence guard also prevents an older search
-response from replacing the newest requested results.
+| Explore | Built-in examples |
+|:---|:---|
+| Start with the fundamentals | `basic`, `dashboard` |
+| Modern navigation and form inputs (0.4.2) | `modernization`, `final-features` |
+| Themes and indicator styles | `indicators`, `light-mode`, `theme-switcher`, `square-corners` |
+| Integrate into existing apps | `bslib`, `bs4dash`, `native-comparison` |
+| Search large datasets | `server-select` |
+| Publish a workflow | `connect-workflow` |
+| Explore behavior and performance | `smoke-test`, `stress-test` |
 
-## Function reference
+The stress test is a diagnostic example, not an application starter.
 
-For full argument documentation, see the [pkgdown
-reference](https://prigasg.github.io/glasstabs/reference/).
-
-### Setup
-
-| Function | Purpose |
-|----|----|
-| [`useGlassTabs()`](https://prigasg.github.io/glasstabs/reference/useGlassTabs.md) | Load package CSS and JavaScript once in the UI |
-| `glassPage(...)` | Experimental fillable page with assets loaded |
-| `runGlassExample(example)` | Run a built-in example application |
-| [`glasstabs_news()`](https://prigasg.github.io/glasstabs/reference/glasstabs_news.md) | Print the package changelog |
-
-### Tab widget
-
-| Function | Purpose |
-|----|----|
-| [`glassTabsUI()`](https://prigasg.github.io/glasstabs/reference/glassTabsUI.md) | Render the animated tab bar and content |
-| [`glassTabPanel()`](https://prigasg.github.io/glasstabs/reference/glassTabPanel.md) | Define a tab and its content |
-| [`glassTabsServer()`](https://prigasg.github.io/glasstabs/reference/glassTabsServer.md) | Reactive active-tab helper |
-| [`glassTabsOutput()`](https://prigasg.github.io/glasstabs/reference/glassTabsOutput.md) / [`renderGlassTabs()`](https://prigasg.github.io/glasstabs/reference/renderGlassTabs.md) | Dynamically render tabs |
-| [`glassTabCondition()`](https://prigasg.github.io/glasstabs/reference/glassTabCondition.md) | Create a [`conditionalPanel()`](https://rdrr.io/pkg/shiny/man/conditionalPanel.html) condition |
-| [`updateGlassTabsUI()`](https://prigasg.github.io/glasstabs/reference/updateGlassTabsUI.md) | Switch tabs from the server |
-| [`updateGlassTabBadge()`](https://prigasg.github.io/glasstabs/reference/updateGlassTabBadge.md) | Update numeric badges |
-| [`showGlassTab()`](https://prigasg.github.io/glasstabs/reference/showGlassTab.md) / [`hideGlassTab()`](https://prigasg.github.io/glasstabs/reference/showGlassTab.md) | Change tab visibility |
-| [`disableGlassTab()`](https://prigasg.github.io/glasstabs/reference/disableGlassTab.md) / [`enableGlassTab()`](https://prigasg.github.io/glasstabs/reference/disableGlassTab.md) | Change tab availability |
-| [`appendGlassTab()`](https://prigasg.github.io/glasstabs/reference/appendGlassTab.md) / [`removeGlassTab()`](https://prigasg.github.io/glasstabs/reference/appendGlassTab.md) | Change tabs at runtime |
-| [`glass_tab_theme()`](https://prigasg.github.io/glasstabs/reference/glass_tab_theme.md) | Define a custom tab theme |
-
-### Select widgets
-
-| Function | Purpose |
-|----|----|
-| [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md) / [`glassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelect.md) | Single- and multi-select widgets |
-| [`glassSelectServer()`](https://prigasg.github.io/glasstabs/reference/glassSelectServer.md) / [`glassMultiSelectServer()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelectServer.md) | Register bounded server search |
-| [`updateGlassSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassSelect.md) / [`updateGlassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/updateGlassMultiSelect.md) | Update choices and selections |
-| [`glassSelectValue()`](https://prigasg.github.io/glasstabs/reference/glassSelectValue.md) / [`glassMultiSelectValue()`](https://prigasg.github.io/glasstabs/reference/glassMultiSelectValue.md) | Read values through reactive helpers |
-| [`glassFilterTags()`](https://prigasg.github.io/glasstabs/reference/glassFilterTags.md) | Show selected multi-select tags |
-| [`closeGlassSelect()`](https://prigasg.github.io/glasstabs/reference/closeGlassSelect.md) / [`closeGlassMultiSelect()`](https://prigasg.github.io/glasstabs/reference/closeGlassSelect.md) | Close a particular dropdown |
-| [`closeAllGlassSelects()`](https://prigasg.github.io/glasstabs/reference/closeGlassSelect.md) | Close all glasstabs select dropdowns |
-| [`glass_select_theme()`](https://prigasg.github.io/glasstabs/reference/glass_select_theme.md) | Define a custom select theme |
-
-Built-in examples include `basic`, `bs4dash`, `bslib`,
-`connect-workflow`, `dashboard`, `final-features`, `indicators`,
-`light-mode`, `native-comparison`, `server-select`, `smoke-test`,
-`square-corners`, `stress-test`, and `theme-switcher`. Run one with
-`runGlassExample("basic")`. The stress test is intended as a diagnostic,
-not as an application starter.
-
-## Shiny inputs
-
-| Input | Type | Meaning |
-|----|----|----|
-| `input[["<id>-active_tab"]]` | Character | Active tab value |
-| `input$<inputId>` for a multi-select | Character vector | Selected choice values |
-| `input$<inputId>` for a single-select | Character or `NULL` | Selected value, or cleared state |
-| `input$<inputId>_style` | Character | Multi-select check style |
-| `input$<inputId>_open` | Logical | Whether a select dropdown is open |
+[Full example
+gallery](https://prigasg.github.io/glasstabs/articles/examples-gallery.html)
+· [Live Posit Connect
+demo](https://prigas89-glasstabs.share.connect.posit.cloud)
 
 ## Documentation and support
 
-The [glasstabs website](https://prigasg.github.io/glasstabs/) provides
-the full reference, detailed guides, and a
-[cheatsheet](https://prigasg.github.io/glasstabs/articles/cheatsheet.html).
+Visit the [glasstabs documentation
+website](https://prigasg.github.io/glasstabs/) for complete function
+signatures, examples, and implementation guidance.
 
-Useful guides include [Shiny
-modules](https://prigasg.github.io/glasstabs/articles/modules.html),
-[linked
-filters](https://prigasg.github.io/glasstabs/articles/linked-filters.html),
-[migrating from native
-inputs](https://prigasg.github.io/glasstabs/articles/migrating.html),
-[troubleshooting](https://prigasg.github.io/glasstabs/articles/troubleshooting.html),
-[example
-gallery](https://prigasg.github.io/glasstabs/articles/examples-gallery.html),
-and [Posit Connect
-deployment](https://prigasg.github.io/glasstabs/articles/posit-connect.html).
+| Guide | Topics |
+|:---|:---|
+| [Getting started](https://prigasg.github.io/glasstabs/articles/getting-started.html) | Setup and first application |
+| [Component gallery](https://prigasg.github.io/glasstabs/articles/component-gallery.html) | Available controls and sample code |
+| [Cheatsheet](https://prigasg.github.io/glasstabs/articles/cheatsheet.html) | Quick reference |
+| [Tabs](https://prigasg.github.io/glasstabs/articles/tabs.html) and [indicators](https://prigasg.github.io/glasstabs/articles/indicators.html) | Layouts, transitions, and workspace management |
+| [Single-select](https://prigasg.github.io/glasstabs/articles/glassSelect.html) and [multi-select](https://prigasg.github.io/glasstabs/articles/multiselect.html) | Selection behavior, search, and updates |
+| [Modules](https://prigasg.github.io/glasstabs/articles/modules.html) and [linked filters](https://prigasg.github.io/glasstabs/articles/linked-filters.html) | Reusable and reactive application patterns |
+| [Migration](https://prigasg.github.io/glasstabs/articles/migrating.html) and [troubleshooting](https://prigasg.github.io/glasstabs/articles/troubleshooting.html) | Moving from native inputs and resolving common problems |
+| [Posit Connect](https://prigasg.github.io/glasstabs/articles/posit-connect.html) | Deployment and verification |
+| [What’s new in 0.4.2](https://prigasg.github.io/glasstabs/articles/whats-new-042.html) | Release highlights |
 
-Release notes are in
-[`NEWS.md`](https://prigasg.github.io/glasstabs/NEWS.md) or available
+For the complete API, browse the [function
+reference](https://prigasg.github.io/glasstabs/reference/).
+
+Release notes are maintained in
+[`NEWS.md`](https://prigasg.github.io/glasstabs/NEWS.md), on the
+[changelog](https://prigasg.github.io/glasstabs/news/index.html), and
 through
 [`glasstabs_news()`](https://prigasg.github.io/glasstabs/reference/glasstabs_news.md)
-in R. To report a problem or request an improvement, open a [GitHub
-issue](https://github.com/PrigasG/glasstabs/issues) and include a
-minimal Shiny example when possible.
+in R.
 
-## Persistent, closable and touch-reorderable workspaces
+Report bugs or request improvements through [GitHub
+Issues](https://github.com/PrigasG/glasstabs/issues). When reporting an
+issue, include the package version, host layout, browser, and a minimal
+reproducible Shiny example if possible.
 
-``` r
+## License
 
-glassTabsUI("workspace",
-  glassTabPanel("home", "Home", p("Pinned")),
-  glassTabPanel("report", "Report", textInput("notes", "Notes"), closable = TRUE),
-  glassTabPanel("settings", "Settings", glassSwitch("enabled", "Enabled"), closable = TRUE),
-  reorderable = TRUE,
-  initial_order = c("home", "settings", "report"),
-  persist_order = "local",
-  touch_reorder = TRUE
-)
-
-# In server: close is a request, not destructive client-side deletion.
-observeEvent(input[["workspace-close_request"]], {
-  value <- input[["workspace-close_request"]]
-  if (value %in% c("report", "settings")) removeGlassTab(session, "workspace", value)
-})
-```
-
-`persist_order = "session"` survives reloads in the same browser tab;
-`"local"` persists between visits on the same browser origin and page
-path. Use `initial_order` with your own authenticated storage for
-user-specific or cross-device ordering. Browser storage takes precedence
-when enabled; only currently rendered tab values are restored. New
-values follow saved values. Use `persist_order = "none"` to avoid
-browser storage. Do not use private data as tab identifiers. The server
-owns closure approval; a rejected request leaves the pane and its inputs
-untouched. Delete requests closure on a focused closable tab, and a
-separate accessible button closes the active closable tab (including
-menu overflow). Drag handles reserve their own touch area; normal
-scrolling and pane swiping remain available elsewhere.
-
-## Choice controls
-
-``` r
-
-glassSwitch("enabled", "Enabled", TRUE, glass_strength = 0.25)
-glassRadioGroup("mode", "Mode", c(Edit = "edit", Preview = "preview"), inline = TRUE)
-glassCheckboxGroup("fields", "Fields", c("Name", "County", "Rating"))
-```
-
-These use standard Shiny bindings and
-[`updateCheckboxInput()`](https://rdrr.io/pkg/shiny/man/updateCheckboxInput.html),
-[`updateRadioButtons()`](https://rdrr.io/pkg/shiny/man/updateRadioButtons.html)
-and
-[`updateCheckboxGroupInput()`](https://rdrr.io/pkg/shiny/man/updateCheckboxGroupInput.html);
-no separate JavaScript input-binding framework is required. Run
-`runGlassExample("final-features")` for the final feature fixture.
+MIT. See [LICENSE](https://prigasg.github.io/glasstabs/LICENSE).
