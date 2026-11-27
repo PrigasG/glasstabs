@@ -51,9 +51,8 @@ npm-debug.log*
 /tests/testthat/_snaps/**/*-new.*
 /tests/testthat/apps/**/shinytest2/
 
-# Local deployment metadata
+# Local deployment metadata (the Connect Cloud manifest is tracked for Git publishing)
 rsconnect/
-/inst/examples/connect-workflow/manifest.json
 
 # LaTeX compilation artifacts
 /inst/cheatsheet/*.aux

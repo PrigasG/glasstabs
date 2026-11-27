@@ -9,7 +9,7 @@
 #   - theme = "auto" for Bootstrap 5 / bslib light-dark mode
 #   - overflow = "scroll" / "multiline" / "menu" on narrow screens
 #   - optional swipe gestures with interactive-content guards
-#   - glassSelect(), glassMultiSelect(), badges, and server-driven tab changes
+#   - glassSelect(), glassMultiSelect(), glassSwitch(), badges, and server-driven tab changes
 #   - dynamic append/remove, show/hide, and disable/enable tab helpers
 #   - keyboard, reduced-motion, high-contrast, and blur-fallback checks
 #
@@ -18,18 +18,7 @@
 
 library(shiny)
 library(glasstabs)
-
-has_bslib <- requireNamespace("bslib", quietly = TRUE)
-glassTabsUI_args <- names(formals(glassTabsUI))
-select_theme <- if (isTRUE(tryCatch({
-  as.character(glassSelect(
-    "gt_auto_probe",
-    c(Probe = "probe"),
-    selected = "probe",
-    theme = "auto"
-  ))
-  TRUE
-}, error = function(e) FALSE))) "auto" else "light"
+library(bslib)
 
 orders <- data.frame(
   region = c("North", "North", "South", "West", "East", "East", "West", "South"),
@@ -92,9 +81,9 @@ workflow_tabs <- function(
       div(
         class = "approval-panel",
         h3("Approval checklist"),
-        checkboxInput("owner_checked", "Owner reviewed filtered queue", value = TRUE),
-        checkboxInput("metrics_checked", "Metrics match Connect snapshot", value = FALSE),
-        checkboxInput("publish_checked", "Ready to publish summary", value = FALSE),
+        glassSwitch("owner_checked", "Owner reviewed filtered queue", value = TRUE),
+        glassSwitch("metrics_checked", "Metrics match Connect snapshot", value = FALSE),
+        glassSwitch("publish_checked", "Ready to publish summary", value = FALSE),
         verbatimTextOutput("approval_summary", placeholder = TRUE)
       )
     ),
@@ -119,24 +108,23 @@ workflow_tabs <- function(
     list(
       id = "workflow",
       compact = TRUE,
-      theme = if ("indicator" %in% glassTabsUI_args) "auto" else "light"
+      theme = "auto"
     ),
     panels
   )
-  if ("indicator" %in% glassTabsUI_args) args$indicator <- indicator
-  if ("orientation" %in% glassTabsUI_args) args$orientation <- orientation
-  if ("tab_align" %in% glassTabsUI_args) args$tab_align <- tab_align
-  if ("text_align" %in% glassTabsUI_args) args$text_align <- text_align
-  if ("shape" %in% glassTabsUI_args) args$shape <- shape
-  if ("overflow" %in% glassTabsUI_args) args$overflow <- overflow
-  if ("swipe" %in% glassTabsUI_args) args$swipe <- swipe
+  args$indicator <- indicator
+  args$orientation <- orientation
+  args$tab_align <- tab_align
+  args$text_align <- text_align
+  args$shape <- shape
+  args$overflow <- overflow
+  args$swipe <- swipe
 
   do.call(glassTabsUI, args)
 }
 
 page_body <- function() {
   tagList(
-    useGlassTabs(),
     tags$head(tags$style(HTML("
       body{background:#f5f7fb;}
       .connect-shell{box-sizing:border-box;width:100%;min-width:0;max-width:1180px;margin:0 auto;padding:24px 16px 34px;}
@@ -166,17 +154,6 @@ page_body <- function() {
       .connect-tools .form-group{margin-bottom:0;}
       [data-bs-theme='dark'] .connect-tools label,
       body[data-bs-theme='dark'] .connect-tools label{color:#dbeafe;}
-      [data-bs-theme='dark'] .selectize-input,
-      body[data-bs-theme='dark'] .selectize-input,
-      body[data-bs-theme='dark'] .form-select,
-      [data-bs-theme='dark'] .form-select{
-        background:#111827;color:#f8fafc;border-color:rgba(148,163,184,.35);
-        box-shadow:none;
-      }
-      [data-bs-theme='dark'] .selectize-dropdown,
-      body[data-bs-theme='dark'] .selectize-dropdown{background:#111827;color:#f8fafc;border-color:rgba(148,163,184,.35);}
-      [data-bs-theme='dark'] .selectize-dropdown .active,
-      body[data-bs-theme='dark'] .selectize-dropdown .active{background:#1e293b;color:#f8fafc;}
       .workflow-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:2px 0 12px;}
       .workflow-actions .btn{text-align:center;background:transparent;color:#0d6efd;border-color:#0d6efd;}
       .workflow-actions .btn.active,
@@ -237,9 +214,6 @@ page_body <- function() {
         var tabClick = e.target.closest ? e.target.closest('#workflow-navbar .gt-tab-link') : null;
         if (!btn && !tabClick) return;
         var target = btn ? btn.getAttribute('data-workflow-target') : tabClick.getAttribute('data-value');
-        var tabs = Array.prototype.slice.call(document.querySelectorAll('#workflow-navbar .gt-tab-link'));
-        var tab = tabs.find(function(el) { return el.getAttribute('data-value') === target; });
-        if (btn && tab) tab.click();
         setTimeout(function() {
           document.querySelectorAll('[data-workflow-target]').forEach(function(el) {
             el.classList.toggle('active', el.getAttribute('data-workflow-target') === target);
@@ -278,7 +252,8 @@ page_body <- function() {
           choices = sort(unique(orders$region)),
           selected = sort(unique(orders$region)),
           label = "Regions",
-          theme = select_theme,
+          searchable = "auto",
+          theme = "auto",
           show_style_switcher = FALSE
         ),
         glassSelect(
@@ -286,52 +261,65 @@ page_body <- function() {
           choices = c("All", sort(unique(orders$status))),
           selected = "All",
           label = "Status",
-          theme = select_theme
+          searchable = "auto",
+          theme = "auto"
         ),
-        selectInput(
+        glassSelect(
           "workflow_orientation",
-          "Tab layout",
           choices = c("Horizontal" = "horizontal", "Vertical" = "vertical"),
-          selected = "horizontal"
+          selected = "horizontal",
+          label = "Tab layout",
+          searchable = "auto",
+          theme = "auto"
         ),
-        selectInput(
+        glassSelect(
           "workflow_tab_align",
-          "Tab alignment",
           choices = c("Center" = "center", "Left" = "left", "Right" = "right"),
-          selected = "center"
+          selected = "center",
+          label = "Tab alignment",
+          searchable = "auto",
+          theme = "auto"
         ),
-        selectInput(
+        glassSelect(
           "workflow_text_align",
-          "Text alignment",
           choices = c("Center" = "center", "Left" = "left", "Right" = "right"),
-          selected = "center"
+          selected = "center",
+          label = "Text alignment",
+          searchable = "auto",
+          theme = "auto"
         ),
-        selectInput(
+        glassSelect(
           "workflow_tab_shape",
-          "Tab shape",
           choices = c("Rounded" = "rounded", "Square" = "square"),
-          selected = "rounded"
+          selected = "rounded",
+          label = "Tab shape",
+          searchable = "auto",
+          theme = "auto"
         ),
-        selectInput(
+        glassSelect(
           "workflow_indicator",
-          "Indicator",
           choices = c("Glass" = "glass", "Solid" = "solid", "Underline" = "underline"),
-          selected = "glass"
+          selected = "glass",
+          label = "Indicator",
+          searchable = "auto",
+          theme = "auto"
         ),
         conditionalPanel(
           condition = "input.workflow_orientation === 'horizontal'",
-          selectInput(
+          glassSelect(
             "workflow_overflow",
-            "Narrow-screen tabs",
             choices = c(
               "Scroll" = "scroll",
               "Multiline" = "multiline",
               "Compact menu" = "menu"
             ),
-            selected = "scroll"
+            selected = "scroll",
+            label = "Narrow-screen tabs",
+            searchable = "auto",
+            theme = "auto"
           )
         ),
-        checkboxInput("workflow_swipe", "Swipe between tabs", value = TRUE),
+        glassSwitch("workflow_swipe", "Swipe between tabs", value = TRUE),
         actionButton("reset_filters", "Reset filters", class = "btn-secondary")
       ),
       div(
@@ -360,8 +348,8 @@ page_body <- function() {
           tags$li("On a phone, swipe across empty panel space in both directions."),
           tags$li("Confirm inputs, buttons, tables, and the sideways scroll box do not trigger a swipe."),
           tags$li("Use arrow keys plus Home and End on the tab bar; focus should follow the active tab."),
-          tags$li("Open both glass selects and use arrows, Home, End, Enter, Space, and Escape."),
-          tags$li("Open either glass select and immediately press outside it; the dropdown should close cleanly."),
+          tags$li("Open the glass selects and use arrows, Home, End, Enter, Space, and Escape."),
+          tags$li("Open a glass select and immediately press outside it; the dropdown should close cleanly."),
           tags$li("Check that a loading veil or modal never leaves a glass select floating above it."),
           tags$li("Press inside the multi-select dropdown and confirm it stays open for the next choice."),
           tags$li("Add and remove the live tab, then check that selection and keyboard focus stay sensible."),
@@ -378,29 +366,16 @@ page_body <- function() {
   )
 }
 
-if (has_bslib && "glassPage" %in% getNamespaceExports("glasstabs")) {
-  ui <- glassPage(
-    title = "glasstabs Connect test lab",
-    theme = bslib::bs_theme(version = 5),
-    padding = 0,
-    div(
-      style = "display:flex;justify-content:flex-end;padding:12px 16px 0;",
-      bslib::input_dark_mode(id = "mode")
-    ),
-    page_body()
-  )
-} else if (has_bslib) {
-  ui <- bslib::page_fluid(
-    theme = bslib::bs_theme(version = 5),
-    div(
-      style = "display:flex;justify-content:flex-end;padding:12px 16px 0;",
-      bslib::input_dark_mode(id = "mode")
-    ),
-    page_body()
-  )
-} else {
-  ui <- fluidPage(page_body())
-}
+ui <- glassPage(
+  title = "glasstabs Connect test lab",
+  theme = bs_theme(version = 5),
+  padding = 0,
+  div(
+    style = "display:flex;justify-content:flex-end;padding:12px 16px 0;",
+    input_dark_mode(id = "mode")
+  ),
+  page_body()
+)
 
 server <- function(input, output, session) {
   filtered_orders <- reactive({

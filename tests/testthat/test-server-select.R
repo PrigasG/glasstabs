@@ -101,8 +101,9 @@ test_that("connect workflow example exists, parses, and demonstrates workflow fe
   expect_match(app_src, "input.workflow_orientation === 'horizontal'", fixed = TRUE)
   expect_match(app_src, 'swipe = FALSE', fixed = TRUE)
   expect_match(app_src, 'theme = "auto"', fixed = TRUE)
-  expect_match(app_src, '"glassPage" %in% getNamespaceExports("glasstabs")', fixed = TRUE)
-  expect_match(app_src, "names(formals(glassTabsUI))", fixed = TRUE)
+  expect_match(app_src, "ui <- glassPage(", fixed = TRUE)
+  expect_false(grepl("useGlassTabs()", app_src, fixed = TRUE))
+  expect_match(app_src, 'glassSwitch("workflow_swipe"', fixed = TRUE)
   expect_match(app_src, "updateGlassTabBadge", fixed = TRUE)
   expect_match(app_src, "updateGlassTabsUI", fixed = TRUE)
   expect_match(app_src, "appendGlassTab", fixed = TRUE)
@@ -113,8 +114,8 @@ test_that("connect workflow example exists, parses, and demonstrates workflow fe
   expect_match(app_src, "enableGlassTab", fixed = TRUE)
   expect_match(app_src, "What this app is testing", fixed = TRUE)
 
-  # A locally generated deployment manifest is optional and excluded from
-  # the repository and CRAN builds. Validate it when present in a checkout.
+  # The Git deployment manifest is tracked, but excluded from CRAN builds.
+  # Validate it when present in a checkout.
   manifest <- test_path("..", "..", "inst", "examples", "connect-workflow", "manifest.json")
   if (file.exists(manifest)) {
     manifest_src <- paste(readLines(manifest, warn = FALSE), collapse = "\n")
@@ -122,6 +123,8 @@ test_that("connect workflow example exists, parses, and demonstrates workflow fe
     expect_match(manifest_src, '"app.R"', fixed = TRUE)
     expect_match(manifest_src, '"Source"\\s*:\\s*"github"')
     expect_match(manifest_src, '"RemoteType"\\s*:\\s*"github"')
+    manifest_data <- jsonlite::fromJSON(manifest, simplifyVector = FALSE)
+    expect_identical(manifest_data$packages$glasstabs$description$Version, "0.4.2")
   }
 })
 
