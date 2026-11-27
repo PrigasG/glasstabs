@@ -1,4 +1,4 @@
-% glasstabs cheatsheet v0.4.1
+% glasstabs cheatsheet v0.4.2
 % Compile with: pdflatex -interaction=nonstopmode -halt-on-error glasstabs-cheatsheet.tex
 \documentclass[9pt,a4paper]{article}
 
@@ -63,7 +63,7 @@
 }
 \newcommand{\sheetheader}[2]{%
   {\large\bfseries\color{gtblue}glasstabs}%
-  \hfill{\tiny\color{gtgray}v0.4.1}\\[1pt]
+  \hfill{\tiny\color{gtgray}v0.4.2}\\[1pt]
   {\footnotesize\color{gtgray}#1}%
   \hfill{\tiny\color{gtgray}#2}\\[-3pt]
   \rule{\linewidth}{0.6pt}
@@ -83,7 +83,7 @@
 \begin{document}
 \begin{multicols*}{4}
 \raggedcolumns
-\sheetheader{tabs and layout}{page 1 of 3}
+\sheetheader{tabs and layout}{page 1 of 4}
 
 \mysection{Setup}
 
@@ -328,7 +328,7 @@ glassTabsUI(
 \begin{multicols*}{4}
 \raggedcolumns
 \footnotesize
-\sheetheader{selects}{page 2 of 3}
+\sheetheader{selects}{page 2 of 4}
 
 \mysection{Multi-select -- UI}
 
@@ -539,7 +539,7 @@ updateGlassSelect(
 \begin{multicols*}{2}
 \raggedcolumns
 \footnotesize
-\sheetheader{select reference}{page 3 of 3}
+\sheetheader{select reference}{page 3 of 4}
 
 \mysection{Close dropdowns}
 
@@ -572,7 +572,7 @@ Both select widgets accept \gtval{"dark"}, \gtval{"light"},
 
 \mysection{Function map -- all exports}
 
-All 32 exported functions, grouped by job:
+All 35 exported functions, grouped by job:
 \begin{lstlisting}
 # Setup / page
 useGlassTabs  glassPage
@@ -637,4 +637,71 @@ glass_tab_theme  glass_select_theme
 \href{https://prigasg.github.io/glasstabs/}{prigasg.github.io/glasstabs}
 \hfill MIT \copyright\ glasstabs authors -- Page 3}
 \end{multicols*}
+\newpage
+\sheetheader{workspace and form inputs}{page 4 of 4}
+\section*{Workspace and form input quick reference}
+\begin{multicols*}{2}
+\raggedcolumns
+\subsection*{Navigation and appearance}
+\begin{verbatim}
+glassTabsUI("workspace",
+  glassTabPanel("home", "Home"),
+  glassTabPanel("report", "Report", closable = TRUE),
+  style = "segmented", indicator = "solid",
+  transition = "none", theme = "auto",
+  glass_strength = 0.25, equal_width = TRUE,
+  tab_gap = "4px", tab_padding = "8px 12px",
+  nav_padding = "4px", content_padding = "12px",
+  reorderable = TRUE, touch_reorder = TRUE,
+  persist_order = "session")
+\end{verbatim}
+Use \verb|fill = TRUE| with a definite parent height. Use
+\verb|hide_single = TRUE| to hide a lone navigation item.
+Desktop drag, keyboard Alt+Shift+arrows and touch handles reorder without
+recreating panes. Browser storage saves identifiers only; use distinct keys
+for distinct projects. Use \verb|initial_order| with persistence disabled for
+server-controlled restoration.
+\subsection*{Close requests}
+\begin{verbatim}
+observeEvent(input[["workspace-close_request"]], {
+  value <- input[["workspace-close_request"]]
+  if (identical(value, "report"))
+    removeGlassTab(session, "workspace", value)
+})
+\end{verbatim}
+The server approves closure; check authorization and unsaved changes.
+Read \verb|input[["workspace-tab_order"]]| for the complete order.
+\columnbreak
+\subsection*{Select sizing and surfaces}
+\begin{verbatim}
+glassSelect("month", month.abb,
+  width = "130px", size = "sm",
+  dropdown_max_height = "18rem",
+  glass_strength = 0.25,
+  theme = glass_select_theme(
+    mode = "light", trigger_bg = "#f8fafc",
+    dropdown_bg = "#ffffff"))
+\end{verbatim}
+Default width remains 160px. Explicit widths fit the parent. Width 100\%
+fills the parent, not the viewport. Searchable panels fit the visible
+viewport and retain modal focus boundaries.
+\subsection*{Form inputs with native bindings}
+\begin{verbatim}
+glassSwitch("enabled", "Enabled", TRUE)
+glassRadioGroup("mode", "Mode", c("Edit", "Preview"))
+glassCheckboxGroup("fields", "Fields", c("A", "B"))
+updateCheckboxInput(session, "enabled", value = TRUE)
+updateRadioButtons(session, "mode", selected = "Edit")
+updateCheckboxGroupInput(session, "fields", selected = "A")
+\end{verbatim}
+\subsection*{Verify the application}
+\verb|runGlassExample("final-features")|. Test select widths, modal search,
+keyboard scrolling, empty tabs, dependency rollback, persistence, touch and
+mobile keyboard behavior. See the pkgdown release guide for limitations.
+\vfill
+{\tiny\color{gtgray}
+\href{https://prigasg.github.io/glasstabs/}{prigasg.github.io/glasstabs}
+\hfill MIT \copyright\ glasstabs authors -- Page 4}
+\end{multicols*}
+
 \end{document}

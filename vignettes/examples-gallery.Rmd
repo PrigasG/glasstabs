@@ -45,6 +45,7 @@ is specific.
 | `smoke-test` | A broad widget smoke test across Overview, Details, Admin, and Compare panels | `runGlassExample("smoke-test")` |
 | `square-corners` | Square-corner styling as a smoke test | `runGlassExample("square-corners")` |
 | `stress-test` | **Diagnostic, not a starter template.** Pushes both selects to their limits, including a 100,000-choice set and complex interaction scenarios — use it to check performance and edge cases, not to copy for ordinary apps | `runGlassExample("stress-test")` |
+| `final-features` | Persistent and closable workspaces, touch handles and form inputs | `runGlassExample("final-features")` |
 
 ## Choosing one
 

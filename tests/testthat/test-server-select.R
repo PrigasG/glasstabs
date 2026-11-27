@@ -29,9 +29,12 @@ test_that("all built-in examples have app files and README coverage", {
     app_sources,
     fixed = TRUE
   )))
+  # covr installs the source tree directly, including this untracked local lab.
+  # R CMD build excludes it through .Rbuildignore.
+  examples <- setdiff(examples, "glasstabs-regression-lab")
   documented_examples <- c(
     "basic", "bs4dash", "bslib", "connect-workflow", "dashboard",
-    "indicators", "light-mode", "modernization", "native-comparison",
+    "final-features", "indicators", "light-mode", "modernization", "native-comparison",
     "server-select", "smoke-test", "square-corners", "stress-test",
     "theme-switcher"
   )

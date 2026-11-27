@@ -36,7 +36,7 @@ glassTabsUI("workspace",
 Desktop drag-and-drop and Alt+Shift+arrow keyboard reordering change the tab
 order without replacing its panels. Read `input[["workspace-tab_order"]]`
 for all values, including hidden and disabled tabs. Recreating the whole
-widget through `renderUI()` follows the order provided in R. Native menu
+widget through `renderUI()` follows the order provided in R unless browser persistence is enabled. Native menu
 mode has no reorder UI. `fill = TRUE` needs a definite parent height and
 makes the active pane scroll. The default floating layout and animations
 remain available. `runGlassExample("modernization")` exercises these options.
@@ -350,3 +350,49 @@ server <- function(input, output, session) {
   observe(message("Widget 2 active: ", input[["widget2-active_tab"]]))
 }
 ```
+
+## Persisted and closable workspaces
+
+```r
+glassTabsUI("workspace",
+  glassTabPanel("home", "Home", shiny::p("Pinned")),
+  glassTabPanel("report", "Report", shiny::textInput("title", "Title"),
+                closable = TRUE),
+  reorderable = TRUE, touch_reorder = TRUE,
+  persist_order = "session", initial_order = c("home", "report"),
+  theme = "auto", transition = "none"
+)
+```
+
+Read `input[["workspace-tab_order"]]` for the complete order. `"none"`
+keeps the original behavior; `"session"` restores the order within a browser
+session and `"local"` across visits on the same origin and path. The default
+key includes the widget's namespace; use a distinct `order_key` for separate
+projects or users sharing a browser. Saved browser order wins over the
+server-supplied `initial_order` for values that still exist. New values append;
+unknown and duplicate stored values are ignored. Storage failure is harmless.
+Only identifiers are saved. Do not put personal or confidential data in tab IDs.
+For cross-device or authenticated project storage, save the reported order on
+the server and use `initial_order` with browser persistence disabled.
+
+Closure is a request, not immediate deletion. In the server:
+
+```r
+observeEvent(input[["workspace-close_request"]], {
+  value <- input[["workspace-close_request"]]
+  if (identical(value, "report")) {
+    # Check permissions and unsaved changes before accepting.
+    removeGlassTab(session, "workspace", value)
+  }
+})
+```
+
+Click the inline close mark, press Delete on a focused closable tab, or use the
+accessible active-tab close button. Nonclosable, hidden and disabled tabs do
+not request closure. Menu overflow has a close button but no drag UI. Removing
+a selected tab chooses the first remaining available tab; no available tab
+means a null active value. Appending to an empty workspace selects the new tab.
+Closing does not persist tab deletion across a fresh server session.
+
+Touch and pen reordering uses a dedicated handle. Normal scrolling and pane
+swipes remain independent. Keyboard users can reorder with Alt+Shift+arrows.

@@ -12,6 +12,7 @@ Ellipsized
 HSL
 JS
 NVDA
+Nonclosable
 README
 RTL
 Selectize
@@ -26,10 +27,12 @@ affordance
 bootAll
 bs
 bslib
+cancelled
 changelog
 cheatsheet
 checkmarks
 clearable
+closable
 colour
 combobox
 conditionalPanel
@@ -54,12 +57,14 @@ greys
 handoff
 hardcoded
 htmltools
+iframes
 initialisation
 initialised
 initialises
 lifecycle
 listbox
 listboxes
+mockups
 mojibake
 morphism
 namespaced
@@ -72,6 +77,7 @@ pre
 px
 reactively
 reactives
+reappend
 reinitialised
 reinitialises
 renderGlassTabs
@@ -106,3 +112,4 @@ updater's
 updaters
 widget's
 wordlist
+workspaces

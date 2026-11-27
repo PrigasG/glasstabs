@@ -1,5 +1,13 @@
 # glasstabs 0.4.2 (development)
 
+## Final workspace and form additions
+
+* Add opt-in persistent tab ordering (`persist_order`, `initial_order`, `order_key`), server-approved `closable` tabs and touch/pen drag handles (`touch_reorder`).
+* Add native-bound `glassSwitch()`, `glassRadioGroup()` and `glassCheckboxGroup()`.
+* Keep dropdown panels within the visible viewport, with a whole-panel scrolling fallback in tight spaces.
+* Clear the active state when the final tab is hidden, disabled or removed; support immediate reappend after cancellation.
+* Add release and component guides, update existing articles and cheatsheet source, and add focused integration tests.
+
 ## Navigation and layout
 
 * Add segmented navigation and refine the attached underline presentation.

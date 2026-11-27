@@ -4,7 +4,14 @@
 \alias{glassTabPanel}
 \title{Define a single glass tab panel}
 \usage{
-glassTabPanel(value, label, ..., icon = NULL, selected = FALSE)
+glassTabPanel(
+  value,
+  label,
+  ...,
+  icon = NULL,
+  selected = FALSE,
+  closable = FALSE
+)
 }
 \arguments{
 \item{value}{A unique string identifier for this tab (e.g. \code{"A"}).}
@@ -19,6 +26,9 @@ any htmltools-compatible tag, e.g. \code{shiny::icon("table")} or
 
 \item{selected}{Logical. Whether this tab starts selected. Only the first
 \code{selected = TRUE} tab takes effect; defaults to \code{FALSE}.}
+
+\item{closable}{Logical. Allow requesting closure by the inline close mark,
+Delete key or the active-tab close button. The server decides whether to remove it.}
 }
 \value{
 A list of class \code{"glassTabPanel"} consumed by \code{\link[=glassTabsUI]{glassTabsUI()}}.

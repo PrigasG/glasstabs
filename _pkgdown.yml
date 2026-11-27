@@ -5,9 +5,9 @@ template:
   bootswatch: flatly
 
 home:
-  title: glasstabs - Animated Shiny Widgets
+  title: glasstabs - Modern Navigation and Inputs for Shiny
   description: |
-    Animated glass-morphism tabs, single-select, and multi-select widgets for R Shiny.
+    Responsive, configurable navigation and form components for R Shiny.
 
 navbar:
   bg: dark
@@ -16,6 +16,7 @@ navbar:
       - intro
       - articles
       - reference
+      - news
     right:
       - search
       - github
@@ -26,6 +27,12 @@ navbar:
       href: https://github.com/prigasG/glasstabs
 
 articles:
+  - title: New in 0.4.2
+    contents:
+      - whats-new-042
+  - title: Components
+    contents:
+      - component-gallery
   - title: Cheatsheet
     navbar: Cheatsheet
     contents:
@@ -111,6 +118,11 @@ reference:
       - closeAllGlassSelects
       - glassFilterTags
       - glass_select_theme
+
+  - title: Form inputs
+    desc: Native Shiny-bound switches, radio groups and checkboxes.
+    contents:
+      - glassSwitch
 
 footer:
   structure:

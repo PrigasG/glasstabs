@@ -8,13 +8,14 @@
 
 <!-- badges: end -->
 
-glasstabs brings animated navigation and polished filters to R Shiny without requiring custom JavaScript or CSS. Its three primary widgets are:
+glasstabs brings animated navigation and polished filters to R Shiny without requiring custom JavaScript or CSS. Its primary components include:
 
 - `glassTabsUI()` for horizontal and vertical tab navigation.
 - `glassSelect()` for searchable single-choice inputs.
 - `glassMultiSelect()` for multi-choice filters and optional tag pills.
+- `glassSwitch()`, `glassRadioGroup()` and `glassCheckboxGroup()` for native-bound form controls (development 0.4.2).
 
-Widgets work with `fluidPage()`, `bslib`, and `bs4Dash`, and support dark, light, automatic, and custom themes. Version 0.4.1 strengthens keyboard accessibility, selection correctness, server search, and responsive dropdown behavior.
+Widgets work with `fluidPage()`, `bslib`, and `bs4Dash`, and support dark, light, automatic, and custom themes. The 0.4.2 development candidate adds workspace management and refined form controls. See [What is new](https://prigasg.github.io/glasstabs/articles/whats-new-042.html) for details. The CRAN release may lag behind GitHub.
 
 ## Installation
 
@@ -178,12 +179,7 @@ For a long selected label, `overflow_tooltip = "auto"` can show the full label o
 
 For short lists, `searchable = "auto"` hides the search field until the number of choices reaches `search_threshold`. This works with both select widgets.
 
-Longer lists fit within the available space above or below the field. A
-subtle **Scroll for more** cue appears when options remain below the visible
-area and disappears at the end of the list. The option area also responds to
-search results, choice updates, and window resizing. Use
-`dropdown_max_height = "18rem"` on either select to set a lower maximum;
-short lists use only the height they need.
+Longer lists fit within the available space above or below the field. A subtle **Scroll for more** cue appears when options remain below the visible area and disappears at the end of the list. The option area also responds to search results, choice updates, and window resizing. Use `dropdown_max_height = "18rem"` on either select to set a lower maximum; short lists use only the height they need.
 
 ``` r
 glassSelect(
@@ -255,12 +251,9 @@ glassTabsUI(
 
 Use `style = "attached"` for a tab bar docked to its content container and `transition = "slide"` for directional pane movement. Use `transition = "none"` for immediate navigation without pane or halo animation. For select controls, `tongue = TRUE` provides the attached unfurl animation; `tongue = FALSE` uses a detached transition. Motion preferences are respected.
 
-For a denser workspace, use `style = "segmented"` or refine the attached
-layout with `tab_gap`, `tab_padding`, `nav_padding`, and `content_padding`.
-`fill = TRUE` needs a parent with a definite height. `hide_single = TRUE`
-keeps a one-tab view clean, and `equal_width = TRUE` aligns tab widths.
+For a denser workspace, use `style = "segmented"` or refine the attached layout with `tab_gap`, `tab_padding`, `nav_padding`, and `content_padding`. `fill = TRUE` needs a parent with a definite height. `hide_single = TRUE` keeps a one-tab view clean, and `equal_width = TRUE` aligns tab widths.
 
-```r
+``` r
 glassTabsUI(
   "workspace",
   glassTabPanel("data", "Data", shiny::p("Data")),
@@ -276,19 +269,12 @@ glassSelect("dataset", c(A = "a", B = "b"), theme = "auto",
 Drag a tab on desktop, or focus a tab and press Alt+Shift+Left/Right
 (Up/Down on a vertical rail). `input[["workspace-tab_order"]]` gives the
 order of all values without changing the active tab. A full `renderUI()`
-replacement follows the order supplied by R; native menu overflow has no
-reorder control. Touch dragging is not promised in this release.
+replacement follows the order supplied by R unless browser persistence is enabled; native menu overflow has no
+reorder control. Opt into browser persistence and touch handles with `persist_order` and `touch_reorder`.
 
-Custom themes allow control of the accent and focus ring without restyling
-the rest of the app. `glass_select_theme()` also accepts `trigger_bg` and
-`dropdown_bg` for separate surfaces. Explicit surface colors remain fixed
-across mode changes, so choose colors with appropriate contrast.
+Custom themes allow control of the accent and focus ring without restyling the rest of the app. `glass_select_theme()` also accepts `trigger_bg` and `dropdown_bg` for separate surfaces. Explicit surface colors remain fixed across mode changes, so choose colors with appropriate contrast.
 
-Run `runGlassExample("modernization")` to use glass controls for tab style,
-theme, indicator, motion, alignment, spacing, overflow, one/six-tab layouts,
-reordering, and lifecycle operations. It also shows select sizing, long-list
-scrolling, actual input values, and host-menu layering. Native Shiny inputs
-appear only in its labeled side-by-side comparison.
+Run `runGlassExample("modernization")` to use glass controls for tab style, theme, indicator, motion, alignment, spacing, overflow, one/six-tab layouts, reordering, and lifecycle operations. It also shows select sizing, long-list scrolling, actual input values, and host-menu layering. Native Shiny inputs appear only in its labeled side-by-side comparison.
 
 ``` r
 glassTabsUI(
@@ -442,7 +428,7 @@ For full argument documentation, see the [pkgdown reference](https://prigasg.git
 | `closeAllGlassSelects()` | Close all glasstabs select dropdowns |
 | `glass_select_theme()` | Define a custom select theme |
 
-Built-in examples include `basic`, `bs4dash`, `bslib`, `connect-workflow`, `dashboard`, `indicators`, `light-mode`, `native-comparison`, `server-select`, `smoke-test`, `square-corners`, `stress-test`, and `theme-switcher`. Run one with `runGlassExample("basic")`. The stress test is intended as a diagnostic, not as an application starter.
+Built-in examples include `basic`, `bs4dash`, `bslib`, `connect-workflow`, `dashboard`, `final-features`, `indicators`, `light-mode`, `native-comparison`, `server-select`, `smoke-test`, `square-corners`, `stress-test`, and `theme-switcher`. Run one with `runGlassExample("basic")`. The stress test is intended as a diagnostic, not as an application starter.
 
 ## Shiny inputs
 
@@ -461,3 +447,48 @@ The [glasstabs website](https://prigasg.github.io/glasstabs/) provides the full 
 Useful guides include [Shiny modules](https://prigasg.github.io/glasstabs/articles/modules.html), [linked filters](https://prigasg.github.io/glasstabs/articles/linked-filters.html), [migrating from native inputs](https://prigasg.github.io/glasstabs/articles/migrating.html), [troubleshooting](https://prigasg.github.io/glasstabs/articles/troubleshooting.html), [example gallery](https://prigasg.github.io/glasstabs/articles/examples-gallery.html), and [Posit Connect deployment](https://prigasg.github.io/glasstabs/articles/posit-connect.html).
 
 Release notes are in [`NEWS.md`](NEWS.md) or available through `glasstabs_news()` in R. To report a problem or request an improvement, open a [GitHub issue](https://github.com/PrigasG/glasstabs/issues) and include a minimal Shiny example when possible.
+
+## Persistent, closable and touch-reorderable workspaces
+
+```r
+glassTabsUI("workspace",
+  glassTabPanel("home", "Home", p("Pinned")),
+  glassTabPanel("report", "Report", textInput("notes", "Notes"), closable = TRUE),
+  glassTabPanel("settings", "Settings", glassSwitch("enabled", "Enabled"), closable = TRUE),
+  reorderable = TRUE,
+  initial_order = c("home", "settings", "report"),
+  persist_order = "local",
+  touch_reorder = TRUE
+)
+
+# In server: close is a request, not destructive client-side deletion.
+observeEvent(input[["workspace-close_request"]], {
+  value <- input[["workspace-close_request"]]
+  if (value %in% c("report", "settings")) removeGlassTab(session, "workspace", value)
+})
+```
+
+`persist_order = "session"` survives reloads in the same browser tab;
+`"local"` persists between visits on the same browser origin and page path.
+Use `initial_order` with your own authenticated storage for user-specific or
+cross-device ordering. Browser storage takes precedence when enabled; only
+currently rendered tab values are restored. New values follow saved values.
+Use `persist_order = "none"` to avoid browser storage. Do not use private data
+as tab identifiers. The server owns closure approval; a rejected request
+leaves the pane and its inputs untouched. Delete requests closure on a
+focused closable tab, and a separate accessible button closes the active
+closable tab (including menu overflow). Drag handles reserve their own touch
+area; normal scrolling and pane swiping remain available elsewhere.
+
+## Choice controls
+
+```r
+glassSwitch("enabled", "Enabled", TRUE, glass_strength = 0.25)
+glassRadioGroup("mode", "Mode", c(Edit = "edit", Preview = "preview"), inline = TRUE)
+glassCheckboxGroup("fields", "Fields", c("Name", "County", "Rating"))
+```
+
+These use standard Shiny bindings and `updateCheckboxInput()`,
+`updateRadioButtons()` and `updateCheckboxGroupInput()`; no separate JavaScript
+input-binding framework is required. Run `runGlassExample("final-features")`
+for the final feature fixture.

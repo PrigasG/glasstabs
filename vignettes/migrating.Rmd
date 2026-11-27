@@ -163,3 +163,14 @@ For everything else — searchable dropdowns, multi-select filters,
 themed dashboards, server-backed large lists — the migration above
 is the whole job: swap the constructor, add `useGlassTabs()`, pin
 the initial selection explicitly, and remap the update calls.
+
+## Migrating to the 0.4.2 workspace and form APIs
+
+Existing select widths and densities are unchanged by default. Opt into
+Use an explicit width when matching a host layout. The new
+form controls retain native Shiny bindings: `glassSwitch()` uses
+`updateCheckboxInput()`, `glassRadioGroup()` uses `updateRadioButtons()`, and
+`glassCheckboxGroup()` uses `updateCheckboxGroupInput()`. No custom server
+helper is needed. Keep using Shiny modules with namespaced UI IDs and bare IDs
+in module server update calls. Persistent order and closure are optional;
+existing desktop reorder inputs and active tab IDs are unchanged.

@@ -1,0 +1,33 @@
+test_that("final tab features are opt-in and validate their arguments", {
+  a <- glassTabPanel("a", "A")
+  b <- glassTabPanel("b", "B", closable = TRUE)
+  legacy <- as.character(glassTabsUI("tabs", a))
+  expect_false(grepl("data-gt-persist-order", legacy, fixed = TRUE))
+  expect_false(grepl("data-gt-touch-reorder", legacy, fixed = TRUE))
+  expect_false(grepl("gt-tab-close", legacy, fixed = TRUE))
+  html <- as.character(glassTabsUI("tabs", a, b, reorderable = TRUE,
+      initial_order = c("b", "missing"), persist_order = "session", touch_reorder = TRUE))
+  expect_match(html, 'data-gt-persist-order="session"', fixed = TRUE)
+  expect_match(html, 'data-gt-touch-reorder="true"', fixed = TRUE)
+  expect_match(html, 'data-gt-closable="true"', fixed = TRUE)
+  expect_lt(regexpr('id="tabs-tab-b"', html, fixed = TRUE)[1],
+            regexpr('id="tabs-tab-a"', html, fixed = TRUE)[1])
+  expect_error(glassTabPanel("a", "A", closable = "yes"), class = "glasstabs_error_bad_argument")
+  expect_error(glassTabsUI("tabs", a, persist_order = "local"), class = "glasstabs_error_bad_argument")
+  expect_error(glassTabsUI("tabs", a, touch_reorder = TRUE), class = "glasstabs_error_bad_argument")
+  expect_error(glassTabsUI("tabs", a, initial_order = c("a", "a")), class = "glasstabs_error_bad_argument")
+})
+
+test_that("choice families preserve native input markup and theme settings", {
+  s <- as.character(glassSwitch("switch", "Enabled", TRUE, glass_strength = 0))
+  r <- as.character(glassRadioGroup("radio", "Mode", c(A = "a", B = "b"), selected = "b"))
+  cbox <- as.character(glassCheckboxGroup("checks", "Fields", c(A = "a", B = "b"), selected = "a"))
+  expect_match(s, 'id="switch"', fixed = TRUE)
+  expect_match(s, 'type="checkbox"', fixed = TRUE)
+  expect_match(s, '--gt-choice-strength:0', fixed = TRUE)
+  expect_match(r, 'type="radio"', fixed = TRUE)
+  expect_match(cbox, 'type="checkbox"', fixed = TRUE)
+  expect_match(cbox, 'gt-choice-checkbox', fixed = TRUE)
+  expect_error(glassSwitch("switch", "Enabled", value = "yes"), class = "glasstabs_error_bad_argument")
+  expect_error(glassRadioGroup("radio", "Mode", c("A"), size = "huge"), class = "glasstabs_error_bad_argument")
+})

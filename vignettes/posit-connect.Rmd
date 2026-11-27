@@ -150,3 +150,12 @@ surface, keep controls near the content they affect, and expose state through
 badges and compact metrics. That makes the app useful as a scheduled report,
 review queue, or operational handoff page without adding a separate landing
 screen.
+
+## Workspace release checks
+
+Test browser storage on the deployed application path, including blocked storage,
+reloads and separate user/project keys. Browser storage is not account storage.
+Approve tab closure on the server. Verify dynamically appended HTML dependencies,
+empty workspace recovery, modal focus, mobile keyboard positioning and touch
+reordering on physical devices before deploying a new release. Re-publish the
+actual candidate and refresh browser assets after package updates.

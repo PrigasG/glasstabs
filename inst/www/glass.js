@@ -611,10 +611,12 @@
     var scrollY = window.pageYOffset || 0;
     var portalHost = dropdown.parentNode;
     var hostRect = portalHost === document.body ? null : portalHost.getBoundingClientRect();
-    var portalX = hostRect ? portalHost.scrollLeft - hostRect.left : scrollX;
-    var portalY = hostRect ? portalHost.scrollTop - hostRect.top : scrollY;
-    var vw = window.innerWidth;
-    var vh = window.innerHeight;
+    var portalX = hostRect ? portalHost.scrollLeft - hostRect.left - portalHost.clientLeft : scrollX;
+    var portalY = hostRect ? portalHost.scrollTop - hostRect.top - portalHost.clientTop : scrollY;
+    var vv = window.visualViewport;
+    var viewLeft = vv ? vv.offsetLeft : 0, viewTop = vv ? vv.offsetTop : 0;
+    var vw = vv ? vv.width : window.innerWidth;
+    var vh = vv ? vv.height : window.innerHeight;
     var edge = 8;
     /* Tongue mode overlaps the borders into one continuous surface. Detached
        mode keeps a small native-like gap and skips the unfurl animation. */
@@ -634,17 +636,23 @@
     dropdown.classList.toggle('gt-compact-controls', dropdownWidth <= 240);
 
     var optionsBox = dropdown.querySelector('.gt-gs-options-scroll, .gt-ms-options-scroll');
+    dropdown.classList.remove('gt-viewport-tight');
+    dropdown.style.removeProperty('max-height');
     dropdown.style.removeProperty('--gt-available-options-height');
     var fullHeight = dropdown.offsetHeight || 0;
     var optionsHeight = optionsBox ? optionsBox.offsetHeight : 0;
     var chromeHeight = fullHeight - optionsHeight;
-    var below = Math.max(0, vh - rect.bottom - edge + overlap);
-    var above = Math.max(0, rect.top - edge + overlap);
+    var below = Math.max(0, viewTop + vh - rect.bottom - edge + overlap);
+    var above = Math.max(0, rect.top - viewTop - edge + overlap);
     var flipped = fullHeight > below && above > below;
     var available = flipped ? above : below;
     if (optionsBox) {
       dropdown.style.setProperty('--gt-available-options-height',
         Math.max(0, Math.floor(available - chromeHeight)) + 'px');
+    }
+    if (available - chromeHeight < 32 && fullHeight > available) {
+      dropdown.classList.add('gt-viewport-tight');
+      dropdown.style.maxHeight = Math.max(0, vh - edge * 2) + 'px';
     }
     var ddHeight = dropdown.offsetHeight || 0;
     var ddWidth = Math.min(dropdown.offsetWidth || dropdownWidth, preferredMaxWidth);
@@ -662,7 +670,8 @@
     /* Follow the document's reading direction: grow toward the trailing edge,
        then clamp only when the viewport does not have enough room. */
     var left = isRtl ? rect.right - ddWidth : rect.left;
-    left = Math.max(edge, Math.min(left, vw - ddWidth - edge));
+    left = Math.max(viewLeft + edge, Math.min(left, viewLeft + vw - ddWidth - edge));
+    top = Math.max(viewTop + portalY + edge, Math.min(top, viewTop + vh + portalY - ddHeight - edge));
 
     dropdown.style.top = top + 'px';
     dropdown.style.left = (left + portalX) + 'px';
@@ -736,6 +745,8 @@
     }
     if (dropdown.parentNode === wrap) return;
     MS_VARS.forEach(function (v) { dropdown.style.removeProperty(v); });
+    dropdown.classList.remove('gt-viewport-tight');
+    dropdown.style.removeProperty('max-height');
     dropdown.style.removeProperty('position');
     dropdown.style.removeProperty('top');
     dropdown.style.removeProperty('right');
@@ -830,6 +841,82 @@
     });
   }
 
+  /* Persist only tab identifiers, not input values or pane HTML. */
+  function tabOrderStorage(container, ns) {
+    var mode = container.getAttribute('data-gt-persist-order');
+    if (mode !== 'session' && mode !== 'local') return null;
+    try {
+      return { store: mode === 'local' ? window.localStorage : window.sessionStorage,
+        key: 'glasstabs:order:v1:' + JSON.stringify([location.pathname,
+          container.getAttribute('data-gt-order-key') || ns]) };
+    } catch (error) { return null; }
+  }
+
+  function restoreTabOrder(navbar, storage) {
+    if (navbar._gtOrderRestored || !storage) return;
+    navbar._gtOrderRestored = true;
+    try {
+      var saved = JSON.parse(storage.store.getItem(storage.key));
+      if (!Array.isArray(saved)) return;
+      var links = Array.from(navbar.querySelectorAll(':scope > .gt-tab-link'));
+      var byValue = new Map(links.map(function (link) { return [link.getAttribute('data-value'), link]; }));
+      var ordered = [];
+      saved.forEach(function (value) {
+        if (!byValue.has(value)) return;
+        ordered.push(byValue.get(value)); byValue.delete(value);
+      });
+      links.forEach(function (link) { if (byValue.has(link.getAttribute('data-value'))) ordered.push(link); });
+      if (ordered.some(function (link, i) { return link !== links[i]; })) {
+        ordered.forEach(function (link) { navbar.appendChild(link); });
+      }
+    } catch (error) { /* Storage unavailable or invalid; use server order. */ }
+  }
+
+  function saveTabOrder(storage, values) {
+    if (!storage) return;
+    try {
+      var json = JSON.stringify(values);
+      if (storage.store.getItem(storage.key) !== json) storage.store.setItem(storage.key, json);
+    } catch (error) { /* Storage is optional. */ }
+  }
+
+  function tabCanClose(link) {
+    return !!link && link.getAttribute('data-gt-closable') === 'true' &&
+      !link.classList.contains('gt-tab-hidden') && !link.classList.contains('gt-tab-disabled');
+  }
+
+  function requestTabClose(navbar, link) {
+    if (!tabCanClose(link) || link.parentElement !== navbar || !window.Shiny || !Shiny.setInputValue) return false;
+    Shiny.setInputValue(navbar.getAttribute('data-ns') + '-close_request',
+      link.getAttribute('data-value'), {priority:'event'});
+    return true;
+  }
+
+  /* The real button is outside the ARIA tablist. Inline x is a pointer
+     shortcut; Delete on the focused tab is the keyboard equivalent. */
+  function syncCloseAction(navbar, container) {
+    var topbar = container.querySelector(':scope > .gt-topbar');
+    if (!topbar) return;
+    var button = topbar.querySelector(':scope > .gt-tab-close-active');
+    var active = navbar.querySelector(':scope > .gt-tab-link.active');
+    var available = tabCanClose(active);
+    if (!button && available) {
+      button = document.createElement('button');
+      button.type = 'button'; button.className = 'gt-tab-close-active';
+      button.textContent = 'Close tab';
+      button.addEventListener('click', function () {
+        requestTabClose(navbar, navbar.querySelector(':scope > .gt-tab-link.active'));
+      });
+      topbar.appendChild(button);
+    }
+    if (button) {
+      button.hidden = !available;
+      var label = available && active.querySelector('.gt-tab-label');
+      button.setAttribute('aria-label', label ? 'Close tab: ' + label.textContent.trim() : 'Close tab');
+    }
+    container.classList.toggle('gt-has-close', available);
+  }
+
   function setupTabReorder(navbar, container, onChange, onMove) {
     var dragged = null;
     var original = null;
@@ -846,8 +933,16 @@
       all().forEach(function (link) {
         var canMove = enabled() && movable(link);
         link.draggable = canMove;
-        if (canMove) link.setAttribute('aria-keyshortcuts', 'Alt+Shift+ArrowLeft Alt+Shift+ArrowRight Alt+Shift+ArrowUp Alt+Shift+ArrowDown');
+        var keys = canMove ? 'Alt+Shift+ArrowLeft Alt+Shift+ArrowRight Alt+Shift+ArrowUp Alt+Shift+ArrowDown' : '';
+        if (tabCanClose(link)) keys += (keys ? ' ' : '') + 'Delete';
+        if (keys) link.setAttribute('aria-keyshortcuts', keys);
         else link.removeAttribute('aria-keyshortcuts');
+        var handle = link.querySelector(':scope > .gt-touch-handle');
+        if (canMove && touchEnabled() && !handle) {
+          handle = document.createElement('span'); handle.className = 'gt-touch-handle';
+          handle.setAttribute('aria-hidden','true'); handle.title = 'Drag to reorder';
+          handle.textContent = '\u283f'; link.insertBefore(handle, link.firstChild);
+        } else if (handle && (!canMove || !touchEnabled())) handle.remove();
       });
     }
     function cancelAnimations() {
@@ -893,7 +988,7 @@
     }
     function start(e) {
       var link = e.target.closest && e.target.closest('.gt-tab-link');
-      if (!enabled() || !movable(link)) { e.preventDefault(); return; }
+      if (touch || (e.target.closest && e.target.closest('.gt-tab-close')) || !enabled() || !movable(link)) { e.preventDefault(); return; }
       dragged = link;
       original = all();
       dragged.classList.add('gt-dragging');
@@ -935,6 +1030,90 @@
       }
       return true;
     }
+    /* The handle reserves only its own touch target. Elsewhere, normal touch
+       scrolling and pane swipe are unchanged. One controller owns all moves. */
+    var touch = null;
+    var touchFrame = null;
+    var touchSnap = null;
+    var touchViewport = navbar.closest('.gt-tab-viewport');
+    function touchEnabled() { return container.getAttribute('data-gt-touch-reorder') === 'true'; }
+    function touchDown(e) {
+      if (!touchEnabled() || !enabled() || e.pointerType === 'mouse' || !e.isPrimary || touch || dragged) return;
+      var handle = e.target.closest && e.target.closest('.gt-touch-handle');
+      var link = handle && handle.closest('.gt-tab-link');
+      if (!movable(link)) return;
+      touch = {id:e.pointerId, link:link, x:e.clientX, y:e.clientY, startX:e.clientX, startY:e.clientY};
+      try { navbar.setPointerCapture(e.pointerId); } catch (error) { touch = null; }
+      e.preventDefault();
+    }
+    function touchHit() {
+      if (!touch || !dragged || !touchViewport) return;
+      var hit = document.elementFromPoint(touch.x, touch.y);
+      if (!hit || !navbar.contains(hit)) return;
+      over({target:hit,clientX:touch.x,clientY:touch.y,preventDefault:function(){}});
+    }
+    function edgeScroll() {
+      touchFrame = null;
+      if (!touch || !dragged || !touchViewport) return;
+      var r = touchViewport.getBoundingClientRect();
+      var vertical = getComputedStyle(navbar).flexDirection === 'column';
+      var point = vertical ? touch.y : touch.x;
+      var startEdge = vertical ? r.top : r.left;
+      var endEdge = vertical ? r.bottom : r.right;
+      var cross = vertical ? touch.x : touch.y;
+      var crossStart = vertical ? r.left : r.top;
+      var crossEnd = vertical ? r.right : r.bottom;
+      if (cross >= crossStart - 12 && cross <= crossEnd + 12) {
+        var delta = point < startEdge + 32 ? -Math.min(16, (startEdge + 32 - point) / 2) :
+          point > endEdge - 32 ? Math.min(16, (point - endEdge + 32) / 2) : 0;
+        if (delta) {
+          touchViewport.scrollBy({left:vertical ? 0 : delta,top:vertical ? delta : 0,behavior:'auto'});
+          touchHit();
+        }
+      }
+      touchFrame = requestAnimationFrame(edgeScroll);
+    }
+    function touchMove(e) {
+      if (!touch || e.pointerId !== touch.id) return;
+      touch.x = e.clientX; touch.y = e.clientY;
+      if (!dragged && Math.hypot(touch.x - touch.startX,touch.y - touch.startY) >= 6) {
+        dragged = touch.link; original = all(); dragged.classList.add('gt-dragging');
+        if (touchViewport) { touchSnap = touchViewport.style.scrollSnapType; touchViewport.style.scrollSnapType = 'none'; }
+        touchFrame = requestAnimationFrame(edgeScroll);
+      }
+      if (dragged) touchHit();
+      e.preventDefault();
+    }
+    function touchFinish(commit, silent) {
+      if (!touch) return;
+      var pointer = touch.id;
+      var moved = !!dragged;
+      touch = null;
+      if (touchFrame !== null) cancelAnimationFrame(touchFrame);
+      touchFrame = null;
+      if (touchViewport && touchSnap !== null) touchViewport.style.scrollSnapType = touchSnap;
+      touchSnap = null;
+      if (navbar.hasPointerCapture(pointer)) navbar.releasePointerCapture(pointer);
+      if (moved) {
+        finish(commit, silent);
+        clearTimeout(clickTimer);
+        clickTimer = setTimeout(function () { suppressClick = false; }, 350);
+      }
+    }
+    function touchUp(e) {
+      if (!touch || e.pointerId !== touch.id) return;
+      var r = (touchViewport || navbar).getBoundingClientRect();
+      var inside = e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
+      touchFinish(inside, false);
+    }
+    function touchCancel(e) { if (touch && e.pointerId === touch.id) touchFinish(false, false); }
+    function touchEscape(e) { if (touch && e.key === 'Escape') { e.preventDefault(); touchFinish(false, false); } }
+    navbar.addEventListener('pointerdown', touchDown);
+    navbar.addEventListener('pointermove', touchMove);
+    navbar.addEventListener('pointerup', touchUp);
+    navbar.addEventListener('pointercancel', touchCancel);
+    navbar.addEventListener('lostpointercapture', touchCancel);
+    document.addEventListener('keydown', touchEscape);
     navbar.addEventListener('dragstart', start);
     navbar.addEventListener('dragover', over);
     navbar.addEventListener('drop', drop);
@@ -945,6 +1124,13 @@
       dragging: function () { return dragged !== null; },
       suppressClick: function () { return suppressClick; },
       destroy: function () {
+        touchFinish(false, true);
+        navbar.removeEventListener('pointerdown', touchDown);
+        navbar.removeEventListener('pointermove', touchMove);
+        navbar.removeEventListener('pointerup', touchUp);
+        navbar.removeEventListener('pointercancel', touchCancel);
+        navbar.removeEventListener('lostpointercapture', touchCancel);
+        document.removeEventListener('keydown', touchEscape);
         finish(false, true);
         clearTimeout(clickTimer);
         cancelAnimations();
@@ -952,7 +1138,11 @@
         navbar.removeEventListener('dragover', over);
         navbar.removeEventListener('drop', drop);
         navbar.removeEventListener('dragend', end);
-        all().forEach(function (l) { l.removeAttribute('draggable'); l.removeAttribute('aria-keyshortcuts'); });
+        all().forEach(function (l) {
+          l.removeAttribute('draggable');
+          if (tabCanClose(l)) l.setAttribute('aria-keyshortcuts','Delete'); else l.removeAttribute('aria-keyshortcuts');
+          var handle = l.querySelector(':scope > .gt-touch-handle'); if (handle) handle.remove();
+        });
       }
     };
   }
@@ -1028,15 +1218,24 @@
     var menuSelect = document.getElementById(ns + '-menu');
     var halo = viewport.querySelector('.gt-halo') || container.querySelector('.gt-halo');
     var trf = viewport.querySelector('.gt-transfer') || container.querySelector('.gt-transfer');
+    var orderStorage = tabOrderStorage(container, ns);
+    restoreTabOrder(navbar, orderStorage);
     var links = Array.from(navbar.querySelectorAll('.gt-tab-link'));
-    var activeEl = links.find(function (l) { return l.classList.contains('active'); }) || links[0];
+    var activeEl = links.find(function (l) { return l.classList.contains('active') && !l.classList.contains('gt-tab-hidden') && !l.classList.contains('gt-tab-disabled'); }) || links.find(function(l){ return !l.classList.contains('gt-tab-hidden') && !l.classList.contains('gt-tab-disabled'); });
 
     if (container.classList.contains('gt-hide-single')) {
       container.classList.toggle('gt-single-tab', links.filter(function (l) {
         return !l.classList.contains('gt-tab-hidden');
       }).length <= 1);
     }
-    if (!halo || !trf || links.length === 0 || !activeEl) {
+    if (!halo || !trf || links.length === 0) {
+      syncCloseAction(navbar, container);
+      if (links.length === 0) {
+        saveTabOrder(orderStorage, []);
+        if (menuSelect) menuSelect.innerHTML = '';
+        if (halo) halo.style.opacity = '0';
+        if (trf) trf.style.opacity = '0';
+      }
       if (container.classList.contains('gt-reorderable') && window.Shiny && Shiny.setInputValue) {
         Shiny.setInputValue(ns + '-tab_order', [], {priority:'deferred'});
       }
@@ -1047,7 +1246,7 @@
     navbar._gtHalo = halo;
     navbar._gtTransfer = trf;
 
-    var active = activeEl.getAttribute('data-value');
+    var active = activeEl ? activeEl.getAttribute('data-value') : null;
     var pending = null;
     var lastNotified = active;
     if (window.Shiny && window.Shiny.setInputValue) {
@@ -1063,6 +1262,8 @@
       var v = l.getAttribute('data-value');
       var pane = document.getElementById(ns + '-pane-' + v);
       if (!pane) return;
+      l.classList.toggle('active', l === activeEl);
+      l.setAttribute('aria-selected', l === activeEl ? 'true' : 'false');
       setPaneActive(pane, l === activeEl);
     });
 
@@ -1134,6 +1335,7 @@
       var values = Array.from(navbar.querySelectorAll('.gt-tab-link')).map(function (link) {
         return link.getAttribute('data-value');
       });
+      saveTabOrder(orderStorage, values);
       var json = JSON.stringify(values);
       if (window.Shiny && Shiny.setInputValue && navbar._gtLastTabOrder !== json) {
         navbar._gtLastTabOrder = json;
@@ -1143,6 +1345,7 @@
 
     function syncMenu() {
       syncOrder();
+      syncCloseAction(navbar, container);
       if (!menuSelect) return;
       var previous = menuSelect.value;
       menuSelect.innerHTML = '';
@@ -1491,7 +1694,7 @@
 
     function initHalo() {
       var el = navbar.querySelector('.gt-tab-link.active');
-      if (!el) return;
+      if (!el) { halo.style.opacity = '0'; trf.style.opacity = '0'; return; }
 
       requestAnimationFrame(function () {
         requestAnimationFrame(function () {
@@ -1530,12 +1733,15 @@
       var link = e.target.closest ? e.target.closest('.gt-tab-link') : null;
       if (!link || link.classList.contains('gt-tab-hidden')) return;
       if (link.classList.contains('gt-tab-disabled')) return;
+      if (e.target.closest && e.target.closest('.gt-tab-close')) { e.preventDefault(); requestTabClose(navbar, link); return; }
+      if (e.target.closest && e.target.closest('.gt-touch-handle')) { e.preventDefault(); return; }
       activateTab(link.getAttribute('data-value'), false, true);
     };
     navbar.addEventListener('click', navbar._gtClickHandler);
 
     navbar._gtKeyHandler = function (e) {
       if (!navbar.contains(document.activeElement)) return;
+      if (e.key === 'Delete' && requestTabClose(navbar, document.activeElement)) { e.preventDefault(); return; }
       if (navbar._gtReorder && navbar._gtReorder.key(e, document.activeElement)) return;
 
       if (e.key === 'Enter' || e.key === ' ') {
@@ -2245,7 +2451,7 @@
           if (!wrap.classList.contains('gt-layer-active')) return;
           optionNav.move('current');
           updateScrollCue(dropdown);
-          if (searchIn && !searchIn.disabled) searchIn.focus();
+          if (searchIn && !searchIn.disabled) searchIn.focus({preventScroll:true});
         }, 100);
       });
       setDropdownOpenState(wrap, inputId, true);
@@ -3161,7 +3367,7 @@
           if (!wrap.classList.contains('gt-layer-active')) return;
           optionNav.move('current');
           updateScrollCue(dropdown);
-          if (searchEnabled() && searchIn) searchIn.focus();
+          if (searchEnabled() && searchIn) searchIn.focus({preventScroll:true});
         }, 100);
       });
       setDropdownOpenState(wrap, inputId, true);
@@ -3932,8 +4138,8 @@
           var n = nodes[j];
           if (!n || n.nodeType !== 1) continue;
           if (
-            (n.matches && n.matches('.gt-navbar, .gt-gs-wrap, .gt-ms-wrap')) ||
-            (n.querySelector && n.querySelector('.gt-navbar, .gt-gs-wrap, .gt-ms-wrap'))
+            (n.matches && n.matches('.gt-navbar, .gt-gs-wrap, .gt-ms-wrap, .gt-choice-family')) ||
+            (n.querySelector && n.querySelector('.gt-navbar, .gt-gs-wrap, .gt-ms-wrap, .gt-choice-family'))
           ) {
             scheduleBoot();
             return;
@@ -4062,6 +4268,7 @@
       link.classList.remove('gt-tab-hidden');
       link.style.display = '';
       link.setAttribute('aria-hidden', 'false');
+      if (!navbar.querySelector(':scope > .gt-tab-link.active') && !link.classList.contains('gt-tab-disabled')) initTabs(navbar);
       if (navbar._gtRefresh) navbar._gtRefresh();
       if (navbar._gtResizeHandler) {
         setTimeout(function () { navbar._gtResizeHandler(); }, 0);
@@ -4090,6 +4297,7 @@
           '.gt-tab-link:not(.gt-tab-hidden):not(.gt-tab-disabled)'
         );
         if (first) navbar._gtActivate(first.getAttribute('data-value'), true);
+        else initTabs(navbar);
       } else if (!wasActive) {
         var currentActive = navbar.querySelector('.gt-tab-link.active:not(.gt-tab-hidden)');
         if (currentActive) {
@@ -4110,8 +4318,13 @@
       if (!navbar) return;
       if (navbar.querySelector('.gt-tab-link' + attrEquals('data-value', msg.value))) return;
       var pendingAppends = navbar._gtPendingAppends || (navbar._gtPendingAppends = new Map());
-      if (pendingAppends.has(msg.value)) return;
-      var pending = { cancelled: false };
+      var existing = pendingAppends.get(msg.value);
+      if (existing && !existing.cancelled) return;
+      if (existing && existing.pane && existing.pane.isConnected) {
+        existing.replacement = msg;
+        return;
+      }
+      var pending = { cancelled: false, pane: null };
       pendingAppends.set(msg.value, pending);
 
       var container = navbar.closest('.gt-container, .gt-wrap-shell')
@@ -4145,6 +4358,7 @@
             navbar.querySelector('.gt-tab-link' + attrEquals('data-value', msg.value))) return;
         setPaneActive(newPane, false);
         paneWrap.appendChild(newPane);
+        pending.pane = newPane;
         inserted = true;
         if (window.Shiny && Shiny.bindAll) {
           if (Shiny.initializeInputs) Shiny.initializeInputs(newPane);
@@ -4156,8 +4370,9 @@
           return;
         }
         navbar.appendChild(newLink);
+        var selectNew = msg.select || !navbar.querySelector(':scope > .gt-tab-link.active');
 
-        if (msg.select) {
+        if (selectNew) {
           previousActive = navbar.querySelector(':scope > .gt-tab-link.active');
           navbar.querySelectorAll(':scope > .gt-tab-link.active').forEach(function (l) {
             l.classList.remove('active');
@@ -4176,7 +4391,7 @@
           setTimeout(function () { navbar._gtResizeHandler(); }, 0);
         }
 
-        if (msg.select && window.Shiny) {
+        if (selectNew && window.Shiny) {
           Shiny.setInputValue(msg.ns + '-active_tab', msg.value, { priority: 'event' });
         }
       } catch (error) {
@@ -4192,7 +4407,10 @@
         if (inserted && navbar.isConnected) initTabs(navbar);
         console.error('glasstabs: failed to append tab', error);
       } finally {
-        if (pendingAppends.get(msg.value) === pending) pendingAppends.delete(msg.value);
+        if (pendingAppends.get(msg.value) === pending) {
+          pendingAppends.delete(msg.value);
+          if (pending.replacement && navbar.isConnected) appendTabMessage(pending.replacement);
+        }
       }
     }
 
@@ -4206,7 +4424,7 @@
       var navbar = document.querySelector('.gt-navbar' + attrEquals('data-ns', msg.ns));
       if (!navbar) return;
       var pending = navbar._gtPendingAppends && navbar._gtPendingAppends.get(msg.value);
-      if (pending) pending.cancelled = true;
+      if (pending) { pending.cancelled = true; pending.replacement = null; }
       var link = navbar.querySelector('.gt-tab-link' + attrEquals('data-value', msg.value));
       if (!link) return;
 
@@ -4235,10 +4453,16 @@
         }
       }
 
+      var oldPane = document.getElementById(msg.ns + '-pane-' + msg.value);
+      var closeButton = container && container.querySelector(':scope > .gt-topbar > .gt-tab-close-active');
+      var focused = document.activeElement;
+      var restoreFocus = link.contains(focused) || (oldPane && oldPane.contains(focused)) ||
+        (wasActive && closeButton === focused);
       link.remove();
       if (container) {
         var pane = document.getElementById(msg.ns + '-pane-' + msg.value);
         if (pane) {
+          setPaneActive(pane, false);
           if (window.Shiny && Shiny.unbindAll) Shiny.unbindAll(pane);
           pane.remove();
         }
@@ -4249,8 +4473,16 @@
         setTimeout(function () { navbar._gtResizeHandler(); }, 0);
       }
 
-      if (wasActive && nextValue && window.Shiny) {
+      if (wasActive && window.Shiny) {
         Shiny.setInputValue(msg.ns + '-active_tab', nextValue, { priority: 'event' });
+      }
+      if (restoreFocus) {
+        var focusTarget = navbar.querySelector(':scope > .gt-tab-link.active');
+        if (focusTarget && focusTarget.getClientRects().length) focusTarget.focus();
+        else if (container) {
+          var menu = container.querySelector(':scope > .gt-topbar > .gt-tab-menu-select');
+          if (menu && menu.getClientRects().length) menu.focus();
+        }
       }
     });
 
@@ -4270,6 +4502,7 @@
               !candidate.classList.contains('gt-tab-disabled');
           });
         if (next) navbar._gtActivate(next.getAttribute('data-value'), true, false);
+        else initTabs(navbar);
       }
       if (navbar._gtRefresh) navbar._gtRefresh();
     });
@@ -4281,6 +4514,7 @@
       if (!link) return;
       link.classList.remove('gt-tab-disabled');
       link.removeAttribute('aria-disabled');
+      if (!navbar.querySelector(':scope > .gt-tab-link.active') && !link.classList.contains('gt-tab-hidden')) initTabs(navbar);
       if (navbar._gtRefresh) navbar._gtRefresh();
     });
 

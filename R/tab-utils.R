@@ -14,6 +14,12 @@
     list(shiny::tags$span(class = "gt-tab-label", panel$label))
   }
 
+  if (isTRUE(panel$closable)) {
+    label_content <- c(label_content, list(shiny::tags$span(
+      class = "gt-tab-close", `aria-hidden` = "true", title = "Request tab closure", "\u00d7"
+    )))
+  }
+
   do.call(
     shiny::tags$div,
     c(
@@ -23,6 +29,8 @@
         `data-value` = panel$value,
         `data-ns` = data_ns,
         role = "tab",
+        `data-gt-closable` = if (isTRUE(panel$closable)) "true",
+        `aria-keyshortcuts` = if (isTRUE(panel$closable)) "Delete",
         tabindex = if (is_active) "0" else "-1",
         `aria-selected` = if (is_active) "true" else "false",
         `aria-controls` = paste0(data_ns, "-pane-", panel$value)

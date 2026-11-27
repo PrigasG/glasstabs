@@ -442,3 +442,20 @@ glasstabs_news()      # prints changelog to the console
 - Open select dropdowns stay open while Shiny outputs update and while the window resizes, but they close when a full-screen overlay (loading screen, modal, veil) appears — including overlays nested inside app wrappers or revealed by toggling visibility.
 
 That is the whole working model: load the dependency once, compose widgets in the UI, and read their values through ordinary Shiny inputs.
+
+## Workspace and form input quick reference
+
+| Task | API |
+|---|---|
+| Restore browser order | `persist_order = "session"` or `"local"` |
+| Restore server order | `initial_order = c("a", "b")` |
+| Isolate saved workspaces | `order_key` |
+| Touch and pen reorder | `reorderable = TRUE, touch_reorder = TRUE` |
+| Request tab closure | `glassTabPanel(..., closable = TRUE)`; `input[["id-close_request"]]` |
+| Accept closure | `removeGlassTab(session, "id", value)` |
+| Logical switch | `glassSwitch()` / `shiny::updateCheckboxInput()` |
+| One choice | `glassRadioGroup()` / `shiny::updateRadioButtons()` |
+| Multiple choices | `glassCheckboxGroup()` / `shiny::updateCheckboxGroupInput()` |
+
+See the [workspace guide](tabs.html) and [release overview](whats-new-042.html)
+for persistence precedence, server authorization and mobile limitations.

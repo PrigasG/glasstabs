@@ -166,3 +166,21 @@ arguments, so re-apply the intended selection after the render.
 **Fix:** keep `useGlassTabs()` at the root and server registration in
 the server function, and treat a `renderUI()` rebuild as a fresh
 widget (see the linked-filters article's renderUI section).
+
+## Workspace and responsive integration checks
+
+| Symptom | Expected behavior and diagnostic |
+|---|---|
+| Closed select overlaps a button | Trigger must fit the wrapper and parent. Check bounding rectangles and `min-width`. Use an explicit width that fits its parent. |
+| Search cannot receive focus in a modal | The portal should be inside the active Bootstrap 3/5 modal or Bootstrap offcanvas. Check focus and the panel parent. |
+| Arrow keys move the page | Only the option list should scroll. Capture `window.scrollY` and the option list's `scrollTop`. |
+| Tab order resets | Use `persist_order` or save `-tab_order` on the server and restore with `initial_order`. Check the storage key and the namespace. |
+| A close mark does nothing | The server must handle `-close_request` and approve `removeGlassTab()`. Never trust the client event as authorization. |
+| Dynamic pane fails | Inspect browser errors and network dependencies. A failed append must not expose an orphan link. |
+| Nested theme looks wrong | Inspect the direct widget's computed color, radius, and padding rather than the outer widget. |
+| Mobile keyboard covers options | Inspect `visualViewport`, the panel bounds, and whole-panel scroll fallback. Test a physical device. |
+
+Use `runGlassExample("final-features")` for a focused reproduction. Include
+package version, Shiny version, browser, host theme, minimal code and the actual
+computed field/panel geometry in bug reports. Avoid application CSS overrides
+until the source of the issue is known.

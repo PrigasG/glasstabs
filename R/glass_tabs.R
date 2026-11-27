@@ -12,6 +12,9 @@
 #' @param selected Logical. Whether this tab starts selected. Only the first
 #'   `selected = TRUE` tab takes effect; defaults to `FALSE`.
 #'
+#' @param closable Logical. Allow requesting closure by the inline close mark,
+#'   Delete key or the active-tab close button. The server decides whether to remove it.
+#'
 #' @return A list of class `"glassTabPanel"` consumed by [glassTabsUI()].
 #'
 #' @examples
@@ -29,7 +32,7 @@
 #'
 #' @family glass tabs
 #' @export
-glassTabPanel <- function(value, label, ..., icon = NULL, selected = FALSE) {
+glassTabPanel <- function(value, label, ..., icon = NULL, selected = FALSE, closable = FALSE) {
   .gt_check_string(
     value, "value",
     "glassTabPanel(): `value` must be a single non-empty string."
@@ -45,13 +48,15 @@ glassTabPanel <- function(value, label, ..., icon = NULL, selected = FALSE) {
     )
   }
   .gt_check_flag(selected, "selected")
+  .gt_check_flag(closable, "closable")
   structure(
     list(
       value    = value,
       label    = label,
       icon     = icon,
       content  = list(...),
-      selected = selected
+      selected = selected,
+      closable = closable
     ),
     class = "glassTabPanel"
   )
@@ -143,6 +148,17 @@ glassTabPanel <- function(value, label, ..., icon = NULL, selected = FALSE) {
 #'   `input[[paste0(id, "-tab_order")]]`. Hidden and disabled tabs cannot be
 #'   dragged; their relative order is retained. Menu overflow has no drag UI.
 #'
+#' @param initial_order Optional character vector of tab values in preferred
+#'   order. Unknown values are ignored and new values are appended.
+#' @param persist_order Browser order storage: `"none"` (default), `"session"`
+#'   (reloads in the same browser tab), or `"local"` (across browser visits).
+#'   Non-default modes require `reorderable = TRUE`; stored order takes precedence
+#'   over `initial_order`. Only tab identifiers are stored, not pane contents.
+#' @param order_key Optional storage key. Defaults to the namespaced widget id
+#'   and is scoped to the current page path and browser origin.
+#' @param touch_reorder Logical. Enable touch/pen reordering with a dedicated
+#'   drag handle, edge scrolling and cancellation. Requires `reorderable = TRUE`.
+#'
 #' @return An `htmltools::tagList` ready to use in a Shiny UI.
 #' @family glass tabs
 #' @export
@@ -172,7 +188,11 @@ glassTabsUI <- function(
     fill = FALSE,
     hide_single = FALSE,
     equal_width = FALSE,
-    reorderable = FALSE
+    reorderable = FALSE,
+    initial_order = NULL,
+    persist_order = c("none", "session", "local"),
+    order_key = NULL,
+    touch_reorder = FALSE
 ) {
   ns          <- shiny::NS(id)
   panels      <- list(...)
@@ -183,6 +203,20 @@ glassTabsUI <- function(
   .gt_check_flag(hide_single, "hide_single")
   .gt_check_flag(equal_width, "equal_width")
   .gt_check_flag(reorderable, "reorderable")
+  .gt_check_flag(touch_reorder, "touch_reorder")
+  persist_order <- .gt_match_arg(persist_order, c("none", "session", "local"), "persist_order")
+  if (!is.null(order_key)) .gt_check_string(order_key, "order_key")
+  if ((!identical(persist_order, "none") || touch_reorder) && !reorderable) {
+    .gt_abort("Persistent or touch reordering requires `reorderable = TRUE`.",
+              class = "glasstabs_error_bad_argument", argument = "reorderable",
+              value = reorderable, expected = TRUE)
+  }
+  if (!is.null(initial_order) && (!is.character(initial_order) || anyNA(initial_order) ||
+      any(!nzchar(initial_order)) || anyDuplicated(initial_order))) {
+    .gt_abort("`initial_order` must contain unique non-empty character values.",
+              class = "glasstabs_error_bad_argument", argument = "initial_order",
+              value = initial_order, expected = "unique character values")
+  }
   glass_strength <- .gt_glass_strength(glass_strength)
   tab_gap <- .gt_layout_length(tab_gap, "tab_gap")
   tab_padding <- .gt_layout_length(tab_padding, "tab_padding", 4L)
@@ -295,6 +329,12 @@ glassTabsUI <- function(
   active_val <- selected %||% {
     sel <- Filter(function(p) p$selected, panels)
     if (length(sel)) sel[[1]]$value else panels[[1]]$value
+  }
+
+  if (!is.null(initial_order)) {
+    indices <- match(initial_order, panel_vals, nomatch = 0L)
+    indices <- indices[indices > 0L]
+    panels <- panels[c(indices, setdiff(seq_along(panels), indices))]
   }
 
   tab_links <- lapply(panels, function(p) {
@@ -415,6 +455,9 @@ glassTabsUI <- function(
     )),
     `data-gt-dark-selector` = if (is_light && !is_auto) dark_selector else
       if (is_auto && !identical(dark_selector, '[data-bs-theme="dark"]')) dark_selector,
+    `data-gt-persist-order` = if (persist_order != "none") persist_order,
+    `data-gt-order-key` = if (persist_order != "none") order_key,
+    `data-gt-touch-reorder` = if (touch_reorder) "true",
     `data-swipe` = if (isTRUE(swipe)) "true" else "false",
     inner
   )

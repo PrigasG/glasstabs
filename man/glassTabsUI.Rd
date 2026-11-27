@@ -31,7 +31,11 @@ glassTabsUI(
   fill = FALSE,
   hide_single = FALSE,
   equal_width = FALSE,
-  reorderable = FALSE
+  reorderable = FALSE,
+  initial_order = NULL,
+  persist_order = c("none", "session", "local"),
+  order_key = NULL,
+  touch_reorder = FALSE
 )
 }
 \arguments{
@@ -143,6 +147,20 @@ any supplied extra UI remains available.}
 reordering. The order of all tab values is available as
 \code{input[[paste0(id, "-tab_order")]]}. Hidden and disabled tabs cannot be
 dragged; their relative order is retained. Menu overflow has no drag UI.}
+
+\item{initial_order}{Optional character vector of tab values in preferred
+order. Unknown values are ignored and new values are appended.}
+
+\item{persist_order}{Browser order storage: \code{"none"} (default), \code{"session"}
+(reloads in the same browser tab), or \code{"local"} (across browser visits).
+Non-default modes require \code{reorderable = TRUE}; stored order takes precedence
+over \code{initial_order}. Only tab identifiers are stored, not pane contents.}
+
+\item{order_key}{Optional storage key. Defaults to the namespaced widget id
+and is scoped to the current page path and browser origin.}
+
+\item{touch_reorder}{Logical. Enable touch/pen reordering with a dedicated
+drag handle, edge scrolling and cancellation. Requires \code{reorderable = TRUE}.}
 }
 \value{
 An \code{htmltools::tagList} ready to use in a Shiny UI.

@@ -806,6 +806,7 @@ test_that("browser: tongue can be disabled for detached native-like panels", {
   on.exit(app$stop(), add = TRUE)
 
   app$wait_for_idle()
+  app$get_js("document.getElementById('detached_single-trigger').scrollIntoView({block:'center'}); true")
   app$click(selector = "#detached_single-trigger")
   app$wait_for_js("document.querySelector('#detached_single-dropdown.open') !== null")
   app$wait_for_js("

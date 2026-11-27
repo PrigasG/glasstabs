@@ -8,7 +8,7 @@ runGlassExample(example = NULL, ...)
 }
 \arguments{
 \item{example}{Name of the example to run, such as \code{"basic"}, \code{"bs4dash"},
-\code{"bslib"}, \code{"connect-workflow"}, \code{"dashboard"}, \code{"indicators"},
+\code{"bslib"}, \code{"connect-workflow"}, \code{"dashboard"}, \code{"final-features"}, \code{"indicators"},
 \code{"light-mode"}, \code{"modernization"}, \code{"native-comparison"}, \code{"server-select"}, \code{"smoke-test"},
 \code{"square-corners"}, \code{"stress-test"}, or \code{"theme-switcher"}. When \code{NULL}
 (default), lists all available examples.}

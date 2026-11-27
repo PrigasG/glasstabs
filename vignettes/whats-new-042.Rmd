@@ -1,0 +1,75 @@
+---
+title: "What's new in glasstabs 0.4.2"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{What's new in glasstabs 0.4.2}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+Version 0.4.2 focuses on reliable navigation, reliable filters and native-bound
+form controls. Existing behavior remains the default. This guide describes the
+0.4.2 development candidate; check `packageVersion("glasstabs")` before using
+new arguments on a CRAN installation.
+
+```{r setup, include=FALSE}
+library(glasstabs)
+```
+
+## Modern workspaces
+
+```{r, eval=FALSE}
+glassTabsUI("workspace",
+  glassTabPanel("edit", "Edit", shiny::textInput("title", "Title")),
+  glassTabPanel("preview", "Preview", shiny::p("Preview"), closable = TRUE),
+  style = "segmented", indicator = "solid", transition = "none",
+  reorderable = TRUE, persist_order = "session", touch_reorder = TRUE,
+  equal_width = TRUE, glass_strength = 0.25, theme = "auto")
+```
+
+Desktop, keyboard and touch handles share the reorder controller. `-tab_order`
+reports the order; `-close_request` asks the server to remove a tab. See the
+[tabs guide](tabs.html) for storage precedence and closure authorization.
+
+## Select dimensions and surfaces
+
+```{r, eval=FALSE}
+glassSelect("month", month.abb, width = "130px", size = "sm",
+            glass_strength = 0.25, theme = "auto")
+glassMultiSelect("region", c("North", "South"), width = "100%",
+                 dropdown_max_height = "18rem", size = "sm")
+```
+
+The original 160px width remains the default. Narrow fields respect their
+parent. Panels respond to visible
+viewport changes and use a scrolling fallback in very tight space.
+
+## Native-bound form controls
+
+```{r, eval=FALSE}
+glassSwitch("enabled", "Enable filters", TRUE)
+glassRadioGroup("mode", "Mode", c("Edit", "Preview"))
+glassCheckboxGroup("columns", "Columns", c("Name", "County"))
+```
+
+Use ordinary Shiny server input values and update functions. See the
+[component gallery](component-gallery.html) for examples and the
+[cheatsheet](cheatsheet.html) for a compact reference.
+
+## Reliability improvements
+
+Dropdowns respect modal focus boundaries, dismiss when their pane goes
+inactive, and scroll options without moving the page. Nested widgets own
+their shape and theme. Appended panes load dependencies and bind before their
+links are committed. Failed/cancelled appends clean up their pending operation.
+
+## Try the candidate
+
+```{r, eval=FALSE}
+runGlassExample("modernization")
+runGlassExample("final-features")
+```
+
+Review the [changelog](../news/index.html), [troubleshooting](troubleshooting.html)
+and [deployment guide](posit-connect.html) before shipping. Physical mobile
+verification and third-party widget integration remain release checks.
