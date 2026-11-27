@@ -21,7 +21,8 @@
   while more options remain below. Open panels limit their option area to
   the available viewport space and update the cue after scrolling, filtering,
   choice updates and resizing. Rebinding a select keeps one cue and releases
-  its previous scroll listener.
+  its previous scroll listener. Revealing an active option scrolls only the
+  option list, keeping the page and dropdown anchor in place.
 * Closed select fields no longer create a positive stacking level. Host
   overlays and Bootstrap layer changes close portaled dropdowns immediately;
   ordinary close retains its retract animation. Dropdowns opened inside a

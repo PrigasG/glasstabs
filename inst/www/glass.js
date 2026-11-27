@@ -463,7 +463,15 @@
       if (active) {
         active.classList.add('gt-option-active');
         if (focusOwner) focusOwner.setAttribute('aria-activedescendant', active.id);
-        if (active.scrollIntoView) active.scrollIntoView({ block: 'nearest' });
+        /* scrollIntoView() also scrolls the document for body-portaled panels.
+           Keep the anchor in place and move only the option list. */
+        var list = active.closest('.gt-gs-options-scroll, .gt-ms-options-scroll');
+        if (list) {
+          var itemRect = active.getBoundingClientRect();
+          var listRect = list.getBoundingClientRect();
+          if (itemRect.top < listRect.top) list.scrollTop -= listRect.top - itemRect.top;
+          else if (itemRect.bottom > listRect.bottom) list.scrollTop += itemRect.bottom - listRect.bottom;
+        }
       } else if (focusOwner) {
         focusOwner.removeAttribute('aria-activedescendant');
       }
