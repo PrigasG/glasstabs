@@ -147,7 +147,7 @@ test_that("README offers a complete app and names all three widgets", {
   readme_path <- test_path("..", "..", "README.md")
   skip_if_not(file.exists(readme_path), "README is excluded from the installed test bundle")
   readme <- paste(readLines(readme_path, warn = FALSE), collapse = "\n")
-  expect_match(readme, "## A complete app", fixed = TRUE)
+  expect_match(readme, "## Quick start", fixed = TRUE)
   expect_match(readme, "glassTabsUI(", fixed = TRUE)
   expect_match(readme, "glassSelect(", fixed = TRUE)
   expect_match(readme, "glassMultiSelect(", fixed = TRUE)
