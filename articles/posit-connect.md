@@ -22,10 +22,20 @@ published to Posit Connect. It demonstrates a practical review workflow:
   experimental
   [`glassPage()`](https://prigasg.github.io/glasstabs/reference/glassPage.md)
   wrapper can be exercised in one published session
+- session-persisted tab order, touch reorder handles, and a closable
+  Live tab demonstrate the 0.4.2 workspace controls
+
+![Dashboard workflow with glasstabs navigation and
+filters](https://prigasg.github.io/glasstabs/reference/figures/dashboard-workflow.png)
+
+Dashboard workflow with glasstabs navigation and filters
 
 The page includes an open test checklist. It is there to make a review
 session easy to repeat, not to turn the example into a wall of
-instructions.
+instructions. Clearing every region intentionally yields an empty queue;
+use **Reset filters** to restore all regions. Changing a layout option
+rebuilds the navigation while preserving the active tab, the Live tab,
+and values entered in its panes.
 
 ## What to test after publishing
 
@@ -40,16 +50,23 @@ instructions.
     and Escape.
 5.  Add and remove the live tab. In horizontal compact-menu mode,
     confirm that its option appears and disappears too.
-6.  Hide and show Approve, then disable and enable Explore. A hidden or
+6.  Reorder the tabs with a pointer, keyboard, or touch handle. Reload
+    the same browser tab to confirm session storage restores their
+    order. Close the Live tab through its close control; its server
+    observer approves the removal.
+7.  Hide and show Approve, then disable and enable Explore. A hidden or
     disabled tab should not trap selection or keyboard focus.
-7.  Update the Test lab badge. Its pulse should be subtle and should not
+8.  Update the Test lab badge. Its pulse should be subtle and should not
     move focus.
-8.  Compare light and dark mode with each indicator, shape, alignment,
+9.  Compare light and dark mode with each indicator, shape, alignment,
     and orientation.
-9.  Enable reduced motion or high contrast in the operating system and
+10. Enable reduced motion or high contrast in the operating system and
     reload the app. Content should change immediately and remain easy to
     distinguish.
-10. Refresh the Connect app and repeat a few controls to catch asset
+11. Clear all regions and confirm the queue and metrics become empty.
+    Change a layout option and confirm the active tab and pane inputs
+    remain intact.
+12. Refresh the Connect app and repeat a few controls to catch asset
     caching or session-reconnect problems.
 
 ## Versions, dependencies, and CSP

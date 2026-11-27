@@ -2,6 +2,11 @@
 
 ## Refined filters
 
+![Multi-select with colored options and a selection
+count](https://prigasg.github.io/glasstabs/reference/figures/select-multiselect.png)
+
+Multi-select with colored options and a selection count
+
 Use `glass_strength = 0.25` and `size = "sm"` for dense layouts. The
 original field density is `"md"`; use `"lg"` for a larger trigger. Glass
 intensity changes decorative blur and tint but does not change choice
@@ -242,6 +247,11 @@ more** appears only while more choices are below the visible list and
 disappears when you reach the end or filter down to a short result set.
 
 ## Long labels, wrapping, and tooltips
+
+![Long multi-select list in a narrow
+layout](https://prigasg.github.io/glasstabs/reference/figures/select-narrow-long-list.png)
+
+Long multi-select list in a narrow layout
 
 The open dropdown always matches the trigger width — it never stretches
 a short field to fit a long label. Longer labels wrap inside that shared

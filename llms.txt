@@ -116,12 +116,12 @@ for more examples.
 
 ## Watch the demos
 
-The recordings open as animated GIFs:
+Watch the compact MP4 recordings:
 
 - [Dashboard workflow: filters, tabs, and preserved input
-  state](https://prigasg.github.io/glasstabs/media/dashboard-workflow.gif)
+  state](https://prigasg.github.io/glasstabs/media/dashboard-workflow.mp4)
 - [Configurable navigation: layouts, themes, and tab
-  operations](https://prigasg.github.io/glasstabs/media/configurable-navigation.gif)
+  operations](https://prigasg.github.io/glasstabs/media/configurable-navigation.mp4)
 
 ## Feature highlights
 

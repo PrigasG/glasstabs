@@ -46,6 +46,11 @@ destination back into view.
 
 ## Long select labels on narrow screens
 
+![Long select list fitting a narrow
+screen](https://prigasg.github.io/glasstabs/reference/figures/select-narrow-long-list.png)
+
+Long select list fitting a narrow screen
+
 Select dropdowns match their trigger width and remain capped by the
 containing layout. Start with the compact default and opt into a wider
 field only where the content needs it:
@@ -175,6 +180,11 @@ tags$div(`data-gt-no-swipe` = "", custom_touch_component)
 ```
 
 ## Motion and contrast
+
+![Dark dropdown with readable text and a visible selection
+marker](https://prigasg.github.io/glasstabs/reference/figures/select-dark-dropup.png)
+
+Dark dropdown with readable text and a visible selection marker
 
 No R setting is needed for reduced motion. The browser preference
 removes the transfer trace and badge pulse, shortens CSS transitions,

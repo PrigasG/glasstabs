@@ -8,6 +8,11 @@ installation.
 
 ## Modern workspaces
 
+![Workspace tabs with drag
+handles](https://prigasg.github.io/glasstabs/reference/figures/tabs-draggable.png)
+
+Workspace tabs with drag handles
+
 ``` r
 
 glassTabsUI("workspace",
@@ -39,6 +44,11 @@ their parent. Panels respond to visible viewport changes and use a
 scrolling fallback in very tight space.
 
 ## Native-bound form controls
+
+![Switch, radio, and checkbox
+controls](https://prigasg.github.io/glasstabs/reference/figures/form-inputs.png)
+
+Switch, radio, and checkbox controls
 
 ``` r
 

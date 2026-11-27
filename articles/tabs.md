@@ -10,6 +10,11 @@ navigation.
 
 ## Modern workspace navigation
 
+![Closable tabs in a compact
+workspace](https://prigasg.github.io/glasstabs/reference/figures/tabs-closable.png)
+
+Closable tabs in a compact workspace
+
 Use the existing `style` and `indicator` controls independently, and opt
 into layout and motion refinements when needed.
 
@@ -373,6 +378,11 @@ server <- function(input, output, session) {
 ```
 
 ## Persisted and closable workspaces
+
+![Reorderable tabs with visible drag
+handles](https://prigasg.github.io/glasstabs/reference/figures/tabs-draggable.png)
+
+Reorderable tabs with visible drag handles
 
 ``` r
 

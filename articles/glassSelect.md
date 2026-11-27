@@ -2,6 +2,12 @@
 
 ## Overview
 
+![Dark single-select dropdown that opens above the field when space is
+tight](https://prigasg.github.io/glasstabs/reference/figures/select-dark-dropup.png)
+
+Dark single-select dropdown that opens above the field when space is
+tight
+
 [`glassSelect()`](https://prigasg.github.io/glasstabs/reference/glassSelect.md)
 is an animated single-select dropdown for Shiny.
 
@@ -218,6 +224,11 @@ unnecessary. The complete accessible label remains on the trigger in
 either mode.
 
 ## Dropdown lifecycle
+
+![Single-select dropdown operating inside a
+modal](https://prigasg.github.io/glasstabs/reference/figures/select-in-modal.png)
+
+Single-select dropdown operating inside a modal
 
 For dynamic layouts, modals, sidebars, or tab changes, you can
 explicitly close an open dropdown from the server:

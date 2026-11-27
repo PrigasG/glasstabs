@@ -10,6 +10,11 @@ and interactions.
 
 ## Navigation
 
+![Closable glass tabs in a compact
+workspace](https://prigasg.github.io/glasstabs/reference/figures/tabs-closable.png)
+
+Closable glass tabs in a compact workspace
+
 ``` r
 
 glassTabsUI("tabs",
@@ -21,6 +26,11 @@ glassTabsUI("tabs",
 
 ## Single and multiple selections
 
+![Multi-select with colored choices and a selection
+count](https://prigasg.github.io/glasstabs/reference/figures/select-multiselect.png)
+
+Multi-select with colored choices and a selection count
+
 ``` r
 
 glassSelect("dataset", c("Providers", "Population"), width = "240px")
@@ -28,6 +38,11 @@ glassMultiSelect("region", c("North", "South"), width = "100%")
 ```
 
 ## Switch, radio and checkbox group
+
+![Glass switch, radio buttons, and checkbox
+group](https://prigasg.github.io/glasstabs/reference/figures/form-inputs.png)
+
+Glass switch, radio buttons, and checkbox group
 
 ``` r
 
@@ -43,6 +58,14 @@ glassCheckboxGroup("fields", "Fields", c("Name", "County"),
 
 runGlassExample("final-features")
 ```
+
+## Watch the demos
+
+[Open the dashboard workflow
+recording](https://prigasg.github.io/glasstabs/media/dashboard-workflow.mp4).
+
+[Open the configurable navigation
+recording](https://prigasg.github.io/glasstabs/media/configurable-navigation.mp4).
 
 See [navigation](https://prigasg.github.io/glasstabs/articles/tabs.md),
 [single-select](https://prigasg.github.io/glasstabs/articles/glassSelect.md),
