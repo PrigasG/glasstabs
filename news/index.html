@@ -65,10 +65,10 @@
 <li>Add independent <code>trigger_bg</code> and <code>dropdown_bg</code> custom theme surfaces.</li>
 <li>Single-select accepts <code>dropdown_max_height</code> for its option list.</li>
 <li>Long single- and multi-select lists show a subtle “Scroll for more” cue while more options remain below. Open panels limit their option area to the available viewport space and update the cue after scrolling, filtering, choice updates and resizing. Rebinding a select keeps one cue and releases its previous scroll listener. Revealing an active option scrolls only the option list, keeping the page and dropdown anchor in place.</li>
-<li>Closed select fields no longer create a positive stacking level. Host overlays and Bootstrap layer changes close portaled dropdowns immediately; ordinary close retains its retract animation. Dropdowns opened inside a Bootstrap modal or offcanvas stay within its focus boundary.</li>
+<li>Closed select fields no longer create a positive stacking level. Host overlays and Bootstrap layer changes close portaled dropdowns immediately; ordinary close retains its retract animation. Dropdowns opened inside a Bootstrap 3 or 5 modal or a Bootstrap offcanvas stay within its focus boundary.</li>
 <li>Refresh open portaled panel theme variables on live mode changes. Scope the box-sizing reset to widget areas rather than the entire application.</li>
 <li>Respect explicit select widths below 160px, including narrow embedded filters. Keep the 160px default width when no width is supplied.</li>
-<li>Keep nested tab navigation layouts and indicator styles independent. Close dropdowns when their pane becomes inactive, and bind dynamically appended Shiny inputs and outputs with their HTML dependencies. Unrelated UI updates no longer reinitialize existing tab controllers.</li>
+<li>Keep nested tab navigation layouts, shapes, themes and indicator styles independent. Close dropdowns when their pane becomes inactive. Dynamically appended tabs load dependencies and bind Shiny inputs and outputs before exposing the new navigation link; failed or canceled appends leave the previous tab intact. Unrelated UI updates no longer reinitialize existing tab controllers.</li>
 <li>Expand the modernization lab with glass configuration controls, one/three/six tab layouts, lifecycle actions and a labeled native Shiny comparison. Add focused unit/browser regression coverage.</li>
 </ul></div>
 </div>

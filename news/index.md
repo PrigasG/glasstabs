@@ -33,17 +33,19 @@
 - Closed select fields no longer create a positive stacking level. Host
   overlays and Bootstrap layer changes close portaled dropdowns
   immediately; ordinary close retains its retract animation. Dropdowns
-  opened inside a Bootstrap modal or offcanvas stay within its focus
-  boundary.
+  opened inside a Bootstrap 3 or 5 modal or a Bootstrap offcanvas stay
+  within its focus boundary.
 - Refresh open portaled panel theme variables on live mode changes.
   Scope the box-sizing reset to widget areas rather than the entire
   application.
 - Respect explicit select widths below 160px, including narrow embedded
   filters. Keep the 160px default width when no width is supplied.
-- Keep nested tab navigation layouts and indicator styles independent.
-  Close dropdowns when their pane becomes inactive, and bind dynamically
-  appended Shiny inputs and outputs with their HTML dependencies.
-  Unrelated UI updates no longer reinitialize existing tab controllers.
+- Keep nested tab navigation layouts, shapes, themes and indicator
+  styles independent. Close dropdowns when their pane becomes inactive.
+  Dynamically appended tabs load dependencies and bind Shiny inputs and
+  outputs before exposing the new navigation link; failed or canceled
+  appends leave the previous tab intact. Unrelated UI updates no longer
+  reinitialize existing tab controllers.
 - Expand the modernization lab with glass configuration controls,
   one/three/six tab layouts, lifecycle actions and a labeled native
   Shiny comparison. Add focused unit/browser regression coverage.
