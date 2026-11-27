@@ -322,6 +322,8 @@ ui <- fluidPage(
     glassTabsUI("one_tab", glassTabPanel("a", "Only", p("Visible")), hide_single = TRUE),
     actionButton("modern_append", "Append modern tab"),
     actionButton("modern_remove", "Remove modern tab"),
+    actionButton("modern_append_dep", "Append dependency probe"),
+    actionButton("modern_remove_dep", "Remove dependency probe"),
     actionButton("modern_switch", "Server: modern B"),
     actionButton("unrelated_glass_build", "Rebuild unrelated glass UI"),
     uiOutput("unrelated_glass_ui"),
@@ -339,6 +341,7 @@ ui <- fluidPage(
                                           style = "segmented", transition = "none")),
                 glassTabPanel("b", "Outer B", p("Outer B")),
                 theme = "light", indicator = "underline", overflow = "menu",
+                shape = "square",
                 transition = "slide"),
     tagList(lapply(c(0, 0.25, 0.99, 1), function(strength) {
       id <- paste0("effect_", gsub("\\.", "_", as.character(strength)))
@@ -377,6 +380,14 @@ server <- function(input, output, session) {
   }, once = TRUE)
   output$dynamic_plot <- renderPlot(plot(1:5, 1:5, type = "b"))
   observeEvent(input$modern_remove, removeGlassTab(session, "modern_tabs", "d"))
+  observeEvent(input$modern_append_dep, {
+    dependency <- htmltools::htmlDependency(
+      "glasstabs-append-probe", "1.0.0", src = c(href = "."), script = "probe.js"
+    )
+    pane <- htmltools::attachDependencies(div("Dependency probe"), dependency)
+    appendGlassTab(session, "modern_tabs", glassTabPanel("dep", "Dependency", pane), select = TRUE)
+  })
+  observeEvent(input$modern_remove_dep, removeGlassTab(session, "modern_tabs", "dep"))
   observeEvent(input$modern_switch, updateGlassTabsUI(session, "modern_tabs", "b"))
   output$unrelated_glass_ui <- renderUI({
     glassSelect(paste0("unrelated_glass_", input$unrelated_glass_build), choices)

@@ -926,20 +926,20 @@
 /* Square corners for the tab bar (glassTabsUI(shape = "square"))
    The halo radius is JS-driven from the tab link's computed border-radius,
    so squaring .gt-tab-link makes the sliding halo follow automatically. */
-.gt-container.shape-square .gt-tab-link,
-.gt-wrap-shell.shape-square .gt-tab-link{
+.gt-container.shape-square > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link,
+.gt-wrap-shell.shape-square > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link{
   border-radius:3px;
 }
-.gt-container.shape-square .gt-tab-wrap,
-.gt-wrap-shell.shape-square .gt-tab-wrap{
+.gt-container.shape-square > .gt-tab-wrap,
+.gt-wrap-shell.shape-square > .gt-tab-wrap{
   border-radius:4px;
 }
-.gt-container.shape-square .gt-card,
-.gt-wrap-shell.shape-square .gt-card{
+.gt-container.shape-square > .gt-tab-wrap > .gt-tab-pane > .gt-card,
+.gt-wrap-shell.shape-square > .gt-tab-wrap > .gt-tab-pane > .gt-card{
   border-radius:3px;
 }
-.gt-container.shape-square.gt-compact .gt-tab-link,
-.gt-wrap-shell.shape-square.gt-compact .gt-tab-link{
+.gt-container.shape-square.gt-compact > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link,
+.gt-wrap-shell.shape-square.gt-compact > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link{
   border-radius:3px;
 }
 
@@ -1251,16 +1251,16 @@
 }
 
 /* Card inner - also transparent; content flows on the page */
-.theme-light .gt-card{
+.theme-light > .gt-tab-wrap > .gt-tab-pane > .gt-card{
   background:var(--gt-card-bg,transparent);
   box-shadow:none;
   color:var(--gt-card-text,#1e293b);
 }
-.theme-light .gt-card h2,
-.theme-light .gt-card h3{
+.theme-light > .gt-tab-wrap > .gt-tab-pane > .gt-card > h2,
+.theme-light > .gt-tab-wrap > .gt-tab-pane > .gt-card > h3{
   color:var(--gt-tab-active-text,#1d4ed8);
 }
-.theme-light .gt-card p{
+.theme-light > .gt-tab-wrap > .gt-tab-pane > .gt-card > p{
   color:var(--gt-card-text,#374151);
 }
 

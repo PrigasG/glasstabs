@@ -204,7 +204,10 @@ test_that("stylesheet ships optgroup, per-option disabled, and square-tab rules"
   expect_true(grepl(".gt-gs-optgroup", css, fixed = TRUE))
   expect_true(grepl(".gt-ms-optgroup", css, fixed = TRUE))
   expect_true(grepl(".gt-gs-option.disabled", css, fixed = TRUE))
-  expect_true(grepl(".gt-container.shape-square .gt-tab-link", css, fixed = TRUE))
+  expect_true(grepl(
+    ".gt-container.shape-square > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link",
+    css, fixed = TRUE
+  ))
 })
 
 test_that("stylesheet keeps underline tabs transparent in light mode", {

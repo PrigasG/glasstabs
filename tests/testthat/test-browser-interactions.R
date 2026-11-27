@@ -282,6 +282,20 @@ test_that("browser: nested tabs and dynamic panes retain independent bindings", 
     getComputedStyle(document.querySelector('#scope_inner-wrap .gt-halo')).backdropFilter !== 'none'
   "))
   expect_true(app$get_js("
+    (function() {
+      var outer=document.getElementById('scope_outer-wrap');
+      var inner=document.getElementById('scope_inner-wrap');
+      var outerLink=outer.querySelector(':scope > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link');
+      var innerLink=inner.querySelector(':scope > .gt-topbar > .gt-tab-viewport > .gt-navbar > .gt-tab-link');
+      var outerCard=outer.querySelector(':scope > .gt-tab-wrap > .gt-tab-pane.active > .gt-card');
+      var innerCard=inner.querySelector(':scope > .gt-tab-wrap > .gt-tab-pane.active > .gt-card');
+      return parseFloat(getComputedStyle(outerLink).borderRadius) <= 4 &&
+        parseFloat(getComputedStyle(innerLink).borderRadius) > 4 &&
+        parseFloat(getComputedStyle(innerCard).borderRadius) > 4 &&
+        getComputedStyle(innerCard).color !== getComputedStyle(outerCard).color;
+    })()
+  "))
+  expect_true(app$get_js("
     window.__modernReorder = document.getElementById('modern_tabs-navbar')._gtReorder;
     !!window.__modernReorder
   "))
@@ -2877,4 +2891,47 @@ test_that("browser: updateGlassSelect can select an empty-string value", {
   expect_equal(app$get_js("
     document.querySelector('#empty_val-label').textContent
   "), "Select an option")
+})
+
+test_that("browser: cancelled and failed dynamic appends keep the old tab", {
+  skip_on_covr()
+  skip_if_not_installed("shinytest2")
+  local_browser_pkg_root()
+
+  app <- shinytest2::AppDriver$new(
+    test_path("apps", "browser-interactions"),
+    name = "browser-append-rollback",
+    height = 800,
+    width = 1000
+  )
+  on.exit(app$stop(), add = TRUE)
+  app$wait_for_idle()
+
+  app$get_js("window.__oldRender = Shiny.renderDependenciesAsync;
+    window.__depCalls = 0;
+    Shiny.renderDependenciesAsync = function() {
+      window.__depCalls++;
+      return new Promise(function(resolve) { window.__releaseDep = resolve; });
+    }; true")
+  app$set_inputs(modern_append_dep = "click", wait_ = FALSE)
+  app$wait_for_js("window.__depCalls === 1 && !!window.__releaseDep")
+  app$set_inputs(modern_remove_dep = "click", wait_ = FALSE)
+  app$wait_for_js("document.getElementById('modern_tabs-navbar')._gtPendingAppends.get('dep').cancelled")
+  app$get_js("window.__releaseDep(); true")
+  app$wait_for_js("!document.getElementById('modern_tabs-navbar')._gtPendingAppends.has('dep')")
+  expect_true(app$get_js("!document.getElementById('modern_tabs-tab-dep') &&
+    !document.getElementById('modern_tabs-pane-dep') &&
+    document.querySelector('#modern_tabs-navbar > .gt-tab-link.active').dataset.value === 'a'"))
+
+  app$get_js("Shiny.renderDependenciesAsync = function() {
+    window.__depCalls++;
+    return Promise.reject(new Error('intentional test dependency failure'));
+  }; true")
+  app$set_inputs(modern_append_dep = "click", wait_ = FALSE)
+  app$wait_for_js("window.__depCalls === 2")
+  app$wait_for_js("!document.getElementById('modern_tabs-navbar')._gtPendingAppends.has('dep')")
+  expect_true(app$get_js("!document.getElementById('modern_tabs-tab-dep') &&
+    !document.getElementById('modern_tabs-pane-dep') &&
+    document.querySelector('#modern_tabs-navbar > .gt-tab-link.active').dataset.value === 'a'"))
+  app$get_js("Shiny.renderDependenciesAsync = window.__oldRender; true")
 })

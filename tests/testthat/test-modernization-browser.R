@@ -94,6 +94,10 @@ test_that("browser: modernization preserves order, selection and pane inputs", {
       "(function(){var d=document.getElementById('%s-dropdown'), o=document.getElementById('%s-options'); return !d.querySelector('.gt-scroll-cue').classList.contains('hidden') && o.clientHeight<=152 && o.scrollHeight>o.clientHeight;})()",
       id, id
     )))
+    app$wait_for_js(sprintf(
+      "document.getElementById('%s-dropdown').querySelector('.gt-option-active') !== null",
+      id
+    ))
     app$get_js(sprintf(
       "(function(){var o=document.getElementById('%s-options'); o.scrollTop=9999; o.dispatchEvent(new Event('scroll')); return true;})()",
       id

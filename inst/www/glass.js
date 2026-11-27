@@ -584,14 +584,15 @@
   /** Escape local clipping while staying inside Bootstrap focus boundaries. */
   function teleportOpen(wrap, dropdown) {
     refreshPortalTheme(wrap, dropdown);
-    var host = wrap.closest('.modal.show, .offcanvas.show') || document.body;
+    var host = wrap.closest('.modal.show, .modal.in, .offcanvas.show') || document.body;
     if (dropdown.parentNode === host) return;
     host.appendChild(dropdown);
     if (dropdown._gtPortalHostObserver) dropdown._gtPortalHostObserver.disconnect();
     dropdown._gtPortalHostObserver = null;
     if (host !== document.body && window.MutationObserver) {
       dropdown._gtPortalHostObserver = new MutationObserver(function () {
-        if (host.classList.contains('show') || host.classList.contains('showing')) return;
+        if (host.classList.contains('show') || host.classList.contains('showing') ||
+            host.classList.contains('in')) return;
         closeDropdownWrap(wrap);
         teleportClose(wrap, dropdown);
       });
@@ -4104,74 +4105,108 @@
       if (navbar._gtRefresh) navbar._gtRefresh();
     });
 
-    Shiny.addCustomMessageHandler('glasstabs_append_tab', async function (msg) {
+    async function appendTabMessage(msg) {
       var navbar = document.querySelector('.gt-navbar' + attrEquals('data-ns', msg.ns));
       if (!navbar) return;
       if (navbar.querySelector('.gt-tab-link' + attrEquals('data-value', msg.value))) return;
+      var pendingAppends = navbar._gtPendingAppends || (navbar._gtPendingAppends = new Map());
+      if (pendingAppends.has(msg.value)) return;
+      var pending = { cancelled: false };
+      pendingAppends.set(msg.value, pending);
 
       var container = navbar.closest('.gt-container, .gt-wrap-shell')
         || navbar.closest('.card-body')
         || navbar.closest('.box-body')
         || (navbar.parentElement && navbar.parentElement.parentElement)
         || navbar.parentElement;
-      if (!container) return;
-
-      var paneWrap = container.querySelector(':scope > .gt-tab-wrap');
-      if (!paneWrap) return;
-
-      if (msg.select) {
-        navbar.querySelectorAll('.gt-tab-link.active').forEach(function (l) {
-          l.classList.remove('active');
-          l.setAttribute('aria-selected', 'false');
-          /* Deactivate only this namespace's pane - not nested glassTabsUI panes */
-          var v = l.getAttribute('data-value');
-          var p = document.getElementById(msg.ns + '-pane-' + v);
-          setPaneActive(p, false);
-        });
+      var paneWrap = container && container.querySelector(':scope > .gt-tab-wrap');
+      if (!paneWrap) {
+        pendingAppends.delete(msg.value);
+        return;
       }
-
       var tmp = document.createElement('div');
       tmp.innerHTML = msg.link_html;
       var newLink = tmp.firstElementChild;
-      if (msg.select) {
-        newLink.classList.add('active');
-        newLink.setAttribute('aria-selected', 'true');
-      }
-      navbar.appendChild(newLink);
-
       tmp.innerHTML = msg.pane_html;
       var newPane = tmp.firstElementChild;
-      if (msg.select) {
-        setPaneActive(newPane, true);
-      } else {
-        setPaneActive(newPane, false);
-      }
-      if (window.Shiny && msg.pane_deps && msg.pane_deps.length) {
-        if (Shiny.renderDependenciesAsync) {
-          await Shiny.renderDependenciesAsync(msg.pane_deps);
-        } else if (Shiny.renderDependencies) {
-          Shiny.renderDependencies(msg.pane_deps);
+      var inserted = false;
+      var previousActive = null;
+      try {
+        if (!newLink || !newPane) throw new Error('Invalid appended tab markup');
+        /* Load dependencies before exposing either half of the new tab. */
+        if (window.Shiny && msg.pane_deps && msg.pane_deps.length) {
+          if (Shiny.renderDependenciesAsync) {
+            await Shiny.renderDependenciesAsync(msg.pane_deps);
+          } else if (Shiny.renderDependencies) {
+            Shiny.renderDependencies(msg.pane_deps);
+          }
         }
-      }
-      paneWrap.appendChild(newPane);
-      if (window.Shiny && Shiny.bindAll) {
-        if (Shiny.initializeInputs) Shiny.initializeInputs(newPane);
-        await Shiny.bindAll(newPane);
-      }
+        if (pending.cancelled || !navbar.isConnected || !paneWrap.isConnected ||
+            navbar.querySelector('.gt-tab-link' + attrEquals('data-value', msg.value))) return;
+        setPaneActive(newPane, false);
+        paneWrap.appendChild(newPane);
+        inserted = true;
+        if (window.Shiny && Shiny.bindAll) {
+          if (Shiny.initializeInputs) Shiny.initializeInputs(newPane);
+          await Shiny.bindAll(newPane);
+        }
+        if (pending.cancelled || !navbar.isConnected || !newPane.isConnected) {
+          if (newPane.isConnected && window.Shiny && Shiny.unbindAll) Shiny.unbindAll(newPane);
+          newPane.remove();
+          return;
+        }
+        navbar.appendChild(newLink);
 
-      initTabs(navbar);
-      if (navbar._gtResizeHandler) {
-        setTimeout(function () { navbar._gtResizeHandler(); }, 0);
-      }
+        if (msg.select) {
+          previousActive = navbar.querySelector(':scope > .gt-tab-link.active');
+          navbar.querySelectorAll(':scope > .gt-tab-link.active').forEach(function (l) {
+            l.classList.remove('active');
+            l.setAttribute('aria-selected', 'false');
+            /* Deactivate only this namespace's pane, never a nested pane. */
+            var v = l.getAttribute('data-value');
+            setPaneActive(document.getElementById(msg.ns + '-pane-' + v), false);
+          });
+          newLink.classList.add('active');
+          newLink.setAttribute('aria-selected', 'true');
+          setPaneActive(newPane, true);
+        }
 
-      if (msg.select && window.Shiny) {
-        Shiny.setInputValue(msg.ns + '-active_tab', msg.value, { priority: 'event' });
+        initTabs(navbar);
+        if (navbar._gtResizeHandler) {
+          setTimeout(function () { navbar._gtResizeHandler(); }, 0);
+        }
+
+        if (msg.select && window.Shiny) {
+          Shiny.setInputValue(msg.ns + '-active_tab', msg.value, { priority: 'event' });
+        }
+      } catch (error) {
+        if (newPane && newPane.isConnected && window.Shiny && Shiny.unbindAll) Shiny.unbindAll(newPane);
+        if (newLink) newLink.remove();
+        if (newPane) newPane.remove();
+        if (previousActive && previousActive.isConnected) {
+          previousActive.classList.add('active');
+          previousActive.setAttribute('aria-selected', 'true');
+          setPaneActive(document.getElementById(msg.ns + '-pane-' +
+            previousActive.getAttribute('data-value')), true);
+        }
+        if (inserted && navbar.isConnected) initTabs(navbar);
+        console.error('glasstabs: failed to append tab', error);
+      } finally {
+        if (pendingAppends.get(msg.value) === pending) pendingAppends.delete(msg.value);
       }
+    }
+
+    Shiny.addCustomMessageHandler('glasstabs_append_tab', function (msg) {
+      appendTabMessage(msg).catch(function (error) {
+        console.error('glasstabs: append handler failed', error);
+      });
     });
 
     Shiny.addCustomMessageHandler('glasstabs_remove_tab', function (msg) {
       var navbar = document.querySelector('.gt-navbar' + attrEquals('data-ns', msg.ns));
       if (!navbar) return;
+      var pending = navbar._gtPendingAppends && navbar._gtPendingAppends.get(msg.value);
+      if (pending) pending.cancelled = true;
       var link = navbar.querySelector('.gt-tab-link' + attrEquals('data-value', msg.value));
       if (!link) return;
 
