@@ -61,12 +61,14 @@
 </ul></div>
 <div class="section level3">
 <h3 id="select-appearance-and-integration-0-4-2">Select appearance and integration<a class="anchor" aria-label="anchor" href="#select-appearance-and-integration-0-4-2"></a></h3>
-<ul><li>Add <code>glass_strength</code> (0 to 1) across tabs and both select widgets, and <code>size</code> for compact or large select triggers. Existing defaults remain.</li>
+<ul><li>Add <code>glass_strength</code> (0 to 1) across tabs and both select widgets, and <code>size</code> for compact or large select triggers. Existing defaults remain. Decorative transfer intensity follows glass strength and is skipped at zero.</li>
 <li>Add independent <code>trigger_bg</code> and <code>dropdown_bg</code> custom theme surfaces.</li>
 <li>Single-select accepts <code>dropdown_max_height</code> for its option list.</li>
-<li>Long single- and multi-select lists show a subtle “Scroll for more” cue while more options remain below. Open panels limit their option area to the available viewport space and update the cue after scrolling, filtering, choice updates and resizing.</li>
-<li>Closed select fields no longer create a positive stacking level. Host overlays and Bootstrap layer changes close portaled dropdowns immediately; ordinary close retains its retract animation.</li>
+<li>Long single- and multi-select lists show a subtle “Scroll for more” cue while more options remain below. Open panels limit their option area to the available viewport space and update the cue after scrolling, filtering, choice updates and resizing. Rebinding a select keeps one cue and releases its previous scroll listener.</li>
+<li>Closed select fields no longer create a positive stacking level. Host overlays and Bootstrap layer changes close portaled dropdowns immediately; ordinary close retains its retract animation. Dropdowns opened inside a Bootstrap modal or offcanvas stay within its focus boundary.</li>
 <li>Refresh open portaled panel theme variables on live mode changes. Scope the box-sizing reset to widget areas rather than the entire application.</li>
+<li>Respect explicit select widths below 160px, including narrow embedded filters. Keep the 160px default width when no width is supplied.</li>
+<li>Keep nested tab navigation layouts and indicator styles independent. Close dropdowns when their pane becomes inactive, and bind dynamically appended Shiny inputs and outputs with their HTML dependencies. Unrelated UI updates no longer reinitialize existing tab controllers.</li>
 <li>Expand the modernization lab with glass configuration controls, one/three/six tab layouts, lifecycle actions and a labeled native Shiny comparison. Add focused unit/browser regression coverage.</li>
 </ul></div>
 </div>
