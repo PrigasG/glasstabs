@@ -79,24 +79,43 @@
 <img src="logo.svg" class="logo" alt=""><h1 id="glasstabs-">glasstabs <a class="anchor" aria-label="anchor" href="#glasstabs-"></a>
 </h1>
 </div>
-<blockquote>
-<p>Animated tabs and select inputs that feel at home in a Shiny app.</p>
-</blockquote>
+<p>Modern navigation and inputs for R Shiny.</p>
 <!-- badges: start -->
 
 <!-- badges: end -->
-<p>glasstabs brings animated navigation and polished filters to R Shiny without requiring custom JavaScript or CSS. Its primary components include:</p>
-<ul>
-<li>
-<code><a href="reference/glassTabsUI.html">glassTabsUI()</a></code> for horizontal and vertical tab navigation.</li>
-<li>
-<code><a href="reference/glassSelect.html">glassSelect()</a></code> for searchable single-choice inputs.</li>
-<li>
-<code><a href="reference/glassMultiSelect.html">glassMultiSelect()</a></code> for multi-choice filters and optional tag pills.</li>
-<li>
-<code><a href="reference/glassSwitch.html">glassSwitch()</a></code>, <code><a href="reference/glassSwitch.html">glassRadioGroup()</a></code> and <code><a href="reference/glassSwitch.html">glassCheckboxGroup()</a></code> for native-bound form controls (development 0.4.2).</li>
-</ul>
-<p>Widgets work with <code><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage()</a></code>, <code>bslib</code>, and <code>bs4Dash</code>, and support dark, light, automatic, and custom themes. The 0.4.2 development candidate adds workspace management and refined form controls. See <a href="https://prigasg.github.io/glasstabs/articles/whats-new-042.html">What is new</a> for details. The CRAN release may lag behind GitHub.</p>
+<p>Build responsive tabs, searchable filters, and form controls without writing custom JavaScript or CSS. They work with <code><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage()</a></code>, <code>bslib</code>, and <code>bs4Dash</code>, with light, dark, automatic, and custom themes.</p>
+<div class="float">
+<img src="reference/figures/dashboard-workflow.png" alt="Dashboard workflow with glasstabs filters and navigation"><div class="figcaption">Dashboard workflow with glasstabs filters and navigation</div>
+</div>
+<div class="section level2">
+<h2 id="components">Components<a class="anchor" aria-label="anchor" href="#components"></a>
+</h2>
+<table class="table">
+<colgroup>
+<col width="33%">
+<col width="33%">
+<col width="33%">
+</colgroup>
+<thead><tr>
+<th align="left"><a href="https://prigasg.github.io/glasstabs/articles/tabs.html">Navigation</a></th>
+<th align="left"><a href="https://prigasg.github.io/glasstabs/articles/multiselect.html">Selects</a></th>
+<th align="left"><a href="https://prigasg.github.io/glasstabs/articles/component-gallery.html">Form inputs</a></th>
+</tr></thead>
+<tbody>
+<tr>
+<td align="left"><img src="reference/figures/tabs-closable.png" alt="Tabs with an active Home panel and closable Data and Report panels"></td>
+<td align="left"><img src="reference/figures/select-multiselect.png" alt="Open multi-select with colored choices, search, and selection count"></td>
+<td align="left"><img src="reference/figures/form-inputs.png" alt="Glass switch, radio buttons, and checkbox group"></td>
+</tr>
+<tr>
+<td align="left">Reorderable, closable, horizontal or vertical tabs.</td>
+<td align="left">Searchable single and multi-select filters.</td>
+<td align="left">Switches, radio groups, and checkboxes.</td>
+</tr>
+</tbody>
+</table>
+<p>The 0.4.2 development version adds workspace management and form inputs. See <a href="https://prigasg.github.io/glasstabs/articles/whats-new-042.html">what is new in 0.4.2</a>. The CRAN release may lag behind GitHub.</p>
+</div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -110,7 +129,7 @@
 <p>The GitHub installation replaces the installed copy on your machine. For most users, the CRAN release is the simpler choice.</p>
 </div>
 <div class="section level2">
-<h2 id="a-complete-app">A complete app<a class="anchor" aria-label="anchor" href="#a-complete-app"></a>
+<h2 id="quick-start">Quick start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
 </h2>
 <p>Call <code><a href="reference/useGlassTabs.html">useGlassTabs()</a></code> once at the UI root, then use the widgets like ordinary Shiny controls. The following app has two tabs, a multi-select filter, selected-value tags, and an active-tab readout.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
@@ -151,6 +170,16 @@
 <span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/shinyApp.html" class="external-link">shinyApp</a></span><span class="op">(</span><span class="va">ui</span>, <span class="va">server</span><span class="op">)</span></span></code></pre></div>
 <p><code><a href="reference/glassMultiSelect.html">glassMultiSelect()</a></code> selects every enabled choice by default. Set <code>selected = character(0)</code> when the filter should start empty.</p>
+</div>
+<div class="section level2">
+<h2 id="explore-more">Explore more<a class="anchor" aria-label="anchor" href="#explore-more"></a>
+</h2>
+<ul>
+<li><a href="https://prigasg.github.io/glasstabs/">Documentation and function reference</a></li>
+<li><a href="https://prigasg.github.io/glasstabs/articles/component-gallery.html">Component gallery</a></li>
+<li><a href="https://prigas89-glasstabs.share.connect.posit.cloud" class="external-link">Live examples</a></li>
+<li><a href="NEWS.html">Changelog</a></li>
+</ul>
 </div>
 <div class="section level2">
 <h2 id="pick-the-control-you-need">Pick the control you need<a class="anchor" aria-label="anchor" href="#pick-the-control-you-need"></a>
