@@ -17,6 +17,8 @@ knitr::opts_chunk$set(eval = FALSE)
 
 ## Overview
 
+![Dark single-select dropdown that opens above the field when space is tight](https://prigasg.github.io/glasstabs/reference/figures/select-dark-dropup.png)
+
 `glassSelect()` is an animated single-select dropdown for Shiny.
 
 For dense interfaces, set `size = "sm"` and `glass_strength = 0.25`.
@@ -212,6 +214,8 @@ Use `overflow_tooltip = "never"` when the visual explanation is unnecessary.
 The complete accessible label remains on the trigger in either mode.
 
 ## Dropdown lifecycle
+
+![Single-select dropdown operating inside a modal](https://prigasg.github.io/glasstabs/reference/figures/select-in-modal.png)
 
 For dynamic layouts, modals, sidebars, or tab changes, you can explicitly close
 an open dropdown from the server:

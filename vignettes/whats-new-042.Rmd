@@ -18,6 +18,8 @@ library(glasstabs)
 
 ## Modern workspaces
 
+![Workspace tabs with drag handles](https://prigasg.github.io/glasstabs/reference/figures/tabs-draggable.png)
+
 ```{r, eval=FALSE}
 glassTabsUI("workspace",
   glassTabPanel("edit", "Edit", shiny::textInput("title", "Title")),
@@ -45,6 +47,8 @@ parent. Panels respond to visible
 viewport changes and use a scrolling fallback in very tight space.
 
 ## Native-bound form controls
+
+![Switch, radio, and checkbox controls](https://prigasg.github.io/glasstabs/reference/figures/form-inputs.png)
 
 ```{r, eval=FALSE}
 glassSwitch("enabled", "Enable filters", TRUE)

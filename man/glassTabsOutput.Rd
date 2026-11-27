@@ -9,13 +9,13 @@ glassTabsOutput(outputId, ...)
 \arguments{
 \item{outputId}{The output id used in the paired \code{\link[=renderGlassTabs]{renderGlassTabs()}} call.}
 
-\item{...}{Additional arguments forwarded to \code{\link[shiny:htmlOutput]{shiny::uiOutput()}}.}
+\item{...}{Additional arguments forwarded to \code{\link[shiny:uiOutput]{shiny::uiOutput()}}.}
 }
 \value{
 A \code{shiny.tag} suitable for use in a Shiny UI.
 }
 \description{
-A drop-in replacement for \code{\link[shiny:htmlOutput]{shiny::uiOutput()}} that pairs with
+A drop-in replacement for \code{\link[shiny:uiOutput]{shiny::uiOutput()}} that pairs with
 \code{\link[=renderGlassTabs]{renderGlassTabs()}}. It creates a placeholder \verb{<div>} that Shiny fills
 with a fully reactive \code{\link[=glassTabsUI]{glassTabsUI()}} when the server-side render function
 runs. The JavaScript engine is automatically (re-)initialised after each
@@ -55,16 +55,16 @@ if (interactive()) {
 }
 }
 \seealso{
-Other glass tabs: 
-\code{\link{appendGlassTab}()},
-\code{\link{disableGlassTab}()},
-\code{\link{glassTabCondition}()},
-\code{\link{glassTabPanel}()},
-\code{\link{glassTabsServer}()},
-\code{\link{glassTabsUI}()},
-\code{\link{renderGlassTabs}()},
-\code{\link{showGlassTab}()},
-\code{\link{updateGlassTabBadge}()},
-\code{\link{updateGlassTabsUI}()}
+Other glass tabs:
+\code{\link[=appendGlassTab]{appendGlassTab()}},
+\code{\link[=disableGlassTab]{disableGlassTab()}},
+\code{\link[=glassTabCondition]{glassTabCondition()}},
+\code{\link[=glassTabPanel]{glassTabPanel()}},
+\code{\link[=glassTabsServer]{glassTabsServer()}},
+\code{\link[=glassTabsUI]{glassTabsUI()}},
+\code{\link[=renderGlassTabs]{renderGlassTabs()}},
+\code{\link[=showGlassTab]{showGlassTab()}},
+\code{\link[=updateGlassTabBadge]{updateGlassTabBadge()}},
+\code{\link[=updateGlassTabsUI]{updateGlassTabsUI()}}
 }
 \concept{glass tabs}

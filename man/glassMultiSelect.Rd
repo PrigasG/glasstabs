@@ -207,13 +207,13 @@ light_filter <- glassMultiSelect("f", fruits, theme = "light")
 
 }
 \seealso{
-Other glass select widgets: 
-\code{\link{glassMultiSelectServer}()},
-\code{\link{glassMultiSelectValue}()},
-\code{\link{glassSelect}()},
-\code{\link{glassSelectServer}()},
-\code{\link{glassSelectValue}()},
-\code{\link{updateGlassMultiSelect}()},
-\code{\link{updateGlassSelect}()}
+Other glass select widgets:
+\code{\link[=glassMultiSelectServer]{glassMultiSelectServer()}},
+\code{\link[=glassMultiSelectValue]{glassMultiSelectValue()}},
+\code{\link[=glassSelect]{glassSelect()}},
+\code{\link[=glassSelectServer]{glassSelectServer()}},
+\code{\link[=glassSelectValue]{glassSelectValue()}},
+\code{\link[=updateGlassMultiSelect]{updateGlassMultiSelect()}},
+\code{\link[=updateGlassSelect]{updateGlassSelect()}}
 }
 \concept{glass select widgets}

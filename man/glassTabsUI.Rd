@@ -169,16 +169,16 @@ An \code{htmltools::tagList} ready to use in a Shiny UI.
 Animated glass-style tab navigation UI
 }
 \seealso{
-Other glass tabs: 
-\code{\link{appendGlassTab}()},
-\code{\link{disableGlassTab}()},
-\code{\link{glassTabCondition}()},
-\code{\link{glassTabPanel}()},
-\code{\link{glassTabsOutput}()},
-\code{\link{glassTabsServer}()},
-\code{\link{renderGlassTabs}()},
-\code{\link{showGlassTab}()},
-\code{\link{updateGlassTabBadge}()},
-\code{\link{updateGlassTabsUI}()}
+Other glass tabs:
+\code{\link[=appendGlassTab]{appendGlassTab()}},
+\code{\link[=disableGlassTab]{disableGlassTab()}},
+\code{\link[=glassTabCondition]{glassTabCondition()}},
+\code{\link[=glassTabPanel]{glassTabPanel()}},
+\code{\link[=glassTabsOutput]{glassTabsOutput()}},
+\code{\link[=glassTabsServer]{glassTabsServer()}},
+\code{\link[=renderGlassTabs]{renderGlassTabs()}},
+\code{\link[=showGlassTab]{showGlassTab()}},
+\code{\link[=updateGlassTabBadge]{updateGlassTabBadge()}},
+\code{\link[=updateGlassTabsUI]{updateGlassTabsUI()}}
 }
 \concept{glass tabs}

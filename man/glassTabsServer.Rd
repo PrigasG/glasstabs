@@ -12,7 +12,7 @@ Do \strong{not} wrap this in \code{ns()} - \code{glassTabsServer()} handles name
 internally via \code{\link[shiny:moduleServer]{shiny::moduleServer()}}.}
 
 \item{bookmark}{Logical. When \code{TRUE} (default), registers \code{\link[shiny:onBookmark]{shiny::onBookmark()}}
-and \code{\link[shiny:onBookmark]{shiny::onRestored()}} hooks so the active tab is saved and restored
+and \code{\link[shiny:onRestored]{shiny::onRestored()}} hooks so the active tab is saved and restored
 automatically when Shiny bookmarking is enabled. Set to \code{FALSE} to opt out.}
 }
 \value{
@@ -91,16 +91,16 @@ my_module_server <- function(id) {
 }
 }
 \seealso{
-Other glass tabs: 
-\code{\link{appendGlassTab}()},
-\code{\link{disableGlassTab}()},
-\code{\link{glassTabCondition}()},
-\code{\link{glassTabPanel}()},
-\code{\link{glassTabsOutput}()},
-\code{\link{glassTabsUI}()},
-\code{\link{renderGlassTabs}()},
-\code{\link{showGlassTab}()},
-\code{\link{updateGlassTabBadge}()},
-\code{\link{updateGlassTabsUI}()}
+Other glass tabs:
+\code{\link[=appendGlassTab]{appendGlassTab()}},
+\code{\link[=disableGlassTab]{disableGlassTab()}},
+\code{\link[=glassTabCondition]{glassTabCondition()}},
+\code{\link[=glassTabPanel]{glassTabPanel()}},
+\code{\link[=glassTabsOutput]{glassTabsOutput()}},
+\code{\link[=glassTabsUI]{glassTabsUI()}},
+\code{\link[=renderGlassTabs]{renderGlassTabs()}},
+\code{\link[=showGlassTab]{showGlassTab()}},
+\code{\link[=updateGlassTabBadge]{updateGlassTabBadge()}},
+\code{\link[=updateGlassTabsUI]{updateGlassTabsUI()}}
 }
 \concept{glass tabs}

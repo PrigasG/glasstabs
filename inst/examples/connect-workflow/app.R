@@ -10,6 +10,7 @@
 #   - overflow = "scroll" / "multiline" / "menu" on narrow screens
 #   - optional swipe gestures with interactive-content guards
 #   - glassSelect(), glassMultiSelect(), glassSwitch(), badges, and server-driven tab changes
+#   - session-persisted tab order, touch reorder, and server-approved closure
 #   - dynamic append/remove, show/hide, and disable/enable tab helpers
 #   - keyboard, reduced-motion, high-contrast, and blur-fallback checks
 #
@@ -45,6 +46,18 @@ stage_card <- function(title, body, state) {
   )
 }
 
+live_panel <- function() {
+  glassTabPanel(
+    "live", "Live tab", closable = TRUE,
+    div(
+      class = "stage-card",
+      h3("Added while the app is running"),
+      p("Drag this tab to reorder it, or request closure with its close control."),
+      actionButton("live_action", "A real button inside the new panel")
+    )
+  )
+}
+
 workflow_tabs <- function(
     orientation = "horizontal",
     tab_align = "center",
@@ -52,7 +65,11 @@ workflow_tabs <- function(
     shape = "rounded",
     indicator = "glass",
     overflow = "scroll",
-    swipe = FALSE
+    swipe = FALSE,
+    selected = "intake",
+    show_live = FALSE,
+    approval_values = list(),
+    swipe_guard_value = "Typing here should never change tabs"
 ) {
   orientation <- match.arg(orientation, c("horizontal", "vertical"))
   tab_align <- match.arg(tab_align, c("center", "left", "right"))
@@ -81,9 +98,12 @@ workflow_tabs <- function(
       div(
         class = "approval-panel",
         h3("Approval checklist"),
-        glassSwitch("owner_checked", "Owner reviewed filtered queue", value = TRUE),
-        glassSwitch("metrics_checked", "Metrics match Connect snapshot", value = FALSE),
-        glassSwitch("publish_checked", "Ready to publish summary", value = FALSE),
+        glassSwitch("owner_checked", "Owner reviewed filtered queue",
+                    value = if (is.null(approval_values$owner)) TRUE else isTRUE(approval_values$owner)),
+        glassSwitch("metrics_checked", "Metrics match Connect snapshot",
+                    value = isTRUE(approval_values$metrics)),
+        glassSwitch("publish_checked", "Ready to publish summary",
+                    value = isTRUE(approval_values$publish)),
         verbatimTextOutput("approval_summary", placeholder = TRUE)
       )
     ),
@@ -93,7 +113,7 @@ workflow_tabs <- function(
         class = "test-lab",
         h3("A safe place to try the interactions"),
         p("Swipe across this open space, use the keyboard on the tabs, and try the controls above. Inputs and the scroll box below should keep their own touch behavior."),
-        textInput("swipe_guard_input", "Interactive swipe guard", "Typing here should never change tabs"),
+        textInput("swipe_guard_input", "Interactive swipe guard", swipe_guard_value),
         div(
           class = "touch-scroll-test",
           `data-gt-no-swipe` = "",
@@ -103,11 +123,16 @@ workflow_tabs <- function(
       )
     )
   )
+  if (isTRUE(show_live)) panels <- c(panels, list(live_panel()))
+  if (!selected %in% vapply(panels, function(panel) panel$value, character(1))) {
+    selected <- "intake"
+  }
 
   args <- c(
     list(
       id = "workflow",
       compact = TRUE,
+      selected = selected,
       theme = "auto"
     ),
     panels
@@ -119,6 +144,10 @@ workflow_tabs <- function(
   args$shape <- shape
   args$overflow <- overflow
   args$swipe <- swipe
+  args$reorderable <- TRUE
+  args$touch_reorder <- TRUE
+  args$persist_order <- "session"
+  args$order_key <- "connect-workflow-v1"
 
   do.call(glassTabsUI, args)
 }
@@ -209,17 +238,12 @@ page_body <- function() {
       }
     "))),
     tags$script(HTML("
-      document.addEventListener('click', function(e) {
-        var btn = e.target.closest ? e.target.closest('[data-workflow-target]') : null;
-        var tabClick = e.target.closest ? e.target.closest('#workflow-navbar .gt-tab-link') : null;
-        if (!btn && !tabClick) return;
-        var target = btn ? btn.getAttribute('data-workflow-target') : tabClick.getAttribute('data-value');
-        setTimeout(function() {
-          document.querySelectorAll('[data-workflow-target]').forEach(function(el) {
-            el.classList.toggle('active', el.getAttribute('data-workflow-target') === target);
-            el.setAttribute('aria-pressed', el.classList.contains('active') ? 'true' : 'false');
-          });
-        }, 0);
+      Shiny.addCustomMessageHandler('connect_workflow_active', function(message) {
+        document.querySelectorAll('[data-workflow-target]').forEach(function(button) {
+          var active = button.getAttribute('data-workflow-target') === message.value;
+          button.classList.toggle('active', active);
+          button.setAttribute('aria-pressed', active ? 'true' : 'false');
+        });
       });
     ")),
     div(
@@ -324,10 +348,10 @@ page_body <- function() {
       ),
       div(
         class = "workflow-actions",
-        actionButton("go_intake", "Intake", class = "btn-outline-primary", `data-workflow-target` = "intake"),
-        actionButton("go_explore", "Explore", class = "btn-outline-primary", `data-workflow-target` = "explore"),
-        actionButton("go_approve", "Approve", class = "btn-outline-primary", `data-workflow-target` = "approve"),
-        actionButton("go_test_lab", "Test lab", class = "btn-outline-primary", `data-workflow-target` = "test_lab")
+        actionButton("go_intake", "Intake", class = "btn-outline-primary", `data-workflow-target` = "intake", `aria-pressed` = "false"),
+        actionButton("go_explore", "Explore", class = "btn-outline-primary", `data-workflow-target` = "explore", `aria-pressed` = "false"),
+        actionButton("go_approve", "Approve", class = "btn-outline-primary", `data-workflow-target` = "approve", `aria-pressed` = "false"),
+        actionButton("go_test_lab", "Test lab", class = "btn-outline-primary", `data-workflow-target` = "test_lab", `aria-pressed` = "false")
       ),
       div(
         class = "workflow-actions",
@@ -352,7 +376,10 @@ page_body <- function() {
           tags$li("Open a glass select and immediately press outside it; the dropdown should close cleanly."),
           tags$li("Check that a loading veil or modal never leaves a glass select floating above it."),
           tags$li("Press inside the multi-select dropdown and confirm it stays open for the next choice."),
-          tags$li("Add and remove the live tab, then check that selection and keyboard focus stay sensible."),
+          tags$li("Reorder tabs with a pointer, Alt+Shift+arrows, or a touch handle, then reload to check session storage."),
+          tags$li("Add the Live tab, close it with its tab control, and check that the server removes it."),
+          tags$li("Change layout while a pane is active; its selection and entered values should remain."),
+          tags$li("Clear every region; the queue and metrics should become empty."),
           tags$li("Hide and show Approve; disable and enable Explore."),
           tags$li("Update the badge and confirm the pulse is subtle and never moves focus."),
           tags$li("Switch light and dark mode and try each indicator, shape, alignment, and orientation."),
@@ -378,12 +405,12 @@ ui <- glassPage(
 )
 
 server <- function(input, output, session) {
+  live_present <- reactiveVal(FALSE)
+
   filtered_orders <- reactive({
     dat <- orders
     selected_regions <- input$region_filter
-    if (!is.null(selected_regions) && length(selected_regions) > 0) {
-      dat <- dat[dat$region %in% selected_regions, , drop = FALSE]
-    }
+    dat <- dat[dat$region %in% selected_regions, , drop = FALSE]
     if (!is.null(input$status_filter) && input$status_filter != "All") {
       dat <- dat[dat$status == input$status_filter, , drop = FALSE]
     }
@@ -414,24 +441,22 @@ server <- function(input, output, session) {
   })
 
   observeEvent(input$append_live_tab, {
-    appendGlassTab(
-      session,
-      "workflow",
-      glassTabPanel(
-        "live", "Live tab",
-        div(
-          class = "stage-card",
-          h3("Added while the app is running"),
-          p("The tab, panel, menu option, ARIA links, and keyboard order should all update together."),
-          actionButton("live_action", "A real button inside the new panel")
-        )
-      ),
-      select = TRUE
-    )
+    if (isTRUE(live_present())) return()
+    appendGlassTab(session, "workflow", live_panel(), select = TRUE)
+    live_present(TRUE)
   })
 
   observeEvent(input$remove_live_tab, {
+    if (!isTRUE(live_present())) return()
     removeGlassTab(session, "workflow", "live")
+    live_present(FALSE)
+  })
+
+  observeEvent(input[["workflow-close_request"]], {
+    if (!identical(input[["workflow-close_request"]], "live") ||
+        !isTRUE(live_present())) return()
+    removeGlassTab(session, "workflow", "live")
+    live_present(FALSE)
   })
 
   observeEvent(input$hide_approve, {
@@ -479,6 +504,15 @@ server <- function(input, output, session) {
       overflow <- "scroll"
     }
     swipe <- isTRUE(input$workflow_swipe)
+    selected <- isolate(input[["workflow-active_tab"]])
+    if (is.null(selected) || !nzchar(selected)) selected <- "intake"
+    approval_values <- isolate(list(
+      owner = input$owner_checked,
+      metrics = input$metrics_checked,
+      publish = input$publish_checked
+    ))
+    swipe_guard_value <- isolate(input$swipe_guard_input)
+    if (is.null(swipe_guard_value)) swipe_guard_value <- "Typing here should never change tabs"
 
     workflow_tabs(
       orientation = orientation,
@@ -487,7 +521,11 @@ server <- function(input, output, session) {
       shape = shape,
       indicator = indicator,
       overflow = overflow,
-      swipe = swipe
+      swipe = swipe,
+      selected = selected,
+      show_live = isolate(live_present()),
+      approval_values = approval_values,
+      swipe_guard_value = swipe_guard_value
     )
   })
 
@@ -499,6 +537,12 @@ server <- function(input, output, session) {
     active <- input[["workflow-active_tab"]]
     if (is.null(active) || !nzchar(active)) "intake" else active
   })
+  observeEvent(input[["workflow-active_tab"]], {
+    session$sendCustomMessage(
+      "connect_workflow_active",
+      list(value = input[["workflow-active_tab"]])
+    )
+  }, ignoreNULL = FALSE)
   output$approval_summary <- renderText({
     paste(
       "Queue rows:", nrow(filtered_orders()),

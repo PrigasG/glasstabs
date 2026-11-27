@@ -14,6 +14,8 @@ for actual rendered widgets, theme changes and interactions.
 
 ## Navigation
 
+![Closable glass tabs in a compact workspace](https://prigasg.github.io/glasstabs/reference/figures/tabs-closable.png)
+
 ```{r, eval=FALSE}
 glassTabsUI("tabs",
   glassTabPanel("data", "Data", p("Data")),
@@ -24,12 +26,16 @@ glassTabsUI("tabs",
 
 ## Single and multiple selections
 
+![Multi-select with colored choices and a selection count](https://prigasg.github.io/glasstabs/reference/figures/select-multiselect.png)
+
 ```{r, eval=FALSE}
 glassSelect("dataset", c("Providers", "Population"), width = "240px")
 glassMultiSelect("region", c("North", "South"), width = "100%")
 ```
 
 ## Switch, radio and checkbox group
+
+![Glass switch, radio buttons, and checkbox group](https://prigasg.github.io/glasstabs/reference/figures/form-inputs.png)
 
 ```{r, eval=FALSE}
 glassSwitch("enabled", "Enable filtering", TRUE, theme = "auto")
@@ -43,6 +49,16 @@ glassCheckboxGroup("fields", "Fields", c("Name", "County"),
 ```{r, eval=FALSE}
 runGlassExample("final-features")
 ```
+
+## Watch the demos
+
+<video controls preload="none" poster="https://prigasg.github.io/glasstabs/reference/figures/dashboard-workflow.png" src="https://prigasg.github.io/glasstabs/media/dashboard-workflow.mp4" width="720" aria-label="Dashboard workflow demonstration"></video>
+
+[Open the dashboard workflow recording](https://prigasg.github.io/glasstabs/media/dashboard-workflow.mp4).
+
+<video controls preload="none" poster="https://prigasg.github.io/glasstabs/reference/figures/tabs-draggable.png" src="https://prigasg.github.io/glasstabs/media/configurable-navigation.mp4" width="720" aria-label="Configurable navigation demonstration"></video>
+
+[Open the configurable navigation recording](https://prigasg.github.io/glasstabs/media/configurable-navigation.mp4).
 
 See [navigation](tabs.html), [single-select](glassSelect.html),
 [multi-select](multiselect.html), [form inputs](../reference/glassSwitch.html)
