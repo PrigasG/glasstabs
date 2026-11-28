@@ -406,6 +406,9 @@ ui <- glassPage(
 
 server <- function(input, output, session) {
   live_present <- reactiveVal(FALSE)
+  approve_hidden <- reactiveVal(FALSE)
+  explore_disabled <- reactiveVal(FALSE)
+  badge_test_value <- reactiveVal(0L)
 
   filtered_orders <- reactive({
     dat <- orders
@@ -461,21 +464,24 @@ server <- function(input, output, session) {
 
   observeEvent(input$hide_approve, {
     hideGlassTab(session, "workflow", "approve")
+    approve_hidden(TRUE)
   })
 
   observeEvent(input$show_approve, {
     showGlassTab(session, "workflow", "approve")
+    approve_hidden(FALSE)
   })
 
   observeEvent(input$disable_explore, {
     disableGlassTab(session, "workflow", "explore")
+    explore_disabled(TRUE)
   })
 
   observeEvent(input$enable_explore, {
     enableGlassTab(session, "workflow", "explore")
+    explore_disabled(FALSE)
   })
 
-  badge_test_value <- reactiveVal(0L)
   observeEvent(input$pulse_badge, {
     next_value <- badge_test_value() + 1L
     badge_test_value(next_value)
@@ -486,6 +492,21 @@ server <- function(input, output, session) {
     updateGlassMultiSelect(session, "region_filter", selected = sort(unique(orders$region)))
     updateGlassSelect(session, "status_filter", selected = "All")
   })
+
+  observeEvent(list(
+    input$workflow_orientation, input$workflow_tab_align,
+    input$workflow_text_align, input$workflow_tab_shape,
+    input$workflow_indicator, input$workflow_overflow, input$workflow_swipe
+  ), {
+    session$onFlushed(function() {
+      if (isTRUE(isolate(approve_hidden()))) hideGlassTab(session, "workflow", "approve")
+      if (isTRUE(isolate(explore_disabled()))) disableGlassTab(session, "workflow", "explore")
+      badge <- isolate(badge_test_value())
+      if (badge > 0L) {
+        updateGlassTabBadge(session, "workflow", "test_lab", badge)
+      }
+    }, once = TRUE)
+  }, ignoreInit = TRUE)
 
   output$workflow_tabs_ui <- renderUI({
     orientation <- input$workflow_orientation

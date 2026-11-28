@@ -393,22 +393,22 @@
         "Encoding": "UTF-8",
         "Language": "en-US",
         "Roxygen": "list(markdown = TRUE)",
-        "RoxygenNote": "7.3.3",
+        "Config/roxygen2/version": "8.1.1",
         "RemoteType": "github",
         "RemoteHost": "api.github.com",
         "RemoteRepo": "glasstabs",
         "RemoteUsername": "PrigasG",
-        "RemoteRef": "35b43d5",
-        "RemoteSha": "35b43d52d8a06aabed98c62a975b1febea58cf37",
+        "RemoteRef": "61034f34b907cc265bed606a963596731d12994a",
+        "RemoteSha": "61034f34b907cc265bed606a963596731d12994a",
         "GithubRepo": "glasstabs",
         "GithubUsername": "PrigasG",
-        "GithubRef": "35b43d5",
-        "GithubSHA1": "35b43d52d8a06aabed98c62a975b1febea58cf37",
+        "GithubRef": "61034f34b907cc265bed606a963596731d12994a",
+        "GithubSHA1": "61034f34b907cc265bed606a963596731d12994a",
         "NeedsCompilation": "no",
-        "Packaged": "2026-11-27 18:48:25 UTC; priga",
+        "Packaged": "2026-11-28 02:57:18 UTC; priga",
         "Author": "George Arthur [aut, cre]",
         "Maintainer": "George Arthur <prigasgenthian48@gmail.com>",
-        "Built": "R 4.5.1; ; 2026-11-27 18:48:26 UTC; windows"
+        "Built": "R 4.5.1; ; 2026-11-28 02:57:19 UTC; windows"
       }
     },
     "glue": {
@@ -1057,7 +1057,7 @@
   },
   "files": {
     "app.R": {
-      "checksum": "e8d6e8f42bf050ea513b177a6b8fb8c5"
+      "checksum": "50165a3850b8474faa0c118f02e398ff"
     }
   },
   "users": null

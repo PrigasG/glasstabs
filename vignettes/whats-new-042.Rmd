@@ -9,8 +9,8 @@ vignette: >
 
 Version 0.4.2 focuses on reliable navigation, reliable filters and native-bound
 form controls. Existing behavior remains the default. This guide describes the
-0.4.2 development candidate; check `packageVersion("glasstabs")` before using
-new arguments on a CRAN installation.
+0.4.2 release; check `packageVersion("glasstabs")` before using new arguments
+if your installed package may be an earlier version.
 
 ```{r setup, include=FALSE}
 library(glasstabs)
@@ -67,7 +67,7 @@ inactive, and scroll options without moving the page. Nested widgets own
 their shape and theme. Appended panes load dependencies and bind before their
 links are committed. Failed/cancelled appends clean up their pending operation.
 
-## Try the candidate
+## Try 0.4.2
 
 ```{r, eval=FALSE}
 runGlassExample("modernization")
@@ -75,5 +75,5 @@ runGlassExample("final-features")
 ```
 
 Review the [changelog](../news/index.html), [troubleshooting](troubleshooting.html)
-and [deployment guide](posit-connect.html) before shipping. Physical mobile
-verification and third-party widget integration remain release checks.
+and [deployment guide](posit-connect.html) for more examples. Physical mobile
+and third-party widget integration can be checked in the interactive examples.

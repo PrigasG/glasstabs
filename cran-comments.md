@@ -1,7 +1,6 @@
-## Release candidate
+## Release summary
 
 This is glasstabs 0.4.2. The previous CRAN release is 0.4.1.
-No 0.4.2 submission date or CRAN acceptance is claimed here.
 
 ## Changes in this version
 
@@ -17,11 +16,15 @@ See NEWS.md for the full release history.
 
 ## Checks
 
-- Local Windows 11 x64, R 4.5.1, `R CMD check --as-cran` through
-  `devtools::check(document = FALSE)`: 0 errors, 0 warnings, 0 notes
+- Local Windows 11 x64, R 4.5.1, `R CMD check --as-cran --no-manual`
+  on the final source archive: 0 errors, 0 warnings, 0 notes
   (November 27, 2026).
 - The source-package archive was inspected: no private Regression Lab,
   roadmap, deployment manifest, stress worksheet, benchmarks, or generated
-  website files; all required runtime, documentation, examples, and test
-  fixtures were present.
-- The pkgdown site built and `pkgdown::check_pkgdown()` found no problems.
+  website files, or website MP4/GIF media; all required runtime,
+  documentation, examples, and test fixtures were present.
+- The pkgdown site built with `install = FALSE`; `pkgdown::check_pkgdown()`
+  found no problems.
+- GitHub Actions passed on Windows, macOS, Ubuntu R release, Ubuntu R
+  oldrel-1, and Ubuntu R devel; lint, test coverage, pkgdown build, and
+  website deployment also passed.
