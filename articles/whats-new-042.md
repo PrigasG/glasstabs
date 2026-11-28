@@ -2,9 +2,9 @@
 
 Version 0.4.2 focuses on reliable navigation, reliable filters and
 native-bound form controls. Existing behavior remains the default. This
-guide describes the 0.4.2 development candidate; check
-`packageVersion("glasstabs")` before using new arguments on a CRAN
-installation.
+guide describes the 0.4.2 release; check `packageVersion("glasstabs")`
+before using new arguments if your installed package may be an earlier
+version.
 
 ## Modern workspaces
 
@@ -72,7 +72,7 @@ their shape and theme. Appended panes load dependencies and bind before
 their links are committed. Failed/cancelled appends clean up their
 pending operation.
 
-## Try the candidate
+## Try 0.4.2
 
 ``` r
 
@@ -85,5 +85,5 @@ Review the
 [troubleshooting](https://prigasg.github.io/glasstabs/articles/troubleshooting.md)
 and [deployment
 guide](https://prigasg.github.io/glasstabs/articles/posit-connect.md)
-before shipping. Physical mobile verification and third-party widget
-integration remain release checks.
+for more examples. Physical mobile and third-party widget integration
+can be checked in the interactive examples.

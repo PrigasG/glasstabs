@@ -50,7 +50,7 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.4.2" id="glasstabs-042-development">glasstabs 0.4.2 (development)<a class="anchor" aria-label="anchor" href="#glasstabs-042-development"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.4.2" id="glasstabs-042">glasstabs 0.4.2<a class="anchor" aria-label="anchor" href="#glasstabs-042"></a></h2>
 <div class="section level3">
 <h3 id="final-workspace-and-form-additions-0-4-2">Final workspace and form additions<a class="anchor" aria-label="anchor" href="#final-workspace-and-form-additions-0-4-2"></a></h3>
 <ul><li>Add opt-in persistent tab ordering (<code>persist_order</code>, <code>initial_order</code>, <code>order_key</code>), server-approved <code>closable</code> tabs and touch/pen drag handles (<code>touch_reorder</code>).</li>
@@ -66,7 +66,7 @@
 <code>transition = "none"</code> activates the pane and indicator immediately.</li>
 <li>Add opt-in spacing, fillable content, equal-width tabs and single-tab hiding.</li>
 <li>
-<code>reorderable = TRUE</code> enables desktop drag reordering and Alt+Shift+arrow keyboard reordering without recreating panes. The <code>-tab_order</code> input reports all tab values. Rebuilding the widget from R resets its order unless the application uses the reported order when building the new widget.</li>
+<code>reorderable = TRUE</code> enables desktop drag reordering and Alt+Shift+arrow keyboard reordering without recreating panes. The <code>-tab_order</code> input reports all tab values. Rebuilding the widget from R follows the supplied tab order unless browser persistence is enabled. Applications can also restore their own saved order using <code>initial_order</code>.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="select-appearance-and-integration-0-4-2">Select appearance and integration<a class="anchor" aria-label="anchor" href="#select-appearance-and-integration-0-4-2"></a></h3>

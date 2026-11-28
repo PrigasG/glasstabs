@@ -12,10 +12,10 @@ Use the components individually or together in existing
 and `bs4Dash` applications. Choose light or dark surfaces, automatic
 theming, compact layouts, or a custom appearance.
 
-**Version note:** This README describes the 0.4.2 development version.
-Persistent ordering, closable tabs, touch reorder handles, and the new
-form inputs require 0.4.2. The CRAN release may lag behind GitHub. See
-[What’s new in
+**Version note:** This README describes 0.4.2. Persistent ordering,
+closable tabs, touch reorder handles, and the new form inputs require
+0.4.2. If your installed package reports an earlier version, install
+0.4.2 from GitHub. See [What’s new in
 0.4.2](https://prigasg.github.io/glasstabs/articles/whats-new-042.html).
 
 ![Dashboard workflow with glasstabs filters and
@@ -44,7 +44,7 @@ Install the CRAN release:
 install.packages("glasstabs")
 ```
 
-To try the current development version from GitHub:
+To install 0.4.2 from GitHub:
 
 ``` r
 

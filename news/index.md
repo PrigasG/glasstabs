@@ -1,6 +1,6 @@
 # Changelog
 
-## glasstabs 0.4.2 (development)
+## glasstabs 0.4.2
 
 ### Final workspace and form additions
 
@@ -29,8 +29,9 @@
 - `reorderable = TRUE` enables desktop drag reordering and
   Alt+Shift+arrow keyboard reordering without recreating panes. The
   `-tab_order` input reports all tab values. Rebuilding the widget from
-  R resets its order unless the application uses the reported order when
-  building the new widget.
+  R follows the supplied tab order unless browser persistence is
+  enabled. Applications can also restore their own saved order using
+  `initial_order`.
 
 ### Select appearance and integration
 
